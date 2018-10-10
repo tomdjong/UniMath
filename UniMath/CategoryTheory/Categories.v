@@ -335,12 +335,6 @@ Definition iso {C: precategory_data}(a b : C) := total2 (fun f : a --> b => is_i
 Definition morphism_from_iso (C:precategory_data)(a b : C) (f : iso a b) : a --> b := pr1 f.
 Coercion morphism_from_iso : iso >-> precategory_morphisms.
 
-Definition mk_iso {C : precategory} {c c' : C} {f : c --> c'} (ii : is_iso f) : iso c c'.
-Proof.
-  exists f.
-  exact ii.
-Defined.
-
 Definition iso_is_iso {C: precategory_data} {a b : C} (f : iso a b) : is_iso f := pr2 f.
 
 Definition isopair {C: precategory_data}{a b : C} (f : a --> b) (fiso: is_iso f) : iso a b :=
@@ -1127,6 +1121,21 @@ Proof.
     simpl in H2. apply H2.
   - set (H2:=iso_after_iso_inv fiso).
     simpl in H2. apply H2.
+Defined.
+
+Lemma is_z_iso_is_iso_equiv {C : category} {a b : ob C} (f : a --> b) : is_iso f ≃ is_z_isomorphism f.
+Proof.
+  use weqiff.
+  - split.
+    + exact (is_z_iso_from_is_iso f).
+    + exact (is_iso_from_is_z_iso f).
+  - use isaprop_is_iso.
+  - use isaprop_is_z_isomorphism. exact (homset_property C).
+Defined.
+
+Lemma z_isomorphism_iso_equiv {C : category} {a b : ob C} : iso a b ≃ z_iso a b.
+Proof.
+  use weqfibtototal. exact is_z_iso_is_iso_equiv.
 Defined.
 
 (** * Categories (aka saturated precategories) *)
