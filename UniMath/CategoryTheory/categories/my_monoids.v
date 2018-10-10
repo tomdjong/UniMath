@@ -36,7 +36,7 @@ End def_monoid_category.
 
 Section char_monoid_iso.
 
-  Lemma monoidiso_is_monoid_cat_iso (X Y : monoid_category) : monoidiso X Y -> z_iso X Y.
+  Lemma monoidiso_is_monoid_cat_iso (X Y : ob monoid_category) : monoidiso X Y -> z_iso X Y.
   Proof.
     intro f.
     set (g := invmonoidiso f).
@@ -48,34 +48,51 @@ Section char_monoid_iso.
       + use monoidfun_paths. use funextfun. intro y. use homotweqinvweq.
   Defined.
 
-  Lemma monoidiso_is_equiv (X Y : monoid_category) (z_f : z_iso X Y) : isweq (pr1 (pr1 z_f)).
+  Lemma monoid_cat_iso_is_isweq {X Y : ob monoid_category} (f : X --> Y) : is_z_isomorphism f -> isweq (pr1 f).
   Proof.
-    unfold z_iso in z_f.
-    induction z_f as [f h]. induction h as [g h']. induction h' as [p q].
+    intro z_f. unfold is_z_isomorphism in z_f.
+    induction z_f as [g h']. induction h' as [p q].
     use isweq_iso.
     - use (g : monoidfun Y X).
-    - intro x. unfold identity in p. unfold monoid_category in p.
-      simpl in p. unfold compose in p. simpl in p. simpl.
-      admit.
-    - intro y. unfold identity in q. unfold monoid_category in q.
-      simpl in q. unfold compose in q. simpl in q. simpl.
-      admit.
-  Admitted.
+    - use toforallpaths. exact (maponpaths pr1 p).
+    - use toforallpaths. exact (maponpaths pr1 q).
+  Defined.
 
-  Lemma monoid_cat_iso_is_monoidiso (X Y : monoid_category) : z_iso X Y -> monoidiso X Y.
+  Lemma monoid_cat_iso_is_monoidiso (X Y : ob monoid_category) : z_iso X Y -> monoidiso X Y.
   Proof.
     intro f.
     use monoidisopair.
     - use weqpair.
       + exact (pr1 (pr1 f)).
-      + exact (monoidiso_is_equiv X Y f).
+      + exact (monoid_cat_iso_is_isweq (pr1 f) (pr2 f)).
     - exact (pr2 (pr1 f)).
   Defined.
 
-  Lemma monoidiso_is_monoid_cat_iso_is_equiv (X Y : monoid_category) : isweq (monoidiso_is_monoid_cat_iso X Y).
+  (* Lemma monoidiso_is_monoid_cat_iso_is_equiv (X Y : ob monoid_category) : isweq (monoidiso_is_monoid_cat_iso X Y).
   Proof.
-    - Search isweq.
+    use isweq_iso.
+    - exact (monoid_cat_iso_is_monoidiso X Y).
+    - intro f. use monoidiso_paths.  use subtypeEquality.
+      + unfold isPredicate. intro x. use isapropisweq.
+      + use idpath.
+    - intro g. use eq_z_iso.
+      + exact (homset_property monoid_category).
+      + use monoidfun_paths. use idpath.
+  Defined. *)
 
+  Lemma monoidiso_is_monoid_cat_iso_equiv (X Y : ob monoid_category) : monoidiso X Y ≃ z_iso X Y.
+  Proof.
+    use weqpair.
+    - exact (monoidiso_is_monoid_cat_iso X Y).
+    - use isweq_iso.
+      + exact (monoid_cat_iso_is_monoidiso X Y).
+      + intro f. use monoidiso_paths.  use subtypeEquality.
+        * unfold isPredicate. intro x. use isapropisweq.
+        *use idpath.
+      + intro g. use eq_z_iso.
+        * exact (homset_property monoid_category).
+        * use monoidfun_paths. use idpath.
+  Defined.
 
 End char_monoid_iso.
 
@@ -84,6 +101,12 @@ Proof.
   use mk_category.
   - exact monoid_category.
   - use mk_is_univalent.
-    + intros X Y. exact (monoid_univalence_isweq X Y).
-      apply monoid_univalence_isweq.
-      unfold idtoiso. unfold isweq. intro. unfold iscontr.
+    + intros X Y.
+      use isweqhomot.
+      *
+        exact (
+            funcomp (funcomp (monoid_univalence_map X Y) (monoidiso_is_monoid_cat_iso X Y)) (invmap z_isomorphism_iso_equiv)).
+      * intro t. induction t. unfold funcomp.  use total2_paths_f.
+        ** use idpath.
+        ** unfold transportf. use proofirrelevance. use isaprop_is_iso.
+      * Search invmap.
