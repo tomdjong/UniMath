@@ -1123,17 +1123,17 @@ Proof.
     simpl in H2. apply H2.
 Defined.
 
-Lemma is_z_iso_is_iso_equiv {C : category} {a b : ob C} (f : a --> b) : is_iso f ≃ is_z_isomorphism f.
+Lemma is_z_iso_is_iso_equiv {C : category} {a b : ob C} (f : a --> b) : is_z_isomorphism f ≃ is_iso f.
 Proof.
   use weqiff.
   - split.
-    + exact (is_z_iso_from_is_iso f).
     + exact (is_iso_from_is_z_iso f).
-  - use isaprop_is_iso.
+    + exact (is_z_iso_from_is_iso f).
   - use isaprop_is_z_isomorphism. exact (homset_property C).
+  - use isaprop_is_iso.
 Defined.
 
-Lemma z_isomorphism_iso_equiv {C : category} {a b : ob C} : iso a b ≃ z_iso a b.
+Lemma z_isomorphism_iso_equiv {C : category} {a b : ob C} : z_iso a b ≃ iso a b.
 Proof.
   use weqfibtototal. exact is_z_iso_is_iso_equiv.
 Defined.
