@@ -1133,7 +1133,7 @@ Proof.
   - use isaprop_is_iso.
 Defined.
 
-Lemma z_isomorphism_iso_equiv {C : category} {a b : ob C} : z_iso a b ≃ iso a b.
+Lemma z_isomorphism_iso_equiv {C : category} (a b : ob C) : z_iso a b ≃ iso a b.
 Proof.
   use weqfibtototal. exact is_z_iso_is_iso_equiv.
 Defined.
