@@ -109,3 +109,19 @@ Inductive term_denotes_element : terms_over_pas -> pas_carrier -> UU :=
                 term_denotes_element s a -> term_denotes_element t b ->
                 defined u ->
                 term_denotes_element (app s t) (value u p).
+
+Definition term_denotes (t : terms_over_pas) : UU
+  := ∑ (a : pas_carrier), term_denotes_element t a.
+
+Delimit Scope pca with pca.
+Local Open Scope pca.
+
+(* TO DO: check level *)
+Notation "t ↓ a" := (term_denotes_element t a) (at level 50) : pca.
+Notation "t ↓" := (term_denotes t) (at level 50) : pca.
+
+Example constants_denote : ∏ (a : pas_carrier), con a ↓ a.
+Proof.
+  intro a.
+  exact (con_denotes a).
+Defined.
