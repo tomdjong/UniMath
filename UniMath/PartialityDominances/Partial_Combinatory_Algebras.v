@@ -1,6 +1,8 @@
 Require Import UniMath.PartialityDominances.Partiality_and_Dominances.
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
+Require Import UniMath.Combinatorics.StandardFiniteSets.
+Require Import UniMath.Combinatorics.Lists.
 
 (* Since we only want one partial map, the application map, we are not really
 interested in composition, so we might not need a structural dominance. A type
@@ -19,10 +21,11 @@ Context (A : pas).
 
 Definition pas_carrier : UU := pr1 A.
 
-Definition pas_disciplined_map : disciplined D sel (pas_carrier × pas_carrier) (pas_carrier)
-  := pr2 (pr2 A).
+Definition pas_disciplined_map :
+  disciplined D sel (pas_carrier × pas_carrier) (pas_carrier) := pr2 (pr2 A).
 
-Definition pas_app : pas_carrier × pas_carrier -> lift(pas_carrier) := pr1 pas_disciplined_map.
+Definition pas_app : pas_carrier × pas_carrier -> lift(pas_carrier) :=
+  pr1 pas_disciplined_map.
 
 (* Terms over a pas *)
 
@@ -59,3 +62,30 @@ Proof.
   intro a.
   exact (con_denotes a).
 Defined.
+
+End fix_a_var_type.
+
+Fixpoint substitution {X Y : Type} (t : terms_over_pas X) (sub : X -> terms_over_pas Y)
+  : terms_over_pas Y :=
+  match t with
+  | var _ x => sub x
+  | con _ a => con _ a
+  | app _ t1 t2 => app _ (substitution t1 sub) (substitution t2 sub)
+  end.
+
+Definition rep_app (n : nat) :
+  pas_carrier -> disciplined D sel (iterprod n pas_carrier) pas_carrier.
+Proof.
+  induction n as [ | m].
+  - intro a. unfold disciplined. simpl.
+    split with (λ _, lift_embedding a).
+    unfold is_disciplined.
+    simpl. unfold ishinh_UU. intro P.
+    intro hyp. apply hyp.
+    split with (λ _,
+
+Definition term_to_partial_function : (∑ (n : nat), terms_over_pas (stn n)) ->
+  ∑ (m : nat), disciplined D sel (iterprod m pas_carrier) pas_carrier.
+Proof.
+  intro hyp. induction hyp as [n t].
+  split with n.
