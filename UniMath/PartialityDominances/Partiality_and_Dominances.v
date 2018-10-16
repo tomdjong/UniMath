@@ -43,9 +43,9 @@ Definition is_disciplined {X Y : UU} (f : X -> lift Y) : UU :=
   ∃ (f' : X -> D_lift Y), tame f' = f.
 
 Definition disciplined (X Y : UU) : UU :=
-  ∑ f : X -> lift Y, isDis_D f.
+  ∑ f : X -> lift Y, is_disciplined f.
 
-Definition disciplined_carrier {X Y : UU} (m : Dis_D X Y) : X -> lift Y :=
+Definition disciplined_carrier {X Y : UU} (m : disciplined X Y) : X -> lift Y :=
   pr1 m.
 
 End fix_a_D_and_prop_selection.
