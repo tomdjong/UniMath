@@ -10,6 +10,14 @@ Definition selects_propositions : UU := ∏ X, D X -> isaprop X.
 Context (sel : selects_propositions).
 
 Definition lift (Y : UU) := ∑ (P : UU), isaprop P × (P -> Y).
+
+Definition lift_embedding {Y : UU} : Y -> lift Y.
+Proof.
+  intro y. split with unit. split.
+  - exact isapropunit.
+  - exact (λ _, y).
+Defined.
+
 Definition D_lift (Y : UU) := ∑ (P : UU), D P × (P -> Y).
 
 Definition defined  {Y : UU} : lift Y -> hProp.
