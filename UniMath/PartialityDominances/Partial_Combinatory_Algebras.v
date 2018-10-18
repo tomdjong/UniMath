@@ -38,6 +38,8 @@ Inductive terms_over_pas : UU :=
   | con : pas_carrier -> terms_over_pas
   | app : terms_over_pas -> terms_over_pas -> terms_over_pas.
 
+(* We only have this for *closed terms* *)
+(*
 Inductive term_denotes_element : terms_over_pas -> pas_carrier -> UU :=
 | con_denotes : ∏ (a : pas_carrier), term_denotes_element (con a) a
 | app_denotes : ∏ (s t : terms_over_pas), ∏ (a b : pas_carrier),
@@ -71,7 +73,10 @@ Fixpoint substitution {X Y : Type} (t : terms_over_pas X) (sub : X -> terms_over
   | var _ x => sub x
   | con _ a => con _ a
   | app _ t1 t2 => app _ (substitution t1 sub) (substitution t2 sub)
-  end.
+  end. *)
+
+(* We will also need an embedding into the D_lift, so fix an inhabitant of D unit. *)
+Context (Dunit : D unit).
 
 Definition rep_app (n : nat) :
   pas_carrier -> disciplined D sel (iterprod n pas_carrier) pas_carrier.
@@ -80,10 +85,21 @@ Proof.
   - intro a. unfold disciplined. simpl.
     split with (λ _, lift_embedding a).
     unfold is_disciplined.
-    simpl. unfold ishinh_UU. intro P.
-    intro hyp. apply hyp.
-    split with (λ _,
-
+    use wittohexists.
+    + exact (λ _, D_lift_embedding D Dunit a).
+    + use funextfun. intro u.
+      unfold tame. unfold canonical_embedding. simpl.
+      unfold lift_embedding.
+      use subtypeEquality'.
+      * simpl. use idpath.
+      * simpl. use isapropdirprod.
+        ** admit.
+        ** unfold isaprop. unfold isofhlevel. intros f f'.
+           unfold iscontr.
+    use subtypeEquality.
+    + unfold isPredicate. intro Y.
+    + simpl. use idpath.
+  -
 Definition term_to_partial_function : (∑ (n : nat), terms_over_pas (stn n)) ->
   ∑ (m : nat), disciplined D sel (iterprod m pas_carrier) pas_carrier.
 Proof.
