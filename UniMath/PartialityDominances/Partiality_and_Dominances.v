@@ -18,7 +18,104 @@ Proof.
   - exact (λ _, y).
 Defined.
 
+Lemma unit_is_unit_iscontr : iscontr(unit = unit).
+Proof.
+  use isofhlevel0pathspace. (* Note that this uses univalence *)
+  - exact (iscontrunit).
+  - exact (iscontrunit).
+Qed.
+
+(* Definition eq_to_lift_embedding_eq {Y : UU} {y y' : Y} :
+  y = y' -> lift_embedding y = lift_embedding y'.
+Proof.
+  intro e.
+  exact (maponpaths lift_embedding e).
+Defined. *)
+(*
+  unfold lift_embedding.
+  apply total2_paths_equiv. unfold PathPair. simpl.
+  split with (idpath unit).
+  set (transportf_idpath :=
+         idpath_transportf (λ x : UU, isaprop x × (x -> Y)) (isapropunit,, (λ _ : unit, y))).
+  rewrite transportf_idpath.
+  use dirprodeq.
+  - simpl. use idpath.
+  - simpl. use funextfun. intro u. exact e.
+Defined.
+*)
+
+Definition eq_is_trans {X : UU} {x y z : X} : x = y -> y = z -> x = z.
+Proof.
+  intros p q. rewrite p. rewrite q. use idpath.
+Defined.
+
+Definition eq_is_sym {X : UU} {x y : X} : x = y -> y = x.
+Proof.
+  intro p. rewrite p. use idpath.
+Defined.
+
+Definition lift_embedding_eq_to_eq {Y : UU} {y y' : Y} :
+  lift_embedding y = lift_embedding y' -> y = y'.
+Proof.
+  unfold lift_embedding. intro e.
+  set (fiber_e := fiber_paths e).
+  unfold base_paths in fiber_e. simpl in fiber_e.
+
+  (* We want to show that maponpaths pr1 e = idpath unit *)
+  assert (eq : maponpaths pr1 e = idpath unit).
+  {
+    set (lem := pr2 unit_is_unit_iscontr).
+    set (eq1 := lem (maponpaths pr1 e)).
+    set (eq2 := lem (idpath unit)).
+    exact (eq_is_trans eq1 (eq_is_sym eq2)).
+  }
+
+  (* Now we use the equality in fiber_e *)
+  rewrite eq in fiber_e.
+  set (transportf_idpath :=
+         idpath_transportf (λ x : UU, isaprop x × (x -> Y)) (isapropunit,, (λ _ : unit, y))).
+  rewrite transportf_idpath in fiber_e.
+
+  (* We extract the constant functions *)
+  set (const_func_eq := maponpaths dirprod_pr2 fiber_e). simpl in const_func_eq.
+  exact ((eqtohomot const_func_eq) tt).
+Defined.
+
+Definition lift_embedding_is_embedding {Y : UU}: @isInjective Y _ lift_embedding.
+Proof.
+  unfold isInjective.
+  intros y y'.
+  use isweq_iso.
+  - exact (lift_embedding_eq_to_eq).
+  - intro e.
+    unfold lift_embedding_eq_to_eq. simpl.
+
+    change (λ p : unit = unit,
+           transportf (λ x : UU, isaprop x × (x → Y)) p (isapropunit,, (λ _ : unit, y)) =
+           isapropunit,, (λ _ : unit, y'))
+    with
+    (λ p : unit = unit,
+           transportf (λ x : UU, isaprop x × (x → Y)) (idpath unit) (isapropunit,, (λ _ : unit, y)) =
+           isapropunit,, (λ _ : unit, y')).
+
+    change (λ p : unit = unit, (transportf (λ x : UU, isaprop x × (x -> Y)) p (isapropunit,, (λ _ : unit, y)))) with
+    (λ p : unit = unit, (transportf (λ x : UU, isaprop x × (x -> Y)) (idpath unit) (isapropunit,, (λ _ : unit, y)))).
+
+    unfold maponpaths. unfold lift_embedding_eq_to_eq. simpl. unfold maponpaths. simpl. admit.
+  - intro e'.
+
+    Search maponpaths. unfold maponpaths. Search paths_rect.
+    unfold lift_embedding_eq_to_eq. simpl.
+    Search isweq.
 Definition D_lift (Y : UU) := ∑ (P : UU), D P × (P -> Y).
+
+(* For there to be an embedding into the D_lift, we need an inhabitant of D unit *)
+Definition D_lift_embedding (v : D unit) {Y : UU} : Y -> D_lift Y.
+Proof.
+  intro y. split with unit. split.
+  - exact v.
+  - exact (λ _, y).
+Defined.
 
 Definition defined  {Y : UU} : lift Y -> hProp.
 Proof.
