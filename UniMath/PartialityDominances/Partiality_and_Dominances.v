@@ -18,6 +18,139 @@ Proof.
   - exact (λ _, y).
 Defined.
 
+Lemma unit_is_unit_iscontr : iscontr(unit = unit).
+Proof.
+  use isofhlevel0pathspace. (* Note that this uses univalence *)
+  - exact (iscontrunit).
+  - exact (iscontrunit).
+Qed.
+
+Definition unit_is_unit_isproofirrelevant : isProofIrrelevant(unit = unit).
+Proof.
+  use proofirrelevance.
+  use isapropifcontr.
+  exact (unit_is_unit_iscontr).
+Defined.
+
+(* A function is an embedding if it has propositional fibers *)
+Definition is_embedding {X Y : UU} (f : X -> Y) : UU := ∏ (y : Y), isaprop (∑ (x : X), f x = y).
+
+Lemma test (X : UU) (p : isaprop X) : isProofIrrelevant (unit = X).
+Proof.
+  admit.
+Admitted.
+
+(*
+Lemma lift_eq_isaprop {Y : UU} (y : Y) (l : lift Y) : isaprop(lift_embedding y = l).
+Proof.
+  use invproofirrelevance.
+  unfold isProofIrrelevant. intros u v.
+  unfold lift_embedding in u. unfold lift_embedding in v.
+  unfold lift in l.
+  induction l as [l1 l2].
+  induction u.
+ *)
+
+Definition lift_embedding_eq_to_eq {Y : UU} {y y' : Y} :
+  lift_embedding y = lift_embedding y' -> y = y'.
+Proof.
+  intro u.
+  apply total2_paths_equiv in u. unfold PathPair in u. simpl in u.
+  induction u as [u1 u2].
+  set (u1isid := unit_is_unit_isproofirrelevant u1 (idpath unit)).
+  rewrite u1isid in u2. rewrite (idpath_transportf _ _) in u2.
+  set (u3 := maponpaths dirprod_pr2 u2). simpl in u3.
+  exact (eqtohomot u3 tt).
+Defined.
+
+Definition lift_embedding_eq_equiv {Y : UU} {y y' : Y} :
+  y = y' ≃ lift_embedding y = lift_embedding y'.
+Proof.
+  use weqpair.
+  - exact (maponpaths lift_embedding).
+  - use isweq_iso.
+    + exact lift_embedding_eq_to_eq.
+    + intro u. admit.
+    + intro v. simpl. unfold maponpaths. simpl.
+
+      unfold lift_embedding_eq_to_eq. simpl.
+      Search isweq.
+Lemma lift_embedding_is_embedding {Y : UU} : is_embedding (@lift_embedding Y).
+Proof.
+  unfold is_embedding. intro l.
+  use invproofirrelevance.
+  unfold isProofIrrelevant.
+  intros p q.
+  induction p as [y_p p']. induction q as [y_q q'].
+  assert (yeq : y_p = y_q).
+  {
+    assert (r : lift_embedding y_p = lift_embedding y_q).
+    { rewrite p'. rewrite q'. use idpath. }
+    apply total2_paths_equiv in r. unfold PathPair in r.
+    induction r as [r1 r2]. unfold lift_embedding in r1. simpl in r1.
+    set (r1isid := unit_is_unit_isproofirrelevant r1 (idpath unit)).
+    rewrite r1isid in r2. rewrite (idpath_transportf _ _) in r2.
+    unfold lift_embedding in r2. simpl in r2.
+    set (r3 := maponpaths dirprod_pr2 r2). simpl in r3.
+    rewrite (eqtohomot r3 tt). use idpath.
+  }
+  apply total2_paths_equiv. unfold PathPair.
+  simpl. split with yeq.
+  induction p'.
+
+  assert (transportf (λ x : Y, lift_embedding x = lift_embedding y_p) yeq (idpath (lift_embedding y_p)) = idpath (lift_embedding y_q)).
+  {
+  change (transportf (λ x : Y, lift_embedding x = lift_embedding y_p) yeq (idpath (lift_embedding y_p))) with (maponpaths lift_embedding yeq).
+  apply total2_paths_equiv in q'.
+  unfold lift_embedding in q'.
+  set (q'1 := maponpaths pr1 q'). simpl in q'1.
+  unfold transportf. unfold constr1. simpl.
+
+  destruct q'.
+  set (q'2 := maponpaths r1 q'1) q'). simpl in q'2.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(*
+
+  unfold lift_embedding.
+  intros p q. induction p as [x p']. induction q as [y q'].
+  apply total2_paths_equiv.
+  unfold PathPair. simpl.
+  assert (eq : x = y).
+  {
+    apply total2_paths_equiv in p'. unfold PathPair in p'. simpl in p'.
+    apply total2_paths_equiv in q'. unfold PathPair in q'. simpl in q'.
+    induction p' as [puniteq ptranseq]. induction q' as [quniteq qtranseq].
+    set (eq' := test (pr1 l) (pr1 (pr2 l)) puniteq quniteq).
+    rewrite eq' in ptranseq.
+
+    assert (eq'' : transportf (λ x : UU, isaprop x × (x -> Y)) quniteq (isapropunit,, (λ _ : unit, x)) = transportf (λ x : UU, isaprop x × (x -> Y)) puniteq (isapropunit,, (λ _ : unit, y))).
+    {
+      rewrite ptranseq. rewrite
+
+    generalize ptranseq. generalize puniteq.
+    rewrite quniteq. *)
+
 Definition ispropunit_proj {Y : UU} : isaprop unit × (unit -> Y) -> (unit -> Y) := pr2.
 
 Definition ispropunit_proj_inv {Y : UU} : (unit -> Y) -> (isaprop unit × (unit -> Y)).
@@ -40,20 +173,6 @@ Proof.
         exact (isapropisaprop unit). }
       rewrite e. use idpath.
     + intro f. use idpath.
-Defined.
-
-Lemma unit_is_unit_iscontr : iscontr(unit = unit).
-Proof.
-  use isofhlevel0pathspace. (* Note that this uses univalence *)
-  - exact (iscontrunit).
-  - exact (iscontrunit).
-Qed.
-
-Definition unit_is_unit_isproofirrelevant : isProofIrrelevant(unit = unit).
-Proof.
-  use proofirrelevance.
-  use isapropifcontr.
-  exact (unit_is_unit_iscontr).
 Defined.
 
 Lemma unit_is_unit_isproofirrelevant_idpath (e : unit = unit) : unit_is_unit_isproofirrelevant e e = idpath _.
