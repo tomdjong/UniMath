@@ -32,16 +32,63 @@ Proof.
   exact (unit_is_unit_iscontr).
 Qed.
 
-Lemma fun_unit_is_unit_isproofirrelevant {Y : UU} {y y' : Y} :
-  (λ e : unit = unit,
-         transportf (λ x : UU, isaprop x × (x → Y)) e (isapropunit,, (λ _ : unit, y)))
-  = (λ e : unit = unit, (isapropunit,, (λ _ : unit, y))).
+(* Easier example? *)
+Definition Ł (Y : UU) : UU := ∑ (P : UU), (P -> Y).
+
+Definition η' {Y: UU} : (unit -> Y) -> Ł Y := λ f, unit,, f.
+
+Definition maponpaths_η'_section {Y : UU} {f g : unit -> Y} :
+  η' f = η' g -> f = g.
 Proof.
-  use funextfun. intro p.
-  set (eq := unit_is_unit_isproofirrelevant p (idpath unit)).
-  rewrite eq. rewrite idpath_transportf. use idpath.
+  unfold η'. intro q. set (q' := fiber_paths q).
+  unfold base_paths in q'. simpl in q'.
+  set (eq := unit_is_unit_isproofirrelevant (maponpaths pr1 q) (idpath unit)).
+  set (q'' := maponpaths (λ e : unit = unit, transportf (λ x : UU, x -> Y) e f) eq).
+  simpl in q''.
+  set (q''' := idpath_transportf (λ x : UU, x -> Y) f).
+  exact ((! q''') @ (! q'') @ q').
+Defined.
+
+Lemma maponpaths_η'_form {Y : UU} {f g : unit -> Y} (e : f = g) :
+  maponpaths η' e = @total2_paths_f _ _ (unit,, f) (unit,, g) (idpath unit) e.
+Proof.
+  induction e. use idpath.
 Qed.
 
+Lemma η'_eq_first_component {Y : UU} {f g : unit -> Y} (q : η' f = η' g) :
+  base_paths _ _ q = idpath unit.
+Proof.
+  exact (unit_is_unit_isproofirrelevant _ _).
+Qed.
+
+Definition maponpaths_η'_is_retract {Y : UU} {f g : unit -> Y} :
+  ∑ (s : η' f = η' g -> f = g), (maponpaths η') ∘ s ~ idfun _.
+Proof.
+  split with maponpaths_η'_section. unfold idfun. unfold funcomp.
+  intro q.
+  unfold maponpaths_η'_section. simpl.
+  rewrite maponpaths_η'_form.
+  rewrite <- total2_fiber_paths.
+
+  assert (eq : (base_paths (η' f) (η' g) q) = idpath unit).
+  { exact (unit_is_unit_isproofirrelevant _ _). }
+  assert (eq2 : maponpaths_η'_section q = fiber_paths q). { admit. }
+  unfold maponpaths_η'_section.
+
+  simpl.
+  rewrite (@η'_eq_first_component Y f g q).
+  unfold η' in q.
+  rewrite maponpaths_η'_triv_first_component. unfold invmap. simpl.
+  rewrite (idpath_transportf _ _).
+  apply (invmap (total2_paths_equiv _ (maponpaths η' (maponpaths_η'_section q)) q)).
+
+  unfold maponpaths_η'_section. simpl.
+  rewrite maponpaths_η'_triv_first_component.
+  apply (total2_paths_equiv).
+
+  unfold fiber_paths.
+  use total2_paths_equiv.
+  rewrite <- maponpathsinv0.
 Definition maponpaths_lift_embedding_section {Y : UU} {y y' : Y} :
   lift_embedding y = lift_embedding y' -> y = y'.
 Proof.
@@ -63,39 +110,52 @@ Proof.
   exact (maponpaths (λ f, f tt) eq1). *)
 Defined.
 
-Definition maponmaps_lift_embedding_is_retract {Y : UU} (y y' : Y):
+Definition maponmaps_lift_embedding_is_section {Y : UU} (y y' : Y):
   ∑ (s : lift_embedding y = lift_embedding y' -> y = y'),
   (maponpaths lift_embedding) ∘ s ~ idfun _.
 Proof.
   split with maponpaths_lift_embedding_section.
-  intro q. unfold idfun. unfold funcomp.
-  unfold lift_embedding in q.
+  unfold idfun. unfold funcomp. intro e.
   unfold maponpaths_lift_embedding_section. simpl.
-  assert (eq : (λ e : unit = unit,
+
+Definition maponmaps_lift_embedding_is_retraction {Y : UU} (y y' : Y):
+  ∑ (s : lift_embedding y = lift_embedding y' -> y = y'),
+  (maponpaths lift_embedding) ∘ s ~ idfun _.
+Proof.
+  split with maponpaths_lift_embedding_section.
+  unfold idfun. unfold funcomp. simpl. intro q.
+  change (unit,, isapropunit,, (λ _ : unit, y) = unit,, isapropunit,, (λ _ : unit, y')) with
+      (unit,, isapropunit,, (λ _ : unit, y) ╝ unit,, isapropunit,, (λ _ : unit, y')).
+  rewrite (total2_paths_equiv  (λ P : UU, isaprop P × (P -> Y))
+                               (unit,, isapropunit,, (λ _ : unit, y))
+                               (unit,, isapropunit,, (λ _ : unit, y'))
+          ) in q.
+
+  unfold maponpaths_lift_embedding_section. simpl.
+  Check (fiber_paths q).
+  unfold fiber_paths. simpl. unfold base_paths.
+
+  rewrite <- total2_fiber_paths. unfold base_paths. simpl.
+  unfold paths_rect.
+  set (q' := maponpaths pr2 q).
+  simpl.
+  set (
+      e :=  (maponpaths dirprod_pr2
+          (! maponpaths
+               (λ e : unit = unit,
                 transportf (λ x : UU, isaprop x × (x → Y)) e (isapropunit,, (λ _ : unit, y)))
-               = (λ e : unit = unit, (isapropunit,, (λ _ : unit, y)))).
-  {
-    use funextfun. intro e.
-    set (eq := unit_is_unit_isproofirrelevant e (idpath unit)).
-    rewrite eq. rewrite idpath_transportf. use idpath.
-  }
-  rewrite eq.
-
-  unfold internal_paths_rew.
-
-  assert (eq' : maponpaths pr1 q = idpath unit).
-  {
-    exact (unit_is_unit_isproofirrelevant (maponpaths pr1 q) (idpath unit)).
-  }
-
-  rewrite eq'.
-  unfold unit_is_unit_isproofirrelevant.
-  assert (e : (unit_is_unit_isproofirrelevant (maponpaths pr1 q) (idpath unit)) = idpath (unit=unit)).
-  rewrite fun_unit_is_unit_isproofirrelevant.
-
-Defined.
-
-
+               (unit_is_unit_isproofirrelevant (maponpaths pr1 q) (idpath unit)) @
+               fiber_paths q))).
+  change
+    ( (maponpaths dirprod_pr2
+          (! maponpaths
+               (λ e : unit = unit,
+                transportf (λ x : UU, isaprop x × (x → Y)) e (isapropunit,, (λ _ : unit, y)))
+               (unit_is_unit_isproofirrelevant (maponpaths pr1 q) (idpath unit)) @
+               fiber_paths q))) with e.
+  rewrite (maponpathscomp (λ f : unit -> Y, f tt) lift_embedding e).
+  (*rewrite (maponpathscomp (λ f : unit -> Y, f tt) lift_embedding _).*) admit.
+Admitted.
 
 Definition D_lift (Y : UU) := ∑ (P : UU), D P × (P -> Y).
 
