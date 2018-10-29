@@ -56,7 +56,11 @@ Qed.
    A path e : x = y gets mapped to (idpath unit,, idpath isapropunit,, ap₁ e),
    where 1 is the obvious map X -> (unit -> X). *)
 Lemma maponpaths_η_eq {X : UU} {x y : X} (e : x = y) :
-  maponpaths η e = @total2_paths_f _ _
+  let to_pair := total2_paths_equiv (λ P : UU, isaprop P × (P -> X))
+                 (unit,, isapropunit,, termfun x) (unit,, isapropunit,, termfun y) in
+  to_pair (maponpaths η e) = (idpath unit,, @dirprod_paths _ _ (isapropunit,, termfun x) (isapropunit,, termfun y) (idpath isapropunit) (maponpaths termfun e)).
+
+  (* @total2_paths_f _ _
                     (unit,, isapropunit,, termfun x)
                     (unit,, isapropunit,, termfun y)
                     (idpath unit)
@@ -64,7 +68,7 @@ Lemma maponpaths_η_eq {X : UU} {x y : X} (e : x = y) :
                      (isapropunit,, termfun x)
                      (isapropunit,, termfun y)
                      (idpath isapropunit)
-                     (maponpaths termfun e)).
+                     (maponpaths termfun e)). *)
   (*  let m := maponpaths η e in
   let m1 := base_paths _ _ m in
   let m2 := fiber_paths m in
@@ -91,7 +95,9 @@ Lemma η_values_eq {X : UU} {x y : X} (q : η x = η y) :
   let transp_fun' := (λ P : UU, isaprop P × (P -> X)) in
   let transp_fun := (λ v : unit = unit, transportf transp_fun' v
                     (isapropunit,, termfun x) = (isapropunit,, termfun y)) in
-  q1,, q2 = (idpath unit,, (transportf transp_fun q1eq q2)).
+  let to_pair := total2_paths_equiv (λ P : UU, isaprop P × (P -> X))
+                 (unit,, isapropunit,, termfun x) (unit,, isapropunit,, termfun y) in
+  to_pair q = (idpath unit,, (transportf transp_fun q1eq q2)).
 Proof.
   use transportf_eq.
 Qed.
@@ -105,7 +111,7 @@ Proof.
   set (q1eq := unit_eq_unit_isproofirr q1 (idpath unit)).
   set (transp_fun' := (λ P : UU, isaprop P × (P -> X))).
   set (transp_fun := (λ v : unit = unit, transportf transp_fun' v
-                    (isapropunit,, termfun x) = (isapropunit,, termfun y))).
+                     (isapropunit,, termfun x) = (isapropunit,, termfun y))).
   set (t := transportf transp_fun q1eq q2).
   set (t':= maponpaths dirprod_pr2 t). simpl in t'.
   (* t' is now a proof of termfun x = termfun y, so x = y. *)
@@ -116,5 +122,20 @@ Lemma maponpaths_η_is_retraction {X : UU} {x y : X} :
   maponpaths η ∘ @maponpaths_η_section X x y ~ idfun _.
 Proof.
   intro q. unfold funcomp, idfun. simpl.
-  set (to_pair := total2_paths_equiv (λ P : UU, isaprop P × (P -> X)) (unit,, isapropunit,, termfun x) (unit,, isapropunit,, termfun y)).
+  set (to_pair := total2_paths_equiv (λ P : UU, isaprop P × (P -> X))
+                  (unit,, isapropunit,, termfun x) (unit,, isapropunit,, termfun y)).
   set (from_pair := invmap to_pair).
+  set (m := maponpaths η (maponpaths_η_section q)).
+  assert (eq : to_pair m = to_pair q).
+  {
+    unfold m. unfold to_pair. rewrite maponpaths_η_eq. rewrite η_values_eq.
+    unfold maponpaths_η_section.
+    (* We should be able to finish this, but Coq is being difficult. *)
+    admit. }
+  set (eq' := maponpaths from_pair eq).
+  assert (meq : from_pair (to_pair m) = m).
+  { use homotinvweqweq. }
+  assert (qeq : from_pair (to_pair q) = q).
+  { use homotinvweqweq. }
+  rewrite <- meq. rewrite <- qeq. exact eq'.
+Qed.
