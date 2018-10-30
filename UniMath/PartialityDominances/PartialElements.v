@@ -59,29 +59,6 @@ Lemma maponpaths_η_eq {X : UU} {x y : X} (e : x = y) :
   let to_pair := total2_paths_equiv (λ P : UU, isaprop P × (P -> X))
                  (unit,, isapropunit,, termfun x) (unit,, isapropunit,, termfun y) in
   to_pair (maponpaths η e) = (idpath unit,, @dirprod_paths _ _ (isapropunit,, termfun x) (isapropunit,, termfun y) (idpath isapropunit) (maponpaths termfun e)).
-
-  (* @total2_paths_f _ _
-                    (unit,, isapropunit,, termfun x)
-                    (unit,, isapropunit,, termfun y)
-                    (idpath unit)
-                    (@dirprod_paths _ _
-                     (isapropunit,, termfun x)
-                     (isapropunit,, termfun y)
-                     (idpath isapropunit)
-                     (maponpaths termfun e)). *)
-  (*  let m := maponpaths η e in
-  let m1 := base_paths _ _ m in
-  let m2 := fiber_paths m in
-  m1,,m2 = idpath unit,, (@dirprod_paths _ _ (isapropunit,, termfun x) (isapropunit,, termfun y)
-                  (idpath isapropunit) (maponpaths termfun e)).
-(* (idpath isapropunit,, (maponpaths termfun e)). *)
-  (*
-  maponpaths η e = invmap (total2_paths_equiv (λ P : UU, isaprop P × (P -> X)) (unit,, isapropunit,, termfun x) (unit,, isapropunit,, termfun y))
-                                               (idpath unit,, @dirprod_paths _ _
-                                                 (isapropunit,, termfun x)
-                                                 (isapropunit,, termfun y)
-                                                 (idpath isapropunit)
-                                                 (maponpaths termfun e)). *)*)
 Proof.
   induction e. use idpath.
 Qed.
@@ -118,6 +95,15 @@ Proof.
   exact (maponpaths (λ f : unit -> X, f tt) t').
 Defined.
 
+Lemma dirprod_paths_pr2 {A B : UU} {x y : A × B} (e : x = y) (e' : pr1 x = pr1 y) :
+  isaset A -> dirprod_paths e' (maponpaths dirprod_pr2 e) = e.
+Proof.
+  intro isasetA. induction e. induction x as [a b].
+  simpl. simpl in e'.
+  rewrite (proofirrelevance _ (isasetA _ _) e' (idpath a)).
+  use idpath.
+Qed.
+
 Lemma maponpaths_η_is_retraction {X : UU} {x y : X} :
   maponpaths η ∘ @maponpaths_η_section X x y ~ idfun _.
 Proof.
@@ -130,6 +116,11 @@ Proof.
   {
     unfold m. unfold to_pair. rewrite maponpaths_η_eq. rewrite η_values_eq.
     unfold maponpaths_η_section.
+    set (transp := transportf (λ v : unit = unit, transportf
+                    (λ P : UU, isaprop P × (P → X)) v (isapropunit,, termfun x) =
+                    isapropunit,, termfun y)
+                    (unit_eq_unit_isproofirr (base_paths (η x) (η y) q)
+                                             (idpath unit)) (fiber_paths q)).
     (* We should be able to finish this, but Coq is being difficult. *)
     admit. }
   set (eq' := maponpaths from_pair eq).
