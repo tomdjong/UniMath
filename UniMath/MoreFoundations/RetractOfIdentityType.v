@@ -10,21 +10,48 @@ Proof.
   induction p. rewrite pathscomp0rid. use idpath.
 Qed.
 
-Theorem idempotentfunfamonpaths_homotopictoid {X : UU} (f : ∏ (x y : X), x = y -> x = y) :
-  (∏ (x y : X), funisidempotent (f x y)) -> ∏ (x y : X), f x y ~ idfun _.
+Lemma idempotentfunfamonpaths_homotopictoid {X : UU} (f : ∏ (x y : X), x = y -> x = y) :
+  (∏ (x y : X), funisidempotent (f x y)) -> ∏ (x y : X), idfun (x = y) ~ f x y.
 Proof.
-  intros idem x y p. unfold idfun. induction p.
-  unfold funisidempotent in idem.
-  assert (eq : f x x (idpath x) = f x x (idpath x) @ (f x x (idpath x))).
-  { etrans.
-    - use (!(idem x x (idpath x))).
-    - use (funfamilyonpaths f x x (f x x (idpath x))).
-  }
-  assert (eq' : f x x (idpath x) @ (idpath x) = f x x (idpath x) @ f x x (idpath x)).
+  intros idemp x y p. unfold idfun. induction p.
+  apply (pathscomp_cancel_left (f x x (idpath x)) _ _).
+  etrans.
+  - use pathscomp0rid.
+  - etrans.
+    + exact (!(idemp x x (idpath x))).
+    + exact (funfamilyonpaths f x x (f x x (idpath x))).
+Qed.
+
+Theorem retraction_of_pathspace_is_section {X : UU} {R : X -> X -> UU}
+  {r : ∏ (x y : X), x = y -> R x y} {s : ∏ (x y : X), R x y -> x = y} :
+  (∏ (x y : X), (r x y) ∘ (s x y) ~ idfun _) ->
+  ∏ (x y : X), (s x y) ∘ (r x y) ~ idfun _.
+Proof.
+  intro retraction. intros x y.
+  (* Since r has a section s, the function s ∘ r is idempotent. *)
+  assert (idemp : ∏ (x' y' : X), funisidempotent (s x' y' ∘ r x' y')).
   {
-    etrans.
-    - use pathscomp0rid.
-    - exact eq.
+    intros x' y' p. rewrite funcomp_assoc.
+    unfold funcomp. unfold funcomp in retraction. rewrite (retraction x' y').
+    unfold idfun. use idpath.
   }
-  exact (!(pathscomp_cancel_left _ _ _ eq')).
-Defined.
+  use invhomot.
+  set (f := λ (x y : X), (s x y) ∘ r x y).
+  apply (idempotentfunfamonpaths_homotopictoid f).
+  exact idemp.
+Qed.
+
+Corollary isInjective' {X Y : UU} {f : X -> Y} :
+  (∑ (s : ∏ (x y : X), f x = f y -> x = y),
+  (∏ (x y : X), (@maponpaths _ _ f x y) ∘ (s x y) ~ idfun _)) ->
+  isInjective f.
+Proof.
+  intro has_section. unfold isInjective. intros x y.
+  set (s := pr1 has_section).
+  set (s_proof := pr2 has_section).
+  use isweq_iso.
+  - exact (s x y).
+  - intro p. apply retraction_of_pathspace_is_section.
+    exact (s_proof).
+  - exact (s_proof x y).
+Qed.
