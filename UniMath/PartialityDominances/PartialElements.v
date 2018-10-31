@@ -231,3 +231,28 @@ Proof.
   - use isdefined_isaprop.
   - use isinclweqonpaths. exact η_is_embedding.
 Defined.
+
+
+
+(*** Domain Theory and Partial Elements ***)
+(* First some preliminaries for relations into the universe (not hprop). *)
+(* Definition istransitive {X : UU} (R : X -> X -> UU) {x y z : X} : UU :=
+  R x y -> R y z -> R x z.
+Definition issymmetric {X : UU} (R : X -> X -> UU) {x : X} : UU := R x x.
+Definition isreflexive {X : UU} (R : X -> X -> UU) {x y : X} : UU := R x y -> R y x. *)
+
+Definition isdirected {X I : UU} (R : X -> X -> UU) (f : I -> X) : UU :=
+  ∏ (i j : I), ∑ (k : I), R (f i) (f k) × R (f j) (f k).
+
+Definition isupperbound {X I : UU} (R : X -> X -> UU) (f : I -> X) (u : X) : UU :=
+  ∏ (i : I), R (f i) u.
+
+Definition islub {X I : UU} (R : X -> X -> UU) (f : I -> X) (u : X) : UU :=
+  isupperbound R f u × ∏ (y : X), (∏ (i : I), R (f i) u) -> R u y.
+
+Definition isdirectedcomplete {X : UU} (R : X -> X -> UU) : UU :=
+  ∏ (I : UU), ∏ (f : I -> X), isdirected R f -> ∑ (u : X), islub R f u.
+
+(* It seems that we need X to be an hSet for this to work. *)
+Lemma information_order_is_directed_complete {X : UU} : @isdirectedcomplete (𝓛 X) (information_order).
+Proof.
