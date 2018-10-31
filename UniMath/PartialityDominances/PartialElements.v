@@ -1,5 +1,7 @@
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
+Require Import UniMath.MoreFoundations.PropExt.
+Require Import UniMath.MoreFoundations.RetractOfIdentityType.
 
 (* The type of partial elements of a type X is denoted by 𝓛 X, for "lift of X". *)
 Definition 𝓛 (X : UU) := ∑ (P : UU), isaprop P × (P -> X).
@@ -20,6 +22,58 @@ Lemma isdefined_isaprop {X : UU} (l : 𝓛 X) : isaprop(isdefined l).
 Proof.
   induction l as [P pair]. induction pair as [i f]. exact i.
 Qed.
+
+(* Lemma on equality of partial elements *)
+Lemma isdefined_value_eq {X : UU} {l m : 𝓛 X} (e : isdefined l = isdefined m) :
+  transportf (λ Q : UU, Q -> X) e (value l) = value m -> l = m.
+Proof.
+  intro transp.
+  induction l as [P r]. induction r as [i f].
+  induction m as [P' r']. induction r' as [i' f'].
+  apply total2_paths_equiv.
+  unfold isdefined in e. simpl in e.
+  split with e. simpl.
+  use dirprod_paths.
+  - use proofirrelevance. use isapropisaprop.
+  - simpl. unfold value in transp. unfold isdefined in transp. simpl in transp.
+    change (λ p : P, f p) with f in transp. change (λ p : P', f' p) with f' in transp.
+    etrans.
+    + assert (eq : pr2 (transportf (λ x : UU, isaprop x × (x -> X)) e (i,, f)) =
+              transportf (λ x : UU, (x -> X)) e f).
+      { generalize e as e'. intro e'. induction e'. use idpath. }
+      exact eq.
+    + exact transp.
+Defined.
+
+(* It is useful to derive equality of partial elements by using the "order".
+   It only is a proper order if the underlying type is a set (TO DO) .*)
+Definition information_order {X : UU} (l m : 𝓛 X) : UU :=
+  ∑ (t : isdefined l -> isdefined m), ∏ (d : isdefined l), value l d = value m (t d).
+
+Delimit Scope PartialElements with PartialElements.
+Local Open Scope PartialElements.
+
+(* TO DO: Check level *)
+Notation "l ⊑ m" := (information_order l m) (at level 50) : PartialElements.
+
+Lemma information_order_is_antisymmetric {X : UU} {l m : 𝓛 X} :
+  l ⊑ m -> m ⊑ l -> l = m.
+Proof.
+  intros ineq1 ineq2.
+  set (t := pr1 ineq1). set (s := pr1 ineq2).
+  set (e := propext (isdefined_isaprop l) (isdefined_isaprop m) (tpair _ t s)).
+  apply (isdefined_value_eq e).
+  assert (eq : transportf (λ Q : UU, Q -> X) e (value l) = (value l) ∘ (pr1weq (eqweqmap (!e)))).
+  { generalize e as e'. induction e'.  use idpath. }
+  etrans.
+  - exact eq.
+  - use funextfun. intro d.
+    assert (seq : pr1weq (eqweqmap (!e )) = s).
+    {
+      use funextfun. intro p. use proofirrelevance. use isdefined_isaprop.
+    }
+    rewrite seq. exact (!(pr2 ineq2) d).
+Defined.
 
 (* Next, we wish to prove that η is an embedding. We first need a series of lemmas. *)
 
@@ -44,11 +98,7 @@ Proof.
     - exact equiv'.
   }
    (* Not strictly needed, but we are using univalence anyway and it allows for a shorter proof. *)
-  assert (eq : (unit = unit) = unit).
-  {
-    exact (invmap (univalence (unit = unit) unit) equiv).
-  }
-  rewrite eq.
+  rewrite (invmap (univalence (unit = unit) unit) equiv).
   exact (proofirrelevance unit (isapropunit)).
 Qed.
 
@@ -58,7 +108,10 @@ Qed.
 Lemma maponpaths_η_eq {X : UU} {x y : X} (e : x = y) :
   let to_pair := total2_paths_equiv (λ P : UU, isaprop P × (P -> X))
                  (unit,, isapropunit,, termfun x) (unit,, isapropunit,, termfun y) in
-  to_pair (maponpaths η e) = (idpath unit,, @dirprod_paths _ _ (isapropunit,, termfun x) (isapropunit,, termfun y) (idpath isapropunit) (maponpaths termfun e)).
+  to_pair (maponpaths η e) = (idpath unit,,
+                              @dirprod_paths _ _ (isapropunit,, termfun x)
+                              (isapropunit,, termfun y) (idpath isapropunit)
+                              (maponpaths termfun e)).
 Proof.
   induction e. use idpath.
 Qed.
@@ -129,4 +182,40 @@ Proof.
   assert (qeq : from_pair (to_pair q) = q).
   { use homotinvweqweq. }
   rewrite <- meq. rewrite <- qeq. exact eq'.
+Admitted.
+
+Theorem η_is_embedding {X : UU} : isInjective (@η X).
+Proof.
+  use isInjective'.
+  split with (@maponpaths_η_section X).
+  exact (@maponpaths_η_is_retraction X).
 Qed.
+
+(* Next, we wish to show that the fiber of η is equivalent to isdefined. *)
+Definition fiber_to_isdefined {X : UU} {l : 𝓛 X} : hfiber η l -> isdefined l.
+Proof.
+  intro fib. induction fib as [x p].
+  (* l ≡ (P,...) = (unit,...); so we transfer the inhabitant tt of unit *)
+  exact (transportf (λ Q : UU, Q) (maponpaths pr1 p) tt).
+Defined.
+
+Definition isdefined_to_fiber {X : UU} {l : 𝓛 X} : isdefined l -> hfiber η l.
+Proof.
+  intro p. induction l as [P r]. induction r as [i f].
+  split with (f p).
+  set (t := (λ _, p) : unit -> P).
+  set (s := (λ _, tt) : P -> unit).
+  apply information_order_is_antisymmetric.
+  - split with t. intro d. unfold value. simpl. unfold t. use idpath.
+  - split with s. intro d. unfold value. unfold termfun. simpl.
+    assert (eq : d = p). { use proofirrelevance. use isdefined_isaprop. }
+    exact (maponpaths f eq).
+Defined.
+
+Theorem isdefined_equiv_fiber {X : UU} {l : 𝓛 X} : isdefined l ≃ hfiber η l.
+Proof.
+  use weqiff.
+  - exact (tpair _ isdefined_to_fiber fiber_to_isdefined).
+  - use isdefined_isaprop.
+  - use isinclweqonpaths. exact η_is_embedding.
+Defined.
