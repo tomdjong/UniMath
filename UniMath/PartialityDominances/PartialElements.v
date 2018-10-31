@@ -75,6 +75,23 @@ Proof.
     rewrite seq. exact (!(pr2 ineq2) d).
 Defined.
 
+Lemma information_order_is_reflexive {X : UU} {l : 𝓛 X} : l ⊑ l.
+Proof.
+  split with (idfun _).
+  intro d. use idpath.
+Defined.
+
+Lemma information_order_is_transitive {X : UU} {l m n : 𝓛 X} :
+  l ⊑ m -> m ⊑ n -> l ⊑ n.
+Proof.
+  intros ineq1 ineq2.
+  set (t := pr1 ineq1). set (s := pr1 ineq2).
+  split with (s ∘ t). intro d.
+  etrans.
+  - exact ((pr2 ineq1) d).
+  - exact ((pr2 ineq2) (t d)).
+Defined.
+
 (* Next, we wish to prove that η is an embedding. We first need a series of lemmas. *)
 
 (* The first lemma shows that unit = unit is proofirrelevant.
@@ -82,21 +99,17 @@ Defined.
 Lemma unit_eq_unit_isproofirr : isProofIrrelevant (unit = unit).
 Proof.
   assert (equiv' : (unit ≃ unit) ≃ unit).
-  {
-    use weq_iso.
+  { use weq_iso.
     - exact (λ _, tt).
     - exact (λ _, idweq unit).
     - intro f. simpl. use subtypeEquality.
       + exact (isapropisweq).
       + simpl. use funextfun. intro x. use (proofirrelevance unit isapropunit).
-    - intro u. simpl. induction u. use idpath.
-  }
+    - intro u. simpl. induction u. use idpath. }
   assert (equiv : (unit = unit) ≃ unit).
-  {
-    eapply weqcomp.
+  { eapply weqcomp.
     - use (univalence unit unit).
-    - exact equiv'.
-  }
+    - exact equiv'. }
    (* Not strictly needed, but we are using univalence anyway and it allows for a shorter proof. *)
   rewrite (invmap (univalence (unit = unit) unit) equiv).
   exact (proofirrelevance unit (isapropunit)).
@@ -166,8 +179,7 @@ Proof.
   set (from_pair := invmap to_pair).
   set (m := maponpaths η (maponpaths_η_section q)).
   assert (eq : to_pair m = to_pair q).
-  {
-    unfold m. unfold to_pair. rewrite maponpaths_η_eq. rewrite η_values_eq.
+  { unfold m. unfold to_pair. rewrite maponpaths_η_eq. rewrite η_values_eq.
     unfold maponpaths_η_section.
     set (transp := transportf (λ v : unit = unit, transportf
                     (λ P : UU, isaprop P × (P → X)) v (isapropunit,, termfun x) =
