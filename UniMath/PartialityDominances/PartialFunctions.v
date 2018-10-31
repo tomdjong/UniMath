@@ -23,8 +23,8 @@ Proof.
   - intro q. induction q as [p e].
     exact (value (f (φ p)) e).
 Defined.
-(* Note that isdefined (f # (P, i, φ)) = ∑ (p : P), isdefined (f (φ p)) and
-   value (f # (P, i, φ)) = value (f (φ p)). *)
+(* Note that isdefined (f # (P, i, φ)) ≡ ∑ (p : P), isdefined (f (φ p)) and
+   value (f # (P, i, φ)) ≡ value (f (φ p)). *)
 
 Notation "f #" := (Kleisli_extension f) (at level 50) : PartialFunctions.
 
