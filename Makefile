@@ -23,6 +23,7 @@ PACKAGES += SubstitutionSystems
 PACKAGES += Folds
 PACKAGES += HomologicalAlgebra
 PACKAGES += Induction
+PACKAGES += PartialityDominances
 ############################################
 # other user options; see also build/Makefile-configuration-template
 BUILD_COQ ?= yes
