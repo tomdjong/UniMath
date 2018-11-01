@@ -1,107 +1,95 @@
-Require Import UniMath.PartialityDominances.Partiality_and_Dominances.
-Require Import UniMath.Foundations.All.
-Require Import UniMath.MoreFoundations.All.
+Require Import UniMath.PartialityDominances.PartialFunctions.
+Require Import UniMath.PartialityDominances.PartialElements.
 Require Import UniMath.Combinatorics.StandardFiniteSets.
 Require Import UniMath.Combinatorics.Lists.
-
-(* Since we only want one partial map, the application map, we are not really
-interested in composition, so we might not need a structural dominance. A type
-transformer D that selects propositions might be enough, at least to define everything. *)
-
-Section fix_a_D_and_selection.
-Context (D : UU -> UU).
-Context (sel : selects_propositions D).
+Require Import UniMath.Foundations.All.
+Require Import UniMath.MoreFoundations.All.
 
 Definition pas : UU :=
-  ∑ (A : UU), nonempty A × disciplined D sel (A × A) A.
+  ∑ (A : UU), nonempty A × (A × A -> 𝓛 A).
 
-Section fix_a_pas.
+Definition pas_carrier (𝓐 : pas) : UU := pr1 𝓐.
 
-Context (A : pas).
-
-Definition pas_carrier : UU := pr1 A.
-
-Definition pas_disciplined_map :
-  disciplined D sel (pas_carrier × pas_carrier) (pas_carrier) := pr2 (pr2 A).
-
-Definition pas_app : pas_carrier × pas_carrier -> lift(pas_carrier) :=
-  pr1 pas_disciplined_map.
+Definition pas_app (𝓐 : pas) : (pas_carrier 𝓐) × (pas_carrier 𝓐) -> 𝓛 (pas_carrier 𝓐) :=
+  pr22 𝓐.
 
 (* Terms over a pas *)
 
+Section fix_a_pas.
+Context (𝓐 : pas).
+Context (A := pas_carrier 𝓐).
+Context (app_𝓐 := pas_app 𝓐).
+
 Section fix_a_var_type.
+Context (X : UU).
 
-Context (X : Type).
-
-Inductive terms_over_pas : UU :=
-  | var : X -> terms_over_pas
-  | con : pas_carrier -> terms_over_pas
-  | app : terms_over_pas -> terms_over_pas -> terms_over_pas.
-
-(* We only have this for *closed terms* *)
-(*
-Inductive term_denotes_element : terms_over_pas -> pas_carrier -> UU :=
-| con_denotes : ∏ (a : pas_carrier), term_denotes_element (con a) a
-| app_denotes : ∏ (s t : terms_over_pas), ∏ (a b : pas_carrier),
-                let u := pas_app (a ,, b) in
-                ∏ (p : defined(u)),
-                term_denotes_element s a -> term_denotes_element t b ->
-                defined u ->
-                term_denotes_element (app s t) (value u p).
-
-Definition term_denotes (t : terms_over_pas) : UU
-  := ∑ (a : pas_carrier), term_denotes_element t a.
-
-Delimit Scope pca with pca.
-Local Open Scope pca.
-
-(* TO DO: check level *)
-Notation "t ↓ a" := (term_denotes_element t a) (at level 50) : pca.
-Notation "t ↓" := (term_denotes t) (at level 50) : pca.
-
-Example constants_denote : ∏ (a : pas_carrier), con a ↓ a.
-Proof.
-  intro a.
-  exact (con_denotes a).
-Defined.
+Inductive term_over_pas : UU :=
+  | var : X -> term_over_pas
+  | con : A -> term_over_pas
+  | app : term_over_pas -> term_over_pas -> term_over_pas.
 
 End fix_a_var_type.
 
-Fixpoint substitution {X Y : Type} (t : terms_over_pas X) (sub : X -> terms_over_pas Y)
-  : terms_over_pas Y :=
+Fixpoint substitution {X Y : Type} (t : term_over_pas X) (sub : X -> term_over_pas Y)
+  : term_over_pas Y :=
   match t with
   | var _ x => sub x
   | con _ a => con _ a
   | app _ t1 t2 => app _ (substitution t1 sub) (substitution t2 sub)
-  end. *)
+  end.
 
-(* We will also need an embedding into the D_lift, so fix an inhabitant of D unit. *)
-Context (Dunit : D unit).
+Local Open Scope PartialFunctions.
+Definition rep_app (n : nat) : A -> iterprod n A ⇀ A.
+Proof.
+  intro a.
+  induction n as [|m IHm].
+  - intro u. exact (η a).
+  - intro tuple. induction tuple as [b tuple'].
+    set (app_tw := λ y x : A, app_𝓐 (x,,y)).
+    exact ((app_tw b) # (IHm tuple')).
+Defined.
 
-Definition rep_app (n : nat) :
-  pas_carrier -> disciplined D sel (iterprod n pas_carrier) pas_carrier.
+Definition term_to_partial_function (n : nat) :
+  term_over_pas (stn n) -> (iterprod n A ⇀ A).
 Proof.
-  induction n as [ | m].
-  - intro a. unfold disciplined. simpl.
-    split with (λ _, lift_embedding a).
-    unfold is_disciplined.
-    use wittohexists.
-    + exact (λ _, D_lift_embedding D Dunit a).
-    + use funextfun. intro u.
-      unfold tame. unfold canonical_embedding. simpl.
-      unfold lift_embedding.
-      use subtypeEquality'.
-      * simpl. use idpath.
-      * simpl. use isapropdirprod.
-        ** admit.
-        ** unfold isaprop. unfold isofhlevel. intros f f'.
-           unfold iscontr.
-    use subtypeEquality.
-    + unfold isPredicate. intro Y.
-    + simpl. use idpath.
-  -
-Definition term_to_partial_function : (∑ (n : nat), terms_over_pas (stn n)) ->
-  ∑ (m : nat), disciplined D sel (iterprod m pas_carrier) pas_carrier.
+  intros t tuple.
+  set (sub := λ m, con empty (nth' n tuple m)).
+  set (s := substitution t sub).
+  induction s as [var | con | s1 IHs1 s2 IHs2].
+  + destruct var.
+  + exact (η con).
+  + exact ((app_𝓐 #) (@into_lift_product A IHs1 IHs2)).
+Defined.
+
+(* A pas is called combinatorially complete if we can represent any term in it. *)
+Definition combinatoriallycomplete : UU :=
+  ∏ (n : nat), ∏ (t : term_over_pas (stn n)),
+  ∑ (a : A), rep_app n a = term_to_partial_function n t.
+
+End fix_a_pas.
+
+Definition pca : UU := ∑ (𝓐 : pas), combinatoriallycomplete 𝓐.
+Definition pca_carrier (𝓐 : pca) : UU := pas_carrier (pr1 𝓐).
+Definition pca_app (𝓐 : pca) : pca_carrier 𝓐 × pca_carrier 𝓐 -> 𝓛 (pca_carrier 𝓐) :=
+  pas_app (pr1 𝓐).
+Definition pca_complete (𝓐 : pca) : combinatoriallycomplete (pr1 𝓐) := pr2 𝓐.
+Definition pca_to_pas (𝓐 : pca) : pas := pr1 𝓐.
+Coercion pca_to_pas : pca >-> pas.
+
+Section fix_a_pca.
+Context (𝓐 : pca).
+Context (A := pca_carrier 𝓐).
+Context (app_𝓐 := pca_app 𝓐).
+
+Definition to_iterprod_2 {X : UU} : X -> X -> iterprod 2 X.
 Proof.
-  intro hyp. induction hyp as [n t].
-  split with n.
+  intros x y.
+  exact (pr2 (cons x (cons y nil))).
+Defined.
+
+(* Section fix_some_vars.
+Context (x :
+
+Lemma pca_has_k_s_combinators : ∑ (k : A), ∏ (a b : A), rep_app 𝓐 2 k (to_iterprod_2 a b) = η a.
+Proof.
+  set (t := var 𝓐 (stn 2) 1: term_over_pas 𝓐 (stn 2)). *)
