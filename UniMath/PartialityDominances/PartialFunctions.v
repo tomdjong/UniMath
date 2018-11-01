@@ -9,7 +9,8 @@ Definition partialfun (X Y : UU) : UU := X -> 𝓛 Y.
 Delimit Scope PartialFunctions with PartialFunctions.
 Local Open Scope PartialFunctions.
 
-Notation "X ⇀ Y" := (partialfun X Y) (at level 50) : PartialFunctions.
+(* TO DO: Check levels *)
+Notation "X ⇀ Y" := (partialfun X Y) (at level 30) : PartialFunctions.
 
 (* We can lift partial functions to total ones. *)
 Definition Kleisli_extension {X Y : UU} : (X ⇀ Y) -> (𝓛 X -> 𝓛 Y).
@@ -26,7 +27,7 @@ Defined.
 (* Note that isdefined (f # (P, i, φ)) ≡ ∑ (p : P), isdefined (f (φ p)) and
    value (f # (P, i, φ)) ≡ value (f (φ p)). *)
 
-Notation "f #" := (Kleisli_extension f) (at level 50) : PartialFunctions.
+Notation "f #" := (Kleisli_extension f) (at level 30) : PartialFunctions.
 
 Lemma η_extension {X : UU} : η # = idfun (𝓛 X).
 Proof.
@@ -64,7 +65,7 @@ Qed.
 
 Definition Kleisli_comp {X Y Z : UU} (f : X ⇀ Y) (g : Y ⇀ Z) : X ⇀ Z := g # ∘ f.
 
-Notation "g □ f" := (Kleisli_comp f g) (at level 50) : PartialFunctions.
+Notation "g □ f" := (Kleisli_comp f g) (at level 30) : PartialFunctions.
 
 Definition Kleisli_id {X : UU} : X ⇀ X := @η X.
 
