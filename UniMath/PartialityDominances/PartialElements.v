@@ -255,3 +255,15 @@ Definition isdirectedcomplete {X : UU} (R : X -> X -> UU) : UU :=
 
 (* It seems that we need X to be an hSet for this to work. *)
 (* Lemma information_order_is_directed_complete {X : UU} : @isdirectedcomplete (𝓛 X) (information_order). *)
+
+(*** Map into lift of product ***)
+Definition into_lift_product {X : UU} : 𝓛 X -> 𝓛 X -> 𝓛 (X × X).
+Proof.
+  intros l m.
+  set (Q := isdefined l × isdefined m).
+  split with Q. split.
+  - use isapropdirprod.
+    + use isdefined_isaprop.
+    + use isdefined_isaprop.
+  - intro q. exact (value l (pr1 q),, value m (pr2 q)).
+Defined.
