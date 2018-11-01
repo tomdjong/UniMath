@@ -1,5 +1,4 @@
 Require Import UniMath.Foundations.All.
-Require Import UniMath.MoreFoundations.All.
 
 Definition propext {X Y : UU} : isaprop X -> isaprop Y -> (X <-> Y) -> X = Y.
 Proof.

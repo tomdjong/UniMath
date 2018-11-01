@@ -1,5 +1,4 @@
 Require Import UniMath.Foundations.All.
-Require Import UniMath.MoreFoundations.All.
 
 (* An endofunction f is idempotent if it f ∘ f is pointwise equal to f. *)
 Definition funisidempotent {X : UU} (f : X -> X) := f ∘ f ~ f.

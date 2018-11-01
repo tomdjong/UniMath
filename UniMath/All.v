@@ -14,3 +14,4 @@ Require Export UniMath.SubstitutionSystems.All.
 Require Export UniMath.Folds.All.
 Require Export UniMath.HomologicalAlgebra.All.
 Require Export UniMath.Induction.All.
+Require Export UniMath.PartialityDominances.All.
