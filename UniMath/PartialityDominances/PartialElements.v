@@ -187,6 +187,27 @@ Proof.
                     (unit_eq_unit_isproofirr (base_paths (η x) (η y) q)
                                              (idpath unit)) (fiber_paths q)).
     (* We should be able to finish this, but Coq is being difficult. *)
+    apply maponpaths.
+    cbn in transp.
+    unfold idfun in transp.
+    etrans. apply maponpaths.
+    Search (maponpaths _ (maponpaths _ _ )).
+    apply (@maponpathscomp _ _ _ _ _ (λ f : unit → X, f tt)
+                           (@termfun X)
+                           (maponpaths dirprod_pr2 transp)).
+    assert (HSX : (termfun ∘ (λ f : unit → X, f tt) = idfun _ )).
+    { admit. }
+
+    etrans. apply maponpaths.
+
+    match goal with |[ |- maponpaths ?M ?N = _ ] => assert (
+                                                        maponpaths M N = maponpaths (idfun (unit -> X)) N) end.
+
+    assert (∏ f g, (f = g -> maponpaths f x = maponpaths g x).
+    {}
+
+
+    cbn.
     admit. }
   set (eq' := maponpaths from_pair eq).
   assert (meq : from_pair (to_pair m) = m).
