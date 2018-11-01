@@ -54,7 +54,7 @@ Delimit Scope PartialElements with PartialElements.
 Local Open Scope PartialElements.
 
 (* TO DO: Check level *)
-Notation "l ⊑ m" := (information_order l m) (at level 50) : PartialElements.
+Notation "l ⊑ m" := (information_order l m) (at level 30) : PartialElements.
 
 Lemma information_order_is_antisymmetric {X : UU} {l m : 𝓛 X} :
   l ⊑ m -> m ⊑ l -> l = m.
