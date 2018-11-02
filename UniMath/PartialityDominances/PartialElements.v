@@ -170,6 +170,9 @@ Proof.
   use idpath.
 Qed.
 
+(*Lemma maponpaths_eq_func {X Y : UU} {f g : X -> Y} {x x' : X} (e : x = x') :
+  f = g -> maponpaths f e = maponpaths g e.
+*)
 Lemma maponpaths_η_is_retraction {X : UU} {x y : X} :
   maponpaths η ∘ @maponpaths_η_section X x y ~ idfun _.
 Proof.
@@ -180,28 +183,30 @@ Proof.
   set (m := maponpaths η (maponpaths_η_section q)).
   assert (eq : to_pair m = to_pair q).
   { unfold m. unfold to_pair. rewrite maponpaths_η_eq. rewrite η_values_eq.
+    apply maponpaths.
     unfold maponpaths_η_section.
+    (* We should do this with match goal, but there are syntax errors *)
     set (transp := transportf (λ v : unit = unit, transportf
                     (λ P : UU, isaprop P × (P → X)) v (isapropunit,, termfun x) =
                     isapropunit,, termfun y)
                     (unit_eq_unit_isproofirr (base_paths (η x) (η y) q)
                                              (idpath unit)) (fiber_paths q)).
     (* We should be able to finish this, but Coq is being difficult. *)
-    apply maponpaths.
-    cbn in transp.
-    unfold idfun in transp.
     etrans. apply maponpaths.
-    Search (maponpaths _ (maponpaths _ _ )).
     apply (@maponpathscomp _ _ _ _ _ (λ f : unit → X, f tt)
-                           (@termfun X)
-                           (maponpaths dirprod_pr2 transp)).
-    assert (HSX : (termfun ∘ (λ f : unit → X, f tt) = idfun _ )).
-    { admit. }
+                                     (@termfun X)
+                                     (maponpaths dirprod_pr2 transp)).
+    assert (compeq : (@termfun X ∘ (λ f : unit → X, f tt) = idfun _ )).
+    { use funextfun. intro g. use funextfun.
+      intro u. induction u. use idpath. }
+    rewrite compeq. (* We need transport... *)
+    change (@termfun X ∘ (λ f : unit -> X, f tt)) with (idfun (unit -> X)).
+    assert (mapo
+    etrans.
 
-    etrans. apply maponpaths.
 
-    match goal with |[ |- maponpaths ?M ?N = _ ] => assert (
-                                                        maponpaths M N = maponpaths (idfun (unit -> X)) N) end.
+    match goal with |- maponpaths ?M ?N = _ | => assert (
+                              maponpaths M N = maponpaths (idfun (unit -> X)) N) end.
 
     assert (∏ f g, (f = g -> maponpaths f x = maponpaths g x).
     {}
