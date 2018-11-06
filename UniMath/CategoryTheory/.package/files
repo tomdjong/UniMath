@@ -116,7 +116,6 @@ Monads/KTriples.v
 Monads/KTriplesEquiv.v
 categories/setwith2binops.v
 categories/monoids.v
-categories/my_monoids.v
 categories/abmonoids.v
 categories/grs.v
 categories/abgrs.v
