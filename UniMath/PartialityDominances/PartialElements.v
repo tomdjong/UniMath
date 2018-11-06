@@ -143,11 +143,11 @@ Proof.
   - exact f.
 Defined.
 
-Definition dirprod_of_fun {A B X Y : UU} (f : A -> X) (g : B -> Y) : A × B -> X × Y :=
+Definition dirprodfun {A B X Y : UU} (f : A -> X) (g : B -> Y) : A × B -> X × Y :=
   λ z : A × B, dirprodpair (f (dirprod_pr1 z)) (g (dirprod_pr2 z)).
 
-Definition dirprod_fiber_incl {A B X Y : UU} (f : A -> X) (g : B -> Y) (z : X × Y) :
-  hfiber (dirprod_of_fun f g) z -> hfiber f (dirprod_pr1 z) × hfiber g (dirprod_pr2 z).
+Definition dirprodfun_fiber_incl {A B X Y : UU} (f : A -> X) (g : B -> Y) (z : X × Y) :
+  hfiber (dirprodfun f g) z -> hfiber f (dirprod_pr1 z) × hfiber g (dirprod_pr2 z).
 Proof.
   intro hfib. induction hfib as [ab p]. induction ab as [a b].
   split.
@@ -157,8 +157,8 @@ Proof.
     exact (maponpaths dirprod_pr2 p).
 Defined.
 
-Definition dirprod_fiber_retraction {A B X Y : UU} (f : A -> X) (g : B -> Y) (x : X) (y : Y) :
-  hfiber f x × hfiber g y -> hfiber (dirprod_of_fun f g) (x,,y).
+Definition dirprodfun_fiber_retraction {A B X Y : UU} (f : A -> X) (g : B -> Y) (x : X) (y : Y) :
+  hfiber f x × hfiber g y -> hfiber (dirprodfun f g) (x,,y).
 Proof.
   intro fiberpair. induction fiberpair as [fibf fibg].
   induction fibf as [a p]. induction fibg as [b q].
@@ -168,26 +168,33 @@ Proof.
   - exact q.
 Defined.
 
-Definition dirprod_fiber_incl_is_retraction {A B X Y : UU} (f : A -> X) (g : B -> Y) (z : X × Y) :
-  dirprod_fiber_retraction f g (dirprod_pr1 z) (dirprod_pr2 z) ∘
-    dirprod_fiber_incl f g z ~ idfun _.
+Definition dirprodfun_fiber_incl_isretraction {A B X Y : UU} (f : A -> X) (g : B -> Y) (z : X × Y) :
+  dirprodfun_fiber_retraction f g (dirprod_pr1 z) (dirprod_pr2 z) ∘
+    dirprodfun_fiber_incl f g z ~ idfun _.
 Proof.
   intro fibprod. induction fibprod as [ab p].
   induction p. use idpath.
 Defined.
 
-Definition dirprod_embedding {A B X Y : UU} (f : A -> X) (g : B -> Y) :
-  isincl f -> isincl g -> isincl (dirprod_of_fun f g).
+Definition dirprodfun_preserves_embeddings {A B X Y : UU} (f : A -> X) (g : B -> Y) :
+  isincl f -> isincl g -> isincl (dirprodfun f g).
 Proof.
   intros fincl gincl. unfold isincl, isofhlevelf. intro z.
   induction z as [x y].
-  apply (hlevelretract _ (dirprod_fiber_retraction f g x y) (dirprod_fiber_incl f g (x,,y))).
-  - use dirprod_fiber_incl_is_retraction.
+  apply (hlevelretract _ (dirprodfun_fiber_retraction f g x y)
+                         (dirprodfun_fiber_incl f g (x,,y))).
+  - use dirprodfun_fiber_incl_isretraction.
   - use isapropdirprod.
     + exact (fincl x).
     + exact (gincl y).
 Defined.
 
+Definition fun_on_sum {A : UU} {B C : A -> UU} :
+  (∏ (a : A), B a -> C a) -> (∑ (a : A), B a) -> ∑ (a : A), C a.
+Proof.
+  intro f. intro x. induction x as [a b].
+  exact (a,, f a b).
+Defined.
 
 (*** End of Martin's Proof ***)
 (*
