@@ -172,26 +172,23 @@ Definition dirprod_fiber_incl_is_retraction {A B X Y : UU} (f : A -> X) (g : B -
   dirprod_fiber_retraction f g (dirprod_pr1 z) (dirprod_pr2 z) ∘
     dirprod_fiber_incl f g z ~ idfun _.
 Proof.
-  intro fibprod. unfold idfun, dirprod_fiber_incl, dirprod_fiber_retraction.
-  apply total2_paths_equiv.
-  unfold PathPair. simpl. induction fibprod as [ab p]. induction ab as [a b]. simpl.
-  split with (idpath _). rewrite idpath_transportf. induction p. simpl. use idpath.
+  intro fibprod. induction fibprod as [ab p].
+  induction p. use idpath.
+Defined.
 
 Definition dirprod_embedding {A B X Y : UU} (f : A -> X) (g : B -> Y) :
-  let h :=  (λ z : A × B, dirprodpair (f (dirprod_pr1 z)) (g (dirprod_pr2 z))) in
-  isincl f -> isincl g -> isincl h.
+  isincl f -> isincl g -> isincl (dirprod_of_fun f g).
 Proof.
-  (* We show that the fiber of h is a retract of (fiber f) × (fiber g). *)
-  intros h fisincl gisincl.
-  unfold isincl, isofhlevelf.
+  intros fincl gincl. unfold isincl, isofhlevelf. intro z.
+  induction z as [x y].
+  apply (hlevelretract _ (dirprod_fiber_retraction f g x y) (dirprod_fiber_incl f g (x,,y))).
+  - use dirprod_fiber_incl_is_retraction.
+  - use isapropdirprod.
+    + exact (fincl x).
+    + exact (gincl y).
+Defined.
 
-  assert (r : (hfiber f x) × (hfiber g y) -> hfiber h (x,,y)).
-  {
 
-  }
-  apply (hlevelretract _ r i).
-  - intro fibh.
-Search isincl.
 (*** End of Martin's Proof ***)
 
 (* Next, we wish to prove that η is an embedding. We first need a series of lemmas. *)
