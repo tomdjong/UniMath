@@ -189,12 +189,50 @@ Proof.
     + exact (gincl y).
 Defined.
 
-Definition fun_on_sum {A : UU} {B C : A -> UU} :
+Definition tosumfun {A : UU} {B C : A -> UU} :
   (∏ (a : A), B a -> C a) -> (∑ (a : A), B a) -> ∑ (a : A), C a.
 Proof.
   intro f. intro x. induction x as [a b].
   exact (a,, f a b).
 Defined.
+
+Definition tosumfun_fiber_incl {A : UU} {B C : A -> UU} (f : ∏ (a : A), B a -> C a)
+           (a : A) (c : C a) : hfiber (tosumfun f) (a,,c) -> hfiber (f a) c.
+Proof.
+  intro fibsumf. induction fibsumf as [d p]. induction d as [a' b].
+  unfold tosumfun in p.
+  apply total2_paths_equiv in p. induction p as [p1 p2]. simpl in p1, p2.
+  split with (transportf B p1 b).
+  assert (eq : f a (transportf B p1 b) = transportf (λ x : A, C x) p1 (f a' b)).
+  { generalize p1 as e. induction e. use idpath. }
+  etrans. exact eq. exact p2.
+Defined.
+
+Definition tosumfun_fiber_retraction {A : UU} {B C : A -> UU} (f : ∏ (a : A), B a -> C a)
+           (d : ∑ (a : A), C a) : hfiber (f (pr1 d)) (pr2 d) -> hfiber (tosumfun f) d.
+Proof.
+  intro fibf. induction d as [a c].
+  simpl in fibf. induction fibf as [b p].
+  split with (a,,b).
+  unfold tosumfun. apply total2_paths_equiv.
+  split with (idpath a). exact p.
+Defined.
+
+Definition tosumfun_fiber_incl_isretraction {A : UU} {B C : A -> UU} (f : ∏ (a : A), B a -> C a)
+           (d : ∑ (a : A), C a) : (tosumfun_fiber_retraction f d) ∘ (tosumfun_fiber_incl f (pr1 d) (pr2 d)) ~ idfun _.
+Proof.
+  intro fibsumf. induction fibsumf as [d' p]. induction d as [a b].
+  induction d' as [a' b']. unfold idfun. simpl. simpl in p.
+  apply total2_paths_equiv.
+  unfold tosumfun in p.
+  set (p' := total2_paths_equiv _ _ _ p).
+  induction p' as [p1 p2].
+  split with p1.
+
+  unfold PathPair. simpl
+  unfold tosumfun_fiber_retraction. simpl.
+
+  unfold idfun, tosumfun_fiber_retraction, tosumfun_fiber_incl. simpl.
 
 (*** End of Martin's Proof ***)
 (*
