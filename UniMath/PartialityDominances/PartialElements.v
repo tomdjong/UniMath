@@ -92,6 +92,108 @@ Proof.
   - exact ((pr2 ineq2) (t d)).
 Defined.
 
+
+(*** Martin's proof ***)
+Definition 𝓜 (X : UU) : UU := ∑ (P : UU), iscontr P × (P -> X).
+
+Definition iscontr_lift_equiv' {X : UU} : (unit -> X) ≃ 𝓜 X.
+Proof.
+  use weq_iso.
+  - exact (λ f : (unit -> X), (unit,, iscontrunit,, f)).
+  - intro l. induction l as [Q pair]. induction pair as [i g].
+    set (c := pr1 i). set (h := λ _ : unit, c).
+    exact (g ∘ h).
+  - intro f. use funextfun. intro u. induction u. use idpath.
+  - intro l. induction l as [Q pair]. induction pair as [i g].
+    apply total2_paths_equiv.
+    unfold PathPair. simpl.
+    assert (e : unit = Q).
+    { use propext.
+      + exact isapropunit.
+      + use isapropifcontr. exact i.
+      + split.
+        * exact (λ _ : unit, (pr1 i)).
+        * exact (λ _ : Q, tt). }
+    split with e.
+    use dirprod_paths.
+    + simpl. use proofirrelevance. use isapropiscontr.
+    + simpl.
+      assert (transpeq : pr2 (transportf (λ x : UU, iscontr x × (x -> X)) e
+                              (iscontrunit,, g ∘ (λ _ : unit, pr1 i))) =
+                              g ∘ (λ _ : unit, pr1 i) ∘ (pr1weq (eqweqmap (!e)))).
+      { generalize e as e'. induction e'. use idpath. }
+      rewrite transpeq.
+      use funextfun. intro q. unfold funcomp, eqweqmap.
+      use maponpaths. exact (!(pr2 i q)).
+Defined.
+
+Definition iscontr_lift_equiv {X : UU} : X ≃ 𝓜 X.
+Proof.
+  use weqcomp.
+  apply (unit -> X).
+  - exact (invweq (weqfunfromunit X)).
+  - exact iscontr_lift_equiv'.
+Defined.
+
+Definition 𝓜_to_𝓛 {X : UU} : 𝓜 X -> 𝓛 X.
+Proof.
+  intro m. induction m as [P pair]. induction pair as [i f].
+  split with P. split.
+  - use isapropifcontr. exact i.
+  - exact f.
+Defined.
+
+Definition dirprod_of_fun {A B X Y : UU} (f : A -> X) (g : B -> Y) : A × B -> X × Y :=
+  λ z : A × B, dirprodpair (f (dirprod_pr1 z)) (g (dirprod_pr2 z)).
+
+Definition dirprod_fiber_incl {A B X Y : UU} (f : A -> X) (g : B -> Y) (z : X × Y) :
+  hfiber (dirprod_of_fun f g) z -> hfiber f (dirprod_pr1 z) × hfiber g (dirprod_pr2 z).
+Proof.
+  intro hfib. induction hfib as [ab p]. induction ab as [a b].
+  split.
+  - split with a.
+    exact (maponpaths dirprod_pr1 p).
+  - split with b.
+    exact (maponpaths dirprod_pr2 p).
+Defined.
+
+Definition dirprod_fiber_retraction {A B X Y : UU} (f : A -> X) (g : B -> Y) (x : X) (y : Y) :
+  hfiber f x × hfiber g y -> hfiber (dirprod_of_fun f g) (x,,y).
+Proof.
+  intro fiberpair. induction fiberpair as [fibf fibg].
+  induction fibf as [a p]. induction fibg as [b q].
+  split with (a,,b).
+  apply dirprod_paths.
+  - exact p.
+  - exact q.
+Defined.
+
+Definition dirprod_fiber_incl_is_retraction {A B X Y : UU} (f : A -> X) (g : B -> Y) (z : X × Y) :
+  dirprod_fiber_retraction f g (dirprod_pr1 z) (dirprod_pr2 z) ∘
+    dirprod_fiber_incl f g z ~ idfun _.
+Proof.
+  intro fibprod. unfold idfun, dirprod_fiber_incl, dirprod_fiber_retraction.
+  apply total2_paths_equiv.
+  unfold PathPair. simpl. induction fibprod as [ab p]. induction ab as [a b]. simpl.
+  split with (idpath _). rewrite idpath_transportf. induction p. simpl. use idpath.
+
+Definition dirprod_embedding {A B X Y : UU} (f : A -> X) (g : B -> Y) :
+  let h :=  (λ z : A × B, dirprodpair (f (dirprod_pr1 z)) (g (dirprod_pr2 z))) in
+  isincl f -> isincl g -> isincl h.
+Proof.
+  (* We show that the fiber of h is a retract of (fiber f) × (fiber g). *)
+  intros h fisincl gisincl.
+  unfold isincl, isofhlevelf.
+
+  assert (r : (hfiber f x) × (hfiber g y) -> hfiber h (x,,y)).
+  {
+
+  }
+  apply (hlevelretract _ r i).
+  - intro fibh.
+Search isincl.
+(*** End of Martin's Proof ***)
+
 (* Next, we wish to prove that η is an embedding. We first need a series of lemmas. *)
 
 (* The first lemma shows that unit = unit is proofirrelevant.
