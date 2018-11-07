@@ -32,7 +32,7 @@ Notation "f #" := (Kleisli_extension f) (at level 30) : PartialFunctions.
 Lemma η_extension {X : UU} : η # = idfun (𝓛 X).
 Proof.
   use funextfun. intro l.
-  apply information_order_is_antisymmetric.
+  apply information_order_antisymmetric.
   - split with pr1.
     intro d. use idpath.
   - split with (λ p : isdefined l, (p,, tt)).
@@ -42,7 +42,7 @@ Qed.
 Lemma fun_extension_after_η {X Y : UU} (f : X ⇀ Y) : f # ∘ η = f.
 Proof.
   use funextfun.
-  intro x. apply information_order_is_antisymmetric.
+  intro x. apply information_order_antisymmetric.
   - split with pr2.
     intro d. use idpath.
   - split with (λ d : isdefined (f x), (tt,, d)).
@@ -53,7 +53,7 @@ Lemma extension_comp {X Y Z : UU} (f : X ⇀ Y) (g : Y ⇀ Z) :
   (g # ∘ f) # = g # ∘ (f #).
 Proof.
   use funextfun. intro l.
-  apply information_order_is_antisymmetric.
+  apply information_order_antisymmetric.
   (* This is essentially just the equivalence between
      ∑(a : A), (b : Ba), C(a, b) and
      ∑((a, b) : ∑(a : A), B(a)), C(a, b). *)

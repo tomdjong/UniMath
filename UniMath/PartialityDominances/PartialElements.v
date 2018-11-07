@@ -1,7 +1,5 @@
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
-Require Import UniMath.MoreFoundations.PropExt.
-Require Import UniMath.MoreFoundations.RetractOfIdentityType.
 
 (* The type of partial elements of a type X is denoted by 𝓛 X, for "lift of X". *)
 Definition 𝓛 (X : UU) := ∑ (P : UU), isaprop P × (P -> X).
@@ -56,7 +54,7 @@ Local Open Scope PartialElements.
 (* TO DO: Check level *)
 Notation "l ⊑ m" := (information_order l m) (at level 30) : PartialElements.
 
-Lemma information_order_is_antisymmetric {X : UU} {l m : 𝓛 X} :
+Definition information_order_antisymmetric {X : UU} {l m : 𝓛 X} :
   l ⊑ m -> m ⊑ l -> l = m.
 Proof.
   intros ineq1 ineq2.
@@ -75,13 +73,13 @@ Proof.
     rewrite seq. exact (!(pr2 ineq2) d).
 Defined.
 
-Lemma information_order_is_reflexive {X : UU} {l : 𝓛 X} : l ⊑ l.
+Definition information_order_reflexive {X : UU} {l : 𝓛 X} : l ⊑ l.
 Proof.
   split with (idfun _).
   intro d. use idpath.
 Defined.
 
-Lemma information_order_is_transitive {X : UU} {l m n : 𝓛 X} :
+Definition information_order_transitive {X : UU} {l m n : 𝓛 X} :
   l ⊑ m -> m ⊑ n -> l ⊑ n.
 Proof.
   intros ineq1 ineq2.
@@ -96,62 +94,86 @@ Defined.
 (*** Martin's proof ***)
 Definition 𝓜 (X : UU) : UU := ∑ (P : UU), iscontr P × (P -> X).
 
-Definition iscontr_lift_equiv' {X : UU} : (unit -> X) ≃ 𝓜 X.
+Definition μ {X : UU} (x : X) : 𝓜 X := (unit,, iscontrunit,, termfun x).
+
+Lemma μ_isweq {X : UU} : isweq (@μ X).
 Proof.
-  use weq_iso.
-  - exact (λ f : (unit -> X), (unit,, iscontrunit,, f)).
-  - intro l. induction l as [Q pair]. induction pair as [i g].
-    set (c := pr1 i). set (h := λ _ : unit, c).
-    exact (g ∘ h).
-  - intro f. use funextfun. intro u. induction u. use idpath.
-  - intro l. induction l as [Q pair]. induction pair as [i g].
-    apply total2_paths_equiv.
-    unfold PathPair. simpl.
-    assert (e : unit = Q).
+  use isweq_iso.
+  - intro m; induction m as [P pair]; induction pair as [i f].
+    exact (f (pr1 i)).
+  - simpl. intro x. use idpath.
+  - simpl. intro m. unfold μ.
+    induction m as [P pair]; induction pair as [i f].
+    apply total2_paths_equiv. assert (e : unit = P).
     { use propext.
       + exact isapropunit.
       + use isapropifcontr. exact i.
       + split.
         * exact (λ _ : unit, (pr1 i)).
-        * exact (λ _ : Q, tt). }
+        * exact (λ _ : P, tt). }
     split with e.
     use dirprod_paths.
     + simpl. use proofirrelevance. use isapropiscontr.
     + simpl.
       assert (transpeq : pr2 (transportf (λ x : UU, iscontr x × (x -> X)) e
-                              (iscontrunit,, g ∘ (λ _ : unit, pr1 i))) =
-                              g ∘ (λ _ : unit, pr1 i) ∘ (pr1weq (eqweqmap (!e)))).
+                              (iscontrunit,, termfun (f (pr1 i)))) =
+                              termfun (f (pr1 i)) ∘ (pr1weq (eqweqmap (!e)))).
       { generalize e as e'. induction e'. use idpath. }
       rewrite transpeq.
-      use funextfun. intro q. unfold funcomp, eqweqmap.
-      use maponpaths. exact (!(pr2 i q)).
-Defined.
-
-Definition iscontr_lift_equiv {X : UU} : X ≃ 𝓜 X.
-Proof.
-  use weqcomp.
-  apply (unit -> X).
-  - exact (invweq (weqfunfromunit X)).
-  - exact iscontr_lift_equiv'.
-Defined.
+      use funextfun. intro p. unfold funcomp, termfun.
+      use maponpaths. exact (!(pr2 i p)).
+Qed.
 
 Definition 𝓜_to_𝓛 {X : UU} : 𝓜 X -> 𝓛 X.
 Proof.
-  intro m. induction m as [P pair]. induction pair as [i f].
-  split with P. split.
-  - use isapropifcontr. exact i.
-  - exact f.
+  use sumfun. intro P; simpl.
+  use dirprodfun.
+  - exact isapropifcontr.
+  - exact (idfun _).
 Defined.
 
-
-
-(*** End of Martin's Proof ***)
-(*
-Theorem η_is_embedding {X : UU} : isInjective (@η X).
+(* Every map between hprops is an embedding. *)
+Definition maponprops_isincl {P Q : UU} (f : P -> Q) :
+  isaprop P -> isaprop Q -> isincl f.
 Proof.
-  use isInjective'.
-  split with (@maponpaths_η_section X).
-  exact (@maponpaths_η_is_retraction X).
+  intros i j. unfold isincl, isofhlevelf.
+  intro q. use invproofirrelevance.
+  intros fib fib'; induction fib as [p s]; induction fib' as [p' t].
+  induction s. assert (eq : p = p').
+  { use proofirrelevance. exact i. }
+  apply total2_paths_equiv; split with eq; simpl.
+  use proofirrelevance. use isasetaprop. exact j.
+Defined.
+
+(* Finally, we can prove that the map from 𝓜 to 𝓛 is an embedding. *)
+Lemma 𝓜_to_𝓛_isincl {X : UU} : isincl (@𝓜_to_𝓛 X).
+Proof.
+  use sumfun_preserves_incl. intro P.
+  use dirprodfun_preserves_incl.
+  - use maponprops_isincl.
+    + exact (isapropiscontr P).
+    + exact (isapropisaprop P).
+  - use isinclweq. exact (idisweq _).
+Qed.
+(*** End of Martin's Proof ***)
+
+(* Now we show that η is an embedding by proving that it is pointwise equal
+   to the composition of the two embeddings X -> 𝓜 X -> 𝓛 X. *)
+Theorem η_isincl {X : UU} : isincl (@η X).
+Proof.
+  set (comp := (@𝓜_to_𝓛 X) ∘ (@μ X)).
+  apply (isinclhomot comp η).
+  - intro x. unfold comp, funcomp.
+    unfold μ. unfold 𝓜_to_𝓛. unfold sumfun.
+    unfold dirprodfun. simpl. unfold idfun.
+    apply total2_paths_equiv.
+    split with (idpath unit).
+    simpl. apply dirprod_paths.
+    + simpl. use proofirrelevance. exact (isapropisaprop unit).
+    + simpl. use idpath.
+  - set (incl1 := weqtoincl _ _ (weqpair (@μ X) (@μ_isweq X))).
+    set (incl2 := inclpair (@𝓜_to_𝓛 X) (@𝓜_to_𝓛_isincl X)).
+    apply (isinclcomp incl1 incl2).
 Qed.
 
 (* Next, we wish to show that the fiber of η is equivalent to isdefined. *)
@@ -168,7 +190,7 @@ Proof.
   split with (f p).
   set (t := (λ _, p) : unit -> P).
   set (s := (λ _, tt) : P -> unit).
-  apply information_order_is_antisymmetric.
+  apply information_order_antisymmetric.
   - split with t. intro d. unfold value. simpl. unfold t. use idpath.
   - split with s. intro d. unfold value. unfold termfun. simpl.
     assert (eq : d = p). { use proofirrelevance. use isdefined_isaprop. }
@@ -180,10 +202,8 @@ Proof.
   use weqiff.
   - exact (tpair _ isdefined_to_fiber fiber_to_isdefined).
   - use isdefined_isaprop.
-  - use isinclweqonpaths. exact η_is_embedding.
-Defined. *)
-
-
+  - use η_isincl.
+Defined.
 
 (*** Domain Theory and Partial Elements ***)
 (* First some preliminaries for relations into the universe (not hprop). *)
@@ -208,6 +228,7 @@ Definition isdirectedcomplete {X : UU} (R : X -> X -> UU) : UU :=
 (* Lemma information_order_is_directed_complete {X : UU} : @isdirectedcomplete (𝓛 X) (information_order). *)
 
 (*** Map into lift of product ***)
+(* Useful for PCA
 Definition into_lift_product {X : UU} : 𝓛 X -> 𝓛 X -> 𝓛 (X × X).
 Proof.
   intros l m.
@@ -217,4 +238,4 @@ Proof.
     + use isdefined_isaprop.
     + use isdefined_isaprop.
   - intro q. exact (value l (pr1 q),, value m (pr2 q)).
-Defined.
+Defined. *)

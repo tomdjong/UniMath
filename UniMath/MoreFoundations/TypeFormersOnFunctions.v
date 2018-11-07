@@ -37,7 +37,7 @@ Proof.
     rewrite pr1_dirprod_paths. rewrite pr2_dirprod_paths. use idpath.
 Defined.
 
-Definition dirprodfun_preserves_embeddings {A B X Y : UU} (f : A -> X) (g : B -> Y) :
+Definition dirprodfun_preserves_incl {A B X Y : UU} (f : A -> X) (g : B -> Y) :
   isincl f -> isincl g -> isincl (dirprodfun f g).
 Proof.
   intros fincl gincl. unfold isincl, isofhlevelf. intro z.
@@ -77,7 +77,7 @@ Proof.
     induction q; use idpath.
 Defined.
 
-Definition sumfun_preserves_embeddings {A : UU} {B C : A -> UU} (f : ∏ (a : A), B a -> C a) :
+Definition sumfun_preserves_incl {A : UU} {B C : A -> UU} (f : ∏ (a : A), B a -> C a) :
   (∏ (a : A), isincl (f a)) -> isincl (sumfun f).
 Proof.
   intro forallaincl. unfold isincl, isofhlevelf.

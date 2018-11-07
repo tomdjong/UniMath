@@ -16,3 +16,4 @@ Require Export UniMath.MoreFoundations.PartA.
 Require Export UniMath.MoreFoundations.Univalence.
 Require Export UniMath.MoreFoundations.PropExt.
 Require Export UniMath.MoreFoundations.RetractOfIdentityType.
+Require Export UniMath.MoreFoundations.TypeFormersOnFunctions.
