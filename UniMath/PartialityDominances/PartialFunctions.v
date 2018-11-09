@@ -4,6 +4,7 @@ Require Import UniMath.PartialityDominances.PartialElements.
 
 (* The type of partial function from X to Y is the type of functions from X
    into the partial elements of Y. *)
+Local Open Scope PartialElements.
 Definition partialfun (X Y : UU) : UU := X -> 𝓛 Y.
 
 Delimit Scope PartialFunctions with PartialFunctions.
@@ -67,7 +68,7 @@ Definition Kleisli_comp {X Y Z : UU} (f : X ⇀ Y) (g : Y ⇀ Z) : X ⇀ Z := g 
 
 Notation "g □ f" := (Kleisli_comp f g) (at level 30) : PartialFunctions.
 
-Definition Kleisli_id {X : UU} : X ⇀ X := @η X.
+Definition Kleisli_id {X : UU} : X ⇀ X := @lift_embedding X.
 
 (* The three lemmas above now say that we have associative composition and identities. *)
 Lemma Kleisli_comp_id_right {X Y : UU} (f : X ⇀ Y) : f □ Kleisli_id = f.

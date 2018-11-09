@@ -2,10 +2,15 @@ Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
 
 (* The type of partial elements of a type X is denoted by 𝓛 X, for "lift of X". *)
-Definition 𝓛 (X : UU) := ∑ (P : UU), isaprop P × (P -> X).
+Definition lift (X : UU) := ∑ (P : UU), isaprop P × (P -> X).
+
+Delimit Scope PartialElements with PartialElements.
+Local Open Scope PartialElements.
+Notation "'𝓛'" := lift : PartialElements.
 
 (* We can map X into its lift. *)
-Definition η {X : UU} (x : X) : 𝓛 X := (unit,, isapropunit,, termfun x).
+Definition lift_embedding {X : UU} (x : X) : 𝓛 X := (unit,, isapropunit,, termfun x).
+Notation "'η'" := lift_embedding : PartialElements.
 
 (* We define meaningful projections. *)
 Definition isdefined {X : UU} (l : 𝓛 X) : UU := pr1 l.
@@ -48,9 +53,6 @@ Defined.
 Definition information_order {X : UU} (l m : 𝓛 X) : UU :=
   ∑ (t : isdefined l -> isdefined m), ∏ (d : isdefined l), value l d = value m (t d).
 
-Delimit Scope PartialElements with PartialElements.
-Local Open Scope PartialElements.
-
 (* TO DO: Check level *)
 Notation "l ⊑ m" := (information_order l m) (at level 30) : PartialElements.
 
@@ -92,17 +94,22 @@ Defined.
 
 
 (*** Martin's proof ***)
-Definition 𝓜 (X : UU) : UU := ∑ (P : UU), iscontr P × (P -> X).
+Definition iscontr_lift (X : UU) : UU := ∑ (P : UU), iscontr P × (P -> X).
 
-Definition μ {X : UU} (x : X) : 𝓜 X := (unit,, iscontrunit,, termfun x).
+Delimit Scope LiftEmbeddingProof with LiftEmbeddingProof.
+Local Open Scope LiftEmbeddingProof.
+Notation "'𝓜'" := iscontr_lift : LiftEmbeddingProof.
 
-Lemma μ_isweq {X : UU} : isweq (@μ X).
+Definition iscontr_lift_embedding {X : UU} (x : X) : 𝓜 X := (unit,, iscontrunit,, termfun x).
+Notation "'μ'" := iscontr_lift_embedding : LiftEmbeddingProof.
+
+Lemma iscontr_lift_embedding_isweq {X : UU} : isweq (@iscontr_lift_embedding X).
 Proof.
   use isweq_iso.
   - intro m; induction m as [P pair]; induction pair as [i f].
     exact (f (pr1 i)).
   - simpl. intro x. use idpath.
-  - simpl. intro m. unfold μ.
+  - simpl. intro m.
     induction m as [P pair]; induction pair as [i f].
     apply total2_paths_equiv. assert (e : unit = P).
     { use propext.
@@ -155,26 +162,27 @@ Proof.
     + exact (isapropisaprop P).
   - use isinclweq. exact (idisweq _).
 Qed.
-(*** End of Martin's Proof ***)
-
 (* Now we show that η is an embedding by proving that it is pointwise equal
    to the composition of the two embeddings X -> 𝓜 X -> 𝓛 X. *)
-Theorem η_isincl {X : UU} : isincl (@η X).
+Theorem lift_embedding_isincl {X : UU} : isincl (@lift_embedding X).
 Proof.
-  set (comp := (@𝓜_to_𝓛 X) ∘ (@μ X)).
+  set (comp := (@𝓜_to_𝓛 X) ∘ (@iscontr_lift_embedding X)).
   apply (isinclhomot comp η).
   - intro x. unfold comp, funcomp.
-    unfold μ. unfold 𝓜_to_𝓛. unfold sumfun.
+    unfold iscontr_lift_embedding; unfold 𝓜_to_𝓛; unfold sumfun.
     unfold dirprodfun. simpl. unfold idfun.
     apply total2_paths_equiv.
     split with (idpath unit).
     simpl. apply dirprod_paths.
     + simpl. use proofirrelevance. exact (isapropisaprop unit).
     + simpl. use idpath.
-  - set (incl1 := weqtoincl _ _ (weqpair (@μ X) (@μ_isweq X))).
+  - set (incl1 := weqtoincl _ _ (weqpair (@iscontr_lift_embedding X)
+                                         (@iscontr_lift_embedding_isweq X))).
     set (incl2 := inclpair (@𝓜_to_𝓛 X) (@𝓜_to_𝓛_isincl X)).
     apply (isinclcomp incl1 incl2).
 Qed.
+Close Scope LiftEmbeddingProof.
+(*** End of Martin's Proof ***)
 
 (* Next, we wish to show that the fiber of η is equivalent to isdefined. *)
 Definition fiber_to_isdefined {X : UU} {l : 𝓛 X} : hfiber η l -> isdefined l.
@@ -202,7 +210,7 @@ Proof.
   use weqiff.
   - exact (tpair _ isdefined_to_fiber fiber_to_isdefined).
   - use isdefined_isaprop.
-  - use η_isincl.
+  - use lift_embedding_isincl.
 Defined.
 
 (*** Domain Theory and Partial Elements ***)
@@ -239,3 +247,5 @@ Proof.
     + use isdefined_isaprop.
   - intro q. exact (value l (pr1 q),, value m (pr2 q)).
 Defined. *)
+
+Close Scope PartialElements.
