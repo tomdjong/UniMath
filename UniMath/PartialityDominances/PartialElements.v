@@ -228,29 +228,7 @@ Proof.
   - use homotinvweqweq.
 Qed.
 
-(*
-(* First some preliminaries for relations into the universe (not hprop). *)
-Definition relation (X : UU) := X -> X -> UU.
-Definition istransitive {X : UU} (R : relation X) : UU :=
-  ∏ (x y z : X), R x y -> R y z -> R x z.
-Definition isreflexive {X : UU} (R : relation X) : UU :=
-  ∏ (x : X), R x x.
-Definition ispreorder {X : UU} (R : relation X) : UU := isreflexive R × istransitive R.
-
-Definition isantisymmetric {X : UU} (R : relation X) : UU :=
-  ∏ (x y : X), R x y -> R y x -> x = y.
-Definition ispartialorder {X : UU} (R : relation X) : UU := ispreorder R × isantisymmetric R.
-
-Definition isupperbound {X I : UU} (R : relation X) (f : I -> X) (u : X) : UU :=
-  ∏ (i : I), R (f i) u.
-Definition islub {X I : UU} (R : relation X) (f : I -> X) (u : X) : UU :=
-  isupperbound R f u × ∏ (y : X), (∏ (i : I), R (f i) u) -> R u y.
-Definition isdirected {X I : UU} (R : relation X) (f : I -> X) : UU :=
-  ∏ (i j : I), ∑ (k : I), R (f i) (f k) × R (f j) (f k).
-Definition isdirectedcomplete {X : UU} (R : relation X) : UU :=
-  ∏ (I : UU), ∏ (f : I -> X), isdirected R f -> ∑ (u : X), islub R f u.
-
-Lemma informationorder_ispropvalued {X : UU} : isaset X -> ∏ (l m : 𝓛 X), isaprop (l ⊑ m).
+(*Lemma informationorder_ispropvalued {X : UU} : isaset X -> ∏ (l m : 𝓛 X), isaprop (l ⊑ m).
 Proof.
   intro Xisaset. intros l m.
   unfold information_order.
