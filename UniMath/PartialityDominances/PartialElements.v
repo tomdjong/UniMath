@@ -75,23 +75,6 @@ Proof.
     rewrite seq. exact (!(pr2 ineq2) d).
 Defined.
 
-Definition information_order_reflexive {X : UU} {l : 𝓛 X} : l ⊑ l.
-Proof.
-  split with (idfun _).
-  intro d. use idpath.
-Defined.
-
-Definition information_order_transitive {X : UU} {l m n : 𝓛 X} :
-  l ⊑ m -> m ⊑ n -> l ⊑ n.
-Proof.
-  intros ineq1 ineq2.
-  set (t := pr1 ineq1). set (s := pr1 ineq2).
-  split with (s ∘ t). intro d.
-  etrans.
-  - exact ((pr2 ineq1) d).
-  - exact ((pr2 ineq2) (t d)).
-Defined.
-
 (*** Martin's proof ***)
 Definition iscontr_lift (X : UU) : UU := ∑ (P : UU), iscontr P × (P -> X).
 
@@ -214,6 +197,59 @@ Defined.
 
 (*** If X is a set, then 𝓛 X with the information "order"
      is a dcpo with least element. ***)
+Section liftisdcpo.
+Context (X : hSet).
+
+Lemma liftofhset_isaset : isaset (𝓛 X).
+Proof.
+  intros [P pair] [Q pair'].
+  induction pair as [i f]. induction pair' as [j g].
+  use invproofirrelevance.
+  intros e e'. induction e.
+  etrans.
+  apply (homotinvweqweq0 (total2_paths_equiv _ _ _)).
+  etrans.
+
+  assert (eq'' : total2_paths_equiv _ _ _ (idpath (P,, i,, f)) = total2_paths_equiv _ _ _ e').
+  {
+    simpl. unfold base_paths; simpl. apply total2_paths_equiv.
+    assert (eq1 : idpath P = maponpaths pr1 e').
+    {
+      use proofirrelevance. use isofhlevelpathspace.
+      - exact i. - exact i. }
+    split with eq1.
+    simpl. use proofirrelevance.
+    assert (helper : isaset ((isaprop P) × (P -> X))).
+    { use isaset_dirprod.
+      - use isasetaprop. use isapropisaprop.
+      - use isaset_set_fun_space. }
+    use helper. }
+  - apply maponpaths. apply eq''.
+  - use homotinvweqweq.
+Qed.
+
+(*
+(* First some preliminaries for relations into the universe (not hprop). *)
+Definition relation (X : UU) := X -> X -> UU.
+Definition istransitive {X : UU} (R : relation X) : UU :=
+  ∏ (x y z : X), R x y -> R y z -> R x z.
+Definition isreflexive {X : UU} (R : relation X) : UU :=
+  ∏ (x : X), R x x.
+Definition ispreorder {X : UU} (R : relation X) : UU := isreflexive R × istransitive R.
+
+Definition isantisymmetric {X : UU} (R : relation X) : UU :=
+  ∏ (x y : X), R x y -> R y x -> x = y.
+Definition ispartialorder {X : UU} (R : relation X) : UU := ispreorder R × isantisymmetric R.
+
+Definition isupperbound {X I : UU} (R : relation X) (f : I -> X) (u : X) : UU :=
+  ∏ (i : I), R (f i) u.
+Definition islub {X I : UU} (R : relation X) (f : I -> X) (u : X) : UU :=
+  isupperbound R f u × ∏ (y : X), (∏ (i : I), R (f i) u) -> R u y.
+Definition isdirected {X I : UU} (R : relation X) (f : I -> X) : UU :=
+  ∏ (i j : I), ∑ (k : I), R (f i) (f k) × R (f j) (f k).
+Definition isdirectedcomplete {X : UU} (R : relation X) : UU :=
+  ∏ (I : UU), ∏ (f : I -> X), isdirected R f -> ∑ (u : X), islub R f u.
+
 Lemma informationorder_ispropvalued {X : UU} : isaset X -> ∏ (l m : 𝓛 X), isaprop (l ⊑ m).
 Proof.
   intro Xisaset. intros l m.
@@ -223,28 +259,25 @@ Proof.
   - intro t. use impred. intro d. use Xisaset.
 Qed.
 
+Lemma informationorder_ispartialorder (X : UU) : ispartialorder (@information_order X).
+Proof.
+  unfold ispartialorder.
 
-(*** Domain Theory and Partial Elements ***)
-(* First some preliminaries for relations into the universe (not hprop). *)
-(* Definition istransitive {X : UU} (R : X -> X -> UU) {x y z : X} : UU :=
-  R x y -> R y z -> R x z.
-Definition issymmetric {X : UU} (R : X -> X -> UU) {x : X} : UU := R x x.
-Definition isreflexive {X : UU} (R : X -> X -> UU) {x y : X} : UU := R x y -> R y x. *)
+Definition information_order_reflexive {X : UU} {l : 𝓛 X} : l ⊑ l.
+Proof.
+  split with (idfun _).
+  intro d. use idpath.
+Defined.
 
-(* Definition isdirected {X I : UU} (R : X -> X -> UU) (f : I -> X) : UU :=
-  ∏ (i j : I), ∑ (k : I), R (f i) (f k) × R (f j) (f k).
-
-Definition isupperbound {X I : UU} (R : X -> X -> UU) (f : I -> X) (u : X) : UU :=
-  ∏ (i : I), R (f i) u.
-
-Definition islub {X I : UU} (R : X -> X -> UU) (f : I -> X) (u : X) : UU :=
-  isupperbound R f u × ∏ (y : X), (∏ (i : I), R (f i) u) -> R u y.
-
-Definition isdirectedcomplete {X : UU} (R : X -> X -> UU) : UU :=
-  ∏ (I : UU), ∏ (f : I -> X), isdirected R f -> ∑ (u : X), islub R f u. *)
-
-(* It seems that we need X to be an hSet for this to work. *)
-(* Lemma information_order_is_directed_complete {X : UU} : @isdirectedcomplete (𝓛 X) (information_order). *)
-
+Definition information_order_transitive {X : UU} {l m n : 𝓛 X} :
+  l ⊑ m -> m ⊑ n -> l ⊑ n.
+Proof.
+  intros ineq1 ineq2.
+  set (t := pr1 ineq1). set (s := pr1 ineq2).
+  split with (s ∘ t). intro d.
+  etrans.
+  - exact ((pr2 ineq1) d).
+  - exact ((pr2 ineq2) (t d)).
+Defined. *)
 
 Close Scope PartialElements.
