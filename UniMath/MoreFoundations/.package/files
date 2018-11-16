@@ -16,3 +16,4 @@ Univalence.v
 PropExt.v
 RetractOfIdentityType.v
 TypeFormersOnFunctions.v
+WeaklyConstant.v
