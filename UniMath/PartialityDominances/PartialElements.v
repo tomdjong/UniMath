@@ -203,28 +203,28 @@ Context (X : hSet).
 Lemma liftofhset_isaset : isaset (𝓛 X).
 Proof.
   intros [P pair] [Q pair'].
-  induction pair as [i f]. induction pair' as [j g].
   use invproofirrelevance.
   intros e e'. induction e.
   etrans.
   apply (homotinvweqweq0 (total2_paths_equiv _ _ _)).
   etrans.
-
-  assert (eq'' : total2_paths_equiv _ _ _ (idpath (P,, i,, f)) = total2_paths_equiv _ _ _ e').
+  assert (eq : total2_paths_equiv _ _ _ (idpath (P,, pair)) =
+                 total2_paths_equiv _ _ _ e').
   {
-    simpl. unfold base_paths; simpl. apply total2_paths_equiv.
-    assert (eq1 : idpath P = maponpaths pr1 e').
-    {
-      use proofirrelevance. use isofhlevelpathspace.
-      - exact i. - exact i. }
-    split with eq1.
-    simpl. use proofirrelevance.
+    simpl. apply total2_paths_equiv. unfold base_paths; simpl.
+    assert (eq' : idpath P = maponpaths pr1 e').
+    { use proofirrelevance. use isofhlevelpathspace.
+      - exact (pr1 pair).
+      - exact (pr1 pair). }
+    split with eq'.
+    simpl; use proofirrelevance.
     assert (helper : isaset ((isaprop P) × (P -> X))).
     { use isaset_dirprod.
       - use isasetaprop. use isapropisaprop.
       - use isaset_set_fun_space. }
-    use helper. }
-  - apply maponpaths. apply eq''.
+    use helper.
+  }
+  - apply maponpaths. apply eq.
   - use homotinvweqweq.
 Qed.
 
@@ -280,4 +280,5 @@ Proof.
   - exact ((pr2 ineq2) (t d)).
 Defined. *)
 
+End liftisdcpo.
 Close Scope PartialElements.
