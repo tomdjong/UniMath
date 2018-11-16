@@ -49,7 +49,7 @@ Proof.
 Defined.
 
 (* It is useful to derive equality of partial elements by using the "order".
-   It only is a proper order if the underlying type is a set (TO DO) .*)
+   It only is a proper order if the underlying type is a set. *)
 Definition information_order {X : UU} (l m : 𝓛 X) : UU :=
   ∑ (t : isdefined l -> isdefined m), ∏ (d : isdefined l), value l d = value m (t d).
 
@@ -91,7 +91,6 @@ Proof.
   - exact ((pr2 ineq1) d).
   - exact ((pr2 ineq2) (t d)).
 Defined.
-
 
 (*** Martin's proof ***)
 Definition iscontr_lift (X : UU) : UU := ∑ (P : UU), iscontr P × (P -> X).
@@ -184,7 +183,7 @@ Qed.
 Close Scope LiftEmbeddingProof.
 (*** End of Martin's Proof ***)
 
-(* Next, we wish to show that the fiber of η is equivalent to isdefined. *)
+(*** Next, we wish to show that the fiber of η is equivalent to isdefined. ***)
 Definition fiber_to_isdefined {X : UU} {l : 𝓛 X} : hfiber η l -> isdefined l.
 Proof.
   intro fib. induction fib as [x p].
@@ -213,6 +212,18 @@ Proof.
   - use lift_embedding_isincl.
 Defined.
 
+(*** If X is a set, then 𝓛 X with the information "order"
+     is a dcpo with least element. ***)
+Lemma informationorder_ispropvalued {X : UU} : isaset X -> ∏ (l m : 𝓛 X), isaprop (l ⊑ m).
+Proof.
+  intro Xisaset. intros l m.
+  unfold information_order.
+  use isofhleveltotal2.
+  - use isapropimpl. use isdefined_isaprop.
+  - intro t. use impred. intro d. use Xisaset.
+Qed.
+
+
 (*** Domain Theory and Partial Elements ***)
 (* First some preliminaries for relations into the universe (not hprop). *)
 (* Definition istransitive {X : UU} (R : X -> X -> UU) {x y z : X} : UU :=
@@ -235,17 +246,5 @@ Definition isdirectedcomplete {X : UU} (R : X -> X -> UU) : UU :=
 (* It seems that we need X to be an hSet for this to work. *)
 (* Lemma information_order_is_directed_complete {X : UU} : @isdirectedcomplete (𝓛 X) (information_order). *)
 
-(*** Map into lift of product ***)
-(* Useful for PCA
-Definition into_lift_product {X : UU} : 𝓛 X -> 𝓛 X -> 𝓛 (X × X).
-Proof.
-  intros l m.
-  set (Q := isdefined l × isdefined m).
-  split with Q. split.
-  - use isapropdirprod.
-    + use isdefined_isaprop.
-    + use isdefined_isaprop.
-  - intro q. exact (value l (pr1 q),, value m (pr2 q)).
-Defined. *)
 
 Close Scope PartialElements.
