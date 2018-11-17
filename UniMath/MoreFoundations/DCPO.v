@@ -21,7 +21,7 @@ Proof.
   use (pr2 (pr1 R (f i) u)). (* R is prop-valued. *)
 Qed.
 
-Definition islub (u : X) : UU := isupperbound u × ∏ (y : X), (∏ (i : I), R (f i) u) -> R u y.
+Definition islub (u : X) : UU := isupperbound u × ∏ (y : X), (∏ (i : I), R (f i) y) -> R u y.
 Lemma islub_isaprop (u : X) : isaprop(islub u).
 Proof.
   use isapropdirprod.
@@ -30,26 +30,32 @@ Proof.
     use (pr2 (pr1 R u x)). (* R is prop-valued. *)
 Qed.
 
-(* Should one truncate this? *)
-Definition directed : UU := ∏ (i j : I), ∑ (k : I), R (f i) (f k) × R (f j) (f k).
-(*Definition isdirected : UU := ∏ (i j : I), ∥∑ (k : I), R (f i) (f k) × R (f j) (f k)∥.*)
-(*Lemma isdirected_isaprop : isaprop isdirected.
+(* Definition directed : UU := ∏ (i j : I), ∑ (k : I), R (f i) (f k) × R (f j) (f k). *)
+Definition isdirected : UU := ∏ (i j : I), ∥∑ (k : I), R (f i) (f k) × R (f j) (f k)∥.
+Lemma isdirected_isaprop : isaprop isdirected.
 Proof.
   use impred. intro i. use impred. intro j.
   use isapropishinh.
-Qed.*)
+Qed.
 End FixIndexingFamily.
 
-(* Should one truncate this? *)
-Definition directedcomplete : UU := ∏ (I : UU), ∏ (f : I -> X), directed f -> ∑ (u : X), islub f u.
-(*Definition isdirectedcomplete : UU := isdirected -> ∥∑ (u : X), islub u∥.*)
-(*Lemma isdirectedcomplete_isaprop : isaprop isdirectedcomplete.
+Definition isdirectedcomplete : UU := ∏ (I : UU), ∏ (f : I -> X), isdirected f -> ∑ (u : X), islub f u.
+Lemma isdirectedcomplete_isaprop : isaprop isdirectedcomplete.
 Proof.
-  use isapropimpl. use isapropishinh.
-Qed. *)
+  use impred; intro I. use impred; intro f.
+  use isapropimpl. use invproofirrelevance.
+  intros [u p] [v q].
+  assert (ueqv : u = v).
+  { (* Use antisymmetry of R *)
+    use (pr2 (pr2 R)).
+    - apply p. use (pr1 q).
+    - apply q. use (pr1 p). }
+  apply total2_paths_equiv; split with ueqv.
+  use proofirrelevance. use islub_isaprop.
+Qed.
 End DirectedComplete.
 
-Definition dcpo := ∑ (X : hSet), ∑ (R : PartialOrder X), directedcomplete R.
+Definition dcpo := ∑ (X : hSet), ∑ (R : PartialOrder X), isdirectedcomplete R.
 Definition dcpocarrier (D : dcpo) : hSet := pr1 D.
 Definition dcpoorder (D : dcpo) : PartialOrder (dcpocarrier D) := pr1 (pr2 D).
 Definition dcpowithleast := ∑ (D : dcpo), ∑ (l : dcpocarrier D), isleast (dcpoorder D) l.
