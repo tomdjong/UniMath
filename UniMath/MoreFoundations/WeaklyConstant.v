@@ -25,7 +25,8 @@ Proof.
 Qed.
 
 Definition weaklyconstanttoaset_factorsthroughsquash {X Y : UU} (f : X -> Y) :
-  isaset Y -> weaklyconstant f -> ∑ (f' : ∥ X ∥ -> Y), f ~ (f' ∘ (@hinhpr X)).
+  isaset Y -> weaklyconstant f -> ∥X∥ -> Y.
+  (* ∑ (f' : ∥ X ∥ -> Y), f ~ (f' ∘ (@hinhpr X)). *)
 Proof.
   intros Yisaset fweaklyconstant.
   (* f factors through its image, which is propostional by the lemma above,
@@ -33,6 +34,14 @@ Proof.
   set (h := factor_through_squash
             (weaklyconstanttoaset_haspropimage f Yisaset fweaklyconstant)
             (prtoimage f)).
-  split with ((pr1image f) ∘ h).
-  intro x. unfold pr1image, hinhpr, h, funcomp; simpl. use idpath.
+  exact ((pr1image f) ∘ h).
+Defined.
+
+Definition weaklyconstanttoaset_factorsthroughsquash_eq {X Y : UU} (f : X -> Y)
+                                             (Yisaset : isaset Y)
+                                             (fconst : weaklyconstant f) :
+  weaklyconstanttoaset_factorsthroughsquash f Yisaset fconst ∘ (@hinhpr X) ~ f.
+Proof.
+  intro x. unfold weaklyconstanttoaset_factorsthroughsquash, hinhpr; simpl.
+  unfold prtoimage, funcomp; simpl. use idpath.
 Defined.
