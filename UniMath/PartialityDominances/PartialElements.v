@@ -1,5 +1,6 @@
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
+Require Import UniMath.Algebra.DCPO.
 
 (* The type of partial elements of a type X is denoted by 𝓛 X, for "lift of X". *)
 Definition lift (X : UU) := ∑ (P : UU), isaprop P × (P -> X).
@@ -19,6 +20,14 @@ Definition value {X : UU} (l : 𝓛 X) : isdefined l -> X.
 Proof.
   induction l as [P pair]. induction pair as [i f].
   intro p. exact (f p).
+Defined.
+
+Definition value_weaklyconstant {X : UU} (l : 𝓛 X) : weaklyconstant (value l).
+Proof.
+  intros p q.
+  use maponpaths.
+  use proofirrelevance.
+  use (pr1 (pr2 l)).
 Defined.
 
 Lemma isdefined_isaprop {X : UU} (l : 𝓛 X) : isaprop(isdefined l).
@@ -46,33 +55,6 @@ Proof.
       { generalize e as e'. intro e'. induction e'. use idpath. }
       exact eq.
     + exact transp.
-Defined.
-
-(* It is useful to derive equality of partial elements by using the "order".
-   It only is a proper order if the underlying type is a set. *)
-Definition information_order {X : UU} (l m : 𝓛 X) : UU :=
-  ∑ (t : isdefined l -> isdefined m), ∏ (d : isdefined l), value l d = value m (t d).
-
-(* TO DO: Check level *)
-Notation "l ⊑ m" := (information_order l m) (at level 30) : PartialElements.
-
-Definition information_order_antisymmetric {X : UU} {l m : 𝓛 X} :
-  l ⊑ m -> m ⊑ l -> l = m.
-Proof.
-  intros ineq1 ineq2.
-  set (t := pr1 ineq1). set (s := pr1 ineq2).
-  set (e := propext (isdefined_isaprop l) (isdefined_isaprop m) (tpair _ t s)).
-  apply (isdefined_value_eq e).
-  assert (eq : transportf (λ Q : UU, Q -> X) e (value l) = (value l) ∘ (pr1weq (eqweqmap (!e)))).
-  { generalize e as e'. induction e'.  use idpath. }
-  etrans.
-  - exact eq.
-  - use funextfun. intro d.
-    assert (seq : pr1weq (eqweqmap (!e )) = s).
-    {
-      use funextfun. intro p. use proofirrelevance. use isdefined_isaprop.
-    }
-    rewrite seq. exact (!(pr2 ineq2) d).
 Defined.
 
 (*** Martin's proof ***)
@@ -174,6 +156,58 @@ Proof.
   exact (transportf (λ Q : UU, Q) (maponpaths pr1 p) tt).
 Defined.
 
+(* It is useful to derive equality of partial elements by using the "order".
+   It only is a proper order if the underlying type is a set. *)
+Definition information_order {X : UU} (l m : 𝓛 X) : UU :=
+  ∑ (t : isdefined l -> isdefined m), ∏ (d : isdefined l), value l d = value m (t d).
+
+(* TO DO: Check level *)
+Notation "l ⊑ m" := (information_order l m) (at level 30) : PartialElements.
+
+Definition information_order_antisymmetric {X : UU} :
+  ∏ (l m : 𝓛 X), l ⊑ m -> m ⊑ l -> l = m.
+Proof.
+  intros l m [t t'] [s s'].
+  set (e := propext (isdefined_isaprop l) (isdefined_isaprop m) (tpair _ t s)).
+  apply (isdefined_value_eq e).
+  assert (eq : transportf (λ Q : UU, Q -> X) e (value l) = (value l) ∘ (pr1weq (eqweqmap (!e)))).
+  { generalize e as e'. induction e'.  use idpath. }
+  etrans.
+  - exact eq.
+  - use funextfun. intro d.
+    assert (seq : pr1weq (eqweqmap (!e )) = s).
+    {
+      use funextfun. intro p. use proofirrelevance. use isdefined_isaprop.
+    }
+    rewrite seq. exact (!(s' d)).
+Defined.
+
+Definition information_order_reflexive {X : UU} : ∏ (l : 𝓛 X), l ⊑ l.
+Proof.
+  intro l. split with (idfun _).
+  intro d. use idpath.
+Defined.
+
+Definition information_order_transitive {X : UU} :
+  ∏ (l m n : 𝓛 X), l ⊑ m -> m ⊑ n -> l ⊑ n.
+Proof.
+  intros l m n [t p] [s q].
+  split with (s ∘ t). intro d.
+  etrans.
+  - exact (p d).
+  - exact (q (t d)).
+Defined.
+
+
+Definition information_order_least {X : UU} : 𝓛 X := (empty,, isapropempty,, fromempty).
+Notation "'⊥'" := information_order_least : PartialElements.
+
+Definition information_order_least_isleast {X : UU} : ∏ (l : 𝓛 X), ⊥ ⊑ l.
+Proof.
+  intro l. split with fromempty.
+  intro d. apply fromempty. exact d.
+Defined.
+
 Definition isdefined_to_fiber {X : UU} {l : 𝓛 X} : isdefined l -> hfiber η l.
 Proof.
   intro p. induction l as [P r]. induction r as [i f].
@@ -195,12 +229,10 @@ Proof.
   - use lift_embedding_isincl.
 Defined.
 
-(*** If X is a set, then 𝓛 X with the information "order"
+(*** If X is a set, then 𝓛 X with the information order
      is a dcpo with least element. ***)
-Section liftisdcpo.
-Context (X : hSet).
 
-Lemma liftofhset_isaset : isaset (𝓛 X).
+Lemma liftofhset_isaset {X : hSet} : isaset (𝓛 X).
 Proof.
   intros [P pair] [Q pair'].
   use invproofirrelevance.
@@ -228,35 +260,137 @@ Proof.
   - use homotinvweqweq.
 Qed.
 
-(*Lemma informationorder_ispropvalued {X : UU} : isaset X -> ∏ (l m : 𝓛 X), isaprop (l ⊑ m).
+Lemma information_order_ispropvalued {X : hSet} : ∏ (l m : 𝓛 X), isaprop (l ⊑ m).
 Proof.
-  intro Xisaset. intros l m.
+  intros l m.
   unfold information_order.
   use isofhleveltotal2.
   - use isapropimpl. use isdefined_isaprop.
-  - intro t. use impred. intro d. use Xisaset.
+  - intro t. use impred. intro d. use (pr2 X).
 Qed.
+Close Scope PartialElements.
 
-Lemma informationorder_ispartialorder (X : UU) : ispartialorder (@information_order X).
-Proof.
-  unfold ispartialorder.
+Definition liftofhSet (X : hSet) : hSet := hSetpair (lift X) liftofhset_isaset.
+Delimit Scope LiftIsDCPO with LiftIsDCPO.
+Local Open Scope LiftIsDCPO.
+Notation "'𝓛'" := liftofhSet : LiftIsDCPO.
 
-Definition information_order_reflexive {X : UU} {l : 𝓛 X} : l ⊑ l.
+Definition information_order_hrel {X : hSet} (l m : 𝓛 X) :=
+  hProppair (information_order l m) (information_order_ispropvalued l m).
+(* TO DO: Check level *)
+Notation "l ⊑ m" := (information_order_hrel l m) (at level 30) : LiftIsDCPO.
+
+(* The partial elements with the information order are a poset. *)
+Definition liftpartialorder (X : hSet) : PartialOrder (𝓛 X).
 Proof.
-  split with (idfun _).
-  intro d. use idpath.
+  unfold PartialOrder.
+  split with information_order_hrel.
+  unfold isPartialOrder. split.
+  - unfold ispreorder. split.
+    + use information_order_transitive.
+    + use information_order_reflexive.
+  - use information_order_antisymmetric.
 Defined.
 
-Definition information_order_transitive {X : UU} {l m n : 𝓛 X} :
-  l ⊑ m -> m ⊑ n -> l ⊑ n.
+(* The following map will be used to define the value of the lub of a
+   (directed) family. *)
+Definition lubvaluemap {X : hSet} {I : UU} (u : I -> 𝓛 X) :
+                       (∑ (i : I), isdefined (u i)) -> X.
 Proof.
-  intros ineq1 ineq2.
-  set (t := pr1 ineq1). set (s := pr1 ineq2).
-  split with (s ∘ t). intro d.
-  etrans.
-  - exact ((pr2 ineq1) d).
-  - exact ((pr2 ineq2) (t d)).
-Defined. *)
+  intro hyp. induction hyp as [i d].
+  exact (value (u i) d).
+Defined.
 
-End liftisdcpo.
-Close Scope PartialElements.
+(* The map is weakly constant if the family is directed. *)
+Definition lubvaluemap_weaklyconstant {X : hSet} {I : UU} (u : I -> 𝓛 X) :
+  isdirected (liftpartialorder X) u -> weaklyconstant (lubvaluemap u).
+Proof.
+  intros isdirec [i d] [i' d'].
+  (* Since ϕ (i, d) = ϕ(i', d') is a prop (as X is a set), we can use
+     untruncated isdirected, and then factor through squash. *)
+  assert (tofactor : (∑ (k : I), (u i) ⊑ (u k) × (u i') ⊑ (u k)) ->
+                     lubvaluemap u (i,, d) = lubvaluemap u (i',, d')).
+  {
+    intro direc. induction direc as [k pair].
+    induction pair as [ineqi ineqi'].
+    induction ineqi as [t f]. induction ineqi' as [s g].
+    etrans.
+    - apply (f d).
+    - etrans.
+      + apply (value_weaklyconstant (u k) (t d) (s d')).
+      + apply (!(g d')).
+   }
+   use (@factor_through_squash (∑ (k : I), (u i) ⊑ (u k) × (u i') ⊑ (u k))
+                               (lubvaluemap u (i,, d) = lubvaluemap u (i',, d'))).
+   - use (pr2 X).
+   - exact tofactor.
+   - use (isdirec i i').
+Defined.
+
+(* The construction of the lub; a proof that this element is actually
+   the lub follows later. *)
+Definition mkdirectedlubinlift {X : hSet} {I : UU}
+           (u : I -> 𝓛 X) : isdirected (liftpartialorder X) u -> 𝓛 X.
+Proof.
+  intro isdirec. split with (∥∑ (i : I), isdefined (u i)∥).
+  split.
+  - use isapropishinh.
+  - use weaklyconstanttoaset_factorsthroughsquash.
+    use lubvaluemap.
+    + exact (pr2 X).
+    + use lubvaluemap_weaklyconstant.
+      exact isdirec.
+Defined.
+
+Definition mkisdefinedlubmap {X : hSet} {I : UU} (u : I -> 𝓛 X)
+           (isdirec : isdirected _ u) :
+           ∏ (i : I), isdefined (u i) -> isdefined (mkdirectedlubinlift u isdirec).
+Proof.
+  intros i d. unfold mkdirectedlubinlift; simpl.
+  use hinhpr. exact (i,,d).
+Defined.
+
+Theorem liftpartialorder_isdirectedcomplete (X : hSet) :
+  isdirectedcomplete (liftpartialorder X).
+Proof.
+  unfold isdirectedcomplete. intros I u isdirec.
+  split with (mkdirectedlubinlift u isdirec).
+  split.
+  - intro i.
+    split with (mkisdefinedlubmap u isdirec i). intro d.
+    unfold mkdirectedlubinlift; simpl. unfold mkisdefinedlubmap; simpl.
+    etrans.
+    + assert (eq1 : value (u i) d = lubvaluemap u (i,, d)).
+      { unfold lubvaluemap; use idpath. }
+      apply eq1.
+    + use weaklyconstanttoaset_factorsthroughsquash_eq.
+      * exact (pr2 X).
+      * intros p p'. use value_weaklyconstant.
+  - intros v upperbound.
+    assert (t : isdefined (mkdirectedlubinlift u isdirec) -> isdefined v).
+    { use factor_through_squash.
+      + exact (pr1 (pr2 v)).
+      + intros  [i d].
+        induction (upperbound i) as [s g].
+        exact (s d). }
+    split with t.
+    intro d.
+    use factor_through_squash.
+    + exact (∑ (i : I), isdefined (u i)).
+    + use (pr2 X).
+    + intros [i p]. unfold mkdirectedlubinlift, value; simpl.
+      unfold mkdirectedlubinlift in d; simpl in d.
+      assert (pinsquash : d = hinhpr (i,,p)).
+      { use proofirrelevance. use isapropishinh. }
+      rewrite pinsquash. etrans.
+      * use weaklyconstanttoaset_factorsthroughsquash_eq.
+        ** exact (pr2 X).
+        ** intros q q'. use value_weaklyconstant.
+      * simpl. induction (upperbound i) as [s g].
+        etrans.
+        ** apply (g p).
+        ** use value_weaklyconstant.
+    + exact d.
+Qed.
+
+Close Scope LiftIsDCPO.
