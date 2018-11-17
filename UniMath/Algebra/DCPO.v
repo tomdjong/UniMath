@@ -55,7 +55,7 @@ Proof.
 Qed.
 End DirectedComplete.
 
-Definition dcpo := ∑ (X : hSet), ∑ (R : PartialOrder X), isdirectedcomplete R.
-Definition dcpocarrier (D : dcpo) : hSet := pr1 D.
-Definition dcpoorder (D : dcpo) : PartialOrder (dcpocarrier D) := pr1 (pr2 D).
+Definition dcpo := ∑ (X : Poset), isdirectedcomplete (pr2 X).
+Definition dcpocarrier (D : dcpo) : hSet := carrierofposet (pr1 D).
+Definition dcpoorder (D : dcpo) : PartialOrder (dcpocarrier D) := pr2 (pr1 D).
 Definition dcpowithleast := ∑ (D : dcpo), ∑ (l : dcpocarrier D), isleast (dcpoorder D) l.
