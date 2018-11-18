@@ -63,6 +63,8 @@ Definition dcpocarrier (D : dcpo) : hSet := carrierofposet (dcpoposet D).
 Definition dcpoorder (D : dcpo) : PartialOrder (dcpocarrier D) := pr2 (dcpoposet D).
 Definition dcpowithleast := ∑ (D : dcpo), ∑ (l : dcpocarrier D), isleast l.
 
+Definition dcpopair (X : Poset) (i : isdirectedcomplete X) : dcpo := (X,,i).
+
 Definition preservesdirected {P Q : Poset} (f : P -> Q) : UU :=
   ∏ (I : UU), ∏ (u : I -> P), isdirected u -> isdirected (f ∘ u).
 Lemma preservesdirected_isaprop {P Q : Poset} (f : P -> Q) : isaprop (preservesdirected f).
@@ -123,3 +125,41 @@ Proof.
   { use (pr2 (pr2 f)). exact isdirec. exact lubfam. }
   set (ineq' := pr1 lubfam'). use (ineq' (inl tt)).
 Qed.
+
+Definition posetmorphismorder (P Q : Poset) : hrel (posetmorphism P Q).
+Proof.
+  intros f g. use hProppair.
+  - exact (∏ (p : P), (posetRelation Q) (f p) (g p)). (* Pointwise *)
+  - use impred; intro p. exact (pr2 (posetRelation Q (f p) (g p))).
+Defined.
+
+Definition posetmorphismorder_ispartialorder (P Q : Poset) :
+  isPartialOrder (posetmorphismorder P Q).
+Proof.
+  split.
+  - split.
+    + intros f g h ineq1 ineq2 p.
+      exact (istrans_posetRelation Q _ (g p) _ (ineq1 p) (ineq2 p)).
+    + intros f p. use isrefl_posetRelation.
+  - intros f g ineq1 ineq2. apply total2_paths_equiv.
+    assert (funeq : pr1 f = pr1 g).
+    { use funextfun. intro p. use isantisymm_posetRelation.
+      ** use ineq1.
+      ** use ineq2. }
+    split with funeq.
+    use proofirrelevance. use isaprop_isaposetmorphism.
+Defined.
+
+Definition posetofposetmorphisms (P Q : Poset) : Poset.
+Proof.
+  use Posetpair.
+  - use hSetpair.
+    + exact (posetmorphism P Q).
+    + unfold posetmorphism. change isaset with (isofhlevel 2).
+      use isofhleveltotal2.
+      use impred; intro p. use (pr2 (carrierofposet Q)).
+      intro f. use isasetaprop. use isaprop_isaposetmorphism.
+  - use PartialOrderpair.
+    + use posetmorphismorder.
+    + use posetmorphismorder_ispartialorder.
+Defined.
