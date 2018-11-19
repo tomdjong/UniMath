@@ -122,29 +122,20 @@ Proof.
   set (ineq' := pr1 lubfam'). use (ineq' (inl tt)).
 Qed.
 
-(* *** Redundant(?) ***
-
-Definition dcpomorphism_to_posetmorphism {D D' : dcpo} :
-  dcpomorphism D D' -> posetmorphism D D'.
-Proof.
-  intro f. split with f. use dcpomorphism_preservesorder.
-Defined.
-Coercion dcpomorphism_to_posetmorphism : dcpomorphism >-> posetmorphism.
-
-Definition posetmorphismorder (P Q : Poset) : hrel (posetmorphism P Q).
+Definition pointwiseorder (D D' : dcpo) : hrel (dcpomorphism D D').
 Proof.
   intros f g. use hProppair.
-  - exact (∏ (p : P), (posetRelation Q) (f p) (g p)). (* Pointwise *)
-  - use impred; intro p. exact (pr2 (posetRelation Q (f p) (g p))).
+  - exact (∏ (d : D), (dcpoorder D') (f d) (g d)).
+  - use impred; intro d. exact (pr2 (dcpoorder D' (f d) (g d))).
 Defined.
 
-Definition posetmorphismorder_ispartialorder (P Q : Poset) :
-  isPartialOrder (posetmorphismorder P Q).
+Lemma pointwiseorder_ispartialorder (D D' : dcpo) :
+  isPartialOrder (pointwiseorder D D').
 Proof.
   split.
   - split.
     + intros f g h ineq1 ineq2 p.
-      exact (istrans_posetRelation Q _ (g p) _ (ineq1 p) (ineq2 p)).
+      exact (istrans_posetRelation _ _ (g p) _ (ineq1 p) (ineq2 p)).
     + intros f p. use isrefl_posetRelation.
   - intros f g ineq1 ineq2. apply total2_paths_equiv.
     assert (funeq : pr1 f = pr1 g).
@@ -152,23 +143,22 @@ Proof.
       ** use ineq1.
       ** use ineq2. }
     split with funeq.
-    use proofirrelevance. use isaprop_isaposetmorphism.
-Defined.
+    use proofirrelevance. use isdcpomorphism_isaprop.
+Qed.
 
-Definition posetofposetmorphisms (P Q : Poset) : Poset.
+Definition posetofdcpomorphisms (D D' : dcpo) : Poset.
 Proof.
   use Posetpair.
   - use hSetpair.
-    + exact (posetmorphism P Q).
-    + unfold posetmorphism. change isaset with (isofhlevel 2).
+    + exact (dcpomorphism D D').
+    + change isaset with (isofhlevel 2).
       use isofhleveltotal2.
-      use impred; intro p. use (pr2 (carrierofposet Q)).
-      intro f. use isasetaprop. use isaprop_isaposetmorphism.
+      use impred; intro p. use (pr2 (dcpocarrier D')).
+      intro f. use isasetaprop. use isdcpomorphism_isaprop.
   - use PartialOrderpair.
-    + use posetmorphismorder.
-    + use posetmorphismorder_ispartialorder.
+    + use pointwiseorder.
+    + use pointwiseorder_ispartialorder.
 Defined.
-*)
 
 Lemma lubpreservesorder {X : Poset} {I : UU} (u v : I -> X) :
   (∏ (i : I), (posetRelation X) (u i) (v i)) ->
@@ -183,15 +173,46 @@ Proof.
   - use (pr1 islubv).
 Qed.
 
-Definition posetdcpomorphisms {D D' : dcpo} : Poset.
+Lemma posetofdcpomorphisms_isdirectedcomplete {D D' : dcpo} :
+  isdirectedcomplete (posetofdcpomorphisms D D').
 Proof.
-  use Posetpair.
-  - exact (dcpomorphism D D').
-  use Posetpair.
+  intros I F isdirec.
+  (* For any d : D, the family (f (d))_(f : F) is directed. *)
+  set (Fatd := λ d : D, λ i : I, pr1 (F i) d).
+  assert (isdirec' : ∏ (d : D), isdirected (Fatd d)).
+  { intros d i j. use factor_through_squash.
+    - exact (directeduntruncated F i j).
+    - use isapropishinh.
+    - intro direc. use hinhpr.
+      induction direc as [k ineqs].
+      split with k; simpl.
+      induction ineqs as [ineq1 ineq2]. split.
+      + exact (ineq1 d).
+      + exact (ineq2 d).
+    - exact (isdirec i j). }
+  (* The lub of (f : F) will be g. *)
+  set (isdireccompl := pr2 D'); simpl in isdireccompl.
+  set (gdata := λ d : D, isdireccompl I _ (isdirec' d)).
+  set (g := λ d : D, pr1 (gdata d)).
+  assert (gpreservesorder : isaposetmorphism g).
+  { intros x y ineq. use lubpreservesorder.
+    - exact I.
+    - exact (λ i : I, pr1 (F i) x).
+    - exact (λ i : I, pr1 (F i) y).
+    - intro i. simpl. use dcpomorphism_preservesorder.
+      exact ineq.
+    - exact (pr2 (gdata x)).
+    - exact (pr2 (gdata y)). }
+  assert (gdirlub : isdcpomorphism g).
+  { intros J u isdirecu v islubv. split.
+    - intro j. unfold funcomp; simpl. use gpreservesorder.
+      use (pr1 islubv j).
+    - intros v' ineqs.
+      assert (vupper : isupperbound (Fatd v) v').
+      { admit. }
+      use (pr2 (gdata v)).
 
-
-
-(* DCPO of dcpo morphisms *)
+  (* DCPO of dcpo morphisms *)
 Definition dcpoofdcpomorphisms {D D' : dcpo} : dcpo.
 Proof.
   use dcpopair.
