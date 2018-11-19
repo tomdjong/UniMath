@@ -65,6 +65,8 @@ Definition dcpocarrier (D : dcpo) : hSet := carrierofposet (dcpoposet D).
 Definition dcpoorder (D : dcpo) : PartialOrder (dcpocarrier D) :=
   pr2 (dcpoposet D).
 Definition dcpowithleast := ∑ (D : dcpo), ∑ (l : dcpocarrier D), isleast l.
+Definition dcpowithleastdcpo : dcpowithleast -> dcpo := pr1.
+Coercion dcpowithleastdcpo : dcpowithleast >-> dcpo.
 
 Definition dcpopair (X : Poset) (i : isdirectedcomplete X) : dcpo := (X,,i).
 
@@ -242,3 +244,22 @@ Proof.
   - exact (posetofdcpomorphisms D D').
   - exact (posetofdcpomorphisms_isdirectedcomplete D D').
 Defined.
+
+(*** Least fixed points (μ) ***)
+(* The chain ⊥, f(⊥), f²(⊥), ... *)
+Definition leastfixedpointchain {D : dcpowithleast} (f : dcpomorphism D D) :
+  nat -> D.
+Proof.
+  intro n. induction n as [ | m IH].
+  induction D as [D' bottom].
+  - exact (pr1 bottom).
+  - exact (f (IH)).
+Defined.
+
+Lemma leastfixedpointchain_isomegachain {D : dcpowithleast} (f : dcpomorphism D D) :
+  ∏ (n : nat), ((leastfixedpointchain f n) ≤ leastfixedpointchain f (S n))%poset.
+Proof.
+  induction n as [ | m IH].
+  - simpl. use (pr2 (pr2 D)). (* ⊥ is least *)
+  - simpl. use dcpomorphism_preservesorder. use IH.
+Qed.
