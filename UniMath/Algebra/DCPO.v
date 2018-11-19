@@ -173,7 +173,8 @@ Proof.
   - use (pr1 islubv).
 Qed.
 
-Lemma posetofdcpomorphisms_isdirectedcomplete {D D' : dcpo} :
+(* This could use a cleanup. *)
+Lemma posetofdcpomorphisms_isdirectedcomplete (D D' : dcpo) :
   isdirectedcomplete (posetofdcpomorphisms D D').
 Proof.
   intros I F isdirec.
@@ -190,7 +191,7 @@ Proof.
       + exact (ineq1 d).
       + exact (ineq2 d).
     - exact (isdirec i j). }
-  (* The lub of (f : F) will be g. *)
+  (* The lub of (f : F) will be g with g(d) = lub (f(d))_(f : F) *)
   set (isdireccompl := pr2 D'); simpl in isdireccompl.
   set (gdata := λ d : D, isdireccompl I _ (isdirec' d)).
   set (g := λ d : D, pr1 (gdata d)).
@@ -208,35 +209,36 @@ Proof.
     - intro j. unfold funcomp; simpl. use gpreservesorder.
       use (pr1 islubv j).
     - intros v' ineqs.
-      assert (vupper : isupperbound (Fatd v) v').
-      { admit. }
-      use (pr2 (gdata v)).
+      assert (v'ineq : ∏ (i : I), ∏ (j : J),
+                       (pr1 (F i) (u j) ≤ v')%poset).
+      { intros i j. use istrans_posetRelation.
+        - exact (g (u j)).
+        - set (gislub := pr2 (gdata (u j))); simpl in gislub.
+          exact (pr1 gislub i).
+        - exact (ineqs j). }
+      assert (v'ineq' : ∏ (i : I), (pr1 (F i) v ≤ v')%poset).
+      { intro i. set (preslub := pr2 (F i));
+        simpl in preslub; unfold isdcpomorphism in preslub.
+        set (preslub' := preslub J u isdirecu).
+        set (preslub'' := preslub' v islubv).
+        unfold funcomp in preslub''; simpl in preslub''.
+        set (helper := pr2 preslub'' v'). apply helper.
+        use v'ineq. }
+      set (gislub := pr2 (gdata v)); unfold Fatd in gislub; simpl in gislub.
+      use (pr2 gislub). intros i; simpl. exact (v'ineq' i). }
+  split with (dcpomorphismpair D D' g gdirlub).
+  split.
+  - intro i. simpl. intro d.
+    set (gdata' := pr1 (pr2 (gdata d)) i). use gdata'.
+  - intros h ineqs; simpl. intro d.
+    use (pr2 (pr2 (gdata d))). unfold Fatd.
+    intro i. exact (ineqs i d).
+Qed.
 
   (* DCPO of dcpo morphisms *)
 Definition dcpoofdcpomorphisms {D D' : dcpo} : dcpo.
 Proof.
   use dcpopair.
-  - exact (posetofdcpomo D D').
-  - intros I F isdirec.
-    (* For any d : D, the family (f (d))_(f : F) is directed. *)
-    assert (isdirec' : ∏ (d : D), isdirected (λ i : I, (pr1 (F i)) d)).
-    { intros d i j. use factor_through_squash.
-      - exact (directeduntruncated F i j).
-      - use isapropishinh.
-      - intro direc. use hinhpr.
-        induction direc as [k ineqs].
-        split with k; simpl.
-        induction ineqs as [ineq1 ineq2]. split.
-        + exact (ineq1 d).
-        + exact (ineq2 d).
-      - exact (isdirec i j). }
-    (* The lub of (f : F) will be g *)
-    set (isdireccompl := pr2 D'); simpl in isdireccompl.
-    set (gdata := λ d : D, isdireccompl I _ (isdirec' d)).
-    set (g := λ d : D, pr1 (gdata d)).
-    assert (gpreservesorder : isaposetmorphism g).
-    { intros x y ineq. use lubpreservesorder.
-      - exact I.
-      - exact (λ i : I, pr1 (F i) x).
-      - exact (λ i : I, pr1 (F i) y).
-      - intro i. simpl.
+  - exact (posetofdcpomorphisms D D').
+  - exact (posetofdcpomorphisms_isdirectedcomplete D D').
+Defined.
