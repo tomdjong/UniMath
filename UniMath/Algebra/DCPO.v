@@ -31,9 +31,9 @@ Proof.
     use (pr2 (R u x)). (* R is prop-valued. *)
 Qed.
 
-Lemma lubsareunique : ∏ (u v : X), islub u -> islub v -> u = v.
+Lemma lubsareunique {u v : X} : islub u -> islub v -> u = v.
 Proof.
-  intros u v islubu islubv.
+  intros islubu islubv.
   use isantisymm_posetRelation.
   - apply islubu. use (pr1 islubv).
   - apply islubv. use (pr1 islubu).
@@ -57,7 +57,7 @@ Proof.
   use impred; intro I. use impred; intro f.
   use isapropimpl. use invproofirrelevance.
   intros [u p] [v q].
-  apply total2_paths_equiv; split with (lubsareunique _ u v p q).
+  apply total2_paths_equiv; split with (lubsareunique _ p q).
   use proofirrelevance. use islub_isaprop.
 Qed.
 
@@ -411,11 +411,25 @@ Proof.
     + use leastfixedpoint_islub.
   - intros d ineqs.
     use (pr2 (leastfixedpoint_islub g)). intro n.
-    assert (gislub : islub (λ i : I, leastfixedpointchain (F i) n)
-                  (leastfixedpointchain g n)).
-    { split.
-      + intro i. use leastfixedpointchain_preservesorder.
-        use (pr1 islubg).
-      + intros d' ineqs'. induction n as [ | m IH].
-        * admit.
-        * simpl.
+    set (islub' := pointwiselub_islub F isdirec).
+    set (eq := lubsareunique _ islubg islub').
+    rewrite eq.
+    set (h := dcpomorphismpair D D (pointwiselub F isdirec) (pointwiselub_isdcpomorphism F isdirec)).
+    set (Fchain := λ (i : I), leastfixedpointchain (F i) n).
+    assert (islubh : islub Fchain (leastfixedpointchain h n)).
+    { unfold Fchain. split.
+      - intro i. use leastfixedpointchain_preservesorder.
+        use (pr1 (pointwiselub_islub F isdirec)).
+      - intros y ineqs'. induction n as [ | m IH].
+        + use dcpowithleast_least.
+        + simpl. use (pr2 (pointwiselub_islubpointwise F isdirec _)).
+          intro i. unfold pointwisefamily; simpl. admit. }
+      (* use (pointwiselub_islubpointwise F isdirec (leastfixedpointchain (F i) n)). } *)
+
+    use (pr2 islubh).
+    intro i. unfold Fchain.
+    use istrans_posetRelation.
+    + exact (μ (F i)).
+    + use (pr1 (leastfixedpoint_islub (F i))).
+    + exact (ineqs i).
+Qed.
