@@ -396,6 +396,7 @@ Proof.
     + use ineq.
 Qed.
 
+(* Look at: http://www.cs.bham.ac.uk/~axj/pub/papers/handy1.pdf ? *)
 Lemma leastfixedpoint_isdcpomorphism (D : dcpowithleast) :
   isdcpomorphism (@leastfixedpoint D).
 Proof.
@@ -414,10 +415,28 @@ Proof.
     set (islub' := pointwiselub_islub F isdirec).
     set (eq := lubsareunique _ islubg islub').
     rewrite eq.
-    set (h := dcpomorphismpair D D (pointwiselub F isdirec) (pointwiselub_isdcpomorphism F isdirec)).
-    set (Fchain := λ (i : I), leastfixedpointchain (F i) n).
-    assert (islubh : islub Fchain (leastfixedpointchain h n)).
-    { unfold Fchain. split.
+    set (h := dcpomorphismpair D D (pointwiselub F isdirec)
+                               (pointwiselub_isdcpomorphism F isdirec)).
+    set (Fchain := λ (m : nat), λ (i : I), leastfixedpointchain (F i) m).
+    assert (islubh : ∏ (m : nat), islub (Fchain m) (leastfixedpointchain h m)).
+    {
+      intro m. induction m as [ | m' IH].
+      - simpl; unfold Fchain; simpl. split.
+        + intro i. use isrefl_posetRelation.
+        + intros d' ineqs'. use dcpowithleast_least.
+      - simpl.
+        set (isdcpomor := (pointwiselub_isdcpomorphism F isdirec)).
+        unfold isdcpomorphism in isdcpomor.
+        assert (isdirecm : isdirected (Fchain m')). { admit. }
+                                                    set (helper := isdcpomor I (Fchain m') isdirecm (leastfixedpointchain h m')).
+        set (helper' := helper IH).
+        assert (finaleq : Fchain (S m') = pointwiselub F isdirec ∘ Fchain m').
+        { use funextfun. intro i. simpl. unfold funcomp; simpl.
+          unfold Fchain; simpl.
+
+
+
+      unfold Fchain. split.
       - intro i. use leastfixedpointchain_preservesorder.
         use (pr1 (pointwiselub_islub F isdirec)).
       - intros y ineqs'. induction n as [ | m IH].
@@ -425,11 +444,3 @@ Proof.
         + simpl. use (pr2 (pointwiselub_islubpointwise F isdirec _)).
           intro i. unfold pointwisefamily; simpl. admit. }
       (* use (pointwiselub_islubpointwise F isdirec (leastfixedpointchain (F i) n)). } *)
-
-    use (pr2 islubh).
-    intro i. unfold Fchain.
-    use istrans_posetRelation.
-    + exact (μ (F i)).
-    + use (pr1 (leastfixedpoint_islub (F i))).
-    + exact (ineqs i).
-Qed.
