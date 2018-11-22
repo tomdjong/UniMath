@@ -67,11 +67,16 @@ Coercion dcpoposet : dcpo >-> Poset.
 Definition dcpocarrier (D : dcpo) : hSet := carrierofposet (dcpoposet D).
 Definition dcpoorder (D : dcpo) : PartialOrder (dcpocarrier D) :=
   pr2 (dcpoposet D).
+Definition dcpoorder_propvalued (D : dcpo) : ∏ (x y : D), isaprop (dcpoorder D x y).
+Proof.
+  intros x y. use (pr2 (pr1 (dcpoorder D) x y)).
+Defined.
 Definition dcpoisdirectedcomplete (D : dcpo) : isdirectedcomplete D := pr2 D.
 Definition dcpowithleast := ∑ (D : dcpo), ∑ (l : dcpocarrier D), isleast l.
 Definition dcpowithleastdcpo : dcpowithleast -> dcpo := pr1.
 Coercion dcpowithleastdcpo : dcpowithleast >-> dcpo.
-Definition dcpowithleast_least (D : dcpowithleast) := (pr2 (pr2 D)).
+Definition dcpowithleast_isleast (D : dcpowithleast) := (pr2 (pr2 D)).
+Definition dcpowithleast_least (D : dcpowithleast) := pr1 (pr2 D).
 
 Definition dcpopair (X : Poset) (i : isdirectedcomplete X) : dcpo := (X,,i).
 
@@ -288,7 +293,96 @@ Defined.
 Delimit Scope DCPO with DCPO.
 Local Open Scope DCPO.
 Notation "A --> B" := (dcpoofdcpomorphisms A B) : DCPO.
+Definition dcpomorphismcarrier' {A B : dcpo} :
+  dcpoofdcpomorphisms A B -> (A -> B) := pr1.
+(* Why won't this work? *)
+(* Coercion dcpomorphismcarrier' : dcpoofdcpomorphisms >-> Funclass. *)
 
+(*** Least fixed points (μ) ***)
+(* We first define for every n : nat, an iteration function. *)
+Definition iter {D : dcpowithleast} (n : nat) (f : D --> D) : D.
+Proof.
+  induction n as [ | m IH].
+  - exact (dcpowithleast_least D).
+  - exact (pr1 f (IH)).
+Defined.
+
+Lemma iter_preservesorder {D : dcpowithleast} (f g : D --> D) :
+  (f ≤ g)%poset -> ∏ (n : nat), (iter n f ≤ iter n g)%poset.
+Proof.
+  intros ineq n; induction n as [ | m IH].
+  - use isrefl_posetRelation.
+  - simpl. use istrans_posetRelation.
+    + exact (pr1 f (iter m g)).
+    + use dcpomorphism_preservesorder; exact IH.
+    + use ineq.
+Qed.
+
+(* Next, we show that each iter n is continuous, but first a small lemma.
+   It could be generalised using "monotone nets".
+   We're saying that: ⊔ f^(n+1)(⊥) = ⊔ g(⊔ f^n(⊥)), where f,g are in the
+   family F.
+   One inequality is easy; the other crucially relies on the fact that
+   F is directed. *)
+Lemma doublelubdirected {D : dcpowithleast} {I : UU} (F : I -> D -->D)
+      (isdirec : isdirected F) (n : nat) (u u' v : D) :
+  islub (λ j : I, (pr1) (F j) u') u -> islub (λ i : I, iter n (F i)) u' ->
+  islub (λ i : I, iter (S n) (F i)) u.
+Proof.
+  intros islubu islubu'.
+  split.
+  - intro i.
+    simpl. eapply istrans_posetRelation.
+    + apply dcpomorphism_preservesorder.
+      apply (pr1 islubu' i).
+    + apply (pr1 islubu i).
+  - intros d ineqs.
+    use (pr2 islubu). intro i; simpl.
+    (* We use that (F i) preserves (directed) lubs. *)
+    set (isdcpomor := (pr2 (F i))); simpl in isdcpomor.
+    unfold isdcpomorphism in isdcpomor.
+    set (helper := isdcpomor I (λ i : I, iter n (F i))).
+    assert (isdirec' : isdirected (λ i : I, iter n (F i))).
+    { intros j j'. use factor_through_squash.
+      - exact (directeduntruncated F j j').
+      - use isapropishinh.
+      - intro direc. use hinhpr.
+        induction direc as [k ineqs'].
+        split with k.
+        split.
+        + use iter_preservesorder. exact (pr1 ineqs').
+        + use iter_preservesorder. exact (pr2 ineqs').
+      - exact (isdirec j j'). }
+    set (helper' := helper isdirec' u' islubu').
+    unfold funcomp in helper'; simpl in helper'.
+    use (pr2 helper'). intro j; simpl.
+    use factor_through_squash.
+    + exact (directeduntruncated F i j).
+    + use dcpoorder_propvalued.
+    + intro direc. induction direc as [k ineqs'].
+      eapply istrans_posetRelation.
+      apply (pr1 ineqs' (iter n (F j))).
+      eapply istrans_posetRelation.
+      * apply dcpomorphism_preservesorder.
+        apply iter_preservesorder. apply (pr2 ineqs').
+      * use (ineqs k).
+    + exact (isdirec i j).
+Qed.
+
+Lemma iter_isdcpomorphism (D : dcpowithleast) : ∏ (n : nat), isdcpomorphism (@iter D n).
+Proof.
+  intros n I F isdirec g islubg.
+  induction n as [| m IH].
+  - split.
+    + intro i. unfold funcomp; simpl. use dcpowithleast_isleast.
+    + intros y ineqs. use dcpowithleast_isleast.
+  - simpl. eapply doublelubdirected.
+    * exact isdirec.
+    * exact (iter m g).
+    *
+(*****************************************************************************************
+                                              OLD
+*******************************************************************************************)
 (*** Least fixed points (μ) ***)
 (* The chain ⊥, f(⊥), f²(⊥), ... *)
 Definition leastfixedpointchain {D : dcpowithleast} (f : D --> D ) :
