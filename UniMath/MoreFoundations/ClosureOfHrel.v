@@ -98,3 +98,6 @@ Proof.
     + use trans.
   - exact hyp.
 Qed.
+
+
+End reflexive_transitive_closure_hrel.
