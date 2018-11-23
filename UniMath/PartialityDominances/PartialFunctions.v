@@ -1,6 +1,7 @@
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.All.
 Require Import UniMath.PartialityDominances.PartialElements.
+Require Import UniMath.Algebra.DCPO.
 
 (* The type of partial function from X to Y is the type of functions from X
    into the partial elements of Y. *)
@@ -88,3 +89,50 @@ Proof.
   rewrite funcomp_assoc.
   now rewrite extension_comp.
 Qed.
+
+(* Equivalently, 𝓛(f) = (f ∘ η)# *)
+Definition liftfunctor {X Y : UU} (f : X -> Y) : 𝓛 X -> 𝓛 Y := (η ∘ f) #.
+
+Definition liftfunctor' {X Y : UU} (f : X -> Y) : 𝓛 X -> 𝓛 Y.
+Proof.
+  intros [P r]. induction r as [i φ].
+  exact (P,,i,,f ∘ φ).
+Defined.
+
+Definition liftfunctor_eq {X Y : UU} : ∏ (f : X -> Y), liftfunctor f = liftfunctor' f.
+Proof.
+  intro f . use funextfun. intro l.
+  induction l as [P r]. induction r as [i φ].
+  unfold liftfunctor'. unfold liftfunctor. unfold Kleisli_extension. simpl.
+  use information_order_antisymmetric.
+  - split with (λ x : (∑ _ : P, unit), pr1 x).
+    intro d. use idpath.
+  - split with (λ p : P, (p,,tt)).
+    intro d. use idpath.
+Defined.
+
+Local Open Scope DCPO.
+Definition Kleisli_extension_dcpo {X Y : hSet} (f : X -> liftdcpo Y) : liftdcpo X --> liftdcpo Y.
+Proof.
+  use dcpomorphismpair.
+  - exact (Kleisli_extension f).
+  - intros I u isdirec v islubv.
+    induction islubv as [isuppv isleastv].
+    split.
+    + intro i. simpl.
+      unfold funcomp; simpl.
+      induction (isuppv i) as [isdefmap valuesmap].
+      (* This needs to be evaluatable... *)
+      assert (isdefmap' : isdefined (f # (u i)) -> isdefined (f # v)).
+      { unfold Kleisli_extension; simpl.
+        intros [pi di]. split with (isdefmap pi).
+        assert (eq : pr22 v (isdefmap pi) = pr22 (u i) pi).
+        { use (!(valuesmap pi)). }
+        set (eq' := maponpaths f eq).
+        set (eq'' := maponpaths isdefined eq').
+        apply (invmap (eqweqmap eq'')).
+        exact di. }
+      split with isdefmap'.
+      intro d. induction d as [pi di].
+      unfold value. simpl.
+      assert (pr22 (u i) pi = pr22 v (pr1 (isdefmap'.
