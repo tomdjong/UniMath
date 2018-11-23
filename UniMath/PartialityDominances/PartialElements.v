@@ -271,26 +271,28 @@ Qed.
 Close Scope PartialElements.
 
 Definition liftofhSet (X : hSet) : hSet := hSetpair (lift X) liftofhset_isaset.
-Delimit Scope LiftIsDCPO with LiftIsDCPO.
-Local Open Scope LiftIsDCPO.
-Notation "'𝓛'" := liftofhSet : LiftIsDCPO.
+Delimit Scope LiftIsPoset with LiftIsPoset.
+Local Open Scope LiftIsPoset.
 
-Definition information_order_hrel {X : hSet} (l m : 𝓛 X) :=
+Definition information_order_hrel {X : hSet} (l m : liftofhSet X) :=
   hProppair (information_order l m) (information_order_ispropvalued l m).
 (* TO DO: Check level *)
-Notation "l ⊑ m" := (information_order_hrel l m) (at level 30) : LiftIsDCPO.
+Notation "l ⊑ m" := (information_order_hrel l m) (at level 30) : LiftIsPoset.
 
 (* The partial elements with the information order are a poset. *)
-Definition liftpartialorder (X : hSet) : PartialOrder (𝓛 X).
+Definition liftposet (X : hSet) : Poset.
 Proof.
-  unfold PartialOrder.
-  split with information_order_hrel.
-  unfold isPartialOrder. split.
-  - unfold ispreorder. split.
-    + use information_order_transitive.
-    + use information_order_reflexive.
-  - use information_order_antisymmetric.
+  use Posetpair.
+  - exact (liftofhSet X).
+  - split with information_order_hrel.
+    unfold isPartialOrder. split.
+    + unfold ispreorder. split.
+      * use information_order_transitive.
+      * use information_order_reflexive.
+    + use information_order_antisymmetric.
 Defined.
+
+Notation "'𝓛'" := liftposet : LiftIsPoset.
 
 (* The following map will be used to define the value of the lub of a
    (directed) family. *)
@@ -303,7 +305,7 @@ Defined.
 
 (* The map is weakly constant if the family is directed. *)
 Definition lubvaluemap_weaklyconstant {X : hSet} {I : UU} (u : I -> 𝓛 X) :
-  isdirected (liftpartialorder X) u -> weaklyconstant (lubvaluemap u).
+  isdirected u -> weaklyconstant (lubvaluemap u).
 Proof.
   intros isdirec [i d] [i' d'].
   (* Since ϕ (i, d) = ϕ(i', d') is a prop (as X is a set), we can use
@@ -330,7 +332,7 @@ Defined.
 (* The construction of the lub; a proof that this element is actually
    the lub follows later. *)
 Definition mkdirectedlubinlift {X : hSet} {I : UU}
-           (u : I -> 𝓛 X) : isdirected (liftpartialorder X) u -> 𝓛 X.
+           (u : I -> 𝓛 X) : isdirected u -> 𝓛 X.
 Proof.
   intro isdirec. split with (∥∑ (i : I), isdefined (u i)∥).
   split.
@@ -343,15 +345,15 @@ Proof.
 Defined.
 
 Definition mkisdefinedlubmap {X : hSet} {I : UU} (u : I -> 𝓛 X)
-           (isdirec : isdirected _ u) :
+           (isdirec : isdirected u) :
            ∏ (i : I), isdefined (u i) -> isdefined (mkdirectedlubinlift u isdirec).
 Proof.
   intros i d. unfold mkdirectedlubinlift; simpl.
   use hinhpr. exact (i,,d).
 Defined.
 
-Theorem liftpartialorder_isdirectedcomplete (X : hSet) :
-  isdirectedcomplete (liftpartialorder X).
+Theorem lift_isdirectedcomplete (X : hSet) :
+  isdirectedcomplete (𝓛 X).
 Proof.
   unfold isdirectedcomplete. intros I u isdirec.
   split with (mkdirectedlubinlift u isdirec).
@@ -392,5 +394,18 @@ Proof.
         ** use value_weaklyconstant.
     + exact d.
 Qed.
+Close Scope LiftIsPoset.
+
+Definition liftdcpo (X : hSet) : dcpo.
+Proof.
+  use dcpopair.
+  - exact (liftposet X).
+  - use lift_isdirectedcomplete.
+Defined.
+
+Delimit Scope LiftIsDCPO with LiftIsDCPO.
+Local Open Scope LiftIsDCPO.
+
+Notation "'𝓛'" := liftdcpo : LiftIsDCPO.
 
 Close Scope LiftIsDCPO.

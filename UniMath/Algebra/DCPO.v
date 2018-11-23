@@ -474,3 +474,5 @@ Proof.
       eapply dcpomorphism_preservesorder. exact IH.
     + exact ineq.
 Qed.
+
+Close Scope DCPO.
