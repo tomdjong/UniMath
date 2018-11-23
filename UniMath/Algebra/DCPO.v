@@ -325,11 +325,11 @@ Qed.
    One inequality is easy; the other crucially relies on the fact that
    F is directed. *)
 Lemma doublelubdirected {D : dcpowithleast} {I : UU} (F : I -> D -->D)
-      (isdirec : isdirected F) (n : nat) (u u' v : D) :
-  islub (λ j : I, (pr1) (F j) u') u -> islub (λ i : I, iter n (F i)) u' ->
+      (isdirec : isdirected F) (n : nat) (u u' : D) :
+  islub (λ i : I, iter n (F i)) u' -> islub (λ j : I, (pr1) (F j) u') u ->
   islub (λ i : I, iter (S n) (F i)) u.
 Proof.
-  intros islubu islubu'.
+  intros islubu' islubu.
   split.
   - intro i.
     simpl. eapply istrans_posetRelation.
@@ -377,34 +377,34 @@ Proof.
     + intro i. unfold funcomp; simpl. use dcpowithleast_isleast.
     + intros y ineqs. use dcpowithleast_isleast.
   - simpl. eapply doublelubdirected.
-    * exact isdirec.
-    * exact (iter m g).
-    *
-(*****************************************************************************************
-                                              OLD
-*******************************************************************************************)
-(*** Least fixed points (μ) ***)
-(* The chain ⊥, f(⊥), f²(⊥), ... *)
-Definition leastfixedpointchain {D : dcpowithleast} (f : D --> D ) :
-  nat -> D.
-Proof.
-  intro n. induction n as [ | m IH].
-  induction D as [D' bottom].
-  - exact (pr1 bottom).
-  - exact ((pr1 f) (IH)).
-Defined.
-
-Lemma leastfixedpointchain_isomegachain {D : dcpowithleast} (f : D --> D) :
-  ∏ (n : nat), ((leastfixedpointchain f n) ≤ leastfixedpointchain f (S n))%poset.
-Proof.
-  induction n as [ | m IH].
-  - simpl. use dcpowithleast_least.
-  - simpl. use dcpomorphism_preservesorder. use IH.
+    + exact isdirec.
+    + exact IH.
+    + (* We show that g is equal to the pointwise lub *)
+      set (islub' := pointwiselub_islub F isdirec).
+      set (eq := lubsareunique _ islubg islub').
+      rewrite eq; simpl.
+      use pointwiselub_islubpointwise.
 Qed.
 
-Lemma leastfixedpointchain_increases {D : dcpowithleast} (f : D --> D) :
-  ∏ (n m : nat), n ≤ m ->
-                 (leastfixedpointchain f n ≤ leastfixedpointchain f m)%poset.
+(* Iter as dcpo morphism *)
+Definition iter' {D : dcpowithleast} (n : nat) : (D --> D) --> D.
+Proof.
+  use dcpomorphismpair.
+  - exact (iter n).
+  - use iter_isdcpomorphism.
+Defined.
+
+  (* Finally, we show that n ↦ iter n is directed and define μ as its lub. *)
+Lemma iter'_isomegachain (D : dcpowithleast) :
+  ∏ (n : nat), (@iter' D n ≤ @iter' D (S n))%poset.
+Proof.
+  induction n as [ | m IH].
+  - simpl. intro f. use dcpowithleast_isleast.
+  - simpl. intro f. use dcpomorphism_preservesorder. use IH.
+Qed.
+
+Lemma iter'_increases (D : dcpowithleast) :
+  ∏ (n m : nat), n ≤ m -> (@iter' D n ≤ @iter' D m)%poset.
 Proof.
   intros n m ineq.
   induction m as [ | m' IH].
@@ -412,129 +412,65 @@ Proof.
     rewrite nis0. use isrefl_posetRelation.
   - set (cases := natlehchoice _ _ ineq).
     induction cases as [less | equal].
-    + use istrans_posetRelation.
-      * exact (leastfixedpointchain f m').
+    + eapply istrans_posetRelation.
       * apply IH. use less.
-      * use leastfixedpointchain_isomegachain.
+      * use iter'_isomegachain.
     +  rewrite equal. use isrefl_posetRelation.
 Qed.
 
-Lemma leastfixedpointchain_isdirected {D : dcpowithleast} (f : D --> D) :
-  isdirected (leastfixedpointchain f).
+Lemma iter'_isdirected (D : dcpowithleast) :
+  isdirected (@iter' D).
 Proof.
   intros n m. use hinhpr. split with (n + m).
   split.
-  + use leastfixedpointchain_increases. use natlehnplusnm.
-  + use leastfixedpointchain_increases. use natlehmplusnm.
+  + use iter'_increases. use natlehnplusnm.
+  + use iter'_increases. use natlehmplusnm.
 Qed.
 
-(* Definition of μ *)
-Definition leastfixedpoint {D : dcpowithleast} (f : D --> D) : D.
+Definition leastfixedpoint {D : dcpowithleast} : (D --> D) --> D.
 Proof.
-  exact (pr1 ((dcpoisdirectedcomplete D) nat (leastfixedpointchain f)
-                         (leastfixedpointchain_isdirected f))).
+  use dcpomorphismpair.
+  - eapply pointwiselub.
+    use iter'_isdirected.
+  - use pointwiselub_isdcpomorphism.
 Defined.
 
 Notation "'μ'" := leastfixedpoint : DCPO.
 
-Lemma leastfixedpoint_islub {D : dcpowithleast} (f : D --> D) :
-  islub (leastfixedpointchain f) (μ f).
-Proof.
-  unfold leastfixedpoint. induction (dcpoisdirectedcomplete D) as [d p].
-  use p.
-Qed.
-
 Lemma leastfixedpoint_isfixedpoint {D : dcpowithleast} :
-  ∏ (f : D --> D), (pr1 f) (μ f) = μ f.
+  ∏ (f : D --> D), (pr1 f) (pr1 μ f) = pr1 μ f.
 Proof.
-  intro f.
-  (* We use that f preserves lubs of directed families *)
-  set (fpreslub := ((pr2 f) nat (leastfixedpointchain f)
-                            (leastfixedpointchain_isdirected f)
-                            (leastfixedpoint f))).
-  set (lubf := fpreslub (leastfixedpoint_islub f)).
+  intro f. unfold leastfixedpoint; simpl.
+  set (lub := pointwiselub_islubpointwise iter' (iter'_isdirected D) f).
   use isantisymm_posetRelation.
-  - use (pr2 lubf).
-    intro n. unfold funcomp; simpl.
-    change (pr1 f (leastfixedpointchain f n)) with (leastfixedpointchain f (S n)).
-    use (pr1 (leastfixedpoint_islub f)).
-  - use (pr2 (leastfixedpoint_islub f)).
-    intro n. destruct n as [ | m].
-    + simpl. use dcpowithleast_least.
-    + simpl. use dcpomorphism_preservesorder.
-      use (pr1 (leastfixedpoint_islub f)).
+  - (* We use that f preserves lubs of directed families *)
+    set (fam := pointwisefamily iter' f).
+    set (famisdirec := pointwisefamily_isdirected iter' (iter'_isdirected D) f).
+    set (fpreslub := (pr2 f _ fam famisdirec _ lub)).
+    use (pr2 (fpreslub)).
+    intro n. unfold fam, funcomp; simpl.
+    change (pr1 f (pointwisefamily iter' f n)) with (pointwisefamily iter' f (S n)).
+    exact (pr1 (pointwiselub_islubpointwise iter' (iter'_isdirected D) f) (S n)).
+  - use (pr2 lub). intro n. induction n as [ | m IH].
+    + use dcpowithleast_isleast.
+    + unfold pointwisefamily; simpl. use dcpomorphism_preservesorder.
+      eapply istrans_posetRelation.
+      * use iter'_increases.
+        ** exact (S m).
+        ** use natlehnsn.
+      * exact (pr1 lub (S m)).
 Qed.
 
 Lemma leastfixedpoint_isleast {D : dcpowithleast} (f : D --> D) :
-  ∏ (d : D), ((pr1 f) d ≤ d)%poset -> (μ f ≤ d)%poset.
+  ∏ (d : D), ((pr1 f) d ≤ d)%poset -> (pr1 μ f ≤ d)%poset.
 Proof.
   intros d ineq.
-  use (pr2 (leastfixedpoint_islub f)).
+  set (lub := pointwiselub_islubpointwise iter' (iter'_isdirected D) f).
+  use (pr2 lub).
   intro n; induction n as [ | m IH].
-  - simpl. use (pr2 (pr2 D)).
-  - simpl. use istrans_posetRelation.
-    + exact ((pr1 f) d).
-    + use dcpomorphism_preservesorder. exact IH.
+  - simpl. use dcpowithleast_isleast.
+  - simpl. eapply istrans_posetRelation.
+    + unfold pointwisefamily; simpl.
+      eapply dcpomorphism_preservesorder. exact IH.
     + exact ineq.
 Qed.
-
-Lemma leastfixedpointchain_preservesorder {D : dcpowithleast} (f g : D --> D) :
-  (f ≤ g)%poset ->
-  ∏ (n : nat), (leastfixedpointchain f n ≤ leastfixedpointchain g n)%poset.
-Proof.
-  intros ineq n; induction n as [ | m IH].
-  - use isrefl_posetRelation.
-  - simpl. use istrans_posetRelation.
-    + exact (pr1 f (leastfixedpointchain g m)).
-    + use dcpomorphism_preservesorder; exact IH.
-    + use ineq.
-Qed.
-
-(* Look at: http://www.cs.bham.ac.uk/~axj/pub/papers/handy1.pdf ? *)
-Lemma leastfixedpoint_isdcpomorphism (D : dcpowithleast) :
-  isdcpomorphism (@leastfixedpoint D).
-Proof.
-  intros I F isdirec g islubg.
-  split.
-  - intro i.
-    unfold funcomp; simpl.
-    use (lubpreservesorder (leastfixedpointchain (F i))
-                           (leastfixedpointchain g)).
-    + use leastfixedpointchain_preservesorder.
-      use (pr1 islubg).
-    + use leastfixedpoint_islub.
-    + use leastfixedpoint_islub.
-  - intros d ineqs.
-    use (pr2 (leastfixedpoint_islub g)). intro n.
-    set (islub' := pointwiselub_islub F isdirec).
-    set (eq := lubsareunique _ islubg islub').
-    rewrite eq.
-    set (h := dcpomorphismpair D D (pointwiselub F isdirec)
-                               (pointwiselub_isdcpomorphism F isdirec)).
-    set (Fchain := λ (m : nat), λ (i : I), leastfixedpointchain (F i) m).
-    assert (islubh : ∏ (m : nat), islub (Fchain m) (leastfixedpointchain h m)).
-    {
-      intro m. induction m as [ | m' IH].
-      - simpl; unfold Fchain; simpl. split.
-        + intro i. use isrefl_posetRelation.
-        + intros d' ineqs'. use dcpowithleast_least.
-      - simpl.
-        set (isdcpomor := (pointwiselub_isdcpomorphism F isdirec)).
-        unfold isdcpomorphism in isdcpomor.
-        assert (isdirecm : isdirected (Fchain m')). { admit. }
-                                                    set (helper := isdcpomor I (Fchain m') isdirecm (leastfixedpointchain h m')).
-        set (helper' := helper IH).
-        assert (finaleq : Fchain (S m') = pointwiselub F isdirec ∘ Fchain m').
-        { use funextfun. intro i. simpl. unfold funcomp; simpl.
-          unfold Fchain; simpl.
-
-
-
-      unfold Fchain. split.
-      - intro i. use leastfixedpointchain_preservesorder.
-        use (pr1 (pointwiselub_islub F isdirec)).
-      - intros y ineqs'. induction n as [ | m IH].
-        + use dcpowithleast_least.
-        + simpl. use (pr2 (pointwiselub_islubpointwise F isdirec _)).
-          intro i. unfold pointwisefamily; simpl. admit. }
-      (* use (pointwiselub_islubpointwise F isdirec (leastfixedpointchain (F i) n)). } *)
