@@ -112,6 +112,21 @@ Proof.
 Defined.
 
 Local Open Scope DCPO.
+
+Definition Kleisli_extension_isdefinedmap {X Y : hSet} (f : X -> liftdcpo Y)
+           (u v : liftdcpo X) (t : isdefined u -> isdefined v)
+           (g : ∏ (d : isdefined u), value u d = value v (t d)) :
+  isdefined (f # u) -> isdefined (f # v).
+Proof.
+  unfold Kleisli_extension; simpl.
+  intros [p d]. split with (t p).
+  set (eq := !(g p)).
+  set (eq' := maponpaths f eq).
+  set (eq'' := maponpaths isdefined eq').
+  apply (invmap (eqweqmap eq'')).
+  exact d.
+Defined.
+
 Definition Kleisli_extension_dcpo {X Y : hSet} (f : X -> liftdcpo Y) : liftdcpo X --> liftdcpo Y.
 Proof.
   use dcpomorphismpair.
@@ -122,17 +137,20 @@ Proof.
     + intro i. simpl.
       unfold funcomp; simpl.
       induction (isuppv i) as [isdefmap valuesmap].
-      (* This needs to be evaluatable... *)
-      assert (isdefmap' : isdefined (f # (u i)) -> isdefined (f # v)).
-      { unfold Kleisli_extension; simpl.
-        intros [pi di]. split with (isdefmap pi).
-        assert (eq : pr22 v (isdefmap pi) = pr22 (u i) pi).
-        { use (!(valuesmap pi)). }
-        set (eq' := maponpaths f eq).
-        set (eq'' := maponpaths isdefined eq').
-        apply (invmap (eqweqmap eq'')).
-        exact di. }
+      set (isdefmap' := Kleisli_extension_isdefinedmap f (u i) v
+                                                       isdefmap
+                                                       valuesmap).
       split with isdefmap'.
       intro d. induction d as [pi di].
-      unfold value. simpl.
-      assert (pr22 (u i) pi = pr22 v (pr1 (isdefmap'.
+      unfold value; simpl.
+      unfold isdefmap'. unfold Kleisli_extension_isdefinedmap.
+      set (eq := valuesmap pi).
+      set (eq' := maponpaths f eq).
+      set (eq'' := maponpaths isdefined eq').
+      assert (lem : ∏ (l m : liftdcpo Y), ∏ (p : l = m),
+                    transportf (λ d : isdefined l, Y) (maponpaths isdefined p) (value l) = value m).
+      {
+      unfold value; simpl.
+      set (eq''' := maponpaths value eq'').
+      * apply eq'.
+      set (eq'' := maponpaths value eq').

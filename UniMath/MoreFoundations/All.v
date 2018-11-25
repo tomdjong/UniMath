@@ -18,3 +18,4 @@ Require Export UniMath.MoreFoundations.PropExt.
 Require Export UniMath.MoreFoundations.RetractOfIdentityType.
 Require Export UniMath.MoreFoundations.TypeFormersOnFunctions.
 Require Export UniMath.MoreFoundations.WeaklyConstant.
+Require Export UniMath.MoreFoundations.ClosureOfHrel.
