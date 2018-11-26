@@ -113,44 +113,79 @@ Defined.
 
 Local Open Scope DCPO.
 
-Definition Kleisli_extension_isdefinedmap {X Y : hSet} (f : X -> liftdcpo Y)
-           (u v : liftdcpo X) (t : isdefined u -> isdefined v)
-           (g : ∏ (d : isdefined u), value u d = value v (t d)) :
-  isdefined (f # u) -> isdefined (f # v).
+(* Definition Kleisli_extension_isdefinedmap {X Y : hSet} (f : X -> liftdcpo Y)
+           (u v : liftdcpo X) : u ⊑ v -> isdefined (f # u) -> isdefined (f # v).
 Proof.
-  unfold Kleisli_extension; simpl.
+  intros [t g]. unfold Kleisli_extension; simpl.
   intros [p d]. split with (t p).
   set (eq := !(g p)).
   set (eq' := maponpaths f eq).
   set (eq'' := maponpaths isdefined eq').
   apply (invmap (eqweqmap eq'')).
   exact d.
-Defined.
+Defined. *)
+
+Lemma Kleisli_extension_preservesorder {X Y : hSet} (f : X -> liftdcpo Y)
+           (u v : liftdcpo X) : u ⊑ v -> (f # u) ⊑ (f # v).
+Proof.
+  intros [isdefmap valuemap].
+  assert (isdefmap' : isdefined (f # u) -> isdefined (f # v)).
+  { intros [p d]. split with (isdefmap p).
+    set (eq := !(valuemap p)).
+    set (eq' := maponpaths f eq).
+    set (eq'' := maponpaths isdefined eq').
+    apply (invmap (eqweqmap eq'')).
+    exact d. }
+  split with (isdefmap').
+  intro d.
+  induction d as [p d'].
+  unfold value; simpl.
+  set (eq := maponpaths f (valuemap p)).
+  use eq_value_eq. etrans. apply maponpaths.
+  - apply (valuemap p).
+  - apply maponpaths. apply value_weaklyconstant.
+Qed.
 
 Definition Kleisli_extension_dcpo {X Y : hSet} (f : X -> liftdcpo Y) : liftdcpo X --> liftdcpo Y.
 Proof.
   use dcpomorphismpair.
   - exact (Kleisli_extension f).
   - intros I u isdirec v islubv.
-    induction islubv as [isuppv isleastv].
     split.
     + intro i. simpl.
       unfold funcomp; simpl.
-      induction (isuppv i) as [isdefmap valuesmap].
-      set (isdefmap' := Kleisli_extension_isdefinedmap f (u i) v
-                                                       isdefmap
-                                                       valuesmap).
-      split with isdefmap'.
-      intro d. induction d as [pi di].
-      unfold value; simpl.
-      unfold isdefmap'. unfold Kleisli_extension_isdefinedmap.
-      set (eq := valuesmap pi).
-      set (eq' := maponpaths f eq).
-      set (eq'' := maponpaths isdefined eq').
-      assert (lem : ∏ (l m : liftdcpo Y), ∏ (p : l = m),
-                    transportf (λ d : isdefined l, Y) (maponpaths isdefined p) (value l) = value m).
-      {
-      unfold value; simpl.
-      set (eq''' := maponpaths value eq'').
-      * apply eq'.
-      set (eq'' := maponpaths value eq').
+      use Kleisli_extension_preservesorder.
+      use (pr1 islubv i).
+    + intros l ineqs.
+      assert (lubeq : v = mkdirectedlubinlift u isdirec).
+      { eapply lubsareunique.
+        - exact islubv.
+        - use mkdirectedlubinlift_islub. }
+      rewrite lubeq.
+      assert (defmap : isdefined (f # (mkdirectedlubinlift u isdirec)) -> isdefined l).
+      { intros [p d]. eapply (isdefinedlub_toprop u isdirec).
+        - intros [i di]. induction (ineqs i) as [defmapi valuemapi].
+          apply defmapi. split with di.
+          set (lubieq := lubvalue_eq u isdirec i di p).
+          exact (invmap (eqweqmap (maponpaths (isdefined ∘ f) lubieq)) d).
+        - use isdefined_isaprop.
+        - exact p. }
+      split with defmap. intro d.
+      eapply (isdefinedlub_toprop u isdirec).
+      * intros [i di].
+        assert (fdi : isdefined (f # (u i))).
+        { split with di.
+          set (lubieq := lubvalue_eq u isdirec i di (pr1 d)).
+          exact (invmap (eqweqmap (maponpaths (isdefined ∘ f) lubieq)) (pr2 d)). }
+        assert (trans1 :
+                value (f # (mkdirectedlubinlift u isdirec)) d = value (f # (u i)) fdi).
+        { unfold value; simpl. use eq_value_eq.
+          apply maponpaths. use (!(lubvalue_eq u isdirec i (pr1 fdi) (pr1 d))). }
+        etrans.
+        ** apply trans1.
+        ** etrans.
+           *** apply (pr2 (ineqs i) fdi).
+           *** use value_weaklyconstant.
+      * use (pr2 Y).
+      * exact (pr1 d).
+Defined.
