@@ -36,7 +36,7 @@ Proof.
 Qed.
 
 (* Lemma on equality of partial elements *)
-Lemma isdefined_value_eq {X : UU} {l m : 𝓛 X} (e : isdefined l = isdefined m) :
+Definition isdefined_value_eq {X : UU} {l m : 𝓛 X} (e : isdefined l = isdefined m) :
   transportf (λ Q : UU, Q -> X) e (value l) = value m -> l = m.
 Proof.
   intro transp.
@@ -55,6 +55,12 @@ Proof.
       { generalize e as e'. intro e'. induction e'. use idpath. }
       exact eq.
     + exact transp.
+Defined.
+
+Definition eq_value_eq {X : UU} {l m : 𝓛 X} :
+  l = m -> ∏ (d : isdefined l), ∏ (d' : isdefined m), value l d = value m d'.
+Proof.
+  intro eq. induction eq. intros d d'. use value_weaklyconstant.
 Defined.
 
 (*** Martin's proof ***)
@@ -352,22 +358,41 @@ Proof.
   use hinhpr. exact (i,,d).
 Defined.
 
-Theorem lift_isdirectedcomplete (X : hSet) :
-  isdirectedcomplete (𝓛 X).
+Lemma isdefinedlub_toprop {X : hSet} {I Q : UU} (u : I -> 𝓛 X) (isdirec : isdirected u) :
+  ((∑ (i : I), isdefined (u i)) -> Q) ->
+  isaprop Q ->
+  isdefined (mkdirectedlubinlift u isdirec) -> Q.
 Proof.
-  unfold isdirectedcomplete. intros I u isdirec.
-  split with (mkdirectedlubinlift u isdirec).
+  intros f Qisaprop p.
+  eapply factor_through_squash.
+  - exact Qisaprop.
+  - exact f.
+  - exact p.
+Qed.
+
+Lemma lubvalue_eq {X : hSet} {I : UU} (u : I -> 𝓛 X) (isdirec : isdirected u) :
+  ∏ (i : I), ∏ (d : isdefined (u i)),
+  let v := mkdirectedlubinlift u isdirec in
+  ∏ (p : isdefined v),
+  value (u i) d = value v p.
+Proof.
+  intros i d v p. change (value (u i) d) with (lubvaluemap u (i,,d)).
+  unfold mkdirectedlubinlift, value; simpl.
+  assert (pinsquash : p = hinhpr (i,,d)).
+  { use proofirrelevance. use isapropishinh. }
+  rewrite pinsquash.
+  use weaklyconstanttoaset_factorsthroughsquash_eq.
+  - use (pr2 X).
+  - use value_weaklyconstant.
+Qed.
+
+Lemma mkdirectedlubinlift_islub {X : hSet} {I : UU} (u : I -> 𝓛 X)
+      (isdirec : isdirected u) : islub u (mkdirectedlubinlift u isdirec).
+Proof.
   split.
   - intro i.
     split with (mkisdefinedlubmap u isdirec i). intro d.
-    unfold mkdirectedlubinlift; simpl. unfold mkisdefinedlubmap; simpl.
-    etrans.
-    + assert (eq1 : value (u i) d = lubvaluemap u (i,, d)).
-      { unfold lubvaluemap; use idpath. }
-      apply eq1.
-    + use weaklyconstanttoaset_factorsthroughsquash_eq.
-      * exact (pr2 X).
-      * intros p p'. use value_weaklyconstant.
+    use lubvalue_eq.
   - intros v upperbound.
     assert (t : isdefined (mkdirectedlubinlift u isdirec) -> isdefined v).
     { use factor_through_squash.
@@ -382,9 +407,9 @@ Proof.
     + use (pr2 X).
     + intros [i p]. unfold mkdirectedlubinlift, value; simpl.
       unfold mkdirectedlubinlift in d; simpl in d.
-      assert (pinsquash : d = hinhpr (i,,p)).
+      assert (dinsquash : d = hinhpr (i,,p)).
       { use proofirrelevance. use isapropishinh. }
-      rewrite pinsquash. etrans.
+      rewrite dinsquash. etrans.
       * use weaklyconstanttoaset_factorsthroughsquash_eq.
         ** exact (pr2 X).
         ** intros q q'. use value_weaklyconstant.
@@ -393,6 +418,14 @@ Proof.
         ** apply (g p).
         ** use value_weaklyconstant.
     + exact d.
+Qed.
+
+Theorem lift_isdirectedcomplete (X : hSet) :
+  isdirectedcomplete (𝓛 X).
+Proof.
+  unfold isdirectedcomplete. intros I u isdirec.
+  split with (mkdirectedlubinlift u isdirec).
+  use mkdirectedlubinlift_islub.
 Qed.
 Close Scope LiftIsPoset.
 
