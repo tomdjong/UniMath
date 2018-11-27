@@ -90,40 +90,7 @@ Proof.
   now rewrite extension_comp.
 Qed.
 
-(* Equivalently, 𝓛(f) = (f ∘ η)# *)
-Definition liftfunctor {X Y : UU} (f : X -> Y) : 𝓛 X -> 𝓛 Y := (η ∘ f) #.
-
-Definition liftfunctor' {X Y : UU} (f : X -> Y) : 𝓛 X -> 𝓛 Y.
-Proof.
-  intros [P r]. induction r as [i φ].
-  exact (P,,i,,f ∘ φ).
-Defined.
-
-Definition liftfunctor_eq {X Y : UU} : ∏ (f : X -> Y), liftfunctor f = liftfunctor' f.
-Proof.
-  intro f . use funextfun. intro l.
-  induction l as [P r]. induction r as [i φ].
-  unfold liftfunctor'. unfold liftfunctor. unfold Kleisli_extension. simpl.
-  use information_order_antisymmetric.
-  - split with (λ x : (∑ _ : P, unit), pr1 x).
-    intro d. use idpath.
-  - split with (λ p : P, (p,,tt)).
-    intro d. use idpath.
-Defined.
-
 Local Open Scope DCPO.
-
-(* Definition Kleisli_extension_isdefinedmap {X Y : hSet} (f : X -> liftdcpo Y)
-           (u v : liftdcpo X) : u ⊑ v -> isdefined (f # u) -> isdefined (f # v).
-Proof.
-  intros [t g]. unfold Kleisli_extension; simpl.
-  intros [p d]. split with (t p).
-  set (eq := !(g p)).
-  set (eq' := maponpaths f eq).
-  set (eq'' := maponpaths isdefined eq').
-  apply (invmap (eqweqmap eq'')).
-  exact d.
-Defined. *)
 
 Lemma Kleisli_extension_preservesorder {X Y : hSet} (f : X -> liftdcpo Y)
            (u v : liftdcpo X) : u ⊑ v -> (f # u) ⊑ (f # v).
@@ -145,6 +112,9 @@ Proof.
   - apply (valuemap p).
   - apply maponpaths. apply value_weaklyconstant.
 Qed.
+
+Delimit Scope PartialFunctions with PartialFunctionsDCPO.
+Local Open Scope PartialFunctionsDCPO.
 
 Definition Kleisli_extension_dcpo {X Y : hSet} (f : X -> liftdcpo Y) : liftdcpo X --> liftdcpo Y.
 Proof.
@@ -188,4 +158,27 @@ Proof.
            *** use value_weaklyconstant.
       * use (pr2 Y).
       * exact (pr1 d).
+Defined.
+
+Notation "f #" := (Kleisli_extension_dcpo f) : PartialFunctionsDCPO.
+
+(* Equivalently, 𝓛(f) = (f ∘ η)# *)
+Definition liftfunctor {X Y : UU} (f : X -> Y) : 𝓛 X -> 𝓛 Y := (η ∘ f) #.
+
+Definition liftfunctor' {X Y : UU} (f : X -> Y) : 𝓛 X -> 𝓛 Y.
+Proof.
+  intros [P r]. induction r as [i φ].
+  exact (P,,i,,f ∘ φ).
+Defined.
+
+Definition liftfunctor_eq {X Y : UU} : ∏ (f : X -> Y), liftfunctor f = liftfunctor' f.
+Proof.
+  intro f . use funextfun. intro l.
+  induction l as [P r]. induction r as [i φ].
+  unfold liftfunctor'. unfold liftfunctor. unfold Kleisli_extension. simpl.
+  use information_order_antisymmetric.
+  - split with (λ x : (∑ _ : P, unit), pr1 x).
+    intro d. use idpath.
+  - split with (λ p : P, (p,,tt)).
+    intro d. use idpath.
 Defined.
