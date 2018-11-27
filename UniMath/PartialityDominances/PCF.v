@@ -46,13 +46,8 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | 𝓈step : ∏ (σ τ ρ : type), ∏ (s : term (σ ⇨ τ ⇨ ρ)),
             ∏ (t : term (σ ⇨ τ)), ∏ (r : term σ),
             smallstep' ρ (𝓈 ` s ` t ` r) (s ` r ` (t ` r))
-(* We (probably?) need to add leftmost (inductive) steps *)
-  | leftapp  : ∏ (σ τ : type), ∏ (s t : term (σ ⇨ τ)), ∏ (r : term σ),
+  | appstep  : ∏ (σ τ : type), ∏ (s t : term (σ ⇨ τ)), ∏ (r : term σ),
                smallstep' (σ ⇨ τ) s t -> smallstep' τ (s ` r) (t ` r)
-  | leftsucc : ∏ (s t : term ι), smallstep' ι s t -> smallstep' ι (succ ` s) (succ ` t)
-  | leftpred : ∏ (s t : term ι), smallstep' ι s t -> smallstep' ι (pred ` s) (pred ` t)
-  | leftifz  : ∏ (s t u v : term ι), smallstep' ι s t -> smallstep' ι (ifz ` s ` u ` v)
-                                                                    (ifz ` t ` u ` v).
 
 Definition smallstep (σ : type) : hrel (term σ) :=
   λ (s t : term σ), ∥ smallstep' σ s t ∥.
