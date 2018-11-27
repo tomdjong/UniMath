@@ -75,27 +75,37 @@ Fixpoint denotational_semantics_type (σ : type) : dcpo :=
 Notation "⟦ σ ⟧" := (denotational_semantics_type σ) : PCF.
 Notation "'𝓛ℕ'" := (liftdcpo natset) : PCF.
 
+Local Open Scope PartialElements.
+Local Open Scope PartialFunctionsDCPO.
+
 Definition lifted_succ : 𝓛ℕ --> 𝓛ℕ.
 Proof.
-  use dcpomorphismpair.
-  - exact (liftfunctor S).
-  - intros I u isdirec d islubd.
-    split.
-    + intro i.
-      unfold funcomp, liftfunctor; simpl.
-      induction (pr1 islubd i) as [t g].
-      split with t.
-      intro p. unfold value.
-      unfold value in g. unfold funcomp.
-      use maponpaths. exact (g p).
-    + intros d' ineqs. simpl.
-      unfold liftfunctor; simpl.
-      unfold liftfunctor in ineqs; simpl in ineqs.
+  eapply Kleisli_extension_dcpo.
+  exact (λ n : natset, η (S n)).
+Defined.
 
+Fixpoint P (n : nat) : nat :=
+  match n with
+  | O   => O
+  | S m => m
+  end.
 
-Local Open Scope PartialElements.
-Local Open Scope PartialFunctions.
+Definition lifted_pred : 𝓛ℕ --> 𝓛ℕ.
+Proof.
+  eapply Kleisli_extension_dcpo.
+  exact (λ n : natset, η (P n)).
+Defined.
+
+Fixpoint ifz' (n a b : nat) : nat :=
+  match n with
+  | O   => a
+  | S m => b
+  end.
+
+(* Definition lifted_ifz : 𝓛ℕ --> (𝓛ℕ --> (𝓛ℕ --> 𝓛ℕ)). *)
+
 Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⟦ σ ⟧ :=
   match t with
   | zero => η O
-  | succ => liftfunctor S end.
+  | succ => lifted_succ
+  | pred => lifted_pred end.
