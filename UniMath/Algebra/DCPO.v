@@ -39,11 +39,12 @@ Proof.
   - apply islubv. use (pr1 islubu).
 Qed.
 
-Definition isdirected : UU := ∏ (i j : I), ∥∑ (k : I), R (f i) (f k) × R (f j) (f k)∥.
+Definition isdirected : UU := ∥ I ∥ × ∏ (i j : I), ∥∑ (k : I), R (f i) (f k) × R (f j) (f k)∥.
 Lemma isdirected_isaprop : isaprop isdirected.
 Proof.
-  use impred. intro i. use impred. intro j.
-  use isapropishinh.
+  use isapropdirprod.
+  - use isapropishinh.
+  - use impred. intro i. use impred. intro j. use isapropishinh.
 Qed.
 Definition directeduntruncated (i j : I) : UU :=
   ∑ (k : I), R (f i) (f k) × R (f j) (f k).
@@ -115,12 +116,14 @@ Proof.
   intros x y ineq. set (two := coprod unit unit).
   set (fam := (λ t : two, match t with | inl _ => x | inr _ => y end)).
   assert (isdirec : isdirected fam).
-  { intros i j. use hinhpr. split with (inr tt).
-    induction i, j.
-    - simpl. exact (ineq,, ineq).
-    - simpl. exact (ineq,, (isrefl_posetRelation (dcpoposet D) y)).
-    - simpl. exact (isrefl_posetRelation (dcpoposet D) y,, ineq).
-    - simpl. exact (isrefl_posetRelation (dcpoposet D) y,,
+  { split.
+    - use hinhpr. exact (inl tt).
+    - intros i j. use hinhpr. split with (inr tt).
+      induction i, j.
+      + simpl. exact (ineq,, ineq).
+      + simpl. exact (ineq,, (isrefl_posetRelation (dcpoposet D) y)).
+      + simpl. exact (isrefl_posetRelation (dcpoposet D) y,, ineq).
+      + simpl. exact (isrefl_posetRelation (dcpoposet D) y,,
                     isrefl_posetRelation (dcpoposet D) y).
   }
   assert (lubfam : islub fam y).
@@ -192,16 +195,18 @@ Definition pointwisefamily {D D' : dcpo} {I : UU} (F : I -> posetofdcpomorphisms
 Lemma pointwisefamily_isdirected {D D' : dcpo} {I : UU} (F : I -> posetofdcpomorphisms D D') :
   isdirected F -> ∏ (d : D), isdirected (pointwisefamily F d).
 Proof.
-  intros isdirec d i j. use factor_through_squash.
-  - exact (directeduntruncated F i j).
-  - use isapropishinh.
-  - intro direc. use hinhpr.
-    induction direc as [k ineqs].
-    split with k; simpl.
-    induction ineqs as [ineq1 ineq2]. split.
-    + exact (ineq1 d).
-    + exact (ineq2 d).
-  - exact (isdirec i j).
+  intros isdirec d. split.
+  - exact (pr1 isdirec).
+  - intros i j. use factor_through_squash.
+    + exact (directeduntruncated F i j).
+    + use isapropishinh.
+    + intro direc. use hinhpr.
+      induction direc as [k ineqs].
+      split with k; simpl.
+      induction ineqs as [ineq1 ineq2]. split.
+      * exact (ineq1 d).
+      * exact (ineq2 d).
+    + exact (pr2 isdirec i j).
 Qed.
 
 (* Pointwise lub *)
@@ -343,16 +348,18 @@ Proof.
     unfold isdcpomorphism in isdcpomor.
     set (helper := isdcpomor I (λ i : I, iter n (F i))).
     assert (isdirec' : isdirected (λ i : I, iter n (F i))).
-    { intros j j'. use factor_through_squash.
-      - exact (directeduntruncated F j j').
-      - use isapropishinh.
-      - intro direc. use hinhpr.
-        induction direc as [k ineqs'].
-        split with k.
-        split.
-        + use iter_preservesorder. exact (pr1 ineqs').
-        + use iter_preservesorder. exact (pr2 ineqs').
-      - exact (isdirec j j'). }
+    { split.
+      - exact (pr1 isdirec).
+      - intros j j'. use factor_through_squash.
+        + exact (directeduntruncated F j j').
+        + use isapropishinh.
+        + intro direc. use hinhpr.
+          induction direc as [k ineqs'].
+          split with k.
+          split.
+          * use iter_preservesorder. exact (pr1 ineqs').
+          * use iter_preservesorder. exact (pr2 ineqs').
+        + exact (pr2 isdirec j j'). }
     set (helper' := helper isdirec' u' islubu').
     unfold funcomp in helper'; simpl in helper'.
     use (pr2 helper'). intro j; simpl.
@@ -366,7 +373,7 @@ Proof.
       * apply dcpomorphism_preservesorder.
         apply iter_preservesorder. apply (pr2 ineqs').
       * use (ineqs k).
-    + exact (isdirec i j).
+    + exact (pr2 isdirec i j).
 Qed.
 
 Lemma iter_isdcpomorphism (D : dcpowithleast) : ∏ (n : nat), isdcpomorphism (@iter D n).
@@ -421,10 +428,12 @@ Qed.
 Lemma iter'_isdirected (D : dcpowithleast) :
   isdirected (@iter' D).
 Proof.
-  intros n m. use hinhpr. split with (n + m).
   split.
-  + use iter'_increases. use natlehnplusnm.
-  + use iter'_increases. use natlehmplusnm.
+  - use hinhpr. exact O.
+  - intros n m. use hinhpr. split with (n + m).
+    split.
+    + use iter'_increases. use natlehnplusnm.
+    + use iter'_increases. use natlehmplusnm.
 Qed.
 
 Definition leastfixedpoint {D : dcpowithleast} : (D --> D) --> D.
