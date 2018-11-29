@@ -47,7 +47,7 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
             ∏ (t : term (σ ⇨ τ)), ∏ (r : term σ),
             smallstep' ρ (𝓈 ` s ` t ` r) (s ` r ` (t ` r))
   | appstep  : ∏ (σ τ : type), ∏ (s t : term (σ ⇨ τ)), ∏ (r : term σ),
-               smallstep' (σ ⇨ τ) s t -> smallstep' τ (s ` r) (t ` r)
+               smallstep' (σ ⇨ τ) s t -> smallstep' τ (s ` r) (t ` r).
 
 Definition smallstep (σ : type) : hrel (term σ) :=
   λ (s t : term σ), ∥ smallstep' σ s t ∥.
@@ -99,8 +99,8 @@ Fixpoint ifz' (n a b : nat) : nat :=
 
 (* Definition lifted_ifz : 𝓛ℕ --> (𝓛ℕ --> (𝓛ℕ --> 𝓛ℕ)). *)
 
-Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⟦ σ ⟧ :=
+(*Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⟦ σ ⟧ :=
   match t with
   | zero => η O
   | succ => lifted_succ
-  | pred => lifted_pred end.
+  | pred => lifted_pred end.*)
