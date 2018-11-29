@@ -436,9 +436,19 @@ Proof.
   - use lift_isdirectedcomplete.
 Defined.
 
+Definition liftdcpowithleast (X : hSet) : dcpowithleast.
+Proof.
+  split with (liftdcpo X).
+  split with (empty,, isapropempty,, fromempty).
+  intro l.
+  split with (fromempty).
+  intro d.
+  destruct d.
+Defined.
+
 Delimit Scope LiftIsDCPO with LiftIsDCPO.
 Local Open Scope LiftIsDCPO.
 
-Notation "'𝓛'" := liftdcpo : LiftIsDCPO.
+Notation "'𝓛'" := liftdcpowithleast : LiftIsDCPO.
 
 Close Scope LiftIsDCPO.
