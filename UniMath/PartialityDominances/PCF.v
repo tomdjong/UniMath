@@ -196,9 +196,10 @@ Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
                       adequacy_relation τ m s -> adequacy_relation ρ (pr1 l m) (t ` s)
   end.
 
-Lemma adequacy_least {σ : type} (t : term σ) :
+Definition adequacy_least {σ : type} (t : term σ) :
   adequacy_relation σ (dcpowithleast_least ⦃ σ ⦄) t.
 Proof.
   induction σ as [ | τ IH ρ IH'].
   - simpl. intro p. destruct p.
   - simpl. intros m s rel. exact (IH' (t ` s)).
+Defined.
