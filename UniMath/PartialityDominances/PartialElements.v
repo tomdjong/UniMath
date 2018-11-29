@@ -332,7 +332,7 @@ Proof.
                                (lubvaluemap u (i,, d) = lubvaluemap u (i',, d'))).
    - use (pr2 X).
    - exact tofactor.
-   - use (isdirec i i').
+   - use (pr2 isdirec i i').
 Defined.
 
 (* The construction of the lub; a proof that this element is actually
