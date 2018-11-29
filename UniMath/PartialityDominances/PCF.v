@@ -19,7 +19,7 @@ Inductive term : type -> UU :=
   | zero                : term ι
   | succ                : term (ι ⇨ ι)
   | pred                : term (ι ⇨ ι)
-  | ifz                 : term (ι ⇨ ι ⇨ ι ⇨ ι)
+(*  | ifz                 : term (ι ⇨ ι ⇨ ι ⇨ ι) *)
   | fixp {σ : type}     : term ((σ ⇨ σ) ⇨ σ)
   | 𝓀    {σ τ : type}   : term (σ ⇨ τ ⇨ σ)
   | 𝓈    {σ τ ρ : type} : term ((σ ⇨ τ ⇨ ρ) ⇨ (σ ⇨ τ) ⇨ σ ⇨ ρ)
@@ -36,9 +36,9 @@ Fixpoint numeral (n : nat) : term ι :=
 Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | predzerostep : smallstep' ι (pred ` zero) zero
   | predsuccstep : ∏ (t : term ι), smallstep' ι (pred ` (succ ` t)) t
-  | ifzzerostep : ∏ (s t : term ι), smallstep' ι ((ifz ` zero) ` s ` t) s
+(*  | ifzzerostep : ∏ (s t : term ι), smallstep' ι ((ifz ` s) ` t ` zero) s
   | ifzsuccstep : ∏ (r s t : term ι),
-                  smallstep' ι (ifz ` (succ ` r) ` s ` t) t
+                  smallstep' ι (ifz ` s ` t ` (succ ` r)) t *)
   | fixpstep : ∏ (σ : type), ∏ (t : term (σ ⇨ σ)),
                smallstep' σ (fixp ` t) (t ` (fixp ` t))
   | 𝓀step : ∏ (σ τ : type), ∏ (s : term σ), ∏ (t : term τ),
@@ -61,14 +61,14 @@ Notation "s ⇓ t" := (bigstep s t) (at level 40) : PCF.
 (* On to denotational semantics *)
 Local Open Scope DCPO.
 
-Fixpoint denotational_semantics_type (σ : type) : dcpo :=
+Fixpoint denotational_semantics_type (σ : type) : dcpowithleast :=
   match σ with
-  | ι => liftdcpo natset
+  | ι => liftdcpowithleast natset
   | τ ⇨ ρ => denotational_semantics_type τ --> denotational_semantics_type ρ
   end.
 
-Notation "⟦ σ ⟧" := (denotational_semantics_type σ) : PCF.
-Notation "'𝓛ℕ'" := (liftdcpo natset) : PCF.
+Notation "⦃ σ ⦄" := (denotational_semantics_type σ) : PCF.
+Notation "'𝓛ℕ'" := (liftdcpowithleast natset) : PCF.
 
 Local Open Scope PartialElements.
 Local Open Scope PartialFunctionsDCPO.
@@ -91,16 +91,99 @@ Proof.
   exact (λ n : natset, η (P n)).
 Defined.
 
-Fixpoint ifz' (n a b : nat) : nat :=
+(*Fixpoint ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
   match n with
   | O   => a
   | S m => b
   end.
 
-(* Definition lifted_ifz : 𝓛ℕ --> (𝓛ℕ --> (𝓛ℕ --> 𝓛ℕ)). *)
+Definition lifted_ifz' (a b : 𝓛ℕ) : 𝓛ℕ --> 𝓛ℕ.
+Proof.
+  eapply Kleisli_extension_dcpo.
+  exact (λ n : nat, ifz' n a b).
+Defined.
 
-(*Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⟦ σ ⟧ :=
+Definition lifted_ifz : 𝓛ℕ --> (𝓛ℕ --> (𝓛ℕ --> 𝓛ℕ)).
+Proof.
+  use dcpomorphismpair.
+  - intro a.
+    use dcpomorphismpair.
+    + intro b.
+      exact (lifted_ifz' a b).
+    + intros I u isdirec v islubv.
+      split.
+      * intro i. simpl. intro l.
+        unfold Kleisli_extension. simpl.
+        induction l as [P pair]; induction pair as [isprop φ]; simpl.
+        assert (t : (∑ (p : P), isdefined (ifz' (φ p) a (u i))) ->
+                    (∑ (p : P), isdefined (ifz' (φ p) a v))).
+        { intros [p di]. split with p.
+          destruct (φ p).
+          ** simpl in *. exact di.
+          ** simpl in *. apply (pr1 (pr1 islubv i)). exact di. }
+        split with t. intros [p di]; cbn.
+(*        assert (eq : ifz' (φ p) a (u i)).
+        { use proofirrelevance. exact isprop. }
+        destruct (φ (pr1 (t (p,, di)))).
+        ** simpl.
+        unfold value; cbn. *)
+        admit.
+      * intros g ineqs. intro l.
+        cbn. unfold Kleisli_extension; simpl.
+        induction l as [P pair]; induction pair as [isprop φ]; simpl.
+        assert (t : (∑ (p : P), isdefined (ifz' (φ p) a v)) ->
+                    isdefined (pr1 g (P,,isprop,,φ))).
+        { intros [p d]. eapply isdefinedlub_toprop.
+          - intros [i di]. use (pr1 ((ineqs i) _)).
+            simpl. exact (p,,di).
+          - use isdefined_isaprop.
+          - admit. }
+        split with t. intros [p d]. cbn.
+        a
+        admit.
+  - split.
+    + intro i. simpl. intros l m.*)
+
+Definition 𝓀_dcpo {D D' : dcpowithleast} : D --> (D' --> D).
+Proof.
+  use dcpomorphismpair.
+  - intro x. use dcpomorphismpair.
+    + exact (λ y : D', x).
+    + intros I u isdirec v islubv. split.
+      * intro i; unfold funcomp; simpl. use isrefl_posetRelation.
+      * intros d ineqs. apply (@factor_through_squash I).
+        ** use (pr2 (pr1 (dcpoorder _) x d)).
+        ** intro i. use (ineqs i).
+        ** exact (pr1 (isdirec)).
+  - intros I u isdirec v islubv. split.
+    + intro i; simpl. intro d'. use (pr1 islubv i).
+    + intros g ineqs; simpl in *.
+      intro d'. use (pr2 islubv).
+      intro i. use (ineqs i d').
+Defined.
+
+Definition 𝓈_dcpo {A B C : dcpowithleast} : (A --> (B --> C)) --> ((A --> B) --> (A --> C)).
+Proof.
+  use dcpomorphismpair.
+  - intro f.
+    use dcpomorphismpair.
+    + intro g.
+      use dcpomorphismpair.
+      * intro a. exact (pr1 (pr1 f a) (pr1 g a)).
+      * admit.
+    + admit.
+ - admit.
+Admitted.
+
+Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⦃ σ ⦄ :=
   match t with
-  | zero => η O
-  | succ => lifted_succ
-  | pred => lifted_pred end.*)
+  | zero     => η O
+  | succ     => lifted_succ
+  | pred     => lifted_pred
+  | fixp     => leastfixedpoint
+  | 𝓀        => 𝓀_dcpo
+  | 𝓈        => 𝓈_dcpo
+  | app s t  => pr1 (denotational_semantics_terms s) (denotational_semantics_terms t)
+  end.
+
+Notation "⟦ t ⟧" := (denotational_semantics_terms t) : PCF.
