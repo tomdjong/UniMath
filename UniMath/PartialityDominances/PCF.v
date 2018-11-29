@@ -91,7 +91,7 @@ Proof.
   exact (λ n : natset, η (P n)).
 Defined.
 
-(*Fixpoint ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
+Fixpoint ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
   match n with
   | O   => a
   | S m => b
@@ -110,7 +110,11 @@ Proof.
     use dcpomorphismpair.
     + intro b.
       exact (lifted_ifz' a b).
-    + intros I u isdirec v islubv.
+    + admit.
+  - admit.
+Admitted.
+
+(*intros I u isdirec v islubv.
       split.
       * intro i. simpl. intro l.
         unfold Kleisli_extension. simpl.
