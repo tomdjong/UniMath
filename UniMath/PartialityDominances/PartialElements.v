@@ -446,9 +446,9 @@ Proof.
   destruct d.
 Defined.
 
-Delimit Scope LiftIsDCPO with LiftIsDCPO.
+(* Delimit Scope LiftIsDCPO with LiftIsDCPO.
 Local Open Scope LiftIsDCPO.
 
 Notation "'𝓛'" := liftdcpowithleast : LiftIsDCPO.
 
-Close Scope LiftIsDCPO.
+Close Scope LiftIsDCPO. *)

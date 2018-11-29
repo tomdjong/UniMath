@@ -100,10 +100,10 @@ Proof.
 Qed.
 
 Definition dcpomorphism (D D' : dcpo) := ∑ (f : D -> D'), isdcpomorphism f.
-Definition dcpomorphismpair (D D': dcpo) :
-  ∏ (t : D -> D'), isdcpomorphism t -> dcpomorphism D D'.
+Definition dcpomorphismpair {D D': dcpo} (t : D -> D')
+           (isdcpomor : isdcpomorphism t) : dcpomorphism D D'.
 Proof.
-  intros t i. exact (t,,i).
+  exact (t,,isdcpomor).
 Defined.
 
 Definition dcpomorphismcarrier {D D' : dcpo} :
@@ -266,8 +266,7 @@ Qed.
 
 Lemma pointwiselub_islub {D D' : dcpo} {I : UU}
       (F : I -> posetofdcpomorphisms D D') (isdirec : isdirected F) :
-  islub F (dcpomorphismpair _ _
-                            (pointwiselub F isdirec)
+  islub F (dcpomorphismpair (pointwiselub F isdirec)
                             (pointwiselub_isdcpomorphism F isdirec)).
 Proof.
   split.
@@ -282,7 +281,7 @@ Lemma posetofdcpomorphisms_isdirectedcomplete (D D' : dcpo) :
   isdirectedcomplete (posetofdcpomorphisms D D').
 Proof.
   intros I F isdirec.
-  split with (dcpomorphismpair D D' (pointwiselub F isdirec)
+  split with (dcpomorphismpair (pointwiselub F isdirec)
                                (pointwiselub_isdcpomorphism F isdirec)).
   use pointwiselub_islub.
 Qed.
@@ -295,9 +294,24 @@ Proof.
   - exact (posetofdcpomorphisms_isdirectedcomplete D D').
 Defined.
 
+Definition dcpoofdcpomorphisms' (D D' : dcpowithleast) : dcpowithleast.
+Proof.
+  split with (dcpoofdcpomorphisms D D').
+  set (leastD' := dcpowithleast_least D').
+  set (l := λ d : D, leastD').
+  assert (isdcpomor : isdcpomorphism l).
+  { intros I u isdirec v islub.
+    split.
+    - intro i. use dcpowithleast_isleast.
+    - intros d' ineqs. use dcpowithleast_isleast. }
+  split with (dcpomorphismpair l isdcpomor).
+  intro f. simpl. intro d.
+  use dcpowithleast_isleast.
+Defined.
+
 Delimit Scope DCPO with DCPO.
 Local Open Scope DCPO.
-Notation "A --> B" := (dcpoofdcpomorphisms A B) : DCPO.
+Notation "A --> B" := (dcpoofdcpomorphisms' A B) : DCPO.
 Definition dcpomorphismcarrier' {A B : dcpo} :
   dcpoofdcpomorphisms A B -> (A -> B) := pr1.
 (* Why won't this work? *)

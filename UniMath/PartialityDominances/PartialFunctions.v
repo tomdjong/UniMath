@@ -116,7 +116,8 @@ Qed.
 Delimit Scope PartialFunctions with PartialFunctionsDCPO.
 Local Open Scope PartialFunctionsDCPO.
 
-Definition Kleisli_extension_dcpo {X Y : hSet} (f : X -> liftdcpo Y) : liftdcpo X --> liftdcpo Y.
+Definition Kleisli_extension_dcpo {X Y : hSet} (f : X -> liftdcpowithleast Y) :
+  liftdcpowithleast X --> liftdcpowithleast Y.
 Proof.
   use dcpomorphismpair.
   - exact (Kleisli_extension f).
