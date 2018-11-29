@@ -19,7 +19,7 @@ Inductive term : type -> UU :=
   | zero                : term ι
   | succ                : term (ι ⇨ ι)
   | pred                : term (ι ⇨ ι)
-(*  | ifz                 : term (ι ⇨ ι ⇨ ι ⇨ ι) *)
+  | ifz                 : term (ι ⇨ ι ⇨ ι ⇨ ι)
   | fixp {σ : type}     : term ((σ ⇨ σ) ⇨ σ)
   | 𝓀    {σ τ : type}   : term (σ ⇨ τ ⇨ σ)
   | 𝓈    {σ τ ρ : type} : term ((σ ⇨ τ ⇨ ρ) ⇨ (σ ⇨ τ) ⇨ σ ⇨ ρ)
@@ -35,26 +35,22 @@ Fixpoint numeral (n : nat) : term ι :=
 
 Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | predzerostep : smallstep' ι (pred ` zero) zero
-  | predsuccstep : ∏ (t : term ι), smallstep' ι (pred ` (succ ` t)) t
-(*  | ifzzerostep : ∏ (s t : term ι), smallstep' ι ((ifz ` s) ` t ` zero) s
-  | ifzsuccstep : ∏ (r s t : term ι),
-                  smallstep' ι (ifz ` s ` t ` (succ ` r)) t *)
-  | fixpstep : ∏ (σ : type), ∏ (t : term (σ ⇨ σ)),
-               smallstep' σ (fixp ` t) (t ` (fixp ` t))
-  | 𝓀step : ∏ (σ τ : type), ∏ (s : term σ), ∏ (t : term τ),
-            smallstep' σ (𝓀 ` s ` t) s
-  | 𝓈step : ∏ (σ τ ρ : type), ∏ (s : term (σ ⇨ τ ⇨ ρ)),
-            ∏ (t : term (σ ⇨ τ)), ∏ (r : term σ),
+  | predsuccstep (t : term ι) : smallstep' ι (pred ` (succ ` t)) t
+  | ifzzerostep (s t : term ι) : smallstep' ι ((ifz ` s) ` t ` zero) s
+  | ifzsuccstep (r s t : term ι) : smallstep' ι (ifz ` s ` t ` (succ ` r)) t
+  | fixpstep {σ : type} (t : term (σ ⇨ σ)) : smallstep' σ (fixp ` t) (t ` (fixp ` t))
+  | 𝓀step {σ τ : type} (s : term σ) (t : term τ) : smallstep' σ (𝓀 ` s ` t) s
+  | 𝓈step {σ τ ρ : type} (s : term (σ ⇨ τ ⇨ ρ)) (t : term (σ ⇨ τ)) (r : term σ) :
             smallstep' ρ (𝓈 ` s ` t ` r) (s ` r ` (t ` r))
-  | appstep  : ∏ (σ τ : type), ∏ (s t : term (σ ⇨ τ)), ∏ (r : term σ),
+  | appstep {σ τ : type} (s t : term (σ ⇨ τ)) (r : term σ) :
                smallstep' (σ ⇨ τ) s t -> smallstep' τ (s ` r) (t ` r).
 
-Definition smallstep (σ : type) : hrel (term σ) :=
+Definition smallstep {σ : type} : hrel (term σ) :=
   λ (s t : term σ), ∥ smallstep' σ s t ∥.
 
 Notation "s ▹ t" := (smallstep s t) (at level 40) : PCF.
 
-Definition bigstep (σ : type) : hrel (term σ) := refl_trans_clos_hrel (smallstep σ).
+Definition bigstep {σ : type} : hrel (term σ) := refl_trans_clos_hrel (smallstep).
 
 Notation "s ⇓ t" := (bigstep s t) (at level 40) : PCF.
 
@@ -184,6 +180,7 @@ Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⦃ σ ⦄ :=
   | zero     => η O
   | succ     => lifted_succ
   | pred     => lifted_pred
+  | ifz      => lifted_ifz
   | fixp     => leastfixedpoint
   | 𝓀        => 𝓀_dcpo
   | 𝓈        => 𝓈_dcpo
@@ -191,3 +188,17 @@ Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⦃ σ ⦄ :=
   end.
 
 Notation "⟦ t ⟧" := (denotational_semantics_terms t) : PCF.
+
+Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
+  match σ with
+  | base => λ l, λ t, ∏ (p : isdefined l), t ⇓ numeral (value l p)
+  | functional τ ρ => λ l, λ t, ∏ (m : ⦃ τ ⦄), ∏ (s : term τ),
+                      adequacy_relation τ m s -> adequacy_relation ρ (pr1 l m) (t ` s)
+  end.
+
+Lemma adequacy_least {σ : type} (t : term σ) :
+  adequacy_relation σ (dcpowithleast_least ⦃ σ ⦄) t.
+Proof.
+  induction σ as [ | τ IH ρ IH'].
+  - simpl. intro p. destruct p.
+  - simpl. intros m s rel. exact (IH' (t ` s)).
