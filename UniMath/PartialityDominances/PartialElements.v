@@ -204,6 +204,27 @@ Proof.
   - exact (q (t d)).
 Defined.
 
+Definition information_order_eq_ifisdefined {X : UU} (l m : 𝓛 X) :
+  l ⊑ m <-> (isdefined l -> l = m).
+Proof.
+  split.
+  - intros ineq dl.
+    use information_order_antisymmetric.
+    + exact ineq.
+    + split with (λ _, dl).
+      intro dm.
+      induction ineq as [t g].
+      etrans.
+      ++ eapply value_weaklyconstant.
+      ++ exact (!(g dl)).
+  - intro ineq'.
+    assert (s : isdefined l -> isdefined m).
+    { intro dl. set (eq := ineq' dl).
+      exact (transportf isdefined eq dl). }
+    split with s.
+    intro dl.
+    use eq_value_eq. exact (ineq' dl).
+Defined.
 
 Definition information_order_least {X : UU} : 𝓛 X := (empty,, isapropempty,, fromempty).
 Notation "'⊥'" := information_order_least : PartialElements.
