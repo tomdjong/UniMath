@@ -137,6 +137,22 @@ Proof.
   set (ineq' := pr1 lubfam'). use (ineq' (inl tt)).
 Qed.
 
+(* As a corollary, dcpo morphisms preserve directed families *)
+Lemma dcpomorphism_preservesdirected {D D' : dcpo} (f : dcpomorphism D D')
+      {I : UU} {u : I -> D} : isdirected u -> isdirected (pr1 f ∘ u).
+Proof.
+  intro isdirec.
+  split.
+  - exact (pr1 isdirec).
+  - intros i j. apply (@factor_through_squash (directeduntruncated u i j)).
+    + use isapropishinh.
+    + intro direc. use hinhpr. induction direc as [k ineqs].
+      split with k. split.
+      * use dcpomorphism_preservesorder. exact (pr1 ineqs).
+      * use dcpomorphism_preservesorder. exact (pr2 ineqs).
+    + exact (pr2 isdirec i j).
+Qed.
+
 Definition pointwiseorder (D D' : dcpo) : hrel (dcpomorphism D D').
 Proof.
   intros f g. use hProppair.
