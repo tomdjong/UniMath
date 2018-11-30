@@ -3,6 +3,7 @@ Require Import UniMath.MoreFoundations.ClosureOfHrel.
 Require Import UniMath.Algebra.DCPO.
 Require Import UniMath.PartialityDominances.PartialElements.
 Require Import UniMath.PartialityDominances.PartialFunctions.
+Require Import UniMath.MoreFoundations.PropExt.
 
 Inductive type : UU :=
   | base       : type
@@ -29,7 +30,7 @@ Notation "s ` t" := (app s t) (at level 50, left associativity) : PCF.
 
 Fixpoint numeral (n : nat) : term ι :=
   match n with
-  | O   => zero
+  | 0   => zero
   | S k => succ ` (numeral k)
   end.
 
@@ -81,7 +82,7 @@ Defined.
 
 Fixpoint P (n : nat) : nat :=
   match n with
-  | O   => O
+  | 0   => O
   | S m => m
   end.
 
@@ -93,7 +94,7 @@ Defined.
 
 Fixpoint ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
   match n with
-  | O   => a
+  | 0   => a
   | S m => b
   end.
 
@@ -103,6 +104,13 @@ Proof.
   exact (λ n : nat, ifz' n a b).
 Defined.
 
+Lemma nateq0orS (n : nat) : (n = 0) ⨿ (∑ (m : nat), n = S m).
+Proof.
+  destruct n.
+  - use inl. use idpath.
+  - use inr. split with n. use idpath.
+Qed.
+
 Definition lifted_ifz : 𝓛ℕ --> (𝓛ℕ --> (𝓛ℕ --> 𝓛ℕ)).
 Proof.
   use dcpomorphismpair.
@@ -110,43 +118,91 @@ Proof.
     use dcpomorphismpair.
     + intro b.
       exact (lifted_ifz' a b).
-    + admit.
+    + intros I u isdirec v islubv.
+      admit. (* Use alternative information_order (?) *)
+      (* split.
+      ++ intro i. intro l. simpl.
+         induction l as [P pair]; induction pair as [isprop φ]; simpl in *.
+         unfold Kleisli_extension; simpl.
+         assert (t : (∑ (p : P), isdefined (ifz' (φ p) a (u i))) ->
+                     (∑ (p : P), isdefined (ifz' (φ p) a v))).
+         { intros [p di]. split with p.
+           destruct (φ p).
+           - simpl in *. exact di.
+           - simpl in *. apply (pr1 (pr1 islubv i)). exact di. }
+         split with t. intros t'; cbn; cbn in t'.
+         set (s := t t').
+         induction s as [p' d'].
+         induction t' as [p di].
+         assert (eq : p = p').
+         { use proofirrelevance. exact isprop. }
+         apply eq_value_eq.
+         destruct (nateq0orS (φ p)) as [φpeq|φpeq'].
+         +++ rewrite φpeq.
+             rewrite ((!maponpaths φ eq) @ φpeq).
+             use idpath.
+         +++ induction φpeq' as [m φpeq]. rewrite φpeq.
+             rewrite ((!maponpaths φ eq) @ φpeq).
+             simpl. use (pr1 (information_order_eq_ifisdefined _ _)).
+             exact (pr1 islubv i).
+             rewrite φpeq in di. simpl in di. exact di.
+      ++ intros f ineqs.
+         unfold funcomp in ineqs.
+         intro l.
+         assert (t : isdefined (pr1 (lifted_ifz' a v) l) -> isdefined (pr1 f l)).
+         {
+           induction l as [P pair]; induction pair as [isprop φ].
+           intros [p d].
+           destruct (nateq0orS (φ p)) as [eql|eql'].
+           - apply (@factor_through_squash I).
+             + use isdefined_isaprop.
+             + intro i. apply (ineqs i).
+               simpl. split with p.
+               rewrite eql. simpl.
+               rewrite eql in d. simpl in d.
+               exact d.
+             + exact (pr1 isdirec).
+           - apply (isdefinedlub_toprop u isdirec).
+             + intros [i di].
+               apply (ineqs i).
+               split with p.
+               induction eql' as [m eql].
+               rewrite eql in *; simpl; simpl in d.
+               exact di.
+             + use isdefined_isaprop.
+             + apply (@factor_through_squash I).
+               ++ use isdefined_isaprop.
+               ++ intro i. induction eql' as [m eql].
+                  rewrite eql in d; simpl in d.
+                  exact (transportf isdefined (lubsareunique u islubv
+                        (mkdirectedlubinlift_islub u isdirec)) d).
+               ++ exact (pr1 isdirec). }
+         split with t. induction l as [P pair]; induction pair as [isprop φ].
+         intros [p d]. unfold value; cbn.
+         destruct (nateq0orS (φ p)) as [eql|eql'].
+         +++ apply (@factor_through_squash I).
+             * use (pr2 natset).
+             * intro i.
+               use eq_value_eq.
+               rewrite eql. simpl. rewrite eql in d; simpl in d.
+               assert (di : isdefined (ifz' (φ p) a (u i))).
+               { rewrite eql. simpl. exact d. }
+               assert (eq : pr1 (lifted_ifz' a (u i)) (P,,isprop,,φ) = pr1 f (P,,isprop,,φ)).
+               { use (pr1 (information_order_eq_ifisdefined _ _)).
+                 - use (ineqs i (P,,isprop,,φ)).
+                 - simpl. split with p. rewrite eql; simpl. exact d. }
+               assert (eq' : a = pr1 (lifted_ifz' a (u i)) (P,,isprop,,φ)).
+               { use isdefined_value_eq.
+                 - simpl. use propext.
+                   + use isdefined_isaprop.
+                   + use isaprop_total2.
+
+               set (helper := g (p,,di)).
+               simpl in helper.*)
   - admit.
 Admitted.
 
-(*intros I u isdirec v islubv.
-      split.
-      * intro i. simpl. intro l.
-        unfold Kleisli_extension. simpl.
-        induction l as [P pair]; induction pair as [isprop φ]; simpl.
-        assert (t : (∑ (p : P), isdefined (ifz' (φ p) a (u i))) ->
-                    (∑ (p : P), isdefined (ifz' (φ p) a v))).
-        { intros [p di]. split with p.
-          destruct (φ p).
-          ** simpl in *. exact di.
-          ** simpl in *. apply (pr1 (pr1 islubv i)). exact di. }
-        split with t. intros [p di]; cbn.
-(*        assert (eq : ifz' (φ p) a (u i)).
-        { use proofirrelevance. exact isprop. }
-        destruct (φ (pr1 (t (p,, di)))).
-        ** simpl.
-        unfold value; cbn. *)
-        admit.
-      * intros g ineqs. intro l.
-        cbn. unfold Kleisli_extension; simpl.
-        induction l as [P pair]; induction pair as [isprop φ]; simpl.
-        assert (t : (∑ (p : P), isdefined (ifz' (φ p) a v)) ->
-                    isdefined (pr1 g (P,,isprop,,φ))).
-        { intros [p d]. eapply isdefinedlub_toprop.
-          - intros [i di]. use (pr1 ((ineqs i) _)).
-            simpl. exact (p,,di).
-          - use isdefined_isaprop.
-          - admit. }
-        split with t. intros [p d]. cbn.
-        a
-        admit.
-  - split.
-    + intro i. simpl. intros l m.*)
+
 
 Definition 𝓀_dcpo {D D' : dcpowithleast} : D --> (D' --> D).
 Proof.
