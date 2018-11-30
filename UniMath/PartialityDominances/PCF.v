@@ -208,14 +208,100 @@ Proof.
   - simpl. intros m s rel. exact (IH' (t ` s)).
 Defined.
 
+Lemma appbigstep {σ τ : type} (s t : term (σ ⇨ τ)) (r : term σ) : s ⇓ t -> (s ` r) ⇓ (t ` r).
+Proof.
+  use hinhfun. intro bstep.
+  induction bstep.
+  - use refl_trans_clos_extends. use factor_through_squash.
+    exact (smallstep' _ x y).
+    + use isapropishinh.
+    + intro sstep. use hinhpr. apply appstep. exact sstep.
+    + exact h.
+  - use refl_trans_clos_refl.
+  - eapply refl_trans_clos_trans.
+    + exact IHbstep1.
+    + exact IHbstep2.
+Qed.
+
 Definition adequacy_step {σ : type} (s t : term σ) (l : ⦃ σ ⦄) :
   s ⇓ t -> adequacy_relation σ l t -> adequacy_relation σ l s.
 Proof.
-  induction σ as [ | τ ρ].
+  induction σ as [ | τ IH ρ IH'].
   - intros step rel.
     intro p.
     set (step' := rel p).
     eapply refl_trans_clos_hrel_istrans.
     + exact step.
     + exact step'.
-  -
+  - intros step rel.
+    simpl. intros m r rel'.
+    apply (IH' (s ` r) (t ` r)).
+    + apply appbigstep. exact step.
+    + exact (rel m r rel').
+Defined.
+
+Definition adequacy_zero : adequacy_relation ι (η O) zero.
+Proof.
+  simpl. intro t. use hinhpr.
+  use refl_trans_clos_refl.
+Defined.
+
+Definition succbigstep (s t : term ι) : bigstep s t -> bigstep (succ ` s) (succ ` t).
+Proof.
+  use hinhfun.
+  intro bstep.
+  induction bstep.
+  - use refl_trans_clos_extends. use factor_through_squash.
+    exact (smallstep' _ x y).
+    + use isapropishinh.
+    + intro sstep. use hinhpr. apply succargstep. exact sstep.
+    + exact h.
+  - use refl_trans_clos_refl.
+  - eapply refl_trans_clos_trans.
+    + exact IHbstep1.
+    + exact IHbstep2.
+Defined.
+
+Definition adequacy_succ : adequacy_relation (ι ⇨ ι) lifted_succ succ.
+Proof.
+  intros l t rel q.
+  induction q as [p q'].
+  set (reduces := rel p).
+  change (numeral (value (pr1 lifted_succ l) (p,,q'))) with
+  (succ ` (numeral (value l p))).
+  apply succbigstep. exact reduces.
+Defined.
+
+Definition predbigstep (s t : term ι) : bigstep s t -> bigstep (pred ` s) (pred ` t).
+Proof.
+  use hinhfun.
+  intro bstep.
+  induction bstep.
+  - use refl_trans_clos_extends. use factor_through_squash.
+    exact (smallstep' _ x y).
+    + use isapropishinh.
+    + intro sstep. use hinhpr. apply predargstep. exact sstep.
+    + exact h.
+  - use refl_trans_clos_refl.
+  - eapply refl_trans_clos_trans.
+    + exact IHbstep1.
+    + exact IHbstep2.
+Defined.
+
+Definition adequacy_pred : adequacy_relation (ι ⇨ ι) lifted_pred pred.
+Proof.
+  intros l t rel q.
+  induction q as [p u].
+  induction l as [Q pair]. induction pair as [isprop φ].
+  destruct (φ p) eqn:eq.
+  - eapply refl_trans_clos_hrel_istrans.
+    + eapply predbigstep. exact (rel p).
+    + cbn. rewrite eq. simpl. use hinhpr.
+      use refl_trans_clos_extends. use hinhpr.
+      exact predzerostep.
+  - eapply refl_trans_clos_hrel_istrans.
+    + eapply predbigstep. exact (rel p).
+    + cbn. rewrite eq. simpl. use hinhpr.
+      use refl_trans_clos_extends. use hinhpr.
+      use predsuccstep.
+Defined.
