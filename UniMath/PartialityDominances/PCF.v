@@ -43,7 +43,11 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | 𝓈step {σ τ ρ : type} (s : term (σ ⇨ τ ⇨ ρ)) (t : term (σ ⇨ τ)) (r : term σ) :
             smallstep' ρ (𝓈 ` s ` t ` r) (s ` r ` (t ` r))
   | appstep {σ τ : type} (s t : term (σ ⇨ τ)) (r : term σ) :
-               smallstep' (σ ⇨ τ) s t -> smallstep' τ (s ` r) (t ` r).
+      smallstep' (σ ⇨ τ) s t -> smallstep' τ (s ` r) (t ` r)
+  | predargstep (s t : term ι) : smallstep' ι s t -> smallstep' ι (pred ` s) (pred ` t)
+  | succargstep (s t : term ι) : smallstep' ι s t -> smallstep' ι (succ ` s) (succ ` t)
+  | ifzargstep  (r r' s t : term ι) : smallstep' ι r r' -> smallstep' ι (ifz ` s ` t ` r)
+                                                                      (ifz ` s ` t ` r').
 
 Definition smallstep {σ : type} : hrel (term σ) :=
   λ (s t : term σ), ∥ smallstep' σ s t ∥.
@@ -203,3 +207,15 @@ Proof.
   - simpl. intro p. destruct p.
   - simpl. intros m s rel. exact (IH' (t ` s)).
 Defined.
+
+Definition adequacy_step {σ : type} (s t : term σ) (l : ⦃ σ ⦄) :
+  s ⇓ t -> adequacy_relation σ l t -> adequacy_relation σ l s.
+Proof.
+  induction σ as [ | τ ρ].
+  - intros step rel.
+    intro p.
+    set (step' := rel p).
+    eapply refl_trans_clos_hrel_istrans.
+    + exact step.
+    + exact step'.
+  -
