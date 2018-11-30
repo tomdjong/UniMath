@@ -173,11 +173,78 @@ Proof.
     use dcpomorphismpair.
     + intro g.
       use dcpomorphismpair.
-      * intro a. exact (pr1 (pr1 f a) (pr1 g a)).
-      * admit.
-    + admit.
- - admit.
-Admitted.
+      ++ intro a. exact (pr1 (pr1 f a) (pr1 g a)).
+      ++ intros I u isdirec v islubv. split.
+         * intro i; unfold funcomp; simpl.
+           assert (ineqf : (pr1 f (u i) ≤ pr1 f v)%poset).
+           { use dcpomorphism_preservesorder. exact (pr1 islubv i). }
+           eapply istrans_posetRelation.
+           ** eapply dcpomorphism_preservesorder.
+               eapply dcpomorphism_preservesorder. exact (pr1 islubv i).
+           ** use ineqf.
+         * intros c ineqs.
+           set (fpreslub := pr2 f I u isdirec v islubv).
+           set (gpreslub := pr2 g I u isdirec v islubv).
+           set (isdirecg := dcpomorphism_preservesdirected g isdirec).
+           set (isdirecf := dcpomorphism_preservesdirected f isdirec).
+           set (fpreslub' := pr2 (pr1 f v) I (pr1 g ∘ u) isdirecg _ gpreslub).
+           use (pr2 fpreslub'). intro i.
+           set (const := const_dcpomor B C c).
+           change c with (const (pr1 g (u i))).
+           unfold funcomp.
+           assert (lubeq : (pr1 f v) = dcpomorphismpair
+                                         (pointwiselub (pr1 f ∘ u) isdirecf)
+                                         (pointwiselub_isdcpomorphism (pr1 f ∘ u) isdirecf)).
+           { eapply lubsareunique.
+             - exact fpreslub.
+             - use pointwiselub_islub. }
+           rewrite lubeq.
+           use (pr2 (pointwiselub_islubpointwise (pr1 f ∘ u) isdirecf (pr1 g (u i)))).
+           intro j.
+           unfold pointwisefamily; simpl. unfold funcomp; simpl.
+           use factor_through_squash. exact (directeduntruncated u i j).
+           ** use dcpoorder_propvalued.
+           ** intros [k greater].
+              eapply istrans_posetRelation.
+              *** eapply dcpomorphism_preservesorder.
+                   eapply dcpomorphism_preservesorder. exact (pr1 greater).
+              *** eapply istrans_posetRelation.
+                   assert (ineqf : (pr1 f (u j) ≤ pr1 f (u k))%poset).
+                   { use dcpomorphism_preservesorder. exact (pr2 greater). }
+                   **** apply (ineqf (pr1 g (u k))).
+                   **** exact (ineqs k).
+           ** exact (pr2 isdirec i j).
+    + intros I F isdirec g islubg; split.
+      ++ intro i; simpl. intro a.
+         use dcpomorphism_preservesorder. exact ((pr1 islubg i) a).
+      ++ intros h ineqs; simpl in *.
+         intro a.
+         set (ptfam := pointwisefamily F a).
+         set (ptfamisdirec := pointwisefamily_isdirected F isdirec a).
+         set (geq := lubsareunique _ islubg (pointwiselub_islub F isdirec)).
+         rewrite geq; simpl.
+         (* We use that f a preserves the lub *)
+         use (pr2 (pr2 (f a) I ptfam ptfamisdirec
+                  (pointwiselub F isdirec a)
+                  (pointwiselub_islubpointwise F isdirec a))).
+         intro i. unfold funcomp, ptfam; simpl.
+         unfold pointwisefamily; simpl. exact (ineqs i a).
+  - intros I 𝓕 isdirec F islubF; split.
+    + intro i; simpl. intros f a.
+      use (pr1 islubF i a).
+    + intros 𝓖 ineqs; simpl in *.
+      intros f a.
+      set (Feq := lubsareunique _ islubF (pointwiselub_islub 𝓕 isdirec)).
+      rewrite Feq; simpl.
+      set (islubpt := (pointwiselub_islubpointwise 𝓕 isdirec a)).
+      set (ptFeq := lubsareunique _ islubpt (pointwiselub_islub
+                                               (pointwisefamily 𝓕 a)
+                                               (pointwisefamily_isdirected 𝓕 isdirec a))).
+      rewrite ptFeq; simpl.
+      apply (pr2 (pointwiselub_islubpointwise (pointwisefamily 𝓕 a)
+             (pointwisefamily_isdirected 𝓕 isdirec a) (pr1 f a))).
+      intro i. exact (ineqs i f a).
+Defined.
 
 Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⦃ σ ⦄ :=
   match t with
