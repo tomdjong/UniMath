@@ -3,7 +3,6 @@ Require Import UniMath.MoreFoundations.ClosureOfHrel.
 Require Import UniMath.Algebra.DCPO.
 Require Import UniMath.PartialityDominances.PartialElements.
 Require Import UniMath.PartialityDominances.PartialFunctions.
-Require Import UniMath.MoreFoundations.PropExt.
 
 Inductive type : UU :=
   | base       : type
