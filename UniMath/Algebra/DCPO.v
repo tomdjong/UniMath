@@ -106,6 +106,19 @@ Proof.
   exact (t,,isdcpomor).
 Defined.
 
+(* Constant functions are dcpo morphisms *)
+Definition const_dcpomor (D D' : dcpo) (b : D') : dcpomorphism D D'.
+Proof.
+  use dcpomorphismpair.
+  - exact (λ _, b).
+  - intros I u isdirec v islubv. split.
+    + intro i. unfold funcomp; simpl. use isrefl_posetRelation.
+    + intros d' ineqs. apply (@factor_through_squash I).
+      * use (pr2 (pr1 (dcpoorder D') b d')).
+      * intro i. exact (ineqs i).
+      * exact (pr1 isdirec).
+Defined.
+
 Definition dcpomorphismcarrier {D D' : dcpo} :
   dcpomorphism D D' -> (D -> D') := pr1.
 Coercion dcpomorphismcarrier : dcpomorphism >-> Funclass.
