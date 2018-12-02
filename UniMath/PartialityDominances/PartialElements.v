@@ -226,6 +226,15 @@ Proof.
     use eq_value_eq. exact (ineq' dl).
 Defined.
 
+Definition information_order_isdefined_hyp {X : UU} (l m : 𝓛 X) :
+  (isdefined l -> l ⊑ m) -> l ⊑ m.
+Proof.
+  intro isdefinedhyp.
+  split with (λ d : isdefined l, (pr1 (isdefinedhyp d) d)).
+  intro d.
+  use (pr2 (isdefinedhyp d)).
+Defined.
+
 Definition information_order_least {X : UU} : 𝓛 X := (empty,, isapropempty,, fromempty).
 Notation "'⊥'" := information_order_least : PartialElements.
 
