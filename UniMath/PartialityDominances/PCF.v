@@ -467,7 +467,7 @@ Proof.
   use refl_trans_clos_refl.
 Defined.
 
-Definition succbigstep (s t : term ι) : bigstep s t -> bigstep (succ ` s) (succ ` t).
+Lemma succbigstep (s t : term ι) : bigstep s t -> bigstep (succ ` s) (succ ` t).
 Proof.
   use hinhfun.
   intro bstep.
@@ -481,7 +481,7 @@ Proof.
   - eapply refl_trans_clos_trans.
     + exact IHbstep1.
     + exact IHbstep2.
-Defined.
+Qed.
 
 Definition adequacy_succ : adequacy_relation (ι ⇨ ι) lifted_succ succ.
 Proof.
@@ -493,7 +493,7 @@ Proof.
   apply succbigstep. exact reduces.
 Defined.
 
-Definition predbigstep (s t : term ι) : bigstep s t -> bigstep (pred ` s) (pred ` t).
+Lemma predbigstep (s t : term ι) : bigstep s t -> bigstep (pred ` s) (pred ` t).
 Proof.
   use hinhfun.
   intro bstep.
@@ -507,7 +507,7 @@ Proof.
   - eapply refl_trans_clos_trans.
     + exact IHbstep1.
     + exact IHbstep2.
-Defined.
+Qed.
 
 Definition adequacy_pred : adequacy_relation (ι ⇨ ι) lifted_pred pred.
 Proof.
@@ -525,4 +525,92 @@ Proof.
     + cbn. rewrite eq. simpl. use hinhpr.
       use refl_trans_clos_extends. use hinhpr.
       use predsuccstep.
+Defined.
+
+Lemma ifzbigstep (s t r r' : term ι) : bigstep r r' ->
+                                            bigstep (ifz ` s ` t ` r) (ifz ` s ` t ` r').
+Proof.
+  use hinhfun.
+  intro bstep.
+  induction bstep.
+  - use refl_trans_clos_extends. eapply (@factor_through_squash (smallstep' _ x y)).
+    + use isapropishinh.
+    + intro sstep. use hinhpr. apply ifzargstep. exact sstep.
+    + exact h.
+  - use refl_trans_clos_refl.
+  - eapply refl_trans_clos_trans.
+    + exact IHbstep1.
+    + exact IHbstep2.
+Qed.
+
+Definition adequacy_ifz : adequacy_relation (ι ⇨ ι ⇨ ι ⇨ ι) lifted_ifz ifz.
+Proof.
+  intros l1 t1 rel1 l2 t2 rel2 l3 t3 rel3.
+  induction l3 as [P pair]; induction pair as [isprop φ].
+  intros [p d].
+  destruct (nateq0orS (φ p)) as [φpeq | φpeq'].
+  - assert (l1eq : pr1 (pr1 (pr1 lifted_ifz l1) l2) (P,,isprop,,φ) = l1).
+    { change (pr1 (pr1 (pr1 lifted_ifz l1) l2) (P,,isprop,,φ)) with
+      (pr1 (lifted_ifz' l1 l2) (P,,isprop,,φ)).
+      exact (lifted_ifz_case_0 _ _ (P,,isprop,,φ) p φpeq). }
+    set (eq := eq_value_eq l1eq).
+    assert (d' : isdefined l1).
+    { rewrite φpeq in d. exact d. }
+    rewrite (eq (p,,d) d').
+    assert (ifzad : adequacy_relation ι l1 (ifz ` t1 ` t2 ` t3)).
+    { eapply adequacy_step.
+      - apply (ifzbigstep t1 t2 t3 zero).
+        set (helper := rel3 p).
+        unfold value in helper. rewrite φpeq in helper.
+        exact helper.
+      - eapply adequacy_step.
+        + use refl_trans_clos_hrel_extends. use hinhpr.
+          use ifzzerostep.
+        + exact rel1. }
+    exact (ifzad d').
+  - induction φpeq' as [m φpeq].
+    assert (l2eq : pr1 (pr1 (pr1 lifted_ifz l1) l2) (P,,isprop,,φ) = l2).
+    { change (pr1 (pr1 (pr1 lifted_ifz l1) l2) (P,,isprop,,φ)) with
+      (pr1 (lifted_ifz' l1 l2) (P,,isprop,,φ)).
+      exact (lifted_ifz_case_S _ _ (P,,isprop,,φ) p (m,,φpeq)). }
+    set (eq := eq_value_eq l2eq).
+    assert (d' : isdefined l2).
+    { rewrite φpeq in d. exact d. }
+    rewrite (eq (p,,d) d').
+    assert (ifzad : adequacy_relation ι l2 (ifz ` t1 ` t2 ` t3)).
+    { eapply adequacy_step.
+      - apply (ifzbigstep t1 t2 t3 (numeral (S m))).
+        set (helper := rel3 p).
+        unfold value in helper. rewrite φpeq in helper.
+        exact helper.
+      - eapply adequacy_step.
+        + use refl_trans_clos_hrel_extends. use hinhpr.
+          use ifzsuccstep.
+        + exact rel2. }
+    exact (ifzad d').
+Defined.
+
+Definition adequacy_𝓀 {σ τ : type} : adequacy_relation (σ ⇨ τ ⇨ σ) 𝓀_dcpo 𝓀.
+Proof.
+  intros l t rel m s rel'.
+  simpl.
+  eapply adequacy_step.
+  - use refl_trans_clos_hrel_extends.
+    use hinhpr.
+    use 𝓀step.
+  - exact rel.
+Defined.
+
+Definition adequacy_𝓈 {σ τ ρ : type} : adequacy_relation
+                                         ((σ ⇨ τ ⇨ ρ) ⇨ (σ ⇨ τ) ⇨ σ ⇨ ρ)
+                                         𝓈_dcpo 𝓈.
+Proof.
+  intros l1 t1 rel1 l2 t2 rel2 l3 t3 rel3.
+  simpl.
+  eapply adequacy_step.
+  - use refl_trans_clos_hrel_extends.
+    use hinhpr.
+    use 𝓈step.
+  - set (rel' := rel2 _ _ rel3).
+    exact (rel1 _ _ rel3 _ _ rel').
 Defined.
