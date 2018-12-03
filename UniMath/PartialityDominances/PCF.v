@@ -92,16 +92,16 @@ Proof.
   exact (λ n : natset, η (P n)).
 Defined.
 
-Fixpoint lifted_ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
+Fixpoint ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
   match n with
   | 0   => a
   | S m => b
   end.
 
-Definition lifted_ifz (a b : 𝓛ℕ) : 𝓛ℕ --> 𝓛ℕ.
+Definition lifted_ifz' (a b : 𝓛ℕ) : 𝓛ℕ --> 𝓛ℕ.
 Proof.
   eapply Kleisli_extension_dcpo.
-  exact (λ n : nat, lifted_ifz' n a b).
+  exact (λ n : nat, ifz' n a b).
 Defined.
 
 Lemma nateq0orS (n : nat) : (n = 0) ⨿ (∑ (m : nat), n = S m).
@@ -112,18 +112,18 @@ Proof.
 Qed.
 
 Lemma lifted_ifz_case_0 (a b l : 𝓛ℕ):
-  ∏ (p : isdefined l), value l p = 0 -> pr1 (lifted_ifz a b) l = a.
+  ∏ (p : isdefined l), value l p = 0 -> pr1 (lifted_ifz' a b) l = a.
 Proof.
   intros p valueeq.
   induction l as [P pair]; induction pair as [isprop ϕ].
   unfold value in valueeq.
-  unfold lifted_ifz. simpl.
+  unfold lifted_ifz'. simpl.
   unfold Kleisli_extension; simpl.
   assert (valueeq' : ∏ (p' : P), ϕ p' = 0).
   { intro p'. rewrite <- valueeq.
     change ϕ with (value (P,,isprop,,ϕ)). use value_weaklyconstant. }
   use information_order_antisymmetric.
-  - assert (t : isdefined (pr1 (lifted_ifz a b) (P,,isprop,,ϕ)) -> isdefined a).
+  - assert (t : isdefined (pr1 (lifted_ifz' a b) (P,,isprop,,ϕ)) -> isdefined a).
     { intros [p' d].
       rewrite (valueeq' p') in d; simpl in d. exact d. }
     split with t.
@@ -132,7 +132,38 @@ Proof.
     use eq_value_eq.
     rewrite (valueeq' p'). simpl.
     use idpath.
-  - assert (s : isdefined a -> isdefined (pr1 (lifted_ifz a b) (P,,isprop,,ϕ))).
+  - assert (s : isdefined a -> isdefined (pr1 (lifted_ifz' a b) (P,,isprop,,ϕ))).
+    { intro d. split with p.
+      rewrite valueeq. simpl. exact d. }
+    split with s.
+    unfold value; simpl.
+    intro d. use eq_value_eq. simpl.
+    rewrite (valueeq' (pr1 (s d))).
+    simpl; use idpath.
+Qed.
+
+Lemma lifted_ifz_case_S (a b l : 𝓛ℕ):
+  ∏ (p : isdefined l), (∑ (m : nat), value l p = S m) -> pr1 (lifted_ifz' a b) l = b.
+Proof.
+  intros p valueeqsum.
+  induction l as [P pair]; induction pair as [isprop ϕ].
+  unfold value in valueeqsum. induction valueeqsum as [m valueeq].
+  unfold lifted_ifz'. simpl.
+  unfold Kleisli_extension; simpl.
+  assert (valueeq' : ∏ (p' : P), ϕ p' = S m).
+  { intro p'. rewrite <- valueeq.
+    change ϕ with (value (P,,isprop,,ϕ)). use value_weaklyconstant. }
+  use information_order_antisymmetric.
+  - assert (t : isdefined (pr1 (lifted_ifz' a b) (P,,isprop,,ϕ)) -> isdefined b).
+    { intros [p' d].
+      rewrite (valueeq' p') in d; simpl in d. exact d. }
+    split with t.
+    unfold value; simpl.
+    intros [p' d].
+    use eq_value_eq.
+    rewrite (valueeq' p'). simpl.
+    use idpath.
+  - assert (s : isdefined b -> isdefined (pr1 (lifted_ifz' a b) (P,,isprop,,ϕ))).
     { intro d. split with p.
       rewrite valueeq. simpl. exact d. }
     split with s.
@@ -149,92 +180,127 @@ Proof.
   - intro a.
     use dcpomorphismpair.
     + intro b.
-      exact (lifted_ifz a b).
+      exact (lifted_ifz' a b).
     + intros I u isdirec v islubv.
-      admit. (* Use alternative information_order (?) *)
-      (* split.
-      ++ intro i. intro l. simpl.
-         induction l as [P pair]; induction pair as [isprop φ]; simpl in *.
-         unfold Kleisli_extension; simpl.
-         assert (t : (∑ (p : P), isdefined (ifz' (φ p) a (u i))) ->
-                     (∑ (p : P), isdefined (ifz' (φ p) a v))).
-         { intros [p di]. split with p.
-           destruct (φ p).
-           - simpl in *. exact di.
-           - simpl in *. apply (pr1 (pr1 islubv i)). exact di. }
-         split with t. intros t'; cbn; cbn in t'.
-         set (s := t t').
-         induction s as [p' d'].
-         induction t' as [p di].
-         assert (eq : p = p').
-         { use proofirrelevance. exact isprop. }
-         apply eq_value_eq.
-         destruct (nateq0orS (φ p)) as [φpeq|φpeq'].
-         +++ rewrite φpeq.
-             rewrite ((!maponpaths φ eq) @ φpeq).
-             use idpath.
-         +++ induction φpeq' as [m φpeq]. rewrite φpeq.
-             rewrite ((!maponpaths φ eq) @ φpeq).
-             simpl. use (pr1 (information_order_eq_ifisdefined _ _)).
-             exact (pr1 islubv i).
-             rewrite φpeq in di. simpl in di. exact di.
-      ++ intros f ineqs.
-         unfold funcomp in ineqs.
-         intro l.
-         assert (t : isdefined (pr1 (lifted_ifz' a v) l) -> isdefined (pr1 f l)).
-         {
-           induction l as [P pair]; induction pair as [isprop φ].
-           intros [p d].
-           destruct (nateq0orS (φ p)) as [eql|eql'].
-           - apply (@factor_through_squash I).
-             + use isdefined_isaprop.
-             + intro i. apply (ineqs i).
-               simpl. split with p.
-               rewrite eql. simpl.
-               rewrite eql in d. simpl in d.
-               exact d.
-             + exact (pr1 isdirec).
-           - apply (isdefinedlub_toprop u isdirec).
-             + intros [i di].
-               apply (ineqs i).
-               split with p.
-               induction eql' as [m eql].
-               rewrite eql in *; simpl; simpl in d.
-               exact di.
-             + use isdefined_isaprop.
-             + apply (@factor_through_squash I).
-               ++ use isdefined_isaprop.
-               ++ intro i. induction eql' as [m eql].
-                  rewrite eql in d; simpl in d.
-                  exact (transportf isdefined (lubsareunique u islubv
-                        (mkdirectedlubinlift_islub u isdirec)) d).
-               ++ exact (pr1 isdirec). }
-         split with t. induction l as [P pair]; induction pair as [isprop φ].
-         intros [p d]. unfold value; cbn.
-         destruct (nateq0orS (φ p)) as [eql|eql'].
-         +++ apply (@factor_through_squash I).
-             * use (pr2 natset).
-             * intro i.
-               use eq_value_eq.
-               rewrite eql. simpl. rewrite eql in d; simpl in d.
-               assert (di : isdefined (ifz' (φ p) a (u i))).
-               { rewrite eql. simpl. exact d. }
-               assert (eq : pr1 (lifted_ifz' a (u i)) (P,,isprop,,φ) = pr1 f (P,,isprop,,φ)).
-               { use (pr1 (information_order_eq_ifisdefined _ _)).
-                 - use (ineqs i (P,,isprop,,φ)).
-                 - simpl. split with p. rewrite eql; simpl. exact d. }
-               assert (eq' : a = pr1 (lifted_ifz' a (u i)) (P,,isprop,,φ)).
-               { use isdefined_value_eq.
-                 - simpl. use propext.
-                   + use isdefined_isaprop.
-                   + use isaprop_total2.
-
-               set (helper := g (p,,di)).
-               simpl in helper.*)
-  - admit.
-Admitted.
-
-
+      split.
+      * intros i l. unfold funcomp.
+         induction l as [P pair]; induction pair as [isprop φ].
+         use (pr2 (information_order_eq_ifisdefined _ _)).
+         intros [p d].
+         destruct (nateq0orS (φ p)) as [φpeq | φpeq'].
+         ** rewrite φpeq in d.
+             etrans.
+             *** apply (lifted_ifz_case_0 a (u i) (P,,isprop,,φ) p φpeq).
+             *** apply (!(lifted_ifz_case_0 a v (P,,isprop,,φ) p φpeq)).
+         ** induction φpeq' as [m φpeq].
+            etrans.
+            *** apply (lifted_ifz_case_S a (u i) (P,,isprop,,φ) p (m,,φpeq)).
+            *** etrans.
+                **** rewrite φpeq in d. simpl in d.
+                     set (ineq := (pr1 islubv i)).
+                     apply (pr1 (information_order_eq_ifisdefined _ _) ineq d).
+                **** apply (!(lifted_ifz_case_S a v (P,,isprop,,φ) p (m,,φpeq))).
+      * intros f ineqs l.
+         induction l as [P pair]; induction pair as [isprop φ].
+         use (pr2 (information_order_eq_ifisdefined _ _)).
+         intros [p d].
+         destruct (nateq0orS (φ p)) as [φpeq | φpeq'].
+         ** etrans.
+            *** apply (lifted_ifz_case_0 a v (P,,isprop,,φ) p φpeq).
+            *** eapply (@factor_through_squash I).
+                **** use (pr2 (dcpocarrier (liftdcpowithleast natset))).
+                **** intro i. set (ineq := ineqs i (P,,isprop,,φ)).
+                     unfold funcomp in ineq.
+                     set (eq := !(lifted_ifz_case_0 a (u i) (P,,isprop,,φ) p φpeq)).
+                     set (helper := pr1 (information_order_eq_ifisdefined _ _) ineq).
+                     assert (d' : isdefined (pr1 (lifted_ifz' a (u i)) (P,,isprop,,φ))).
+                     { split with p. rewrite φpeq in *. simpl; simpl in d; exact d. }
+                     set (eq' := helper d').
+                     exact (eq @ eq').
+                **** exact (pr1 isdirec).
+         ** induction φpeq' as [m φpeq].
+            eapply (isdefinedlub_toprop u isdirec).
+            *** intros [i di].
+                etrans.
+                **** apply (lifted_ifz_case_S a v (P,,isprop,,φ) p (m,,φpeq)).
+                **** etrans.
+                     ***** set (ineq := pr1 islubv i).
+                           apply (!(pr1 (information_order_eq_ifisdefined _ _) ineq) di).
+                     ***** etrans.
+                           ****** apply (!(lifted_ifz_case_S a (u i) (P,,isprop,,φ) p (m,,φpeq))).
+                           ****** apply (pr1 (information_order_eq_ifisdefined _ _) (ineqs i _)).
+                                  split with p. rewrite φpeq. simpl. exact di.
+            *** use (pr2 (dcpocarrier (liftdcpowithleast natset))).
+            *** rewrite φpeq in d. simpl in d.
+                assert (lubeq : v = mkdirectedlubinlift u isdirec).
+                { eapply (lubsareunique u).
+                  - exact islubv.
+                  - use mkdirectedlubinlift_islub. }
+                exact (transportf isdefined lubeq d).
+  - intros I u isdirec v islubv; split.
+    + intro i; simpl.
+      intros l l'.
+      use (pr2 (information_order_eq_ifisdefined _ _)).
+      induction l' as [Q pair]; induction pair as [isprop' ψ].
+      intros [q d].
+      change (((λ n : nat, ifz' n (u i) l) #)%PartialFunctionsDCPO (Q,,isprop',,ψ))
+      with (pr1 (lifted_ifz' (u i) l) (Q,,isprop',,ψ)).
+      change (((λ n : nat, ifz' n v l) #)%PartialFunctionsDCPO (Q,,isprop',,ψ))
+      with (pr1 (lifted_ifz' v l) (Q,,isprop',,ψ)).
+      destruct (nateq0orS (ψ q)) as [ψqeq | ψqeq'].
+      * etrans.
+        ** apply (lifted_ifz_case_0 (u i) l (Q,,isprop',,ψ) q ψqeq).
+        ** etrans.
+           *** apply (pr1 (information_order_eq_ifisdefined _ _) (pr1 islubv i)).
+               rewrite ψqeq in d. exact d.
+           *** apply (!(lifted_ifz_case_0 v l (Q,,isprop',,ψ) q ψqeq)).
+      * induction ψqeq' as [m ψqeq].
+        etrans.
+        ** apply (lifted_ifz_case_S (u i) l (Q,,isprop',,ψ) q (m,,ψqeq)).
+        ** apply (!(lifted_ifz_case_S v l (Q,,isprop',,ψ) q (m,,ψqeq))).
+    + intros f ineqs; simpl in ineqs; simpl.
+      intros l l'. use (pr2 (information_order_eq_ifisdefined _ _)).
+      induction l' as [Q pair]; induction pair as [isprop' ψ].
+      intros [q d].
+      destruct (nateq0orS (ψ q)) as [ψqeq | ψqeq'].
+      * change (((λ n : nat, ifz' n v l) #)%PartialFunctionsDCPO (Q,,isprop',,ψ)) with
+        (pr1 (lifted_ifz' v l) (Q,,isprop',,ψ)).
+        etrans.
+        ** apply (lifted_ifz_case_0 v l (Q,,isprop',,ψ) q ψqeq).
+        ** eapply (isdefinedlub_toprop u isdirec).
+           *** intros [i di]. etrans.
+               **** apply pathsinv0.
+                    apply (pr1 (information_order_eq_ifisdefined _ _) (pr1 islubv i)).
+                    exact di.
+               **** etrans.
+                    ***** apply (!(lifted_ifz_case_0 (u i) l (Q,,isprop',,ψ) q ψqeq)).
+                    ***** apply (pr1 (information_order_eq_ifisdefined _ _) (ineqs i _ _)).
+                          simpl. split with q. rewrite ψqeq; simpl. exact di.
+           *** use (pr2 (dcpocarrier 𝓛ℕ)).
+           *** assert (lubeq : v = mkdirectedlubinlift u isdirec).
+               { eapply (lubsareunique u).
+                 - exact islubv.
+                 - use mkdirectedlubinlift_islub. }
+               rewrite ψqeq in d; simpl in d.
+               exact (transportf isdefined lubeq d).
+      * change (((λ n : nat, ifz' n v l) #)%PartialFunctionsDCPO (Q,,isprop',,ψ)) with
+        (pr1 (lifted_ifz' v l) (Q,,isprop',,ψ)).
+        induction ψqeq' as [m ψqeq].
+        etrans.
+        ** apply (lifted_ifz_case_S v l (Q,,isprop',,ψ) q (m,,ψqeq)).
+        ** eapply (@factor_through_squash I).
+           *** use (pr2 (dcpocarrier 𝓛ℕ)).
+           *** intro i.
+               set (ineq := ineqs i l (Q,,isprop',,ψ)).
+               change (((λ n : nat, ifz' n (u i) l)# )%PartialFunctionsDCPO (Q,,isprop',,ψ))
+               with (pr1 (lifted_ifz' (u i) l) (Q,,isprop',,ψ)) in ineq.
+               set (eq := lifted_ifz_case_S (u i) l (Q,,isprop',,ψ) q (m,,ψqeq)).
+               etrans.
+               **** apply (!eq).
+               **** apply (pr1 (information_order_eq_ifisdefined _ _) ineq).
+                    simpl. split with q. rewrite ψqeq in *. exact d.
+           *** exact (pr1 isdirec).
+Defined.
 
 Definition 𝓀_dcpo {D D' : dcpowithleast} : D --> (D' --> D).
 Proof.
