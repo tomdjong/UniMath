@@ -3,6 +3,7 @@ Require Import UniMath.MoreFoundations.ClosureOfHrel.
 Require Import UniMath.Algebra.DCPO.
 Require Import UniMath.PartialityDominances.PartialElements.
 Require Import UniMath.PartialityDominances.PartialFunctions.
+Require Import UniMath.MoreFoundations.PropExt.
 
 Inductive type : UU :=
   | base       : type
@@ -91,16 +92,16 @@ Proof.
   exact (λ n : natset, η (P n)).
 Defined.
 
-Fixpoint ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
+Fixpoint lifted_ifz' (n : nat) (a b : 𝓛ℕ) : 𝓛ℕ :=
   match n with
   | 0   => a
   | S m => b
   end.
 
-Definition lifted_ifz' (a b : 𝓛ℕ) : 𝓛ℕ --> 𝓛ℕ.
+Definition lifted_ifz (a b : 𝓛ℕ) : 𝓛ℕ --> 𝓛ℕ.
 Proof.
   eapply Kleisli_extension_dcpo.
-  exact (λ n : nat, ifz' n a b).
+  exact (λ n : nat, lifted_ifz' n a b).
 Defined.
 
 Lemma nateq0orS (n : nat) : (n = 0) ⨿ (∑ (m : nat), n = S m).
@@ -110,13 +111,45 @@ Proof.
   - use inr. split with n. use idpath.
 Qed.
 
+Lemma lifted_ifz_case_0 (a b l : 𝓛ℕ):
+  ∏ (p : isdefined l), value l p = 0 -> pr1 (lifted_ifz a b) l = a.
+Proof.
+  intros p valueeq.
+  induction l as [P pair]; induction pair as [isprop ϕ].
+  unfold value in valueeq.
+  unfold lifted_ifz. simpl.
+  unfold Kleisli_extension; simpl.
+  assert (valueeq' : ∏ (p' : P), ϕ p' = 0).
+  { intro p'. rewrite <- valueeq.
+    change ϕ with (value (P,,isprop,,ϕ)). use value_weaklyconstant. }
+  use information_order_antisymmetric.
+  - assert (t : isdefined (pr1 (lifted_ifz a b) (P,,isprop,,ϕ)) -> isdefined a).
+    { intros [p' d].
+      rewrite (valueeq' p') in d; simpl in d. exact d. }
+    split with t.
+    unfold value; simpl.
+    intros [p' d].
+    use eq_value_eq.
+    rewrite (valueeq' p'). simpl.
+    use idpath.
+  - assert (s : isdefined a -> isdefined (pr1 (lifted_ifz a b) (P,,isprop,,ϕ))).
+    { intro d. split with p.
+      rewrite valueeq. simpl. exact d. }
+    split with s.
+    unfold value; simpl.
+    intro d. use eq_value_eq. simpl.
+    rewrite (valueeq' (pr1 (s d))).
+    simpl; use idpath.
+Qed.
+
+
 Definition lifted_ifz : 𝓛ℕ --> (𝓛ℕ --> (𝓛ℕ --> 𝓛ℕ)).
 Proof.
   use dcpomorphismpair.
   - intro a.
     use dcpomorphismpair.
     + intro b.
-      exact (lifted_ifz' a b).
+      exact (lifted_ifz a b).
     + intros I u isdirec v islubv.
       admit. (* Use alternative information_order (?) *)
       (* split.
