@@ -614,3 +614,39 @@ Proof.
   - set (rel' := rel2 _ _ rel3).
     exact (rel1 _ _ rel3 _ _ rel').
 Defined.
+
+Definition adequacy_lubs {σ : type} {I : UU} (u : I -> ⦃ σ ⦄) (isdirec : isdirected u)
+           (t : term σ) : (∏ (i : I), adequacy_relation σ (u i) t) ->
+                          ∏ (v : ⦃ σ ⦄), islub u v -> adequacy_relation σ v t.
+Proof.
+  induction σ as [ | τ IH ρ IH'].
+  - intro adequacy_I.
+    intros v islubv p.
+    assert (lubeq : v = mkdirectedlubinlift u isdirec).
+    { eapply (lubsareunique u).
+      - exact islubv.
+      - use mkdirectedlubinlift_islub. }
+    set (p' := transportf isdefined lubeq p).
+    eapply (isdefinedlub_toprop u isdirec).
+    + intros [i di].
+      rewrite (eq_value_eq lubeq p p').
+      rewrite <- (lubvalue_eq u isdirec i di).
+      exact (adequacy_I i di).
+    + use isapropishinh.
+    + exact p'.
+  - intro adequacy_I.
+    intros v islubv m s rel.
+    set (ptfam := pointwisefamily u m).
+    set (ptfamdirec := pointwisefamily_isdirected u isdirec m).
+    apply (IH' ptfam ptfamdirec).
+    + intro i. unfold ptfam. unfold pointwisefamily.
+      apply (adequacy_I i).
+      exact rel.
+    + assert (lubeq : v = dcpomorphismpair (pointwiselub u isdirec)
+                                           (pointwiselub_isdcpomorphism u isdirec)).
+      { apply (lubsareunique u).
+        - exact islubv.
+        - use pointwiselub_islub. }
+      rewrite lubeq.
+      use pointwiselub_islubpointwise.
+Defined.
