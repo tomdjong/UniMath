@@ -650,3 +650,21 @@ Proof.
       rewrite lubeq.
       use pointwiselub_islubpointwise.
 Defined.
+
+Definition adequacy_fixp {σ : type} : adequacy_relation ((σ ⇨ σ) ⇨ σ)
+                                                        leastfixedpoint fixp.
+Proof.
+  intros f t rel.
+  (* We wish to apply the previous lemma. *)
+  set (ptfam := pointwisefamily (@iter' ⦃ σ ⦄) f).
+  set (ptfamdirec := pointwisefamily_isdirected (@iter' ⦃ σ ⦄)
+                                                (iter'_isdirected ⦃ σ ⦄) f).
+  apply (adequacy_lubs ptfam ptfamdirec).
+  - intro n. induction n as [ | m IH].
+    + use adequacy_least.
+    + eapply adequacy_step.
+      ++ use refl_trans_clos_hrel_extends. use hinhpr.
+         use fixpstep.
+      ++ exact (rel _ _ IH).
+  - use pointwiselub_islubpointwise.
+Defined.
