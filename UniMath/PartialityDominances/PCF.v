@@ -668,3 +668,22 @@ Proof.
       ++ exact (rel _ _ IH).
   - use pointwiselub_islubpointwise.
 Defined.
+
+Definition adequacy_allterms {σ : type} (t : term σ) : adequacy_relation σ (⟦ t ⟧) t.
+Proof.
+  induction t.
+  - use adequacy_zero.
+  - use adequacy_succ.
+  - use adequacy_pred.
+  - use adequacy_ifz.
+  - use adequacy_fixp.
+  - use adequacy_𝓀.
+  - use adequacy_𝓈.
+  - simpl. exact (IHt1 _ _ IHt2).
+Defined.
+
+Theorem adequacy (t : term ι) :
+  ∏ (p : isdefined (⟦ t ⟧)), t ⇓ numeral (value (⟦ t ⟧) p).
+Proof.
+  use (@adequacy_allterms ι t).
+Qed.
