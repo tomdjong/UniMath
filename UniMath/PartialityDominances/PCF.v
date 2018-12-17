@@ -421,13 +421,24 @@ Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
                       adequacy_relation τ m s -> adequacy_relation ρ (pr1 l m) (t ` s)
   end.
 
-Definition adequacy_least {σ : type} (t : term σ) :
+Lemma adequacy_relation_propvalued {σ : type} (l : ⦃ σ ⦄) (t : term σ) :
+  isaprop (adequacy_relation σ l t).
+Proof.
+  induction σ as [ | τ IH ρ IH'].
+  - simpl. use impred.
+    intro p. use isapropishinh.
+  - simpl. use impred; intro m;
+             use impred; intro s; use impred; intro rel.
+    use IH'.
+Qed.
+
+Lemma adequacy_least {σ : type} (t : term σ) :
   adequacy_relation σ (dcpowithleast_least ⦃ σ ⦄) t.
 Proof.
   induction σ as [ | τ IH ρ IH'].
   - simpl. intro p. destruct p.
   - simpl. intros m s rel. exact (IH' (t ` s)).
-Defined.
+Qed.
 
 Lemma appbigstep {σ τ : type} (s t : term (σ ⇨ τ)) (r : term σ) : s ⇓ t -> (s ` r) ⇓ (t ` r).
 Proof.
@@ -444,7 +455,7 @@ Proof.
     + exact IHbstep2.
 Qed.
 
-Definition adequacy_step {σ : type} (s t : term σ) (l : ⦃ σ ⦄) :
+Lemma adequacy_step {σ : type} (s t : term σ) (l : ⦃ σ ⦄) :
   s ⇓ t -> adequacy_relation σ l t -> adequacy_relation σ l s.
 Proof.
   induction σ as [ | τ IH ρ IH'].
@@ -459,13 +470,13 @@ Proof.
     apply (IH' (s ` r) (t ` r)).
     + apply appbigstep. exact step.
     + exact (rel m r rel').
-Defined.
+Qed.
 
-Definition adequacy_zero : adequacy_relation ι (η O) zero.
+Lemma adequacy_zero : adequacy_relation ι (η O) zero.
 Proof.
   simpl. intro t. use hinhpr.
   use refl_trans_clos_refl.
-Defined.
+Qed.
 
 Lemma succbigstep (s t : term ι) : bigstep s t -> bigstep (succ ` s) (succ ` t).
 Proof.
@@ -483,7 +494,7 @@ Proof.
     + exact IHbstep2.
 Qed.
 
-Definition adequacy_succ : adequacy_relation (ι ⇨ ι) lifted_succ succ.
+Lemma adequacy_succ : adequacy_relation (ι ⇨ ι) lifted_succ succ.
 Proof.
   intros l t rel q.
   induction q as [p q'].
@@ -491,7 +502,7 @@ Proof.
   change (numeral (value (pr1 lifted_succ l) (p,,q'))) with
   (succ ` (numeral (value l p))).
   apply succbigstep. exact reduces.
-Defined.
+Qed.
 
 Lemma predbigstep (s t : term ι) : bigstep s t -> bigstep (pred ` s) (pred ` t).
 Proof.
@@ -509,7 +520,7 @@ Proof.
     + exact IHbstep2.
 Qed.
 
-Definition adequacy_pred : adequacy_relation (ι ⇨ ι) lifted_pred pred.
+Lemma adequacy_pred : adequacy_relation (ι ⇨ ι) lifted_pred pred.
 Proof.
   intros l t rel q.
   induction q as [p u].
@@ -525,7 +536,7 @@ Proof.
     + cbn. rewrite eq. simpl. use hinhpr.
       use refl_trans_clos_extends. use hinhpr.
       use predsuccstep.
-Defined.
+Qed.
 
 Lemma ifzbigstep (s t r r' : term ι) : bigstep r r' ->
                                             bigstep (ifz ` s ` t ` r) (ifz ` s ` t ` r').
@@ -543,7 +554,7 @@ Proof.
     + exact IHbstep2.
 Qed.
 
-Definition adequacy_ifz : adequacy_relation (ι ⇨ ι ⇨ ι ⇨ ι) lifted_ifz ifz.
+Lemma adequacy_ifz : adequacy_relation (ι ⇨ ι ⇨ ι ⇨ ι) lifted_ifz ifz.
 Proof.
   intros l1 t1 rel1 l2 t2 rel2 l3 t3 rel3.
   induction l3 as [P pair]; induction pair as [isprop φ].
@@ -588,9 +599,9 @@ Proof.
           use ifzsuccstep.
         + exact rel2. }
     exact (ifzad d').
-Defined.
+Qed.
 
-Definition adequacy_𝓀 {σ τ : type} : adequacy_relation (σ ⇨ τ ⇨ σ) 𝓀_dcpo 𝓀.
+Lemma adequacy_𝓀 {σ τ : type} : adequacy_relation (σ ⇨ τ ⇨ σ) 𝓀_dcpo 𝓀.
 Proof.
   intros l t rel m s rel'.
   simpl.
@@ -599,11 +610,11 @@ Proof.
     use hinhpr.
     use 𝓀step.
   - exact rel.
-Defined.
+Qed.
 
-Definition adequacy_𝓈 {σ τ ρ : type} : adequacy_relation
-                                         ((σ ⇨ τ ⇨ ρ) ⇨ (σ ⇨ τ) ⇨ σ ⇨ ρ)
-                                         𝓈_dcpo 𝓈.
+Lemma adequacy_𝓈 {σ τ ρ : type} : adequacy_relation
+                                    ((σ ⇨ τ ⇨ ρ) ⇨ (σ ⇨ τ) ⇨ σ ⇨ ρ)
+                                    𝓈_dcpo 𝓈.
 Proof.
   intros l1 t1 rel1 l2 t2 rel2 l3 t3 rel3.
   simpl.
@@ -613,11 +624,11 @@ Proof.
     use 𝓈step.
   - set (rel' := rel2 _ _ rel3).
     exact (rel1 _ _ rel3 _ _ rel').
-Defined.
+Qed.
 
-Definition adequacy_lubs {σ : type} {I : UU} (u : I -> ⦃ σ ⦄) (isdirec : isdirected u)
-           (t : term σ) : (∏ (i : I), adequacy_relation σ (u i) t) ->
-                          ∏ (v : ⦃ σ ⦄), islub u v -> adequacy_relation σ v t.
+Lemma adequacy_lubs {σ : type} {I : UU} (u : I -> ⦃ σ ⦄) (isdirec : isdirected u)
+      (t : term σ) : (∏ (i : I), adequacy_relation σ (u i) t) ->
+                     ∏ (v : ⦃ σ ⦄), islub u v -> adequacy_relation σ v t.
 Proof.
   induction σ as [ | τ IH ρ IH'].
   - intro adequacy_I.
@@ -649,10 +660,9 @@ Proof.
         - use pointwiselub_islub. }
       rewrite lubeq.
       use pointwiselub_islubpointwise.
-Defined.
+Qed.
 
-Definition adequacy_fixp {σ : type} : adequacy_relation ((σ ⇨ σ) ⇨ σ)
-                                                        leastfixedpoint fixp.
+Lemma adequacy_fixp {σ : type} : adequacy_relation ((σ ⇨ σ) ⇨ σ) leastfixedpoint fixp.
 Proof.
   intros f t rel.
   (* We wish to apply the previous lemma. *)
@@ -669,7 +679,7 @@ Proof.
   - use pointwiselub_islubpointwise.
 Defined.
 
-Definition adequacy_allterms {σ : type} (t : term σ) : adequacy_relation σ (⟦ t ⟧) t.
+Lemma adequacy_allterms {σ : type} (t : term σ) : adequacy_relation σ (⟦ t ⟧) t.
 Proof.
   induction t.
   - use adequacy_zero.
@@ -680,10 +690,56 @@ Proof.
   - use adequacy_𝓀.
   - use adequacy_𝓈.
   - simpl. exact (IHt1 _ _ IHt2).
-Defined.
+Qed.
 
 Theorem adequacy (t : term ι) :
   ∏ (p : isdefined (⟦ t ⟧)), t ⇓ numeral (value (⟦ t ⟧) p).
 Proof.
   use (@adequacy_allterms ι t).
+Qed.
+
+Theorem soudness {σ : type} (s t : term σ) : s ⇓ t -> (⟦ s ⟧) = (⟦ t ⟧).
+Proof.
+  intro step.
+  use (@factor_through_squash ((refl_trans_clos smallstep) s t)).
+  - use (pr2 (dcpocarrier _)).
+  - intro step'.
+    induction step'.
+    + use (@factor_through_squash (smallstep' σ x y)).
+      ++ use (pr2 (dcpocarrier _)).
+      ++ intro step'.
+         induction step'.
+         +++ simpl.
+             use (eqtohomot (fun_extension_after_η _)).
+         +++ simpl.
+             set (eq := eqtohomot (extension_comp (λ n : nat, η (S n))
+                                                  (λ n : nat, η (P n))) (⟦ t ⟧)).
+             unfold funcomp in eq.
+             rewrite <- eq.
+             assert (eq' :
+                 ((λ x : nat, ((λ n : nat, η (P n)) #) (η (S x))))%PartialFunctionsDCPO = η).
+             { use funextfun. intro n. simpl.
+               use (eqtohomot (fun_extension_after_η _)). }
+             rewrite eq'. rewrite η_extension. use idpath.
+         +++ simpl. use (eqtohomot (fun_extension_after_η _)).
+         +++ simpl.
+             set (eq := (extension_comp (λ n : nat, η (S n))
+                                                  (λ n : nat, ifz' n (⟦ s ⟧) (⟦ t ⟧)))).
+             unfold funcomp in eq.
+             rewrite <- eq.
+             change (((λ n : nat, ifz' n (⟦ s ⟧) (⟦ t ⟧)) #)%PartialFunctionsDCPO
+                    (((λ m : nat, η (S m)) #)%PartialFunctionsDCPO (⟦ r ⟧)))
+             with
+             (((λ x : nat, ((λ n : nat, ifz' n (⟦ s ⟧) (⟦ t ⟧)) #) (η (S x))) #)%PartialFunctionsDCPO
+                                                                                (⟦ r ⟧)).
+             rewrite <- eq.
+
+      ++ exact h.
+    + use idpath.
+    + etrans.
+      ++ apply IHstep'1.
+         use hinhpr. exact step'1.
+      ++ apply IHstep'2.
+         use hinhpr. exact step'2.
+  - exact step.
 Qed.
