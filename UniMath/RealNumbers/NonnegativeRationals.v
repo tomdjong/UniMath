@@ -1,11 +1,10 @@
 (** Catherine Lelay. Sep. 2015 *)
 
-Unset Automatic Introduction. (** This line has to be removed for the file to compile with Coq8.2 *)
-
 Unset Kernel Term Sharing.
 
 Require Import UniMath.MoreFoundations.Tactics.
 Require Import UniMath.MoreFoundations.PartA.
+Require Import UniMath.MoreFoundations.Sets.
 
 Require Import UniMath.RealNumbers.Sets.
 Require Import UniMath.RealNumbers.Fields.
@@ -14,7 +13,7 @@ Require Import UniMath.RealNumbers.Prelim.
 
 Opaque hq.
 
-Open Scope hq_scope.
+Local Open Scope hq_scope.
 
 (** * Definition of non-negative rational numbers *)
 
@@ -325,7 +324,7 @@ Notation "x * y" := (multNonnegativeRationals x y) (at level 40, left associativ
 Notation "/ x" := (invNonnegativeRationals x) (at level 35, right associativity) : NRat_scope.
 Notation "x / y" := (divNonnegativeRationals x y) (at level 40, left associativity) : NRat_scope.
 
-Open Scope NRat_scope.
+Local Open Scope NRat_scope.
 
 (** *** Correctness of definitions *)
 

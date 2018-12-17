@@ -101,7 +101,7 @@ Qed.
 Definition functor (C C' : precategory_data) : UU :=
   total2 ( λ F : functor_data C C', is_functor F ).
 
-Notation "a ⟶ b" := (functor a b) (at level 39) : cat.
+Notation "a ⟶ b" := (functor a b) : cat.
 (* to input: type "\-->" with Agda input method *)
 
 (** Note that this makes the second component opaque for efficiency reasons *)
@@ -405,7 +405,7 @@ Defined.
 End functors.
 
 (** Notations do not survive the end of sections, so we redeclare them here. *)
-Notation "a ⟶ b" := (functor a b) (at level 39) : cat.
+Notation "a ⟶ b" := (functor a b) : cat.
 Notation "# F" := (functor_on_morphisms F) (at level 3) : cat.
 
 (** ** Fully faithful functors *)
@@ -861,6 +861,31 @@ Lemma comp_ff_is_ff (C D E : precategory)
 Proof.
   unfold fully_faithful in *.
   intros ? ?; apply (pr2 (weqcomp (_,, ffF _ _) (_,, ffG _ _))).
+Qed.
+
+(** Fully faithful functors induce equivalences on commutative triangles
+
+    Compare to [faithful_reflects_commutative_triangle]. *)
+Lemma fully_faithful_commutative_triangle_weq
+      {C D : precategory} (F : functor C D) (fff : fully_faithful F)
+      {X Y Z : ob C} (f : X --> Y) (g : Y --> Z) (h : X --> Z) :
+  (f · g = h) ≃ (#F f · #F g = #F h).
+Proof.
+  apply (@weqcomp _ (# F (f · g) = # F h)).
+  - eapply weqpair.
+    apply (isweqmaponpaths (weq_from_fully_faithful fff _ _) (f · g) h).
+  - use weq_iso; intros p.
+    + refine (_ @ p).
+      apply (!functor_comp _ _ _).
+    + refine (_ @ p).
+      apply (functor_comp _ _ _).
+    + refine (path_assoc _ _ _ @ _).
+      refine (maponpaths (λ pp, pp @ _) (pathsinv0r _) @ _).
+      reflexivity.
+    + cbn.
+      refine (path_assoc _ _ _ @ _).
+      refine (maponpaths (λ pp, pp @ _) (pathsinv0l _) @ _).
+      reflexivity.
 Qed.
 
 (** ** Image on objects of a functor  *)
@@ -1587,7 +1612,7 @@ Notation "[ C , D ]" := (functor_category C D) : cat.
 Notation "F ⟹ G" := (nat_trans F G) (at level 39) : cat.
 (* to input: type "\==>" with Agda input method *)
 
-Notation "F ∙ G" := (functor_composite F G) (at level 35) : cat.
+Notation "F ∙ G" := (functor_composite F G) : cat.
 (* to input: type "\." with Agda input method *)
 (* the old notation had the arguments in the opposite order *)
 
@@ -1617,6 +1642,17 @@ Qed.
 (* Natural isomorphisms *)
 Definition is_nat_iso {C D : precategory} {F G : C ⟶ D} (μ : F ⟹ G) : UU :=
 ∏ (c : C), is_iso (μ c).
+
+Definition isaprop_is_nat_iso
+           {C D : category}
+           {F G : C ⟶ D}
+           (α : F ⟹ G)
+  : isaprop (is_nat_iso α).
+Proof.
+  apply impred.
+  intro.
+  apply isaprop_is_iso.
+Defined.
 
 Definition is_nat_id {C D : precategory} {F : C ⟶ D} (μ : F ⟹ F) : UU :=
 ∏ (c : C), μ c = identity (F c).
@@ -1675,6 +1711,8 @@ Defined.
 Definition nat_iso_to_trans {C D : precategory} {F G : C ⟶ D} (ν : nat_iso F G) : F ⟹ G :=
   pr1 ν.
 
+Coercion nat_iso_to_trans : nat_iso >-> nat_trans.
+
 (* ⁻¹ *)
 Definition nat_iso_to_trans_inv {C D : precategory} {F G : C ⟶ D} (ν : nat_iso F G) : G ⟹ F :=
   pr1 (nat_iso_inv ν).
@@ -1687,3 +1725,56 @@ Defined.
 
 Definition is_nat_iso_id {C D : precategory} {F G : C ⟶ D} (eq : F = G) (ν : nat_iso F G) : UU :=
   ∏ (c : C), nat_comp_to_endo eq (nat_iso_to_trans ν c) = identity (F c).
+
+Definition induced_precategory_incl {M : precategory} {X:Type} (j : X -> ob M) :
+  induced_precategory M j ⟶ M.
+Proof.
+  use mk_functor.
+  - use mk_functor_data.
+    + exact j.
+    + intros a b f. exact f.
+  - repeat split.
+Defined.
+
+Definition iso_to_nat_iso
+           {C D : category}
+           (F G : C ⟶ D)
+  : @iso (functor_category C D) F G → nat_iso F G.
+Proof.
+  intros α.
+  use mk_nat_iso.
+  - exact (pr1 α).
+  - use is_functor_iso_pointwise_if_iso.
+    apply α.
+Defined.
+
+Definition nat_iso_to_iso
+           {C D : category}
+           (F G : C ⟶ D)
+  : nat_iso F G → @iso (functor_category C D) F G.
+Proof.
+  intros α.
+  use functor_iso_from_pointwise_iso ; apply α.
+Defined.
+
+Definition iso_is_nat_iso
+           {C D : category}
+           (F G : C ⟶ D)
+  : @iso (functor_category C D) F G ≃ nat_iso F G.
+Proof.
+  refine (weqpair (iso_to_nat_iso F G) _).
+  use isweq_iso.
+  - exact (nat_iso_to_iso F G).
+  - intros X.
+    use subtypeEquality.
+    + intro.
+      apply isaprop_is_iso.
+    + apply nat_trans_eq.
+      { apply D. }
+      reflexivity.
+  - intros X.
+    use subtypeEquality.
+    + intro.
+      apply isaprop_is_nat_iso.
+    + reflexivity.
+Defined.
