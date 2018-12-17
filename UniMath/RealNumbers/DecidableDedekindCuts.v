@@ -11,16 +11,14 @@ Require Import UniMath.RealNumbers.Sets.
 Require Import UniMath.RealNumbers.NonnegativeRationals.
 Require Export UniMath.RealNumbers.NonnegativeReals.
 
-Unset Automatic Introduction.
-
-Open Scope Dcuts_scope.
+Local Open Scope Dcuts_scope.
+Local Open Scope DC_scope.
 
 (** ** Definition *)
 
 Lemma isboolDcuts_isaprop (x : Dcuts) :
   isaprop (∏ r, (r ∈ x) ∨ (neg (r ∈ x))).
 Proof.
-  intros x.
   apply impred_isaprop.
   intros r.
   apply pr2.
