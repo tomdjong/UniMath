@@ -38,7 +38,7 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | predzerostep : smallstep' ι (pred ` zero) zero
   | predsuccstep (t : term ι) : smallstep' ι (pred ` (succ ` t)) t
   | ifzzerostep (s t : term ι) : smallstep' ι ((ifz ` s) ` t ` zero) s
-  | ifzsuccstep (r s t : term ι) : smallstep' ι (ifz ` s ` t ` (succ ` r)) t
+  | ifzsuccstep (s t : term ι) (n : nat) : smallstep' ι (ifz ` s ` t ` (succ ` (numeral n))) t
   | fixpstep {σ : type} (t : term (σ ⇨ σ)) : smallstep' σ (fixp ` t) (t ` (fixp ` t))
   | 𝓀step {σ τ : type} (s : term σ) (t : term τ) : smallstep' σ (𝓀 ` s ` t) s
   | 𝓈step {σ τ ρ : type} (s : term (σ ⇨ τ ⇨ ρ)) (t : term (σ ⇨ τ)) (r : term σ) :
@@ -414,6 +414,13 @@ Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⦃ σ ⦄ :=
 
 Notation "⟦ t ⟧" := (denotational_semantics_terms t) : PCF.
 
+Lemma denotational_semantics_numerals (n : nat) : ⟦ numeral n ⟧ = η n.
+Proof.
+  induction n as [ | m IHm].
+  - use idpath.
+  - simpl. rewrite IHm. use fun_extension_after_η.
+Qed.
+
 Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
   match σ with
   | base => λ l, λ t, ∏ (p : isdefined l), t ⇓ numeral (value l p)
@@ -726,8 +733,8 @@ Proof.
                   rewrite funcomp_assoc.
                   rewrite (funextfun _ _ (fun_extension_after_η _)).
                   unfold funcomp. simpl.
-                  (* The problem is with the operational semantics! *)
-
+                  rewrite (denotational_semantics_numerals n).
+                  use fun_extension_after_η.
          +++ use pathsinv0. use leastfixedpoint_isfixedpoint.
          +++ use idpath.
          +++ use idpath.
