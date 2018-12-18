@@ -31,9 +31,9 @@ Defined.
 
 Notation "f #" := (Kleisli_extension f) (at level 30) : PartialFunctions.
 
-Lemma η_extension {X : UU} : η # = idfun (𝓛 X).
+Lemma η_extension {X : UU} : η # ~ idfun (𝓛 X).
 Proof.
-  use funextfun. intro l.
+  intro l.
   apply information_order_antisymmetric.
   - split with pr1.
     intro d. use idpath.
@@ -41,9 +41,8 @@ Proof.
     intro d. use idpath.
 Qed.
 
-Lemma fun_extension_after_η {X Y : UU} (f : X ⇀ Y) : f # ∘ η = f.
+Lemma fun_extension_after_η {X Y : UU} (f : X ⇀ Y) : f # ∘ η ~ f.
 Proof.
-  use funextfun.
   intro x. apply information_order_antisymmetric.
   - split with pr2.
     intro d. use idpath.
@@ -52,9 +51,9 @@ Proof.
 Qed.
 
 Lemma extension_comp {X Y Z : UU} (f : X ⇀ Y) (g : Y ⇀ Z) :
-  (g # ∘ f) # = g # ∘ (f #).
+  (g # ∘ f) # ~ g # ∘ (f #).
 Proof.
-  use funextfun. intro l.
+  intro l.
   apply information_order_antisymmetric.
   (* This is essentially just the equivalence between
      ∑(a : A), (b : Ba), C(a, b) and
@@ -72,22 +71,25 @@ Notation "g □ f" := (Kleisli_comp f g) (at level 30) : PartialFunctions.
 Definition Kleisli_id {X : UU} : X ⇀ X := @lift_embedding X.
 
 (* The three lemmas above now say that we have associative composition and identities. *)
-Lemma Kleisli_comp_id_right {X Y : UU} (f : X ⇀ Y) : f □ Kleisli_id = f.
+Lemma Kleisli_comp_id_right {X Y : UU} (f : X ⇀ Y) : f □ Kleisli_id ~ f.
 Proof.
-  unfold Kleisli_id, Kleisli_comp. exact (fun_extension_after_η f).
+  intro l. use fun_extension_after_η.
 Qed.
 
-Lemma Kleisli_comp_id_left {X Y : UU} (f : X ⇀ Y) : Kleisli_id □ f = f.
+Lemma Kleisli_comp_id_left {X Y : UU} (f : X ⇀ Y) : Kleisli_id □ f ~ f.
 Proof.
-  unfold Kleisli_id, Kleisli_comp. rewrite η_extension. use idpath.
+  intro l. use η_extension.
 Qed.
 
 Lemma Kleisli_comp_assoc {X Y W Z : UU} (f : X ⇀ Y) (g : Y ⇀ W) (h : W ⇀ Z) :
-  h □ (g □ f) = (h □ g) □ f.
+  h □ (g □ f) ~ (h □ g) □ f.
 Proof.
+  intro l.
   unfold Kleisli_comp.
-  rewrite funcomp_assoc.
-  now rewrite extension_comp.
+  apply pathsinv0.
+  etrans.
+  - use extension_comp.
+  - use idpath.
 Qed.
 
 Local Open Scope DCPO.
