@@ -702,38 +702,57 @@ Theorem soudness {σ : type} (s t : term σ) : s ⇓ t -> (⟦ s ⟧) = (⟦ t �
 Proof.
   intro step.
   use (@factor_through_squash ((refl_trans_clos smallstep) s t)).
-  - use (pr2 (dcpocarrier _)).
+  - use setproperty.
   - intro step'.
     induction step'.
     + use (@factor_through_squash (smallstep' σ x y)).
-      ++ use (pr2 (dcpocarrier _)).
+      ++ use setproperty.
       ++ intro step'.
          induction step'.
          +++ simpl.
-             use (eqtohomot (fun_extension_after_η _)).
+             use fun_extension_after_η.
          +++ simpl.
-             set (eq := eqtohomot (extension_comp (λ n : nat, η (S n))
-                                                  (λ n : nat, η (P n))) (⟦ t ⟧)).
-             unfold funcomp in eq.
-             rewrite <- eq.
-             assert (eq' :
-                 ((λ x : nat, ((λ n : nat, η (P n)) #) (η (S x))))%PartialFunctionsDCPO = η).
-             { use funextfun. intro n. simpl.
-               use (eqtohomot (fun_extension_after_η _)). }
-             rewrite eq'. rewrite η_extension. use idpath.
-         +++ simpl. use (eqtohomot (fun_extension_after_η _)).
-         +++ simpl.
-             set (eq := (extension_comp (λ n : nat, η (S n))
-                                                  (λ n : nat, ifz' n (⟦ s ⟧) (⟦ t ⟧)))).
-             unfold funcomp in eq.
-             rewrite <- eq.
-             change (((λ n : nat, ifz' n (⟦ s ⟧) (⟦ t ⟧)) #)%PartialFunctionsDCPO
-                    (((λ m : nat, η (S m)) #)%PartialFunctionsDCPO (⟦ r ⟧)))
-             with
-             (((λ x : nat, ((λ n : nat, ifz' n (⟦ s ⟧) (⟦ t ⟧)) #) (η (S x))) #)%PartialFunctionsDCPO
-                                                                                (⟦ r ⟧)).
-             rewrite <- eq.
+             etrans.
+             ++++ apply pathsinv0. use extension_comp.
+             ++++ change (λ n : nat, η (S n)) with (η ∘ S).
+                  rewrite funcomp_assoc.
+                  rewrite (funextfun _ _ (fun_extension_after_η _)).
+                  change ((λ n : nat, η (P n)) ∘ S) with (@lift_embedding natset).
+                  use η_extension.
+         +++ simpl. use fun_extension_after_η.
+         +++ simpl. etrans.
+             ++++ apply pathsinv0. use extension_comp.
+             ++++ change (λ n : nat, η (S n)) with (η ∘ S).
+                  rewrite funcomp_assoc.
+                  rewrite (funextfun _ _ (fun_extension_after_η _)).
+                  unfold funcomp. simpl.
+                  (* The problem is with the operational semantics! *)
 
+         +++ use pathsinv0. use leastfixedpoint_isfixedpoint.
+         +++ use idpath.
+         +++ use idpath.
+         +++ simpl. apply (@eqtohomot _ _ (pr1 (⟦ s ⟧)) (pr1 (⟦ t ⟧))).
+        (* Three times the 'same' proof. *)
+             use maponpaths.
+             apply IHstep'.
+             ++++ use refl_trans_clos_hrel_extends.
+                  use hinhpr. exact step'.
+             ++++ use hinhpr. exact step'.
+         +++ simpl; use maponpaths.
+             apply IHstep'.
+             ++++ use refl_trans_clos_hrel_extends;
+                    use hinhpr; exact step'.
+             ++++ use hinhpr; exact step'.
+         +++ simpl; use maponpaths.
+             apply IHstep'.
+             ++++ use refl_trans_clos_hrel_extends;
+                    use hinhpr; exact step'.
+             ++++ use hinhpr; exact step'.
+         +++ simpl; use maponpaths.
+             apply IHstep'.
+             ++++ use refl_trans_clos_hrel_extends;
+                    use hinhpr; exact step'.
+             ++++ use hinhpr; exact step'.
       ++ exact h.
     + use idpath.
     + etrans.
