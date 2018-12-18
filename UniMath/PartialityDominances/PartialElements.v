@@ -146,7 +146,7 @@ Proof.
     simpl. apply dirprod_paths.
     + simpl. use proofirrelevance. exact (isapropisaprop unit).
     + simpl. use idpath.
-  - set (incl1 := weqtoincl _ _ (weqpair (@iscontr_lift_embedding X)
+  - set (incl1 := weqtoincl (weqpair (@iscontr_lift_embedding X)
                                          (@iscontr_lift_embedding_isweq X))).
     set (incl2 := inclpair (@𝓜_to_𝓛 X) (@𝓜_to_𝓛_isincl X)).
     apply (isinclcomp incl1 incl2).
