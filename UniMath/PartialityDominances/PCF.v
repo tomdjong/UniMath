@@ -705,7 +705,7 @@ Proof.
   use (@adequacy_allterms ι t).
 Qed.
 
-Theorem soudness {σ : type} (s t : term σ) : s ⇓ t -> (⟦ s ⟧) = (⟦ t ⟧).
+Theorem soundness {σ : type} (s t : term σ) : s ⇓ t -> (⟦ s ⟧) = (⟦ t ⟧).
 Proof.
   intro step.
   use (@factor_through_squash ((refl_trans_clos smallstep) s t)).
@@ -768,4 +768,21 @@ Proof.
       ++ apply IHstep'2.
          use hinhpr. exact step'2.
   - exact step.
+Qed.
+
+Theorem isdefined_pcf (t : term ι) :
+  isdefined (⟦ t ⟧) <-> ∑ (n : nat), t ⇓ numeral n.
+Proof.
+  split.
+  - intro p.
+    split with (value (⟦ t ⟧) p).
+    use adequacy.
+  - intros [n step].
+    assert (denoteq : ⟦ t ⟧ = η n).
+    { etrans.
+      - eapply soundness.
+        exact step.
+      - use denotational_semantics_numerals. }
+    rewrite denoteq.
+    exact tt.
 Qed.
