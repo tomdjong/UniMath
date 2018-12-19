@@ -1,5 +1,75 @@
 Require Import UniMath.Foundations.All.
 
+Section reflexive_closure_hrel.
+  Context {X : UU}.
+
+Inductive refl_clos (R : hrel X) : X -> X -> UU :=
+  | base_step' (x y : X) : R x y -> refl_clos R x y
+  | refl_step' (x : X) : refl_clos R x x.
+
+Delimit Scope reflclos with reflclos.
+Local Open Scope reflclos.
+
+Context (R : hrel X).
+Notation "'R''" := (refl_clos R) : reflclos.
+
+Lemma refl_clos_extends : ∏ (x y : X), R x y -> R' x y.
+Proof.
+  use base_step'.
+Qed.
+
+Lemma refl_clos_refl : ∏ (x : X), R' x x.
+Proof.
+  use refl_step'.
+Qed.
+
+Lemma refl_clos_univprop : ∏ (S : X -> X -> UU),
+                           (∏ (x y : X), R x y -> S x y) ->
+                           (∏ (x : X), S x x) ->
+                           ∏ (x y : X), R' x y -> S x y.
+Proof.
+  intros S extends refl x y. intro hyp.
+  induction hyp.
+  - use extends. exact h.
+  - use refl.
+Qed.
+
+Definition refl_clos_hrel (x y : X) := ∥ R' x y ∥.
+
+Notation "'R*'" := (refl_clos_hrel) : reflclos.
+
+Lemma refl_clos_hrel_ishrel : ∏ (x y : X), isaprop (R* x y).
+Proof.
+  intros x y. use isapropishinh.
+Qed.
+
+Lemma refl_clos_hrel_extends : ∏ (x y : X), R x y -> R* x y.
+Proof.
+  intros x y R1. use hinhpr. use refl_clos_extends. exact R1.
+Qed.
+
+Lemma refl_clos_hrel_isrefl : isrefl R*.
+Proof.
+  intro x. use hinhpr. use refl_clos_refl.
+Qed.
+
+Lemma refl_clos_hrel_univprop : ∏ (S : hrel X),
+                                      (∏ (x y : X), R x y -> S x y) ->
+                                      (∏ (x : X), S x x) ->
+                                      ∏ (x y : X), R* x y -> S x y.
+Proof.
+  intros S extends refl x y. intro hyp.
+  use factor_through_squash.
+  - exact (R' x y).
+  - use (pr2 (S x y)).
+  - use (refl_clos_univprop (λ x y : X, (pr1 (S x y)))).
+    + use extends.
+    + use refl.
+  - exact hyp.
+Qed.
+
+End reflexive_closure_hrel.
+
 Section reflexive_transitive_closure_hrel.
   Context {X : UU}.
 
