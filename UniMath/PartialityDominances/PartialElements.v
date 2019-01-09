@@ -57,6 +57,115 @@ Proof.
     + exact transp.
 Defined.
 
+(* We characterise equality in the lift *)
+(***                                  ***)
+
+Definition lifteq_char {X : UU} {l m : 𝓛 X} :
+  l = m -> ∑ (e : isdefined l ≃ isdefined m), value l ∘ invmap e = value m.
+Proof.
+  intro eq.
+  apply total2_paths_equiv in eq.
+  induction eq as [eq1 eq2].
+  split with (eqweqmap eq1).
+  assert (helper : value l ∘ invmap (eqweqmap eq1) =
+                   pr2 (transportf _ eq1 (pr2 l))).
+  { generalize eq1 as e'; intro e'; induction e'; use idpath. }
+  etrans.
+  - exact helper.
+  - change (value m) with (pr2 (pr2 m)). apply maponpaths.
+    exact eq2.
+Defined.
+
+Definition lifteq_char' {X : UU} {l m : 𝓛 X} :
+  (∑ (e : isdefined l ≃ isdefined m), value l ∘ invmap e = value m) -> l = m.
+Proof.
+  intros [e veq].
+  apply total2_paths_equiv.
+  assert (e' : isdefined l = isdefined m).
+  { apply propext.
+    + apply isdefined_isaprop.
+    + apply isdefined_isaprop.
+    + apply weq_to_iff. exact e. }
+  split with e'.
+  use dirprod_paths.
+  - use proofirrelevance. use isapropisaprop.
+  - assert (helper : pr2 (transportf _ e' (pr2 l)) = value l ∘ invmap (eqweqmap e')).
+    { generalize e' as e''; intro e''; induction e''; use idpath. }
+    assert (helper' : e = eqweqmap e').
+    { apply total2_paths_equiv.
+      assert (funeq : pr1 e = pr1 (eqweqmap e')).
+      { apply funextfun. intro d.
+        apply proofirrelevance. apply isdefined_isaprop. }
+      split with funeq.
+      apply proofirrelevance. apply isapropisweq. }
+    etrans.
+    + exact helper.
+    + rewrite <- helper'. exact veq.
+Defined.
+
+Definition lifteq_char'' {X : UU} {l m : 𝓛 X} :
+  (∑ (e : isdefined l <-> isdefined m), value l ∘ pr2 e ~ value m) <-> l = m.
+Proof.
+  split.
+  - intros [e veq]. apply lifteq_char'.
+    assert (eisweq : isweq (pr1 e)).
+    { apply (isweq_iso (pr1 e) (pr2 e)).
+      - intro d. apply proofirrelevance. apply isdefined_isaprop.
+      - intro d. apply proofirrelevance; apply isdefined_isaprop. }
+    split with (weqpair (pr1 e) eisweq).
+    assert (inveq : invmap (weqpair (pr1 e) eisweq) = pr2 e).
+    { use funextfun. intro d. apply proofirrelevance.
+      apply isdefined_isaprop. }
+    rewrite inveq. apply funextfun. exact veq.
+  - intro eq.
+    set (eq' := lifteq_char eq).
+    induction eq' as [e1 e2].
+    split with (dirprodpair (pr1weq e1) (invmap e1)).
+    apply eqtohomot.
+    apply e2.
+Defined.
+
+Definition lifteq_char''' {X : UU} {l m : 𝓛 X} :
+  (∑ (e : isdefined l <-> isdefined m), value l ∘ pr2 e ~ value m) <-> l = m.
+Proof.
+  split.
+  - intros [e veq].
+    apply total2_paths_equiv.
+    assert (eq : isdefined l = isdefined m).
+    { apply propext.
+      - apply isdefined_isaprop.
+      - apply isdefined_isaprop.
+      - exact e. }
+    split with eq.
+    apply dirprod_paths.
+    + apply proofirrelevance. apply isapropisaprop.
+    + assert (lem : pr2 (transportf _ eq (pr2 l)) = value l ∘ pr2 e).
+      { assert (inveq : invmap (eqweqmap eq) = pr2 e).
+        { apply funextfun. intro d. apply proofirrelevance.
+          apply isdefined_isaprop. }
+        rewrite <- inveq.
+        generalize eq as eq'; intro eq'; induction eq'; use idpath. }
+      etrans.
+      ++ apply lem.
+      ++ apply funextfun. exact veq.
+  - intro eq.
+    apply total2_paths_equiv in eq.
+    induction eq as [e1 e2].
+    split with (weq_to_iff (eqweqmap e1)).
+    intro d.
+    assert (lem : value l ∘ pr2 (weq_to_iff (eqweqmap e1)) = pr2 (transportf _ e1 (pr2 l))).
+    { generalize e1 as e1'; intro e1'; induction e1'; use idpath. }
+    etrans.
+    + apply (eqtohomot lem).
+    + change (value m d) with (pr2 (pr2 m) d).
+      use eqtohomot.
+      exact (maponpaths dirprod_pr2 e2).
+Defined.
+
+
+(***                                  ***)
+
+
 Definition eq_value_eq {X : UU} {l m : 𝓛 X} :
   l = m -> ∏ (d : isdefined l), ∏ (d' : isdefined m), value l d = value m d'.
 Proof.
