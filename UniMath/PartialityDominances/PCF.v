@@ -727,14 +727,20 @@ Proof.
                   change ((λ n : nat, η (P n)) ∘ S) with (@lift_embedding natset).
                   use η_extension.
          +++ simpl. use fun_extension_after_η.
-         +++ simpl. etrans.
+         +++ change (succ ` numeral n) with (numeral (S n)).
+             change (⟦ ifz ` s ` t ` numeral (S n) ⟧) with
+             (pr1 (⟦ ifz ` s ` t ⟧) (⟦ numeral (S n) ⟧)).
+             rewrite (denotational_semantics_numerals (S n)).
+             simpl. use fun_extension_after_η.
+
+             (* simpl. etrans.
              ++++ apply pathsinv0. use extension_comp.
              ++++ change (λ n : nat, η (S n)) with (η ∘ S).
                   rewrite funcomp_assoc.
                   rewrite (funextfun _ _ (fun_extension_after_η _)).
                   unfold funcomp. simpl.
                   rewrite (denotational_semantics_numerals n).
-                  use fun_extension_after_η.
+                  use fun_extension_after_η. *)
          +++ use pathsinv0. use leastfixedpoint_isfixedpoint.
          +++ use idpath.
          +++ use idpath.
