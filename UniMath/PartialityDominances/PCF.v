@@ -63,9 +63,10 @@ Proof.
   - intro τ. induction τ.
     + apply inr. intro eq.
       exact (type_encode _ _ eq).
-    + set (IH1 := IHσ1 τ1); set (IH2 := IHσ2 τ2).
-      induction IH1 as [eq1 | neq1]. induction IH2 as [eq2 | neq2].
-      ++ apply inl. apply (map_on_two_paths functional eq1 eq2).
+    + induction (IHσ1 τ1) as [eq1 | neq1].
+      induction (IHσ2 τ2) as [eq2 | neq2].
+      ++ apply inl.
+         exact (map_on_two_paths functional eq1 eq2).
       ++ apply inr. intro eq'. apply neq2.
          exact (maponpaths typeright eq').
       ++ apply inr. intro eq'. apply neq1.
