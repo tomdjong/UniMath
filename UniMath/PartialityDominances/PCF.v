@@ -16,6 +16,155 @@ Notation "'ι'" := base : PCF.
 (* Check level? *)
 Notation "σ ⇨ τ" := (functional σ τ) (at level 60, right associativity) : PCF.
 
+Fixpoint typecode (σ τ : type) : UU :=
+  match σ with
+  | ι       => match τ with
+               | ι       => unit
+               | τ ⇨ ρ   => empty
+               end
+  | σ₁ ⇨ σ₂ => match τ with
+               | ι       => empty
+               | τ₁ ⇨ τ₂ => (typecode σ₁ τ₁) × (typecode σ₂ τ₂)
+               end
+  end.
+
+Definition refl_typecode (σ : type) : typecode σ σ.
+Proof.
+  induction σ.
+  - exact tt.
+  - exact (IHσ1,,IHσ2).
+Defined.
+
+Definition type_encode (σ τ : type) : σ = τ -> typecode σ τ.
+Proof.
+  intro eq.
+  exact (transportf (typecode σ) eq (refl_typecode σ)).
+Defined.
+
+Definition type_decode : ∏ (σ τ : type), typecode σ τ -> σ = τ.
+Proof.
+  intro σ. induction σ.
+  - intros τ c. induction τ.
+    + apply idpath.
+    + induction c.
+  - intros τ c. induction τ.
+    + induction c.
+    + induction c as [c1 c2]. apply map_on_two_paths.
+      ++ apply IHσ1.
+         exact c1.
+      ++ apply IHσ2.
+         exact c2.
+Defined.
+
+Definition functtransportf2 {X Y Z : UU} (f : X -> Y -> Z) (P : Z -> UU) {x x' : X} {y y' : Y}
+           (ex : x = x') (ey : y = y') (p : P (f x y)) :
+  transportf (λ z : X × Y, P (f (pr1 z) (pr2 z))) (@dirprod_paths X Y (x,,y) (x',,y') ex ey) p =
+  transportf P (map_on_two_paths f ex ey) p.
+Proof.
+  induction ex, ey. apply idpath.
+Defined.
+
+Definition transportf_dirprod_pr1 {X Y : UU} (P : X -> UU) {x x' : X} {y y' : Y}
+           (ex : x = x') (ey : y = y') (p : P x) :
+  transportf (λ a : X × Y, P (pr1 a)) (@dirprod_paths X Y (x,,y) (x',,y') ex ey) p =
+  transportf P ex p.
+Proof.
+  induction ex, ey. apply idpath.
+Defined.
+
+Definition transportf_dirprod_pr2 {X Y : UU} (P : Y -> UU) {x x' : X} {y y' : Y}
+           (ex : x = x') (ey : y = y') (p : P y) :
+  transportf (λ a : X × Y, P (pr2 a)) (@dirprod_paths X Y (x,,y) (x',,y') ex ey) p =
+  transportf P ey p.
+Proof.
+  induction ex, ey. apply idpath.
+Defined.
+
+Definition typeeq_typecode_equiv (σ τ : type) : σ = τ ≃ typecode σ τ.
+Proof.
+  use weq_iso.
+  - apply type_encode.
+  - apply type_decode.
+  - intro p. induction p.
+    unfold type_encode.
+    rewrite idpath_transportf.
+    induction σ.
+    + apply idpath.
+    + simpl. rewrite IHσ1. rewrite IHσ2. apply idpath.
+  - generalize τ as ρ. clear τ. induction σ.
+    + intros ρ c. induction ρ.
+      ++ induction c. apply iscontrunit.
+      ++ induction c.
+    + intros ρ c. induction ρ.
+      ++ induction c.
+      ++ induction c as [c1 c2]. simpl. unfold type_encode.
+         set (IH1 := IHσ1 ρ1 c1).
+         set (IH2 := IHσ2 ρ2 c2).
+         assert (lem : transportf (typecode (σ1 ⇨ σ2))
+                                  (map_on_two_paths functional
+                                                    (type_decode σ1 ρ1 c1)
+                                                    (type_decode σ2 ρ2 c2))
+                                                    (refl_typecode (σ1 ⇨ σ2)) =
+                       transportf (typecode σ1) (type_decode σ1 ρ1 c1) (refl_typecode σ1) ,,
+                       transportf (typecode σ2) (type_decode σ2 ρ2 c2) (refl_typecode σ2)).
+         { rewrite <- functtransportf2.
+           change (λ z : type × type, typecode (σ1 ⇨ σ2) (pr1 z ⇨ pr2 z)) with
+           (λ z : type × type, (typecode σ1 (pr1 z)) × typecode σ2 (pr2 z)).
+           etrans.
+           - (* I would use transportf_dirprod here, but for some reason Coq
+                does not like it. *)
+             set (p := @dirprod_paths type type (σ1,,σ2) (ρ1,,ρ2)
+                                      (type_decode σ1 ρ1 c1) (type_decode σ2 ρ2 c2)).
+             set (A := type × type : UU).
+             set (B1 := λ a : A, typecode σ1 (pr1 a)).
+             set (B2 := λ a : A, typecode σ2 (pr2 a)).
+             set (x := ((σ1,,σ2),,refl_typecode (σ1 ⇨ σ2)) : ∑ (a : A), B1 a × B2 a).
+             set (x' := ((ρ1,,ρ2),,(c1,,c2)) : ∑ (a : A), B1 a × B2 a).
+             change (λ z : A, typecode σ1 (pr1 z) × typecode σ2 (pr2 z)) with
+                    (λ a : A, B1 a × B2 a).
+             change (refl_typecode (σ1 ⇨ σ2)) with (pr2 x).
+             assert (helper : transportf (λ a : A, B1 a × B2 a) p (pr2 x) =
+                     dirprodpair (transportf (λ a : A, B1 a) p (pr1 (pr2 x)))
+                                 (transportf (λ a : A, B2 a) p (pr2 (pr2 x)))).
+             { generalize p as p'. clear x' p. induction p'; use idpath. }
+             apply helper.
+           - simpl. apply dirprod_paths.
+             + simpl. rewrite transportf_dirprod_pr1. apply idpath.
+             + simpl. rewrite transportf_dirprod_pr2. apply idpath. }
+         rewrite lem. apply dirprod_paths; simpl.
+         +++ exact IH1.
+         +++ exact IH2.
+Defined.
+
+Definition decidableweq {X Y : UU} (w : X ≃ Y) : decidable X -> decidable Y.
+Proof.
+  intro decX.
+  induction decX as [x | nx].
+  - exact (inl (w x)).
+  - apply inr. intro y. apply nx.
+    exact (invmap w y).
+Defined.
+
+Lemma typehasdeceq : isdeceq type.
+Proof.
+  intros σ τ.
+  apply (decidableweq (invweq (typeeq_typecode_equiv σ τ))).
+  generalize τ as ρ. clear τ. induction σ.
+  - induction ρ.
+    + apply inl. exact tt.
+    + apply inr. exact fromempty.
+  - induction ρ.
+    + apply inr. exact fromempty.
+    + set (IH1 := IHσ1 ρ1); set (IH2 := IHσ2 ρ2).
+      induction IH1 as [c1 | nc1]. induction IH2 as [c2 | nc2].
+      ++ exact (inl (c1,,c2)).
+      ++ apply inr. intro d. induction d as [d1 d2].
+         apply nc2. exact d2.
+      ++ apply inr. intro d. induction d as [d1 d2].
+         apply nc1. exact d1.
+Qed.
+
+
 Inductive term : type -> UU :=
   | zero                : term ι
   | succ                : term (ι ⇨ ι)
