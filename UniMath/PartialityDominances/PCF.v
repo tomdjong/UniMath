@@ -28,6 +28,18 @@ Fixpoint typecode (σ τ : type) : UU :=
                end
   end.
 
+Fixpoint typeleft (σ : type) : type :=
+  match σ with
+  | ι     => ι
+  | τ ⇨ _ => τ
+  end.
+
+Fixpoint typeright (σ : type) : type :=
+  match σ with
+  | ι     => ι
+  | _ ⇨ ρ => ρ
+  end.
+
 Definition refl_typecode (σ : type) : typecode σ σ.
 Proof.
   induction σ.
@@ -39,6 +51,25 @@ Definition type_encode (σ τ : type) : σ = τ -> typecode σ τ.
 Proof.
   intro eq.
   exact (transportf (typecode σ) eq (refl_typecode σ)).
+Defined.
+
+Definition typehasdeceq : isdeceq type.
+Proof.
+  intro σ. induction σ.
+  - intro τ. induction τ.
+    + apply inl. apply idpath.
+    + apply inr. intro eq.
+      exact (type_encode _ _ eq).
+  - intro τ. induction τ.
+    + apply inr. intro eq.
+      exact (type_encode _ _ eq).
+    + set (IH1 := IHσ1 τ1); set (IH2 := IHσ2 τ2).
+      induction IH1 as [eq1 | neq1]. induction IH2 as [eq2 | neq2].
+      ++ apply inl. apply (map_on_two_paths functional eq1 eq2).
+      ++ apply inr. intro eq'. apply neq2.
+         exact (maponpaths typeright eq').
+      ++ apply inr. intro eq'. apply neq1.
+         exact (maponpaths typeleft eq').
 Defined.
 
 Definition type_decode : ∏ (σ τ : type), typecode σ τ -> σ = τ.
@@ -145,7 +176,7 @@ Proof.
     exact (invmap w y).
 Defined.
 
-Lemma typehasdeceq : isdeceq type.
+Lemma typehasdeceq' : isdeceq type.
 Proof.
   intros σ τ.
   apply (decidableweq (invweq (typeeq_typecode_equiv σ τ))).
