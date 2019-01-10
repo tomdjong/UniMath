@@ -182,3 +182,20 @@ Proof.
       ++ exact IHleft.
       ++ exact h.
 Defined.
+
+(* Definition refl_trans_clos_step_dec {X : UU} (R : hrel X) :
+  isdecrel R -> isdeceq X -> ∏ (x y : X) (k : nat) ,
+  decidable (refl_trans_clos_step R k x y).
+Proof.
+  intros Rdec Xdec x y.
+  induction (Rdec x y) as [r | nr].
+  - intro k. admit (* extends *).
+  - induction (Xdec x y) as [eq | neq].
+    + admit.
+    + induction k.
+      ++ apply inr. intro Rstep.
+         inversion Rstep.
+         +++ apply nr. assumption.
+         +++ apply neq. rewrite H1. apply idpath.
+      ++ induction (IHk) as [rk | nrk].
+         +++  (* We need decidable (∑ (z : X) R x z) *) *)

@@ -4,6 +4,7 @@ Require Import UniMath.Algebra.DCPO.
 Require Import UniMath.PartialityDominances.PartialElements.
 Require Import UniMath.PartialityDominances.PartialFunctions.
 Require Import UniMath.MoreFoundations.PropExt.
+Require Import Coq.Init.Specif.
 
 Inductive type : UU :=
   | base       : type
@@ -230,6 +231,31 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | succargstep (s t : term ι) : smallstep' ι s t -> smallstep' ι (succ ` s) (succ ` t)
   | ifzargstep  (r r' s t : term ι) : smallstep' ι r r' -> smallstep' ι (ifz ` s ` t ` r)
                                                                       (ifz ` s ` t ` r').
+
+(*Definition sumdec_smallstep' (σ : type) (s : term σ) :
+  decidable (∑ (t : term σ), smallstep' σ s t).
+Proof.
+  induction s.
+  - apply inr.
+    intros [t rel].
+    inversion_clear rel.
+  - apply inr. intros [t rel]. inversion_clear rel.
+  - apply inr. intros [t rel]. inversion_clear rel.
+  - apply inr. intros [t rel]. inversion_clear rel.
+  - apply inr. intros [t rel]. inversion_clear rel.
+  - apply inr. intros [t rel]. inversion_clear rel.
+  - apply inr. intros [t rel]. inversion_clear rel.
+  - induction IHs1 as [pos | npos].
+    + induction pos as [t step].
+      apply inl. exists (t ` s2).
+      apply appstep. exact step.
+    + induction s1.
+      ++ induction s1.
+      apply inr. intro step'.
+      induction step' as [t step]. induction t.
+      ++ inversion_clear step.
+      ++
+*)
 
 Definition smallstep {σ : type} : hrel (term σ) :=
   λ (s t : term σ), ∥ smallstep' σ s t ∥.
