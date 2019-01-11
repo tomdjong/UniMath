@@ -232,6 +232,52 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | ifzargstep  (r r' s t : term ι) : smallstep' ι r r' -> smallstep' ι (ifz ` s ` t ` r)
                                                                       (ifz ` s ` t ` r').
 
+(* Definition smallstep'_rightextensional (σ : type) (s t r : term σ) :
+  smallstep' σ s t -> smallstep' σ s r -> t = r.
+Proof.
+  intro step1. induction step1.
+  - induction r. *)
+
+Definition smallstep'_rightextensional (σ : type) (s t : term σ) :
+  smallstep' σ s t -> ∏ (τ : type) (r : term τ) (typeeq : σ = τ),
+                         smallstep' σ s (transportb term typeeq r) -> t = (transportb term typeeq r).
+Proof.
+  intros step1. induction step1.
+  - intros τ r typeeq step2. induction r.
+    + admit. (* Easy *)
+    + admit. (* Type non-sense *)
+    + admit.
+    + admit.
+    + admit.
+    + admit.
+    + admit.
+    + (* term non-sense *) admit.
+  - admit.
+  - admit.
+  - admit.
+  - admit.
+  - admit.
+  - admit.
+  - intros ρ p typeeq step2.
+
+
+
+
+
+  - inversion step2.
+
+  induction s.
+  - inversion_clear step1.
+  - inversion_clear step1.
+  - inversion_clear step1.
+  - inversion_clear step1.
+  - inversion_clear step1.
+  - inversion_clear step1.
+  - inversion_clear step1.
+  - induction t.
+    + inversion_clear step1.
+*)
+
 (*Definition sumdec_smallstep' (σ : type) (s : term σ) :
   decidable (∑ (t : term σ), smallstep' σ s t).
 Proof.
