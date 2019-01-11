@@ -107,8 +107,10 @@ Section reflexive_transitive_closure_step_hrel.
 Inductive refl_trans_clos_step (R : hrel X) : nat -> X -> X -> UU :=
   | base_step' (x y : X)              : R x y -> refl_trans_clos_step R 0 x y
   | refl_step' (x : X)                : refl_trans_clos_step R 0 x x
-  | trans_step' (x y z : X) (n : nat) : refl_trans_clos_step R n x y -> R y z ->
+  | trans_step' (x y z : X) (n : nat) : R x y -> refl_trans_clos_step R n y z ->
                                         refl_trans_clos_step R (S n) x z.
+(*  | monotone_step' (x y : X) (n : nat) : refl_trans_clos_step R n x y ->
+                                         refl_trans_clos_step R (S n) x y.*)
 
 Inductive refl_trans_clos' (R : hrel X) : X -> X -> UU :=
   | refl_step'' (x : X) : refl_trans_clos' R x x
@@ -161,7 +163,7 @@ Proof.
          exact h.
 Defined.
 
-Definition refl_trans_clos'_approx {X : UU} (R : hrel X) (x y : X) :
+(*Definition refl_trans_clos'_approx {X : UU} (R : hrel X) (x y : X) :
   refl_trans_clos' R x y <-> ∑ (k : nat), refl_trans_clos_step R k x y.
 Proof.
   split.
@@ -181,21 +183,51 @@ Proof.
     + eapply trans_step''.
       ++ exact IHleft.
       ++ exact h.
-Defined.
+(*    + exact IHleft.      *)
+Defined.*)
 
-(* Definition refl_trans_clos_step_dec {X : UU} (R : hrel X) :
-  isdecrel R -> isdeceq X -> ∏ (x y : X) (k : nat) ,
-  decidable (refl_trans_clos_step R k x y).
+Definition refl_trans_clos_step_dec {X : UU} (R : hrel X) :
+  (∏ (x y z : X), R x y -> R x z -> y = z) ->
+  isdecrel R -> (∏ (x : X), decidable (∑ (y : X), R x y)) ->
+  isdeceq X -> ∏ (k : nat) (x y : X) , decidable (refl_trans_clos_step R k x y).
 Proof.
-  intros Rdec Xdec x y.
-  induction (Rdec x y) as [r | nr].
-  - intro k. admit (* extends *).
-  - induction (Xdec x y) as [eq | neq].
-    + admit.
-    + induction k.
-      ++ apply inr. intro Rstep.
-         inversion Rstep.
+  intros Rext Rdec Rsumdec Xdec.
+  induction k as [| m IHm].
+  - intros x y. induction (Rdec x y) as [r | nr].
+    + apply inl, base_step'. exact r.
+    + induction (Xdec x y) as [eq | neq].
+      ++ apply inl. rewrite eq. apply refl_step'.
+      ++ apply inr. intro Rstep. inversion Rstep.
          +++ apply nr. assumption.
          +++ apply neq. rewrite H1. apply idpath.
-      ++ induction (IHk) as [rk | nrk].
-         +++  (* We need decidable (∑ (z : X) R x z) *) *)
+  - intros x z. induction (Rsumdec x) as [Rx | nRx].
+    + induction Rx as [y Rxy].
+      induction (IHm y z) as [Ryz | nRyz].
+      ++ apply inl. eapply trans_step'.
+         +++ exact Rxy.
+         +++ exact Ryz.
+      ++ apply inr. intro Rsm.
+         inversion_clear Rsm.
+         set (yeq := Rext x y y0 Rxy X0).
+         rewrite <- yeq in X1.
+         assert (nmeq : n = m).
+         { apply invmaponpathsS. rewrite H. apply idpath. }
+         rewrite nmeq in X1.
+         apply nRyz. exact X1.
+    + apply inr. intro Rsm.
+      inversion_clear Rsm.
+      apply nRx. exists y.
+      assumption.
+Defined.
+
+Definition refl_trans_clos_step_hrel {X : UU} (R : hrel X) (k : nat) (x y : X) :=
+  ∥ refl_trans_clos_step R k x y ∥.
+
+Definition refl_trans_clos_step_hrel_dec {X : UU} (R : hrel X) :
+  (∏ (x y z : X), R x y -> R x z -> y = z) ->
+  isdecrel R -> (∏ (x : X), decidable (∑ (y : X), R x y)) ->
+  isdeceq X -> ∏ (k : nat) (x y : X) , decidable (refl_trans_clos_step_hrel R k x y).
+Proof.
+  intros Rext Rdec Rsumdec Xdec k x y. apply decidable_ishinh.
+  exact (refl_trans_clos_step_dec R Rext Rdec Rsumdec Xdec k x y).
+Defined.
