@@ -293,3 +293,32 @@ Proof.
   intros s t.
   exact (termhasdeceq_transportb s σ (idpath σ) t).
 Defined.
+
+Definition testWtype {I A : UU} {B : A -> UU} (t : A -> I) (s : (∑ (a : A), B a) -> I)
+           {a a' : A} (e : a = a') {b : B a} (m : s (a,,b) = t a) :
+  s (a' ,, transportf B e b) = t a'.
+Proof.
+  induction e. apply m.
+Defined.
+
+Definition test1 {A : UU} {W : UU} {B : A -> UU} {a1 a2 : A} (e : a1 = a2)
+           (f : B a1 -> W) (f' : B a2 -> W) (fe : ∏ (b : B a1), f b  = f' (transportf B e b))
+           (sup : ∏ (a : A), (B a -> W) -> W) :
+  sup a1 f = sup a1 (f' ∘ transportf B e).
+Proof.
+  induction e.
+  assert (transportf B (idpath a1) = idfun _).
+  { apply funextfun. intro b. apply idpath. }
+  rewrite X. assert (f = f').
+  { apply funextfun. intro b. apply fe. }
+  rewrite X0. apply idpath.
+Defined.
+
+Definition test2 {A : UU} {W : UU} {B : A -> UU} {a1 a2 : A} (e : a1 = a2)
+           (f : B a1 -> W) (f' : B a2 -> W) (fe : ∏ (b : B a1), f b  = f' (transportf B e b))
+           (sup : ∏ (a : A), (B a -> W) -> W) :
+  sup a2 f' = sup a1 (f' ∘ transportf B e).
+Proof.
+  induction e.
+  apply idpath.
+Defined.
