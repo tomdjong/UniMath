@@ -5,14 +5,12 @@ Require Import UniMath.MoreFoundations.Tactics.
 
 Require Export UniMath.Topology.Prelim.
 
-Unset Automatic Introduction. (* This line has to be removed for the file to compile with Coq8.2 *)
-
 (** ** for RationalNumbers.v *)
 
 Require Export UniMath.NumberSystems.RationalNumbers.
 Require Export UniMath.Algebra.Archimedean.
 
-Open Scope hq_scope.
+Local Open Scope hq_scope.
 
 Notation "x <= y" := (hqleh x y) : hq_scope.
 Notation "x >= y" := (hqgeh x y) : hq_scope.
@@ -145,7 +143,7 @@ Qed.
 Lemma hqinv_gt0 (x : hq) : 0 < x → 0 < / x.
 Proof.
   unfold hqlth.
-  intros x Hx.
+  intros Hx.
   apply hqgthandmultlinv with x.
   - exact Hx.
   - rewrite hqmultx0.

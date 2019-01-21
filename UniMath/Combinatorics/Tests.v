@@ -1,5 +1,3 @@
-Unset Automatic Introduction.
-
 Require Import UniMath.Foundations.Preamble.
 Require UniMath.Combinatorics.Lists.
 Require UniMath.Combinatorics.StandardFiniteSets.
@@ -10,6 +8,7 @@ Require UniMath.Combinatorics.OrderedSets.
 Require UniMath.Combinatorics.StandardFiniteSets.
 Require UniMath.Combinatorics.BoundedSearch.
 Require UniMath.MoreFoundations.DecidablePropositions.
+Require UniMath.MoreFoundations.NegativePropositions.
 
 Module Test_list.
 
@@ -31,6 +30,7 @@ End Test_list.
 Module Test_stn.
 
   Import UniMath.Combinatorics.StandardFiniteSets.
+  Import UniMath.MoreFoundations.NegativePropositions.
 
   Local Open Scope stn.
 
@@ -425,7 +425,7 @@ Module Test_ord.
 
     Definition which {X} : X ⨿ ¬X -> bool.
     Proof.
-      intros X c.
+      intros c.
       induction c.
       - exact true.
       - exact false.
@@ -500,7 +500,7 @@ Module Test_search.
 
   Local Definition someseq (n : nat) : bool.
   Proof.
-    intros n. destruct n.
+    destruct n.
     - exact false.
     - destruct n.
       + exact true.

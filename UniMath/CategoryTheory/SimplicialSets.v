@@ -6,8 +6,6 @@ started on Nov. 22, 2014 (with Alexander Vishik)
 
 *)
 
-Unset Automatic Introduction.
-
 (* Preamble *)
 
 Require Import UniMath.MoreFoundations.Tactics.
@@ -15,7 +13,8 @@ Require Import UniMath.MoreFoundations.Tactics.
 Require Export UniMath.Combinatorics.FiniteSets.
 (* Require Export UniMath.Combinatorics.OrderedSets. *)
 Require Export UniMath.CategoryTheory.Categories.
-Require Export UniMath.CategoryTheory.categories.category_hset.
+Require Export UniMath.CategoryTheory.categories.HSET.Core.
+Require Export UniMath.CategoryTheory.categories.HSET.Univalence.
 Require Export UniMath.CategoryTheory.functor_categories.
 Require Export UniMath.CategoryTheory.opp_precat.
 
@@ -33,7 +32,7 @@ Definition monfunstnpr1 {n m : nat} : monfunstn n m  -> ⟦ n ⟧ -> ⟦ m ⟧ :
 
 Lemma monfunstnpr1_isInjective {m n} (f g : monfunstn m n) : monfunstnpr1 f = monfunstnpr1 g -> f = g.
 Proof.
-  intros ? ? ? ? e.
+  intros e.
   apply subtypeEquality.
   { intros h. apply impred; intro i. apply impred; intro j. apply impred; intro l.
     apply propproperty. }

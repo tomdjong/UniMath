@@ -5,9 +5,9 @@
 Require Import UniMath.Algebra.Monoids_and_Groups
                UniMath.Foundations.NaturalNumbers
                UniMath.Foundations.UnivalenceAxiom
+               UniMath.MoreFoundations.NegativePropositions
                UniMath.CategoryTheory.total2_paths
                UniMath.Ktheory.Utilities.
-Unset Automatic Introduction.
 
 (** ** Definitions *)
 
@@ -24,7 +24,7 @@ Record Tree :=
     }.
 
 Lemma mt_path_refl (T:Tree) (x y:T) : x = y -> mt_dist _ x y = 0.
-Proof. intros ? ? ? e. destruct e. apply mt_refl. Qed.
+Proof. intros e. destruct e. apply mt_refl. Qed.
 
 Lemma tree_deceq (T:Tree) : isdeceq T.
 Proof. intros. intros t u. induction (isdeceqnat (mt_dist T t u) 0) as [a|b].
@@ -40,8 +40,7 @@ Definition tree_induction (T:Tree) (x:T) (P:T->Type)
            (p0 : P x)
            (pn : ∏ z (ne:x != z), P (step T ne) -> P z) :
   ∏ z, P z.
-Proof. intros ? ? ? ? ?.
-       assert(d_ind : ∏ n z, mt_dist _ x z = n -> P z).
+Proof. assert(d_ind : ∏ n z, mt_dist _ x z = n -> P z).
        { intros ?.
          induction n as [|n IH].
          { intros. assert (k:x=z).
@@ -65,7 +64,9 @@ Proof. refine (make nat nat_dist _ _ _ _ _).
        { intro m. induction m as [|m IHm]. { reflexivity. } { rewrite nat_dist_S. assumption. } }
        { apply nat_dist_anti. } { apply nat_dist_symm. }
        { apply nat_dist_trans. }
-       { intros m n e. assert (d := natneqchoice _ _ (neg_to_negProp e)). clear e.
+       { intros m n e.
+         Set Printing All.
+         assert (d := natneqchoice _ _ (nat_nopath_to_neq e)); clear e.
          destruct d as [h|h].
          { exists (S n).
            { split.

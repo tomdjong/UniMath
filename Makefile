@@ -22,6 +22,7 @@ PACKAGES += Tactics
 PACKAGES += SubstitutionSystems
 PACKAGES += Folds
 PACKAGES += HomologicalAlgebra
+PACKAGES += Paradoxes
 PACKAGES += Induction
 PACKAGES += PartialityDominances
 ############################################
@@ -36,6 +37,7 @@ HIDE := $(if $(VERBOSE),,@)
 ############################################
 
 .PHONY: all everything install lc lcp wc describe clean distclean build-coq doc build-coqide html
+all: make-first
 all: check-first
 all: check-for-change-to-Foundations
 all: make-summary-files
@@ -78,7 +80,7 @@ clean:: build/CoqMakefile.make; $(MAKE) -f build/CoqMakefile.make $@
 distclean:: build/CoqMakefile.make; $(MAKE) -f build/CoqMakefile.make cleanall archclean
 
 OTHERFLAGS += $(MOREFLAGS)
-OTHERFLAGS += -noinit -indices-matter -type-in-type -w '-notation-overridden,-local-declaration,+uniform-inheritance,-deprecated-option'
+OTHERFLAGS += -noinit -indices-matter -type-in-type -w '-notation-overridden,-local-declaration,+uniform-inheritance'
 ifeq ($(VERBOSE),yes)
 OTHERFLAGS += -verbose
 endif
@@ -124,18 +126,18 @@ MODIFIERS := $(MODIFIERS)Local\|
 MODIFIERS := $(MODIFIERS)Private\|
 MODIFIERS := $(MODIFIERS)Program\|
 
-COQDEFS := --language=none																\
-	-r '/^[[:space:]]*\(\($(MODIFIERS)\)[[:space:]]+\)?\($(DEFINERS)\)[[:space:]]+\([[:alnum:]'\''_]+\)/\4/'					\
-	-r "/^[[:space:]]*Notation.* \"'\([[:alnum:]'\''_]+\)'/\1/"											\
-	-r '/^[[:space:]]*Tactic[[:space:]]+Notation.*[[:space:]]"\([[:alnum:]'\''_]+\)"[[:space:]]/\1/'						\
-	-r '/^[[:space:]]*Delimit[[:space:]]+Scope[[:space:]]+[[:alnum:]'\''_]+[[:space:]]+with[[:space:]]+\([[:alnum:]'\''_]+\)[[:space:]]*\./\1/'
+COQDEFS := --language=none																			\
+	-r '/^[[:space:]]*\(\($(MODIFIERS)\)[[:space:]]+\)?\($(DEFINERS)\)[[:space:]]+\([[:alnum:][:nonascii:]'\''_]+\)/\4/'							\
+	-r "/^[[:space:]]*Notation.* \"'\([[:alnum:][:nonascii:]'\''_]+\)'/\1/"													\
+	-r '/^[[:space:]]*Tactic[[:space:]]+Notation.*[[:space:]]"\([[:alnum:][:nonascii:]'\''_]+\)"[[:space:]]/\1/'								\
+	-r '/^[[:space:]]*Delimit[[:space:]]+Scope[[:space:]]+[[:alnum:][:nonascii:]'\''_]+[[:space:]]+with[[:space:]]+\([[:alnum:][:nonascii:]'\''_]+\)[[:space:]]*\./\1/'
 
 $(foreach P,$(PACKAGES),$(eval TAGS-$P: Makefile $(filter UniMath/$P/%,$(VFILES)); etags $(COQDEFS) -o $$@ $$^))
 TAGS : Makefile $(PACKAGE_FILES) $(VFILES); etags $(COQDEFS) $(VFILES)
 FILES_FILTER := grep -vE '^[[:space:]]*(\#.*)?$$'
 FILES_FILTER_2 := grep -vE '^[[:space:]]*(\#.*)?$$$$'
 $(foreach P,$(PACKAGES),												\
-	$(eval $P: check-first build/CoqMakefile.make;									\
+	$(eval $P: make-first check-first build/CoqMakefile.make;									\
 		+$(MAKE) -f build/CoqMakefile.make									\
 			$(shell <UniMath/$P/.package/files $(FILES_FILTER) |sed "s=^\(.*\).v=UniMath/$P/\1.vo=" )	\
 			UniMath/$P/All.vo))
@@ -285,7 +287,7 @@ clean::; rm -f .enforce-prescribed-ordering.okay
 
 # We arrange for the *.d files to be made, because we need to read them to enforce the prescribed ordering, by listing them as dependencies here.
 # Up to coq version 8.7, each *.v file had a corresponding *.v.d file.
-# After that, there is just one *.d file, it's name is .coqdeps.d, and it sits in this top-level directory.
+# After that, there is just one *.d file, its name is .coqdeps.d, and it sits in this top-level directory.
 # So we have to distinguish the versions somehow; here we do that.
 # We expect the file build/CoqMakefile.make to exist now, because we have an include command above for the file .coq_makefile_output.conf,
 # and the same rule that make it makes build/CoqMakefile.make.
@@ -361,7 +363,7 @@ DEPFILES := $(VFILES:.v=.v.d)
 endif
 
 # DEPFILES is defined above
-$(DEPFILES): | build/CoqMakefile.make
+$(DEPFILES): make-summary-files | build/CoqMakefile.make
 	$(MAKE) -f build/CoqMakefile.make $@
 
 # here we ensure that the travis script checks every package
@@ -450,7 +452,7 @@ endef
 $(foreach P, $(PACKAGES), $(eval $(call make-summary-file,$P)) $(eval make-summary-files: UniMath/$P/All.v))
 
 # Here we create the file UniMath/All.v.  It will "Require Export" all of the All.v files for the various packages.
-make-summary-files: UniMath/All.v
+make-first: UniMath/All.v
 UniMath/All.v: Makefile
 	$(SHOW)'making $@'
 	$(HIDE)									\
