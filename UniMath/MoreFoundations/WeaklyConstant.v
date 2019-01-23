@@ -45,3 +45,46 @@ Proof.
   intro x. unfold weaklyconstanttoaset_factorsthroughsquash, hinhpr; simpl.
   unfold prtoimage, funcomp; simpl. use idpath.
 Defined.
+
+(* Formalisation of Lemma 3.11 from "Notions of Anonymous Existence in Martin-Löf
+   Type Theory" by Kraus et al. *)
+Definition weaklyconstant_endomap (X : UU) := ∑ (f : X -> X), weaklyconstant f.
+
+Definition wconst_endomap_prop_path {X : UU} :
+  (∏ (Y : UU), weaklyconstant_endomap (X = Y)) -> ∏ Y : UU, isaprop (X = Y).
+Proof.
+  intro wconstendo.
+  intros Y.
+  assert (patheq : ∏ (p : X = Y), p = !(pr1 (wconstendo X) (idpath X)) @
+                                       pr1 (wconstendo Y) p).
+  { induction p. apply pathsinv0.
+    apply pathsinv0l. }
+  apply invproofirrelevance.
+  intros p q.
+  rewrite (patheq p).
+  rewrite (patheq q).
+  apply maponpaths.
+  apply (pr2 (wconstendo Y)).
+Defined.
+
+Definition wconst_endomap_prop_path_prop {X : UU} :
+  isaprop X ->
+  (∏ (Y : UU), isaprop Y -> weaklyconstant_endomap (X = Y)) ->
+  ∏ Y : UU, isaprop Y -> isaprop (X = Y).
+Proof.
+  intros Xaprop wconstendo.
+  intros Y Yaprop.
+  assert (patheq : ∏ (p : X = Y), p = !(pr1 (wconstendo X Xaprop) (idpath X)) @
+                                       pr1 (wconstendo Y Yaprop) p).
+  { induction p. apply pathsinv0.
+    assert (propaprop : Yaprop = Xaprop).
+    { apply proofirrelevance, isapropisaprop. }
+    rewrite propaprop.
+    apply pathsinv0l. }
+  apply invproofirrelevance.
+  intros p q.
+  rewrite (patheq p).
+  rewrite (patheq q).
+  apply maponpaths.
+  apply (pr2 (wconstendo Y Yaprop)).
+Defined.
