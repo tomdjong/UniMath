@@ -1,193 +1,263 @@
+(**
+
+Tom de Jong
+
+Created: November 2018
+
+Refactored: January 2019
+
+*******************************************************************************)
+
+(** * Basic Domain Theory *)
+(** ** Contents
+- Least upper bounds ([leastupperbound])
+- Definition of a directed family ([directedfamily])
+- Definition of a directed complete poset (dcpo) ([dcpo])
+- Definition of a morphisms of dcpos ([morphismofdcpos])
+- The morphisms between two dcpos form a dcpo with the pointwise order
+  ([morphismsofdcpos_formdcpo])
+- Definition of a dcpo with bottom ([dcpowithbottom])
+- The least fixed point operator for morphisms between dcpos with bottom 
+  ([leastfixedpoint])
+*)
+
 Require Import UniMath.Foundations.All.
 
-Section DirectedComplete.
+Local Open Scope poset. (* So we can write ≤ *)
+
+(** ** Least upper bounds *)
+Section leastupperbound.
 Context {X : Poset}.
-Context (R := posetRelation X).
-
-Definition isleast (l : X) : UU := ∏ (x : X), R l x.
-Lemma isleast_isaprop (l : X) : isaprop (isleast l).
-Proof.
-  use impred. intro x. use (pr2 (R l x)). (* R is prop-valued. *)
-Qed.
-
-Section FixIndexingFamily.
 Context {I : UU}.
-Context (f : I -> X). (* Indexing family *)
+Variable (f : I -> X). (* Indexing family *)
 
-Definition isupperbound (u : X) : UU := ∏ (i : I), R (f i) u.
-Lemma isupperbound_isaprop (u : X) : isaprop(isupperbound u).
+Definition isupperbound (u : X) : UU := ∏ (i : I), f i ≤ u.
+Lemma isaprop_isupperbound (u : X) : isaprop (isupperbound u).
 Proof.
-  use impred. intro i.
-  use (pr2 (R (f i) u)). (* R is prop-valued. *)
+  apply impred_isaprop; intro i; apply propproperty.
 Qed.
 
+(* Definition of least upper bound (lub) *)
 Definition islub (u : X) : UU := isupperbound u ×
-                                 ∏ (y : X), (∏ (i : I), R (f i) y) -> R u y.
-Lemma islub_isaprop (u : X) : isaprop(islub u).
+                                 ∏ (y : X), (∏ (i : I), f i ≤ y) -> u ≤ y.
+Lemma isaprop_islub (u : X) : isaprop (islub u).
 Proof.
-  use isapropdirprod.
-  - exact (isupperbound_isaprop u).
-  - use impred. intro x. use impred. intro hyp.
-    use (pr2 (R u x)). (* R is prop-valued. *)
+  apply isapropdirprod.
+  - apply isaprop_isupperbound.
+  - apply impred_isaprop; intro x.
+    apply isapropimpl; apply propproperty.
 Qed.
 
+Definition islub_isupperbound {u : X} : islub u -> isupperbound u := pr1.
+Definition islub_isleast {u : X} :
+  islub u -> ∏ (y : X), (∏ (i : I), f i ≤ y) -> u ≤ y := pr2.
+                                   
 Lemma lubsareunique {u v : X} : islub u -> islub v -> u = v.
 Proof.
   intros islubu islubv.
-  use isantisymm_posetRelation.
-  - apply islubu. use (pr1 islubv).
-  - apply islubv. use (pr1 islubu).
+  apply isantisymm_posetRelation.
+  - apply (islub_isleast islubu). exact (islub_isupperbound islubv).
+  - apply (islub_isleast islubv). exact (islub_isupperbound islubu).
 Qed.
 
-Definition isdirected : UU := ∥ I ∥ × ∏ (i j : I), ∥∑ (k : I), R (f i) (f k) × R (f j) (f k)∥.
-Lemma isdirected_isaprop : isaprop isdirected.
+End leastupperbound.
+
+(** ** Directed families *)
+Section directedfamily.
+Context {X : Poset}.
+Context {I : UU}.
+
+Definition isdirected (f : I -> X) : UU :=
+  ∥ I ∥ × ∏ (i j : I), ∥∑ (k : I), f i ≤ f k × f j ≤ f k∥.
+Lemma isaprop_isdirected (f : I -> X) : isaprop (isdirected f).
 Proof.
-  use isapropdirprod.
-  - use isapropishinh.
-  - use impred. intro i. use impred. intro j. use isapropishinh.
+  apply isapropdirprod.
+  - apply isapropishinh.
+  - apply impred_isaprop; intro i; apply impred_isaprop; intro j.
+    apply isapropishinh.
 Qed.
-Definition directeduntruncated (i j : I) : UU :=
-  ∑ (k : I), R (f i) (f k) × R (f j) (f k).
-End FixIndexingFamily.
-End DirectedComplete.
 
+Definition directeduntruncated (f : I -> X) (i j : I) : UU :=
+  ∑ (k : I), f i ≤ f k × f j ≤ f k.
+
+Definition isdirected_inhabited {f : I -> X} :
+  isdirected f -> ∥ I  ∥ := pr1.
+Definition isdirected_order {f : I -> X} :
+  isdirected f -> ∏ (i j : I), ∥∑ (k : I), f i ≤ f k × f j ≤ f k∥ := pr2.
+
+End directedfamily.
+
+(** ** Directed complete posets (dcpos) *)
+Section dcpo.
 Definition isdirectedcomplete (X : Poset) : UU :=
-  ∏ (I : UU), ∏ (f : I -> X), isdirected f -> ∑ (u : X), islub f u.
-Lemma isdirectedcomplete_isaprop (X : Poset) : isaprop (isdirectedcomplete X).
+  ∏ (I : UU) (f : I -> X), isdirected f -> ∑ (u : X), islub f u.
+Lemma isaprop_isdirectedcomplete (X : Poset) : isaprop (isdirectedcomplete X).
 Proof.
-  use impred; intro I. use impred; intro f.
-  use isapropimpl. use invproofirrelevance.
+  apply impred_isaprop; intro I.
+  apply impred_isaprop; intro f.
+  apply isapropimpl.
+  apply invproofirrelevance.
   intros [u p] [v q].
-  apply total2_paths_equiv; split with (lubsareunique _ p q).
-  use proofirrelevance. use islub_isaprop.
+  apply total2_paths_equiv.
+  exists (lubsareunique _ p q).
+  apply proofirrelevance. apply isaprop_islub.
 Qed.
 
 Definition dcpo := ∑ (X : Poset), isdirectedcomplete X.
-Definition dcpoposet (D : dcpo) : Poset := pr1 D.
+Definition dcpoposet : dcpo -> Poset := pr1.
 Coercion dcpoposet : dcpo >-> Poset.
-Definition dcpocarrier (D : dcpo) : hSet := carrierofposet (dcpoposet D).
-Definition dcpoorder (D : dcpo) : PartialOrder (dcpocarrier D) :=
-  pr2 (dcpoposet D).
-Definition dcpoorder_propvalued (D : dcpo) : ∏ (x y : D), isaprop (dcpoorder D x y).
-Proof.
-  intros x y. use (pr2 (pr1 (dcpoorder D) x y)).
-Defined.
 Definition dcpoisdirectedcomplete (D : dcpo) : isdirectedcomplete D := pr2 D.
-Definition dcpowithleast := ∑ (D : dcpo), ∑ (l : dcpocarrier D), isleast l.
-Definition dcpowithleastdcpo : dcpowithleast -> dcpo := pr1.
-Coercion dcpowithleastdcpo : dcpowithleast >-> dcpo.
-Definition dcpowithleast_isleast (D : dcpowithleast) := (pr2 (pr2 D)).
-Definition dcpowithleast_least (D : dcpowithleast) := pr1 (pr2 D).
-
 Definition dcpopair (X : Poset) (i : isdirectedcomplete X) : dcpo := (X,,i).
 
+Definition dcpo_mklub {D : dcpo} {I : UU} {f : I -> D} : isdirected f -> D.
+Proof.
+  intro isdirec.
+  exact (pr1 (dcpoisdirectedcomplete D I f isdirec)).
+Defined.
+
+Definition dcpo_mklub_islub {D : dcpo} {I : UU} {f : I -> D}
+           (isdirec : isdirected f) : islub f (dcpo_mklub isdirec).
+Proof.
+  exact (pr2 (dcpoisdirectedcomplete D I f isdirec)).
+Defined.
+
+End dcpo.
+
+(** ** Morphisms of dcpos *)
+
+Section morphismofdcpos.
 Definition preserveslub {P Q : Poset} (f : P -> Q) {I : UU} (u : I -> P) : UU :=
   ∏ (v : P), islub u v -> islub (f ∘ u) (f v).
-Lemma preserveslub_isaprop {P Q : Poset} (f : P -> Q) {I : UU} (u : I -> P) :
+Lemma isaprop_preserveslub {P Q : Poset} (f : P -> Q) {I : UU} (u : I -> P) :
   isaprop (preserveslub f u).
 Proof.
-  use impred; intro v.
-  use isapropimpl. use islub_isaprop.
+  apply impred_isaprop; intro v.
+  apply isapropimpl. apply isaprop_islub.
 Qed.
 
 Definition isdcpomorphism {D D' : dcpo} (f : D -> D') :=
-  ∏ (I : UU), ∏ (u : I -> D), isdirected u -> preserveslub f u.
-Lemma isdcpomorphism_isaprop {D D' : dcpo} (f : D -> D') :
+  isaposetmorphism f ×
+  ∏ (I : UU) (u : I -> D), isdirected u -> preserveslub f u.
+Lemma isaprop_isdcpomorphism {D D' : dcpo} (f : D -> D') :
   isaprop (isdcpomorphism f).
 Proof.
-  use impred; intro I; use impred; intro u.
-  use isapropimpl. use preserveslub_isaprop.
+  apply isapropdirprod.
+  - apply isaprop_isaposetmorphism.
+  - apply impred_isaprop; intro I.
+    apply impred_isaprop; intro u.
+    apply isapropimpl; apply isaprop_preserveslub.
 Qed.
 
 Definition dcpomorphism (D D' : dcpo) := ∑ (f : D -> D'), isdcpomorphism f.
-Definition dcpomorphismpair {D D': dcpo} (t : D -> D')
-           (isdcpomor : isdcpomorphism t) : dcpomorphism D D'.
+
+Definition dcpomorphism_posetmorphism (D D' : dcpo) :
+  dcpomorphism D D' -> posetmorphism D D'.
 Proof.
-  exact (t,,isdcpomor).
+  intros [f isdcpomor].
+  exists f. exact (pr1 isdcpomor).
 Defined.
+Coercion dcpomorphism_posetmorphism : dcpomorphism >-> posetmorphism.
 
-(* Constant functions are dcpo morphisms *)
-Definition const_dcpomor (D D' : dcpo) (b : D') : dcpomorphism D D'.
-Proof.
-  use dcpomorphismpair.
-  - exact (λ _, b).
-  - intros I u isdirec v islubv. split.
-    + intro i. unfold funcomp; simpl. use isrefl_posetRelation.
-    + intros d' ineqs. apply (@factor_through_squash I).
-      * use (pr2 (pr1 (dcpoorder D') b d')).
-      * intro i. exact (ineqs i).
-      * exact (pr1 isdirec).
-Defined.
-
-Definition dcpomorphismcarrier {D D' : dcpo} :
-  dcpomorphism D D' -> (D -> D') := pr1.
-Coercion dcpomorphismcarrier : dcpomorphism >-> Funclass.
-
-Lemma dcpomorphism_preservesorder {D D' : dcpo} (f : dcpomorphism D D') :
+Definition dcpomorphism_preservesorder {D D' : dcpo} (f : dcpomorphism D D') :
   isaposetmorphism f.
 Proof.
-  intros x y ineq. set (two := coprod unit unit).
-  set (fam := (λ t : two, match t with | inl _ => x | inr _ => y end)).
-  assert (isdirec : isdirected fam).
-  { split.
-    - use hinhpr. exact (inl tt).
-    - intros i j. use hinhpr. split with (inr tt).
-      induction i, j.
-      + simpl. exact (ineq,, ineq).
-      + simpl. exact (ineq,, (isrefl_posetRelation (dcpoposet D) y)).
-      + simpl. exact (isrefl_posetRelation (dcpoposet D) y,, ineq).
-      + simpl. exact (isrefl_posetRelation (dcpoposet D) y,,
-                    isrefl_posetRelation (dcpoposet D) y).
-  }
-  assert (lubfam : islub fam y).
-  { split.
-    - intro t. induction t.
-      + simpl. use ineq.
-      + simpl. use isrefl_posetRelation.
-    - intros d hyp. exact (hyp (inr tt)). }
-  assert (lubfam' : islub (f ∘ fam) (f y)).
-  { use (pr2 f). exact isdirec. exact lubfam. }
-  set (ineq' := pr1 lubfam'). use (ineq' (inl tt)).
-Qed.
+  exact (pr1 (pr2 f)).
+Defined.
 
-(* As a corollary, dcpo morphisms preserve directed families *)
-Lemma dcpomorphism_preservesdirected {D D' : dcpo} (f : dcpomorphism D D')
-      {I : UU} {u : I -> D} : isdirected u -> isdirected (pr1 f ∘ u).
+Definition dcpomorphism_preserveslub {D D' : dcpo} (f : dcpomorphism D D')
+           {I : UU} {u : I -> D} : isdirected u -> preserveslub f u.
 Proof.
   intro isdirec.
+  apply (pr2 (pr2 f)).
+  exact isdirec.
+Defined.
+
+(* In fact, requiring that a dcpo morphism is a poset morphism is redundant *)
+Definition isdcpomorphism' {D D' : dcpo} (f : D -> D') :=
+  ∏ (I : UU) (u : I -> D), isdirected u -> preserveslub f u.
+  
+Lemma preservesdirectedlub_isdcpomorphism {D D' : dcpo} (f : D -> D') :
+  isdcpomorphism' f -> isdcpomorphism f.
+Proof.
+  intro preservesdireclub.
   split.
-  - exact (pr1 isdirec).
-  - intros i j. apply (@factor_through_squash (directeduntruncated u i j)).
-    + use isapropishinh.
-    + intro direc. use hinhpr. induction direc as [k ineqs].
-      split with k. split.
-      * use dcpomorphism_preservesorder. exact (pr1 ineqs).
-      * use dcpomorphism_preservesorder. exact (pr2 ineqs).
-    + exact (pr2 isdirec i j).
+  - intros x y ineq.
+    set (two := coprod unit unit).
+    set (fam := (λ t : two, match t with | inl _ => x | inr _ => y end)).
+    assert (isdirec : isdirected fam).
+    { split.
+      - apply hinhpr. exact (inl tt).
+      - intros i j. apply hinhpr. exists (inr tt).
+        induction i, j.
+        + simpl. exact (ineq,,ineq).
+        + simpl. split.
+          ++ exact ineq.
+          ++ apply isrefl_posetRelation.
+        + simpl. split.
+          ++ apply isrefl_posetRelation.
+          ++ exact ineq.
+        + simpl. split.
+          ++ apply isrefl_posetRelation.
+          ++ apply isrefl_posetRelation. }
+    assert (islubfam : islub fam y).
+    { split.
+      - intro t. induction t.
+        + simpl. exact ineq.
+        + simpl. apply isrefl_posetRelation.
+      - intros d ineqs. exact (ineqs (inr tt)). }
+    set (islubfam' := preservesdireclub two fam isdirec y islubfam).
+    apply (islub_isupperbound (f ∘ fam) islubfam' (inl tt)).
+  - exact preservesdireclub.
 Qed.
 
+Definition mkdcpomorphism {D D' : dcpo}
+           (f : D -> D') (i : isdcpomorphism' f) : dcpomorphism D D'.
+Proof.
+  exists f.
+  apply preservesdirectedlub_isdcpomorphism. exact i.
+Defined.
+
+(** Constant functions between dcpos are continuous *)
+Definition mkconst_dcpomor (D E : dcpo) (e : E) : dcpomorphism D E.
+Proof.
+  use mkdcpomorphism.
+  - exact (λ _, e).
+  - intros I u isdirec v islubv. split.
+    + intro i. unfold funcomp; simpl. apply isrefl_posetRelation.
+    + intros d' ineqs. apply (@factor_through_squash I).
+      * apply propproperty.
+      * intro i. exact (ineqs i).
+      * exact (isdirected_inhabited isdirec).
+Defined.
+
+End morphismofdcpos.
+
+(** ** The morphisms between two dcpos form a dcpo with the pointwise order. *)
+Section morphismsofdcpos_formdcpo.
 Definition pointwiseorder (D D' : dcpo) : hrel (dcpomorphism D D').
 Proof.
   intros f g. use hProppair.
-  - exact (∏ (d : D), (dcpoorder D') (f d) (g d)).
-  - use impred; intro d. exact (pr2 (dcpoorder D' (f d) (g d))).
+  - exact (∏ (d : D), f d ≤ g d).
+  - apply impred_isaprop; intro d. apply propproperty.
 Defined.
 
-Lemma pointwiseorder_ispartialorder (D D' : dcpo) :
+Lemma ispartialorder_pointwiseorder (D D' : dcpo) :
   isPartialOrder (pointwiseorder D D').
 Proof.
   split.
   - split.
-    + intros f g h ineq1 ineq2 p.
-      exact (istrans_posetRelation _ _ (g p) _ (ineq1 p) (ineq2 p)).
-    + intros f p. use isrefl_posetRelation.
+    + intros f g h ineq1 ineq2 d.
+      eapply istrans_posetRelation.
+      ++ use ineq1.
+      ++ use ineq2.
+    + intros f p. apply isrefl_posetRelation.
   - intros f g ineq1 ineq2. apply total2_paths_equiv.
     assert (funeq : pr1 f = pr1 g).
-    { use funextfun. intro p. use isantisymm_posetRelation.
-      ** use ineq1.
-      ** use ineq2. }
-    split with funeq.
-    use proofirrelevance. use isdcpomorphism_isaprop.
+    { use funextfun; intro d. apply isantisymm_posetRelation.
+      - use ineq1.
+      - use ineq2. }
+    exists funeq.
+    apply proofirrelevance, isaprop_isdcpomorphism.
 Qed.
 
 Definition posetofdcpomorphisms (D D' : dcpo) : Poset.
@@ -195,66 +265,66 @@ Proof.
   use Posetpair.
   - use hSetpair.
     + exact (dcpomorphism D D').
-    + change isaset with (isofhlevel 2).
-      use isofhleveltotal2.
-      use impred; intro p. use (pr2 (dcpocarrier D')).
-      intro f. use isasetaprop. use isdcpomorphism_isaprop.
+    + apply (isofhleveltotal2 2).
+      ++ apply impred_isaset; intro d.
+         apply setproperty.
+      ++ intro f; apply isasetaprop, isaprop_isdcpomorphism.
   - use PartialOrderpair.
-    + use pointwiseorder.
-    + use pointwiseorder_ispartialorder.
+    + apply pointwiseorder.
+    + apply ispartialorder_pointwiseorder.
 Defined.
 
 Lemma lubpreservesorder {X : Poset} {I : UU} (u v : I -> X) :
-  (∏ (i : I), (posetRelation X) (u i) (v i)) ->
-  ∏ (lu lv : X), islub u lu -> islub v lv ->
-                 (posetRelation X) lu lv.
+  (∏ (i : I), u i ≤ v i) ->
+  ∏ (lu lv : X), islub u lu -> islub v lv -> lu ≤ lv.
 Proof.
   intros ineqs lu lv islubu islubv.
-  apply (pr2 islubu).
-  intro i. use istrans_posetRelation.
-  - exact (v i).
-  - exact (ineqs i).
-  - use (pr1 islubv).
+  eapply islub_isleast.
+  - exact islubu.
+  - intro i. eapply istrans_posetRelation.
+    + exact (ineqs i).
+    + apply (islub_isupperbound v islubv).
 Qed.
 
-(*** Next, we show that the dcpomorphisms form a dcpo themselves. ***)
-Definition pointwisefamily {D D' : dcpo} {I : UU} (F : I -> posetofdcpomorphisms D D') :
-  D -> I -> D' := λ (d : D), λ (i : I), pr1 (F i) d.
+(** Given a family of dcpo morphisms from D to D' and a point d : D
+   we have a pointwise family in D' by evaluating each morphism at d. *)
+Definition pointwisefamily {D D' : dcpo} {I : UU}
+           (F : I -> dcpomorphism D D') : D -> I -> D' :=
+  λ (d : D), λ (i : I), (F i) d.
 
-Lemma pointwisefamily_isdirected {D D' : dcpo} {I : UU} (F : I -> posetofdcpomorphisms D D') :
+Lemma pointwisefamily_isdirected {D D' : dcpo} {I : UU}
+      (F : I -> posetofdcpomorphisms D D') :
   isdirected F -> ∏ (d : D), isdirected (pointwisefamily F d).
 Proof.
   intros isdirec d. split.
-  - exact (pr1 isdirec).
+  - exact (isdirected_inhabited isdirec).
   - intros i j. use factor_through_squash.
     + exact (directeduntruncated F i j).
-    + use isapropishinh.
-    + intro direc. use hinhpr.
+    + apply isapropishinh.
+    + intro direc. apply hinhpr.
       induction direc as [k ineqs].
-      split with k; simpl.
+      exists k. unfold pointwisefamily.
       induction ineqs as [ineq1 ineq2]. split.
-      * exact (ineq1 d).
-      * exact (ineq2 d).
-    + exact (pr2 isdirec i j).
+      * use ineq1.
+      * use ineq2.
+    + apply (isdirected_order isdirec).
 Qed.
 
-(* Pointwise lub *)
-Definition pointwiselub {D D' : dcpo} {I : UU} (F : I -> posetofdcpomorphisms D D') :
-           isdirected F -> D -> D'.
+Definition pointwiselub {D D' : dcpo} {I : UU}
+           (F : I -> posetofdcpomorphisms D D') (isdir : isdirected F) : D -> D'.
 Proof.
-  intro isdirec.
-  (* The lub of F will be g where g(d) = lub of (pointwisefamily F) d. *)
   intro d.
-  exact (pr1 (dcpoisdirectedcomplete D' _ _
-                                     (pointwisefamily_isdirected F isdirec d))).
+  set (ptfamdir := pointwisefamily_isdirected F isdir d).
+  exact (dcpo_mklub ptfamdir).
 Defined.
 
 Lemma pointwiselub_islubpointwise {D D' : dcpo} {I : UU}
       (F : I -> posetofdcpomorphisms D D') (isdirec : isdirected F) :
   ∏ (d : D), islub (pointwisefamily F d) (pointwiselub F isdirec d).
 Proof.
-  intro d. unfold pointwiselub.
-  use (pr2 (dcpoisdirectedcomplete D' _ _ _)).
+  intro d.
+  set (ptfamdir := pointwisefamily_isdirected F isdirec d).
+  exact (dcpo_mklub_islub ptfamdir).
 Qed.
 
 Lemma pointwiselub_preservesorder {D D' : dcpo} {I : UU}
@@ -263,46 +333,46 @@ Lemma pointwiselub_preservesorder {D D' : dcpo} {I : UU}
 Proof.
   intros x y ineq. use lubpreservesorder.
   - exact I.
-  - exact (λ i : I, pr1 (F i) x).
-  - exact (λ i : I, pr1 (F i) y).
-  - intro i. simpl. use dcpomorphism_preservesorder.
+  - intro i. apply (F i). exact x.
+  - intro i. apply (F i). exact y.
+  - intro i. simpl.
+    apply dcpomorphism_preservesorder.
     exact ineq.
-  - use pointwiselub_islubpointwise.
-  - use pointwiselub_islubpointwise.
+  - simpl. apply pointwiselub_islubpointwise.
+  - simpl. apply pointwiselub_islubpointwise.
 Qed.
-
-Lemma pointwiselub_isdcpomorphism {D D' : dcpo} {I : UU}
+  
+Lemma pointwiselub_isdcpomorphism' {D D' : dcpo} {I : UU}
       (F : I -> posetofdcpomorphisms D D') (isdirec : isdirected F) :
-  isdcpomorphism (pointwiselub F isdirec).
+  isdcpomorphism' (pointwiselub F isdirec).
 Proof.
-  unfold isdcpomorphism. intros J v isdirecv.
+  unfold isdcpomorphism'. intros J v isdirecv.
   intros w wislub.
-  unfold funcomp. split.
-  - intro j. use pointwiselub_preservesorder. use (pr1 wislub).
+  split.
+  - intro j. apply pointwiselub_preservesorder.
+    apply islub_isupperbound. exact wislub.
   - intros d' ineqs.
-    use (pr2 (pointwiselub_islubpointwise F isdirec w)).
-    intro i. unfold pointwisefamily; simpl.
-    set (Fi_preslub := pr2 (F i)); unfold isdcpomorphism in Fi_preslub;
-      simpl in Fi_preslub.
-    set (Fi_preslub' := (Fi_preslub J v isdirecv w wislub)).
-    use (pr2 Fi_preslub').
-    intro j. unfold funcomp; simpl.
-    use istrans_posetRelation.
-    + exact (pointwiselub F isdirec (v j)).
-    + use (pr1 (pointwiselub_islubpointwise F isdirec (v j))).
-    + exact (ineqs j).
+    eapply islub_isleast.
+    + apply pointwiselub_islubpointwise.
+    + intro i. unfold pointwisefamily.
+      eapply dcpomorphism_preserveslub.
+      * exact isdirecv.
+      * exact wislub.
+      * intro j. eapply istrans_posetRelation.
+        2: { exact (ineqs j). }
+        apply pointwiselub_islubpointwise.
 Qed.
 
 Lemma pointwiselub_islub {D D' : dcpo} {I : UU}
       (F : I -> posetofdcpomorphisms D D') (isdirec : isdirected F) :
-  islub F (dcpomorphismpair (pointwiselub F isdirec)
-                            (pointwiselub_isdcpomorphism F isdirec)).
+  islub F (mkdcpomorphism (pointwiselub F isdirec)
+                            (pointwiselub_isdcpomorphism' F isdirec)).
 Proof.
   split.
   - intro i; simpl. intro d; simpl.
-    use (pr1 (pointwiselub_islubpointwise F isdirec d)).
+    apply pointwiselub_islubpointwise.
   - intros h ineqs; simpl. intro d; simpl.
-    use (pr2 (pointwiselub_islubpointwise F isdirec d)).
+    apply pointwiselub_islubpointwise.
     intro i. use (ineqs i).
 Qed.
 
@@ -310,69 +380,72 @@ Lemma posetofdcpomorphisms_isdirectedcomplete (D D' : dcpo) :
   isdirectedcomplete (posetofdcpomorphisms D D').
 Proof.
   intros I F isdirec.
-  split with (dcpomorphismpair (pointwiselub F isdirec)
-                               (pointwiselub_isdcpomorphism F isdirec)).
-  use pointwiselub_islub.
+  exists (mkdcpomorphism (pointwiselub F isdirec)
+                         (pointwiselub_isdcpomorphism' F isdirec)).
+  apply pointwiselub_islub.
 Qed.
 
-(* DCPO of dcpo morphisms *)
 Definition dcpoofdcpomorphisms (D D' : dcpo) : dcpo.
 Proof.
-  use dcpopair.
-  - exact (posetofdcpomorphisms D D').
+  eapply dcpopair.
   - exact (posetofdcpomorphisms_isdirectedcomplete D D').
 Defined.
+End morphismsofdcpos_formdcpo.
 
-Definition dcpoofdcpomorphisms' (D D' : dcpowithleast) : dcpowithleast.
+(** ** Dcpos with bottom *)
+Section dcpowithbottom.
+Definition dcpowithbottom := ∑ (D : dcpo), ∑ (l : D), isMinimal l.
+Definition dcpowithbottom_dcpo : dcpowithbottom -> dcpo := pr1.
+Coercion dcpowithbottom_dcpo : dcpowithbottom >-> dcpo.
+Definition dcpowithbottom_isMinimal (D : dcpowithbottom) := (pr2 (pr2 D)).
+Definition dcpowithbottom_bottom (D : dcpowithbottom) := pr1 (pr2 D).
+
+Definition dcpowithbottom_ofdcpomorphisms (D D' : dcpowithbottom) :
+  dcpowithbottom.
 Proof.
-  split with (dcpoofdcpomorphisms D D').
-  set (leastD' := dcpowithleast_least D').
-  set (l := λ d : D, leastD').
-  assert (isdcpomor : isdcpomorphism l).
-  { intros I u isdirec v islub.
-    split.
-    - intro i. use dcpowithleast_isleast.
-    - intros d' ineqs. use dcpowithleast_isleast. }
-  split with (dcpomorphismpair l isdcpomor).
+  exists (dcpoofdcpomorphisms D D').
+  set (leastD' := dcpowithbottom_bottom D').
+  set (l := mkconst_dcpomor D D' leastD').
+  exists l.
   intro f. simpl. intro d.
-  use dcpowithleast_isleast.
+  apply dcpowithbottom_isMinimal.
 Defined.
+
+End dcpowithbottom.
+
+(** ** The least fixed point *)
+Section leastfixedpoint.
 
 Delimit Scope DCPO with DCPO.
 Local Open Scope DCPO.
-Notation "A --> B" := (dcpoofdcpomorphisms' A B) : DCPO.
-Definition dcpomorphismcarrier' {A B : dcpo} :
-  dcpoofdcpomorphisms A B -> (A -> B) := pr1.
-(* Why won't this work? *)
-(* Coercion dcpomorphismcarrier' : dcpoofdcpomorphisms >-> Funclass. *)
-
-(*** Least fixed points (μ) ***)
-(* We first define for every n : nat, an iteration function. *)
-Definition iter {D : dcpowithleast} (n : nat) (f : D --> D) : D.
+Notation "A --> B" := (dcpowithbottom_ofdcpomorphisms A B) : DCPO.
+  
+Definition iter {D : dcpowithbottom} (n : nat) (f : D --> D) : D.
 Proof.
   induction n as [ | m IH].
-  - exact (dcpowithleast_least D).
-  - exact (pr1 f (IH)).
+  - exact (dcpowithbottom_bottom D).
+  - apply f. exact IH.
 Defined.
 
-Lemma iter_preservesorder {D : dcpowithleast} (f g : D --> D) :
-  (f ≤ g)%poset -> ∏ (n : nat), (iter n f ≤ iter n g)%poset.
+Lemma iter_preservesorder {D : dcpowithbottom} (f g : D --> D) :
+  (f ≤ g) -> ∏ (n : nat), (iter n f ≤ iter n g).
 Proof.
   intros ineq n; induction n as [ | m IH].
-  - use isrefl_posetRelation.
-  - simpl. use istrans_posetRelation.
-    + exact (pr1 f (iter m g)).
-    + use dcpomorphism_preservesorder; exact IH.
+  - apply isrefl_posetRelation.
+  - simpl. eapply istrans_posetRelation.
+    + apply dcpomorphism_preservesorder. exact IH.
     + use ineq.
 Qed.
 
-(* Next, we show that each iter n is continuous, but first a small lemma.
-   It could be generalised using "monotone nets".
-   We're saying that: ⊔ f^(n+1)(⊥) = ⊔ g(⊔ f^n(⊥)), where f,g are in the
-   family F.
-   One inequality is easy; the other crucially relies on the fact that
-   F is directed. *)
-Lemma doublelubdirected {D : dcpowithleast} {I : UU} (F : I -> D -->D)
+(** Next, we show that each iter n is continuous, but first a small lemma.
+    It could be generalised using monotone nets, c.f.
+    Proposition 2.1.12 in Abramsky's and Jung's chapter "Domain Theory"
+    in "Handbook of Logic in Computer Science".
+    We're saying that: ⊔ f^(n+1)(⊥) = ⊔ g(⊔ f^n(⊥)), where f,g are in the
+    family F.
+    One inequality is easy; the other crucially relies on the fact that
+    F is directed. *)
+Lemma doublelubdirected {D : dcpowithbottom} {I : UU} (F : I -> D -->D)
       (isdirec : isdirected F) (n : nat) (u u' : D) :
   islub (λ i : I, iter n (F i)) u' -> islub (λ j : I, (pr1) (F j) u') u ->
   islub (λ i : I, iter (S n) (F i)) u.
@@ -382,149 +455,154 @@ Proof.
   - intro i.
     simpl. eapply istrans_posetRelation.
     + apply dcpomorphism_preservesorder.
-      apply (pr1 islubu' i).
-    + apply (pr1 islubu i).
+      apply (islub_isupperbound _ islubu').
+    + apply (islub_isupperbound _ islubu).
   - intros d ineqs.
-    use (pr2 islubu). intro i; simpl.
-    (* We use that (F i) preserves (directed) lubs. *)
-    set (isdcpomor := (pr2 (F i))); simpl in isdcpomor.
-    unfold isdcpomorphism in isdcpomor.
-    set (helper := isdcpomor I (λ i : I, iter n (F i))).
+    apply (islub_isleast _ islubu).
+    intro i.
+    set (fam := λ i : I, iter n (F i)).
     assert (isdirec' : isdirected (λ i : I, iter n (F i))).
     { split.
-      - exact (pr1 isdirec).
-      - intros j j'. use factor_through_squash.
-        + exact (directeduntruncated F j j').
-        + use isapropishinh.
-        + intro direc. use hinhpr.
+      - exact (isdirected_inhabited isdirec).
+      - intros i1 i2.
+        use factor_through_squash.
+        + exact (directeduntruncated F i1 i2).
+        + apply isapropishinh.
+        + intro direc. apply hinhpr.
           induction direc as [k ineqs'].
-          split with k.
+          exists k.
           split.
-          * use iter_preservesorder. exact (pr1 ineqs').
-          * use iter_preservesorder. exact (pr2 ineqs').
-        + exact (pr2 isdirec j j'). }
-    set (helper' := helper isdirec' u' islubu').
-    unfold funcomp in helper'; simpl in helper'.
-    use (pr2 helper'). intro j; simpl.
-    use factor_through_squash.
-    + exact (directeduntruncated F i j).
-    + use dcpoorder_propvalued.
-    + intro direc. induction direc as [k ineqs'].
-      eapply istrans_posetRelation.
-      apply (pr1 ineqs' (iter n (F j))).
-      eapply istrans_posetRelation.
-      * apply dcpomorphism_preservesorder.
-        apply iter_preservesorder. apply (pr2 ineqs').
-      * use (ineqs k).
-    + exact (pr2 isdirec i j).
+          * apply iter_preservesorder. exact (pr1 ineqs').
+          * apply iter_preservesorder. exact (pr2 ineqs').
+        + apply (isdirected_order isdirec).
+    }
+    eapply dcpomorphism_preserveslub.
+    + exact isdirec'.
+    + exact islubu'.
+    + intro j; unfold funcomp.
+      use factor_through_squash.
+      * exact (directeduntruncated F i j).
+      * apply propproperty.
+      * intro direc. induction direc as [k ineqs'].
+        eapply istrans_posetRelation.
+        -- apply dcpomorphism_preservesorder.
+           apply iter_preservesorder.
+           apply (pr2 ineqs').
+        -- eapply istrans_posetRelation.
+           ++ use (pr1 ineqs').
+           ++ exact (ineqs k).
+      * apply (isdirected_order isdirec).
 Qed.
 
-Lemma iter_isdcpomorphism (D : dcpowithleast) : ∏ (n : nat), isdcpomorphism (@iter D n).
+Lemma iter_isdcpomorphism' (D : dcpowithbottom) :
+  ∏ (n : nat), isdcpomorphism' (@iter D n).
 Proof.
   intros n I F isdirec g islubg.
   induction n as [| m IH].
   - split.
-    + intro i. unfold funcomp; simpl. use dcpowithleast_isleast.
-    + intros y ineqs. use dcpowithleast_isleast.
+    + intro i. unfold funcomp; simpl. apply dcpowithbottom_isMinimal.
+    + intros y ineqs. apply dcpowithbottom_isMinimal.
   - simpl. eapply doublelubdirected.
     + exact isdirec.
     + exact IH.
-    + (* We show that g is equal to the pointwise lub *)
-      set (islub' := pointwiselub_islub F isdirec).
+    + set (islub' := pointwiselub_islub F isdirec).
       set (eq := lubsareunique _ islubg islub').
-      rewrite eq; simpl.
-      use pointwiselub_islubpointwise.
+      rewrite eq; cbn.
+      apply pointwiselub_islubpointwise.
 Qed.
 
-(* Iter as dcpo morphism *)
-Definition iter' {D : dcpowithleast} (n : nat) : (D --> D) --> D.
+(** Iter as dcpo morphism *)
+Definition iter' {D : dcpowithbottom} (n : nat) : (D --> D) --> D.
 Proof.
-  use dcpomorphismpair.
-  - exact (iter n).
-  - use iter_isdcpomorphism.
+  eapply mkdcpomorphism.
+  exact (iter_isdcpomorphism' D n).
 Defined.
 
-  (* Finally, we show that n ↦ iter n is directed and define μ as its lub. *)
-Lemma iter'_isomegachain (D : dcpowithleast) :
-  ∏ (n : nat), (@iter' D n ≤ @iter' D (S n))%poset.
+Lemma iter'_isomegachain (D : dcpowithbottom) :
+  ∏ (n : nat), (@iter' D n ≤ @iter' D (S n)).
 Proof.
   induction n as [ | m IH].
-  - simpl. intro f. use dcpowithleast_isleast.
-  - simpl. intro f. use dcpomorphism_preservesorder. use IH.
+  - simpl. intro f. apply dcpowithbottom_isMinimal.
+  - simpl. intro f. apply dcpomorphism_preservesorder. use IH.
 Qed.
 
-Lemma iter'_increases (D : dcpowithleast) :
-  ∏ (n m : nat), n ≤ m -> (@iter' D n ≤ @iter' D m)%poset.
+Lemma iter'_increases (D : dcpowithbottom) :
+  ∏ (n m : nat), (n ≤ m)%nat -> (@iter' D n ≤ @iter' D m).
 Proof.
   intros n m ineq.
   induction m as [ | m' IH].
   - set (nis0 := natleh0tois0 ineq).
-    rewrite nis0. use isrefl_posetRelation.
+    rewrite nis0. apply isrefl_posetRelation.
   - set (cases := natlehchoice _ _ ineq).
     induction cases as [less | equal].
     + eapply istrans_posetRelation.
-      * apply IH. use less.
-      * use iter'_isomegachain.
-    +  rewrite equal. use isrefl_posetRelation.
+      * apply IH. apply less.
+      * apply iter'_isomegachain.
+    + rewrite equal. apply isrefl_posetRelation.
 Qed.
 
-Lemma iter'_isdirected (D : dcpowithleast) :
+Lemma iter'_isdirected (D : dcpowithbottom) :
   isdirected (@iter' D).
 Proof.
   split.
-  - use hinhpr. exact O.
-  - intros n m. use hinhpr. split with (n + m).
+  - apply hinhpr. exact O.
+  - intros n m. apply hinhpr. exists (n + m).
     split.
-    + use iter'_increases. use natlehnplusnm.
-    + use iter'_increases. use natlehmplusnm.
+    + apply iter'_increases. apply natlehnplusnm.
+    + apply iter'_increases, natlehmplusnm.
 Qed.
 
-Definition leastfixedpoint {D : dcpowithleast} : (D --> D) --> D.
+Definition leastfixedpoint {D : dcpowithbottom} : (D --> D) --> D.
 Proof.
-  use dcpomorphismpair.
+  use mkdcpomorphism.
   - eapply pointwiselub.
-    use iter'_isdirected.
-  - use pointwiselub_isdcpomorphism.
+    apply iter'_isdirected.
+  - apply pointwiselub_isdcpomorphism'.
 Defined.
 
 Notation "'μ'" := leastfixedpoint : DCPO.
 
-Lemma leastfixedpoint_isfixedpoint {D : dcpowithleast} :
+Lemma leastfixedpoint_isfixedpoint {D : dcpowithbottom} :
   ∏ (f : D --> D), (pr1 f) (pr1 μ f) = pr1 μ f.
 Proof.
-  intro f. unfold leastfixedpoint; simpl.
-  set (lub := pointwiselub_islubpointwise iter' (iter'_isdirected D) f).
-  use isantisymm_posetRelation.
-  - (* We use that f preserves lubs of directed families *)
-    set (fam := pointwisefamily iter' f).
-    set (famisdirec := pointwisefamily_isdirected iter' (iter'_isdirected D) f).
-    set (fpreslub := (pr2 f _ fam famisdirec _ lub)).
-    use (pr2 (fpreslub)).
-    intro n. unfold fam, funcomp; simpl.
-    change (pr1 f (pointwisefamily iter' f n)) with (pointwisefamily iter' f (S n)).
-    exact (pr1 (pointwiselub_islubpointwise iter' (iter'_isdirected D) f) (S n)).
-  - use (pr2 lub). intro n. induction n as [ | m IH].
-    + use dcpowithleast_isleast.
-    + unfold pointwisefamily; simpl. use dcpomorphism_preservesorder.
-      eapply istrans_posetRelation.
-      * use iter'_increases.
-        ** exact (S m).
-        ** use natlehnsn.
-      * exact (pr1 lub (S m)).
+  intro f. unfold leastfixedpoint; cbn.
+  apply isantisymm_posetRelation.
+  - set (isdirec := pointwisefamily_isdirected iter' (iter'_isdirected D) f).
+    eapply dcpomorphism_preserveslub.
+    + exact isdirec.
+    + apply pointwiselub_islubpointwise.
+    + intro n. unfold funcomp.
+      eapply (istrans_posetRelation _ _ (pointwisefamily iter' f (S n)) _).
+      * apply isrefl_posetRelation.
+      * apply pointwiselub_islubpointwise.
+  - eapply (islub_isleast).
+    + apply pointwiselub_islubpointwise.
+    + intro n. induction n as [ | m IH].
+      * apply dcpowithbottom_isMinimal.
+      * unfold pointwisefamily; simpl. apply dcpomorphism_preservesorder.
+        eapply istrans_posetRelation.
+        -- use iter'_increases.
+           ++ exact (S m).
+           ++ apply natlehnsn.
+        -- exact (islub_isupperbound _
+                  (pointwiselub_islubpointwise iter' (iter'_isdirected D) f)
+                  (S m)).
 Qed.
 
-Lemma leastfixedpoint_isleast {D : dcpowithleast} (f : D --> D) :
-  ∏ (d : D), ((pr1 f) d ≤ d)%poset -> (pr1 μ f ≤ d)%poset.
+Lemma leastfixedpoint_isleast {D : dcpowithbottom} (f : D --> D) :
+  ∏ (d : D), ((pr1 f) d ≤ d) -> (pr1 μ f ≤ d).
 Proof.
   intros d ineq.
-  set (lub := pointwiselub_islubpointwise iter' (iter'_isdirected D) f).
-  use (pr2 lub).
-  intro n; induction n as [ | m IH].
-  - simpl. use dcpowithleast_isleast.
-  - simpl. eapply istrans_posetRelation.
-    + unfold pointwisefamily; simpl.
-      eapply dcpomorphism_preservesorder. exact IH.
-    + exact ineq.
+  eapply islub_isleast.
+  - apply pointwiselub_islubpointwise.
+  - intro n; induction n as [ | m IH].
+    + apply dcpowithbottom_isMinimal.
+    + unfold pointwisefamily. simpl.
+      eapply istrans_posetRelation.
+      * apply dcpomorphism_preservesorder. exact IH.
+      * exact ineq.
 Qed.
 
 Close Scope DCPO.
+
+End leastfixedpoint.
