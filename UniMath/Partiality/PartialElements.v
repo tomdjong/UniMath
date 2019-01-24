@@ -294,35 +294,6 @@ Proof.
   - apply weaklyconstant_value.
 Qed.
 
-(*Definition mkisdefinedlubmap {X : hSet} {I : UU} (u : I -> 𝓛 X)
-           (isdirec : isdirected u) :
-  ∏ (i : I), isdefined (u i) <-> isdefined (mkdirectedlubinlift u isdirec).
-Proof.
-  intro i.
-  split.
-  - intro d. unfold mkdirectedlubinlift; simpl.
-    apply hinhpr. exact (i,,d).
-  - apply isdefinedlub_toprop.
-    + intro
-
-Defined.
-
-Lemma lubvalue_eq {X : hSet} {I : UU} (u : I -> 𝓛 X) (isdirec : isdirected u) :
-  ∏ (i : I), ∏ (d : isdefined (u i)),
-  let v := mkdirectedlubinlift u isdirec in
-  ∏ (p : isdefined v),
-  value (u i) d = value v p.
-Proof.
-  intros i d v p. change (value (u i) d) with (lubvaluemap u (i,,d)).
-  unfold mkdirectedlubinlift, value. cbn.
-  assert (pinsquash : p = hinhpr (i,,d)).
-  { apply proofirrelevance, isapropishinh. }
-  rewrite pinsquash.
-  use weaklyconstanttoaset_factorsthroughsquash_eq.
-  - apply setproperty.
-  - apply weaklyconstant_value.
-Qed.*)
-
 Lemma mkdirectedlubinlift_islub {X : hSet} {I : UU} (u : I -> 𝓛 X)
       (isdirec : isdirected u) : islub u (mkdirectedlubinlift isdirec).
 Proof.
@@ -341,29 +312,26 @@ Proof.
     + exact d.
 Qed.
 
-(** CONTINUE HERE ***)
 Theorem lift_isdirectedcomplete (X : hSet) :
   isdirectedcomplete (𝓛 X).
 Proof.
   unfold isdirectedcomplete. intros I u isdirec.
-  split with (mkdirectedlubinlift u isdirec).
-  use mkdirectedlubinlift_islub.
+  exists (mkdirectedlubinlift isdirec).
+  apply mkdirectedlubinlift_islub.
 Qed.
 Close Scope LiftIsPoset.
 
 Definition liftdcpo (X : hSet) : dcpo.
 Proof.
-  use dcpopair.
-  - exact (liftposet X).
-  - use lift_isdirectedcomplete.
+  eapply dcpopair.
+  exact (lift_isdirectedcomplete X).
 Defined.
 
-Definition liftdcpowithleast (X : hSet) : dcpowithleast.
+Definition liftdcpowithbottom (X : hSet) : dcpowithbottom.
 Proof.
-  split with (liftdcpo X).
-  split with (empty,, isapropempty,, fromempty).
+  exists (liftdcpo X).
+  exists (empty,, isapropempty,, fromempty).
   intro l.
-  split with (fromempty).
   intro d.
-  destruct d.
+  induction d.
 Defined.
