@@ -167,22 +167,15 @@ Proof.
   intros l m.
   eapply (isapropretract) with (f := (total2_paths_equiv _ l m))
                                (g := invmap (total2_paths_equiv _ l m)).
-  - induction l as [P pair]; induction m as [P' pair'].
-    apply invproofirrelevance.
-    intros e e'.
-    induction e as [e1 e2]; induction e' as [e'1 e'2].
-    apply total2_paths_equiv.
-    assert (eq1: e1 = e'1).
-    { apply proofirrelevance.
-      simpl.
-      exact (isaprop_pathsprop (pr1 pair) (pr1 pair')). }
-    exists eq1.
-    simpl; use proofirrelevance.
-    assert (helper : isaset (isaprop P' × (P' -> X))).
-    { apply isaset_dirprod.
-      - apply isasetaprop. apply isapropisaprop.
-      - apply isaset_set_fun_space. }
-    apply helper.
+  - apply isofhleveltotal2.
+    + apply isaprop_pathsprop.
+      1-2: apply isaprop_isdefined.
+    + intros eq.
+      assert (helper : isaset (isaprop (pr1 m) × ((pr1 m) -> X))).
+      { apply isaset_dirprod.
+        - apply isasetaprop. apply isapropisaprop.
+        - apply isaset_set_fun_space. }
+      apply helper.
   - use homotinvweqweq.
 Qed.
 
