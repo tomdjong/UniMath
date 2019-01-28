@@ -117,6 +117,14 @@ Proof.
     ++ apply funextfun. exact veq.
 Defined.
 
+Definition isdefined_lift_embedding {X : UU} (l : 𝓛 X) (d : isdefined l) :
+  l = η (value l d).
+Proof.
+  apply lifteq_suff.
+  exists (tpair _ (λ _, tt) (λ _, d)).
+  intro p. apply idpath.
+Defined.
+
 End lift.
 
 (** Make notation available outside the section *)
@@ -277,7 +285,7 @@ Proof.
       exact isdirec.
 Defined.
 
-Lemma isdefinedlub_toprop {X : hSet} {I Q : UU} {u : I -> 𝓛 X}
+Lemma isdefinedlub_toprop' {X : hSet} {I Q : UU} {u : I -> 𝓛 X}
       (isdirec : isdirected u) :
   ((∑ (i : I), isdefined (u i)) -> Q) ->
   isaprop Q ->
@@ -287,7 +295,7 @@ Proof.
   exact (factor_through_squash Qisaprop f p).
 Qed.
 
-Lemma liftlub_isdefined {X : hSet} {I : UU} {u : I -> 𝓛 X}
+Lemma liftlub_isdefined' {X : hSet} {I : UU} {u : I -> 𝓛 X}
       (isdirec : isdirected u) :
   ∏ (i : I), isdefined (u i) -> u i = mkdirectedlubinlift isdirec.
 Proof.
@@ -319,16 +327,43 @@ Proof.
   split.
   - intro i.
     intro di.
-    exact (liftlub_isdefined isdirec i di).
+    exact (liftlub_isdefined' isdirec i di).
   - intros v upperbound.
     intro d.
-    apply (isdefinedlub_toprop isdirec).
+    apply (isdefinedlub_toprop' isdirec).
     + intros [i di].
       etrans.
-      * exact (!(liftlub_isdefined isdirec i di)).
+      * exact (!(liftlub_isdefined' isdirec i di)).
       * exact (upperbound i di).
     + apply liftofhset_isaset.
     + exact d.
+Qed.
+
+Lemma isdefinedlub_toprop {X : hSet} {I Q : UU} {u : I -> 𝓛 X} {v : 𝓛 X}
+      (isdirec : isdirected u) :
+  islub u v -> ((∑ (i : I), isdefined (u i)) -> Q) ->
+  isaprop Q ->
+  isdefined v -> Q.
+Proof.
+  intro vislub.
+  assert (eq : v = mkdirectedlubinlift isdirec).
+  { apply (lubsareunique u).
+    - exact vislub.
+    - apply mkdirectedlubinlift_islub. }
+  rewrite eq. apply isdefinedlub_toprop'.
+Qed.
+
+Lemma liftlub_isdefined {X : hSet} {I : UU} {u : I -> 𝓛 X} {v : 𝓛 X}
+      (isdirec : isdirected u) :
+  islub u v -> ∏ (i : I), isdefined (u i) -> u i = v.
+Proof.
+  intro vislub.
+  assert (eq : v = mkdirectedlubinlift isdirec).
+  { apply (lubsareunique u).
+    - exact vislub.
+    - apply mkdirectedlubinlift_islub. }
+  rewrite eq.
+  apply liftlub_isdefined'.
 Qed.
 
 Theorem lift_isdirectedcomplete (X : hSet) :
@@ -359,3 +394,4 @@ End liftdcpo.
 
 Notation "l ⊑ m" := (liftorder_hrel l m) (at level 30) : LiftDcpo.
 Notation "'𝓛'" := liftdcpowithbottom : LiftDcpo.
+Notation "'η'" := lift_embedding : LiftDcpo.
