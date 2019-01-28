@@ -93,7 +93,6 @@ Proof.
     exact (maponpaths dirprod_pr2 e2).
 Defined.
 
-
 Definition lifteq_suff {X : UU} {l m : 𝓛 X} :
   (∑ (e : isdefined l <-> isdefined m), value l ∘ pr2 e ~ value m) -> l = m.
 Proof.
@@ -120,10 +119,12 @@ Defined.
 
 End lift.
 
+(** Make notation available outside the section *)
+Notation "'𝓛'" := lift : PartialElements.
+Notation "'η'" := lift_embedding : PartialElements.
+
 (** * The 'order' on the lift *)
 Section liftorder.
-
-Notation "'𝓛'" := lift : PartialElements.
 
 Definition liftorder {X : UU} (l m : 𝓛 X) : UU :=
   isdefined l -> l = m.
@@ -179,11 +180,10 @@ Defined.
 
 End liftorder.
 
+Notation "l ⊑ m" := (liftorder l m) (at level 30) : PartialElements.
+
 (** * The lift as a dcpo with bottom *)
 Section liftdcpo.
-
-Notation "'𝓛'" := lift : PartialElements.
-Notation "l ⊑ m" := (liftorder l m) (at level 30) : PartialElements.
 
 Lemma liftofhset_isaset {X : hSet} : isaset (𝓛 X).
 Proof.
