@@ -158,19 +158,34 @@ Proof.
 Defined.
 Coercion dcpomorphism_posetmorphism : dcpomorphism >-> posetmorphism.
 
-Definition dcpomorphism_preservesorder {D D' : dcpo} (f : dcpomorphism D D') :
+Lemma dcpomorphism_preservesorder {D D' : dcpo} (f : dcpomorphism D D') :
   isaposetmorphism f.
 Proof.
   exact (pr1 (pr2 f)).
-Defined.
+Qed.
 
-Definition dcpomorphism_preserveslub {D D' : dcpo} (f : dcpomorphism D D')
+Lemma dcpomorphism_preservesdirected {D D' : dcpo} (f : dcpomorphism D D')
+      {I : UU} {u : I -> D} : isdirected u -> isdirected (pr1 f ∘ u).
+Proof.
+  intro isdirec.
+  split.
+  - exact (isdirected_inhabited isdirec).
+  - intros i j. apply (@factor_through_squash (directeduntruncated u i j)).
+    + apply isapropishinh.
+    + intro direc. apply hinhpr. induction direc as [k ineqs].
+      split with k. split.
+      * apply dcpomorphism_preservesorder. exact (pr1 ineqs).
+      * apply dcpomorphism_preservesorder. exact (pr2 ineqs).
+    + exact (isdirected_order isdirec i j).
+Qed.
+
+Lemma dcpomorphism_preserveslub {D D' : dcpo} (f : dcpomorphism D D')
            {I : UU} {u : I -> D} : isdirected u -> preserveslub f u.
 Proof.
   intro isdirec.
   apply (pr2 (pr2 f)).
   exact isdirec.
-Defined.
+Qed.
 
 (* In fact, requiring that a dcpo morphism is a poset morphism is redundant *)
 Definition isdcpomorphism' {D D' : dcpo} (f : D -> D') :=
