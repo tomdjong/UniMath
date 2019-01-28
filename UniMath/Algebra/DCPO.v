@@ -17,7 +17,7 @@ Refactored: January 2019
 - The morphisms between two dcpos form a dcpo with the pointwise order
   ([morphismsofdcpos_formdcpo])
 - Definition of a dcpo with bottom ([dcpowithbottom])
-- The least fixed point operator for morphisms between dcpos with bottom 
+- The least fixed point operator for morphisms between dcpos with bottom
   ([leastfixedpoint])
 *)
 
@@ -51,7 +51,7 @@ Qed.
 Definition islub_isupperbound {u : X} : islub u -> isupperbound u := pr1.
 Definition islub_isleast {u : X} :
   islub u -> ∏ (y : X), (∏ (i : I), f i ≤ y) -> u ≤ y := pr2.
-                                   
+
 Lemma lubsareunique {u v : X} : islub u -> islub v -> u = v.
 Proof.
   intros islubu islubv.
@@ -175,7 +175,7 @@ Defined.
 (* In fact, requiring that a dcpo morphism is a poset morphism is redundant *)
 Definition isdcpomorphism' {D D' : dcpo} (f : D -> D') :=
   ∏ (I : UU) (u : I -> D), isdirected u -> preserveslub f u.
-  
+
 Lemma preservesdirectedlub_isdcpomorphism {D D' : dcpo} (f : D -> D') :
   isdcpomorphism' f -> isdcpomorphism f.
 Proof.
@@ -341,7 +341,7 @@ Proof.
   - simpl. apply pointwiselub_islubpointwise.
   - simpl. apply pointwiselub_islubpointwise.
 Qed.
-  
+
 Lemma pointwiselub_isdcpomorphism' {D D' : dcpo} {I : UU}
       (F : I -> posetofdcpomorphisms D D') (isdirec : isdirected F) :
   isdcpomorphism' (pointwiselub F isdirec).
@@ -413,13 +413,13 @@ Defined.
 
 End dcpowithbottom.
 
-(** ** The least fixed point *)
-Section leastfixedpoint.
-
 Delimit Scope DCPO with DCPO.
 Local Open Scope DCPO.
 Notation "A --> B" := (dcpowithbottom_ofdcpomorphisms A B) : DCPO.
-  
+
+(** ** The least fixed point *)
+Section leastfixedpoint.
+
 Definition iter {D : dcpowithbottom} (n : nat) (f : D --> D) : D.
 Proof.
   induction n as [ | m IH].
