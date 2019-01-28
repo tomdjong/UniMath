@@ -1,15 +1,38 @@
+(**
+
+Tom de Jong
+
+Created: October - November 2018
+
+Refactored: January 2019
+
+*******************************************************************************)
+
+(** * Partial Elements *)
+(** ** Contents
+- Definition of Partial Elements of X (or Lift (𝓛 X) of X) ([lift])
+  , basic lemmas on [isdefined] and [value] and a (logical) characterisation
+  of equality on 𝓛 X
+- An order on the lift of X ([liftorder])
+- The lift of X as a dcpo with bottom ([liftdcpo])
+*)
+
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.PropExt.
 Require Import UniMath.MoreFoundations.WeaklyConstant.
 Require Import UniMath.Algebra.DCPO.
 
-Definition lift (X : UU) := ∑ (P : UU), isaprop P × (P -> X).
+(** * The lift of a type *)
 
 Delimit Scope PartialElements with PartialElements.
 Local Open Scope PartialElements.
+
+Section lift.
+
+Definition lift (X : UU) := ∑ (P : UU), isaprop P × (P -> X).
+
 Notation "'𝓛'" := lift : PartialElements.
 
-(* We can map X into its lift. *)
 Definition lift_embedding {X : UU} (x : X) : 𝓛 X :=
   (unit,, isapropunit,, termfun x).
 
@@ -95,18 +118,16 @@ Proof.
     ++ apply funextfun. exact veq.
 Defined.
 
+End lift.
 
-(****************************************************************************************
-new section
-*****************************************************************************************)
+(** * The 'order' on the lift *)
+Section liftorder.
+
+Notation "'𝓛'" := lift : PartialElements.
 
 Definition liftorder {X : UU} (l m : 𝓛 X) : UU :=
   isdefined l -> l = m.
 
-(*Definition information_order {X : UU} (l m : 𝓛 X) : UU :=
-  ∑ (t : isdefined l -> isdefined m), ∏ (d : isdefined l), value l d = value m (t d).*)
-
-(* TO DO: Check level *)
 Notation "l ⊑ m" := (liftorder l m) (at level 30) : PartialElements.
 
 Definition liftorder_antisymmetric {X : UU} :
@@ -156,11 +177,13 @@ Proof.
   induction dbot.
 Defined.
 
-(*************************************************************************************
-New section
-**************************************************************************************)
-(*** If X is a set, then 𝓛 X with the information order
-     is a dcpo with least element. ***)
+End liftorder.
+
+(** * The lift as a dcpo with bottom *)
+Section liftdcpo.
+
+Notation "'𝓛'" := lift : PartialElements.
+Notation "l ⊑ m" := (liftorder l m) (at level 30) : PartialElements.
 
 Lemma liftofhset_isaset {X : hSet} : isaset (𝓛 X).
 Proof.
@@ -212,7 +235,7 @@ Defined.
 
 Notation "'𝓛'" := liftposet : LiftIsPoset.
 
-(* The following map will be used to define the value of the lub of a
+(** The following map will be used to define the value of the lub of a
    (directed) family. *)
 Definition lubvaluemap {X : hSet} {I : UU} (u : I -> 𝓛 X) :
                        (∑ (i : I), isdefined (u i)) -> X.
@@ -221,7 +244,7 @@ Proof.
   exact (value (u i) d).
 Defined.
 
-(* The map is weakly constant if the family is directed. *)
+(** The map is weakly constant if the family is directed. *)
 Definition lubvaluemap_weaklyconstant {X : hSet} {I : UU} (u : I -> 𝓛 X) :
   isdirected u -> weaklyconstant (lubvaluemap u).
 Proof.
@@ -237,8 +260,8 @@ Proof.
   - exact (isdirected_order isdirec i i').
 Defined.
 
-(* The construction of the lub; a proof that this element is actually
-   the lub follows later. *)
+(** The construction of the lub; a proof that this element is actually
+    the lub follows later. *)
 Definition mkdirectedlubinlift {X : hSet} {I : UU} {u : I -> 𝓛 X}
            (isdirec : isdirected u) : 𝓛 X.
 Proof.
@@ -328,3 +351,5 @@ Proof.
   intro d.
   induction d.
 Defined.
+
+End liftdcpo.
