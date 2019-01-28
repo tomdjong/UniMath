@@ -182,6 +182,9 @@ End liftorder.
 
 Notation "l ⊑ m" := (liftorder l m) (at level 30) : PartialElements.
 
+Delimit Scope LiftDcpo with LiftDcpo.
+Local Open Scope LiftDcpo.
+
 (** * The lift as a dcpo with bottom *)
 Section liftdcpo.
 
@@ -353,3 +356,6 @@ Proof.
 Defined.
 
 End liftdcpo.
+
+Notation "l ⊑ m" := (liftorder_hrel l m) (at level 30) : LiftDcpo.
+Notation "'𝓛'" := liftdcpowithbottom : LiftDcpo.
