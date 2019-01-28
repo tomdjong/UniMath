@@ -41,32 +41,35 @@ Defined.
 
 Notation "f #" := (Kleisli_extension f) (at level 30) : LiftMonad.
 
-Lemma η_extension {X : UU} : η # ~ idfun (𝓛 X).
+Definition η_extension {X : UU} : η # ~ idfun (𝓛 X).
 Proof.
   intro l.
   apply lifteq_suff.
   exists (tpair _ pr1 (λ d, (d,,tt))).
   intro d. cbn. apply idpath.
-Qed.
+Defined.
 
-Lemma fun_extension_after_η {X Y : UU} (f : X -> 𝓛 Y) : f # ∘ η ~ f.
+(** * We avoid expressing this using ∘, because that does not work well
+      with the rewrite tactic. *)
+Definition fun_extension_after_η {X Y : UU} (f : X -> 𝓛 Y) :
+  ∏ (x : X), f # (η x) = f x.
 Proof.
   intro x. apply lifteq_suff.
   exists (tpair _ pr2 (λ d, (tt,,d))).
   intro d. cbn. apply idpath.
-Qed.
+Defined.
 
 (** This is essentially just the equivalence between
     ∑(a : A), (b : Ba), C(a, b) and
     ∑((a, b) : ∑(a : A), B(a)), C(a, b). *)
-Lemma extension_comp {X Y Z : UU} (f : X -> 𝓛 Y) (g : Y -> 𝓛 Z) :
-  (g # ∘ f) # ~ g # ∘ (f #).
+Definition extension_comp {X Y Z : UU} (f : X -> 𝓛 Y) (g : Y -> 𝓛 Z) :
+  ∏ (l : 𝓛 X), (g # ∘ f) # l = g # (f # l).
 Proof.
   intro l.
   apply lifteq_suff.
   exists (weq_to_iff (weqtotal2asstol _ _)).
   intro d. cbn. apply idpath.
-Qed.
+Defined.
 
 Definition liftfunctor {X Y : UU} (f : X -> Y) : 𝓛 X -> 𝓛 Y.
 Proof.
@@ -117,15 +120,10 @@ Proof.
       apply Kleisli_extension_preservesorder.
       apply (islub_isupperbound _ islubv).
     + intros l ineqs; cbn.
-      assert (lubeq : v = mkdirectedlubinlift isdirec).
-      { eapply lubsareunique.
-        - exact islubv.
-        - apply mkdirectedlubinlift_islub. }
-      rewrite lubeq.
       intro q.
-      eapply (isdefinedlub_toprop isdirec).
+      apply (isdefinedlub_toprop isdirec islubv).
       * intros [i di].
-        set (eq := liftlub_isdefined isdirec i di).
+        set (eq := liftlub_isdefined isdirec islubv i di).
         rewrite <- eq.
         use (ineqs i).
         unfold funcomp.
