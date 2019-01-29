@@ -391,6 +391,20 @@ Proof.
     intro i. use (ineqs i).
 Qed.
 
+Lemma islub_islubpointwise {D D' : dcpo} {I : UU} {g : posetofdcpomorphisms D D'}
+      {F : I -> posetofdcpomorphisms D D'} (isdirec : isdirected F) :
+  islub F g -> ∏ (d : D), islub (pointwisefamily F d) (pr1 g d).
+Proof.
+  intros islubFg d.
+  set (ptlub := mkdcpomorphism (pointwiselub F isdirec)
+                               (pointwiselub_isdcpomorphism' F isdirec)).
+  assert (lubeq : g = ptlub).
+  { apply (lubsareunique F islubFg).
+    apply pointwiselub_islub. }
+  rewrite lubeq.
+  apply pointwiselub_islubpointwise.
+Qed.
+
 Lemma posetofdcpomorphisms_isdirectedcomplete (D D' : dcpo) :
   isdirectedcomplete (posetofdcpomorphisms D D').
 Proof.
