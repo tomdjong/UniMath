@@ -311,6 +311,13 @@ Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⦃ σ ⦄ :=
 
 Notation "⟦ t ⟧" := (denotational_semantics_terms t) : PCF.
 
+Lemma denotational_semantics_numerals (n : nat) : ⟦ numeral n ⟧ = η n.
+Proof.
+  induction n as [| m IH].
+  - apply idpath.
+  - cbn. rewrite IH. apply idpath.
+Qed.
+
 Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
   match σ with
   | base => λ l, λ t, ∏ (p : isdefined l), t ▹* numeral (value l p)
