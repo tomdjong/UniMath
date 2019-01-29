@@ -133,6 +133,17 @@ Proof.
       * exact (pr1 q).
 Defined.
 
+Definition liftfunctor_dcpo {X Y : hSet} (f : X -> Y) : 𝓛 X --> 𝓛 Y.
+Proof.
+  use mkdcpomorphism.
+  - exact (liftfunctor f).
+  - set (liftfunc' := Kleisli_extension_dcpo (η ∘ f)).
+    assert (eq : ∏ (l : 𝓛 X), liftfunctor f l = pr1 liftfunc' l).
+    { use liftfunctor_eq. }
+    rewrite (funextfun _ _ eq).
+    exact (pr2 (pr2 liftfunc')).
+Defined.
+
 Close Scope LiftMonad.
 End liftmonaddcpo.
 
