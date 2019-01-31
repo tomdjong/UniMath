@@ -26,6 +26,10 @@ of the code. Find the documentation at enhanced-html/index.html.
 
 File listing
 ------------
+- UniMath/Algebra/DCPO.v
+
+  Formalisation of directed complete posets (with bottom) up to least fixed
+  points.
 
 - UniMath/Partiality/PartialElements.v
 
