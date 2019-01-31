@@ -28,19 +28,25 @@ File listing
 ------------
 
 - UniMath/Partiality/PartialElements.v
+
   General theory of partial elements, i.e. the lift of a type and the lift of a
   set as a dcpo with bottom 
 - UniMath/Partiality/LiftMonad.v
+
   The monad structure on the lift and the Kleisli extension as a dcpo morphism
 - UniMath/Partiality/PCF.v
+
   The results on PCF: most importantly Soundness and Adequacy
 
 **Auxiliary files**
 - UniMath/MoreFoundations/ClosureOfHrel.v
+
   Reflexive transitive closure of a (propositional valued) relation
 - UniMath/MoreFoundations/PropExt.v
+
   Some consequences of Propositional Extensionality
 - UniMath/MoreFoundations/WeaklyContant.v
+
   Some results on weakly constant functions from "Notions of Anonymous
   Existence in Martin-L&oumlf Type Theory" by Kraus et al.
 
