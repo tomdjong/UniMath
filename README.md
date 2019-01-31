@@ -1,5 +1,5 @@
-Univalent Mathematics
-=====================
+The Scott model of PCF in constructive univalent mathematics
+============================================================
 
 This is the [Coq](https://coq.inria.fr/) formalisation of the constructive Scott model of PCF.
 It uses the [UniMath](https://github.com/UniMath/UniMath) library.
