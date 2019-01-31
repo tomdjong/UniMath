@@ -48,6 +48,6 @@ File listing
 - UniMath/MoreFoundations/WeaklyContant.v
 
   Some results on weakly constant functions from "Notions of Anonymous
-  Existence in Martin-L&oumlf Type Theory" by Kraus et al.
+  Existence in Martin-Löf Type Theory" by Kraus et al.
 
 
