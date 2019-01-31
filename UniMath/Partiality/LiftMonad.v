@@ -11,7 +11,8 @@ Refactored: January 2019
 (** * Lift Monad *)
 (** ** Contents
 - Monad structure of the lift, i.e. Kleisli extension and Kleisli laws
-- The Kleisli extension as a dcpo morphism
+  ([liftmonad])
+- The Kleisli extension as a dcpo morphism ([liftmonaddcpo])
 *)
 
 
