@@ -154,7 +154,7 @@ End operationalsemantics.
 Notation "s ▹ t" := (smallstep s t) (at level 40) : PCF.
 Notation "s ▹* t" := (refltrans_smallstep s t) (at level 40) : PCF.
 
-(** * The Scott model of PCF *)
+(** * The constructive Scott model of PCF *)
 Section denotationalsemantics.
 
 Local Open Scope DCPO.
@@ -474,6 +474,7 @@ Qed.
 
 End soundness.
 
+(** * Adequacy *)
 Section adequacy.
 
 Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
