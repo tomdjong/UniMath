@@ -1,76 +1,47 @@
 Univalent Mathematics
 =====================
 
-This [Coq](https://coq.inria.fr/) library aims to formalize a substantial body of mathematics using the
-[univalent point of view](https://en.wikipedia.org/wiki/Univalent_foundations).
+This is the [Coq](https://coq.inria.fr/) formalisation of the constructive Scott model of PCF.
+It uses the [UniMath](https://github.com/UniMath/UniMath) library.
+It includes a copy of the UniMath library for compatibility and to make it easy to run without too much setting up.
 
 Installation
 ------------
 
-See
+For general instructions, see 
 [INSTALL.md](https://github.com/UniMath/UniMath/blob/master/INSTALL.md).
 
-Contents
---------
-
-The [UniMath subdirectory](UniMath/) contains various packages of formalized
-mathematics. For more information, see the [UniMath Table of Contents](UniMath/CONTENTS.md).
-
-Some scientific articles describing the contents of the UniMath library are listed in the 
-[wiki](https://github.com/UniMath/UniMath/wiki/Documentation:-Articles-describing-UniMath).
-
-Contributing to UniMath
------------------------
-
-To contribute to UniMath, submit a pull request.  Your code will be subject to the 
-copyright and license agreement in [LICENSE.md](LICENSE.md).
-
-For the style guide and other instructions, see [UniMath/README.md](UniMath/README.md).
-
-Discussing UniMath & Getting Help
----------------------------------
-
-- **Questions** about the UniMath library, compilation, and installation of UniMath, etc.,
-should be sent to the [UniMath mailing list](mailto:univalent-mathematics@googlegroups.com), which is archived in the 
-[Google Group](https://groups.google.com/forum/#!forum/univalent-mathematics).
-- **Bugs** should be reported in our [UniMath bug tracker on Github](https://github.com/UniMath/UniMath/issues).
-
-
-Citing UniMath
---------------
-
-To cite UniMath in your article, you can use the following bibtex item:
-```bibtex
-@Misc{UniMath,
-    author = {Voevodsky, Vladimir and Ahrens, Benedikt and Grayson, Daniel and others},
-    title = {{UniMath --- a computer-checked library of univalent mathematics}},
-    url = {https://github.com/UniMath/UniMath},
-    howpublished = {{available} at \url{https://github.com/UniMath/UniMath}}
- }
+Use 
+```bash
+$ make Partiality
 ```
-Note that this requires ```\usepackage{url}``` or ```\usepackage{hyperref}```.
+in the root directory to make the PCF formalisation
+
+Use
+```bash
+$ make doc
+```
+in the root directory to create HTML documentation that allow for easy reading
+of the code. Find the documentation at enhanced-html/index.html.
+
+File listing
+------------
+
+- UniMath/Partiality/PartialElements.v
+  General theory of partial elements, i.e. the lift of a type and the lift of a
+  set as a dcpo with bottom 
+- UniMath/Partiality/LiftMonad.v
+  The monad structure on the lift and the Kleisli extension as a dcpo morphism
+- UniMath/Partiality/PCF.v
+  The results on PCF: most importantly Soundness and Adequacy
+
+**Auxiliary files**
+- UniMath/MoreFoundations/ClosureOfHrel.v
+  Reflexive transitive closure of a (propositional valued) relation
+- UniMath/MoreFoundations/PropExt.v
+  Some consequences of Propositional Extensionality
+- UniMath/MoreFoundations/WeaklyContant.v
+  Some results on weakly constant functions from "Notions of Anonymous
+  Existence in Martin-L&oumlf Type Theory" by Kraus et al.
 
 
-The UniMath Development Team
-----------------------------
-
-The UniMath project was started in 2014 by merging the repository
-[Foundations](https://github.com/UniMath/Foundations), by Vladimir Voevodsky
-(written in 2010), with two repositories based on it:
-[rezk_completion](https://github.com/benediktahrens/rezk_completion), by
-Benedikt Ahrens, and [Ktheory](https://github.com/DanGrayson/Ktheory), by
-Daniel Grayson.  Vladimir Voevodsky was a member of the team until his death in
-September, 2017.
-
-The current members of the UniMath Development Team are:
-
-- Benedikt Ahrens
-- Daniel Grayson
-
-
-Acknowledgments
----------------
-
-The UniMath development team gratefully acknowledges the great work by
-the Coq development team in providing the [Coq proof assistant](https://coq.inria.fr/), as well
-as their support in keeping UniMath compatible with Coq.
