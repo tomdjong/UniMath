@@ -1,36 +1,59 @@
+(**
+
+Tom de Jong
+
+Created: November 2018
+
+Refactored: January 2019
+
+*******************************************************************************)
+
+(** * Some results on weakly constant functions *)
+(** ** Contents
+- Definition of weakly constant functions as functions for which any two values
+  are equal
+- Any weakly constant function from X into a set factors through the
+  propositional truncation ∥ X ∥ of X (Theorem 5.4 in [1])
+- A weakly constant endomap on the path space implies that the path space is
+  propositional (Lemma 3.11 in [1])
+[1] "Notions of Anonymous Existence in Martin-Löf Type Theory" by Kraus et al.
+*)
+
 Require Import UniMath.Foundations.All.
 
-Definition weaklyconstant {X Y : UU} (f : X -> Y) : UU := ∏ (x x' : X), f x = f x'.
+Definition weaklyconstant {X Y : UU} (f : X -> Y) : UU :=
+  ∏ (x x' : X), f x = f x'.
 
 Lemma weaklyconstanttoaset_haspropimage {X Y : UU} (f : X -> Y) :
   isaset Y -> weaklyconstant f -> isaprop (image f).
 Proof.
   intros Yisaset fweaklyconstant.
-  use invproofirrelevance.
+  apply invproofirrelevance.
   intros [y u] [y' u'].
   assert (w : hfiber f y -> hfiber f y' -> y = y').
-  { intros [x p] [x' p']. rewrite <- p; rewrite <- p'. use fweaklyconstant. }
+  { intros [x p] [x' p']. rewrite <- p; rewrite <- p'.
+    apply fweaklyconstant. }
   assert (w' : hfiber f y -> ∥ hfiber f y' ∥ -> y = y').
-  { intro yfib. use factor_through_squash.
-    - use Yisaset.
+  { intro yfib. apply factor_through_squash.
+    - apply Yisaset.
     - exact (w yfib). }
   assert (w'' : ∥ hfiber f y ∥ -> ∥ hfiber f y' ∥ -> y = y').
   { use factor_through_squash.
-    - use isapropimpl. use Yisaset.
+    - apply isapropimpl. apply Yisaset.
     - exact w'. }
   apply total2_paths_equiv.
-  split with (w'' u u').
-  use proofirrelevance.
-  use isapropishinh.
+  exists (w'' u u').
+  apply proofirrelevance.
+  apply isapropishinh.
 Qed.
 
+(** Any function f : X -> Y factors through its image.
+    If f is weakly constant, then the image is propositional
+    by the lemma above, so then f : X -> im(f) factors through ∥ X ∥. *)
 Definition weaklyconstanttoaset_factorsthroughsquash {X Y : UU} (f : X -> Y) :
   isaset Y -> weaklyconstant f -> ∥X∥ -> Y.
-  (* ∑ (f' : ∥ X ∥ -> Y), f ~ (f' ∘ (@hinhpr X)). *)
 Proof.
   intros Yisaset fweaklyconstant.
-  (* f factors through its image, which is propostional by the lemma above,
-     hence, X -> im(f) factors through ∥ X ∥. *)
   set (h := factor_through_squash
             (weaklyconstanttoaset_haspropimage f Yisaset fweaklyconstant)
             (prtoimage f)).
@@ -42,30 +65,11 @@ Definition weaklyconstanttoaset_factorsthroughsquash_eq {X Y : UU} (f : X -> Y)
                                              (fconst : weaklyconstant f) :
   weaklyconstanttoaset_factorsthroughsquash f Yisaset fconst ∘ (@hinhpr X) ~ f.
 Proof.
-  intro x. unfold weaklyconstanttoaset_factorsthroughsquash, hinhpr; simpl.
-  unfold prtoimage, funcomp; simpl. use idpath.
+  intro x. cbn.
+  apply idpath.
 Defined.
 
-(* Formalisation of Lemma 3.11 from "Notions of Anonymous Existence in Martin-Löf
-   Type Theory" by Kraus et al. *)
 Definition weaklyconstant_endomap (X : UU) := ∑ (f : X -> X), weaklyconstant f.
-
-Definition wconst_endomap_prop_path {X : UU} :
-  (∏ (Y : UU), weaklyconstant_endomap (X = Y)) -> ∏ Y : UU, isaprop (X = Y).
-Proof.
-  intro wconstendo.
-  intros Y.
-  assert (patheq : ∏ (p : X = Y), p = !(pr1 (wconstendo X) (idpath X)) @
-                                       pr1 (wconstendo Y) p).
-  { induction p. apply pathsinv0.
-    apply pathsinv0l. }
-  apply invproofirrelevance.
-  intros p q.
-  rewrite (patheq p).
-  rewrite (patheq q).
-  apply maponpaths.
-  apply (pr2 (wconstendo Y)).
-Defined.
 
 Definition wconst_endomap_prop_path_prop {X : UU} :
   isaprop X ->
