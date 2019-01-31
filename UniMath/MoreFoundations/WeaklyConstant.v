@@ -47,9 +47,9 @@ Proof.
   apply isapropishinh.
 Qed.
 
-(** Any function f : X -> Y factors through its image.
+(** Any function f : X → Y factors through its image.
     If f is weakly constant, then the image is propositional
-    by the lemma above, so then f : X -> im(f) factors through ∥ X ∥. *)
+    by the lemma above, so then f : X → im(f) factors through ∥ X ∥. *)
 Definition weaklyconstanttoaset_factorsthroughsquash {X Y : UU} (f : X -> Y) :
   isaset Y -> weaklyconstant f -> ∥X∥ -> Y.
 Proof.
