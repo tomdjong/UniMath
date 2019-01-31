@@ -9,7 +9,7 @@ Installation
 ------------
 
 For general instructions, see 
-[INSTALL.md](https://github.com/UniMath/UniMath/blob/master/INSTALL.md).
+[INSTALL.md](https://github.com/tomdjong/UniMath/blob/paper/INSTALL.md).
 
 Use 
 ```bash
