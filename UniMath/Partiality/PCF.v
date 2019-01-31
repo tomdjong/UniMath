@@ -1,3 +1,26 @@
+(**
+
+Tom de Jong
+
+Created: November - December 2018
+
+Refactored: January 2019
+
+*******************************************************************************)
+
+(** * Operational Semantics and the constructive Scott Model of PCF *)
+(** ** Contents
+- Definition of PCF ([pcf])
+- Operational smallstep semantics of PCF and its reflexive transitive closure
+  ([operationalsemantics])
+- The Scott model of PCF ([denotationalsemantics])
+- Soundness of the Scott model with respect to the operational semantics
+  ([soundness])
+- Adequacy ([adequacy])
+*)
+
+
+
 Require Import UniMath.Foundations.All.
 Require Import UniMath.MoreFoundations.ClosureOfHrel.
 Require Import UniMath.Algebra.DCPO.
@@ -5,12 +28,14 @@ Require Import UniMath.Partiality.PartialElements.
 Require Import UniMath.Partiality.LiftMonad.
 Require Import UniMath.MoreFoundations.PropExt.
 
+(** * Definition of PCF *)
+Delimit Scope PCF with PCF.
+Local Open Scope PCF.
+
+Section pcf.
 Inductive type : UU :=
   | base       : type
   | functional : type -> type -> type.
-
-Delimit Scope PCF with PCF.
-Local Open Scope PCF.
 
 Notation "'ι'" := base : PCF.
 
@@ -33,6 +58,14 @@ Fixpoint numeral (n : nat) : term ι :=
   | 0   => zero
   | S k => succ ` (numeral k)
   end.
+
+End pcf.
+
+Notation "'ι'" := base : PCF.
+Notation "σ ⇨ τ" := (functional σ τ) (at level 60, right associativity) : PCF.
+Notation "s ` t" := (app s t) (at level 50, left associativity) : PCF.
+
+Section operationalsemantics.
 
 Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | predzerostep :
@@ -57,7 +90,6 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
       smallstep' ι s t -> smallstep' ι (succ ` s) (succ ` t)
   | ifzargstep  (r r' s t : term ι) :
       smallstep' ι r r' -> smallstep' ι (ifz ` s ` t ` r)  (ifz ` s ` t ` r').
-
 
 Definition smallstep {σ : type} : hrel (term σ) :=
   λ (s t : term σ), ∥ smallstep' σ s t ∥.
@@ -117,7 +149,14 @@ Proof.
   intros ? ?. apply ifzargstep.
 Qed.
 
-(* On to denotational semantics *)
+End operationalsemantics.
+
+Notation "s ▹ t" := (smallstep s t) (at level 40) : PCF.
+Notation "s ▹* t" := (refltrans_smallstep s t) (at level 40) : PCF.
+
+(** * The Scott model of PCF *)
+Section denotationalsemantics.
+
 Local Open Scope DCPO.
 Local Open Scope LiftDcpo.
 Local Open Scope LiftMonadDcpo.
@@ -374,6 +413,69 @@ Proof.
   - cbn. rewrite IH. apply idpath.
 Qed.
 
+End denotationalsemantics.
+
+Notation "⦃ σ ⦄" := (denotational_semantics_type σ) : PCF.
+Notation "'ℕ'" := natset : PCF.
+Notation "⟦ t ⟧" := (denotational_semantics_terms t) : PCF.
+
+(** * Soundness of the Scott model with respect to the operational semantics *)
+Section soundness.
+Theorem soundness {σ : type} (s t : term σ) : s ▹* t -> (⟦ s ⟧) = (⟦ t ⟧).
+Proof.
+  intro step.
+  apply (@factor_through_squash ((refl_trans_clos smallstep) s t)).
+  - apply setproperty.
+  - intro step'.
+    induction step'.
+    + apply (@factor_through_squash (smallstep' σ x y)).
+      * use setproperty.
+      * intro step'.
+        induction step'.
+        -- apply idpath.
+        -- apply idpath.
+        -- cbn. rewrite fun_extension_after_η.
+           apply idpath.
+        -- change (⟦ ifz ` s ` t ` (succ ` numeral n) ⟧) with
+           (pr1 (⟦ ifz ` s ` t ⟧) (⟦ numeral (S n) ⟧)).
+           rewrite (denotational_semantics_numerals (S n)).
+           cbn. rewrite fun_extension_after_η.
+           apply idpath.
+        -- apply pathsinv0. apply leastfixedpoint_isfixedpoint.
+        -- apply idpath.
+        -- apply idpath.
+        -- cbn. apply (@eqtohomot _ _ (pr1 (⟦ s ⟧))).
+           apply maponpaths.
+           apply IHstep'.
+           ++ apply refl_trans_clos_hrel_extends.
+              apply hinhpr. exact step'.
+           ++ apply hinhpr. exact step'.
+        -- cbn. apply maponpaths. apply IHstep'.
+           ++ apply refl_trans_clos_hrel_extends.
+              apply hinhpr. exact step'.
+           ++ apply hinhpr. exact step'.
+        -- cbn; apply maponpaths, IHstep'.
+           ++ apply refl_trans_clos_hrel_extends;
+              apply hinhpr; exact step'.
+           ++ apply hinhpr; exact step'.
+        -- cbn; apply maponpaths, IHstep'.
+           ++ apply refl_trans_clos_hrel_extends;
+              apply hinhpr; exact step'.
+           ++ apply hinhpr; exact step'.
+      * exact h.
+    + apply idpath.
+    + etrans.
+      ++ apply IHstep'1.
+         apply hinhpr. exact step'1.
+      ++ apply IHstep'2.
+         apply hinhpr. exact step'2.
+  - exact step.
+Qed.
+
+End soundness.
+
+Section adequacy.
+
 Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
   match σ with
   | ι     => λ (l : ⦃ ι ⦄) (t : term ι),
@@ -408,7 +510,7 @@ Proof.
     + exact (rel m r rel').
 Defined.
 
-Definition adequacy_zero : adequacy_relation ι (η O) zero.
+Definition adequacy_zero : adequacy_relation ι (lift_embedding O) zero.
 Proof.
   cbn. intro t. apply hinhpr.
   apply refl_trans_clos_refl.
@@ -565,69 +667,4 @@ Proof.
   exact (@adequacy_allterms ι t).
 Qed.
 
-Theorem soundness {σ : type} (s t : term σ) : s ▹* t -> (⟦ s ⟧) = (⟦ t ⟧).
-Proof.
-  intro step.
-  apply (@factor_through_squash ((refl_trans_clos smallstep) s t)).
-  - apply setproperty.
-  - intro step'.
-    induction step'.
-    + apply (@factor_through_squash (smallstep' σ x y)).
-      * use setproperty.
-      * intro step'.
-        induction step'.
-        -- apply idpath.
-        -- apply idpath.
-        -- cbn. rewrite fun_extension_after_η.
-           apply idpath.
-        -- change (⟦ ifz ` s ` t ` (succ ` numeral n) ⟧) with
-           (pr1 (⟦ ifz ` s ` t ⟧) (⟦ numeral (S n) ⟧)).
-           rewrite (denotational_semantics_numerals (S n)).
-           cbn. rewrite fun_extension_after_η.
-           apply idpath.
-        -- apply pathsinv0. apply leastfixedpoint_isfixedpoint.
-        -- apply idpath.
-        -- apply idpath.
-        -- cbn. apply (@eqtohomot _ _ (pr1 (⟦ s ⟧))).
-           apply maponpaths.
-           apply IHstep'.
-           ++ apply refl_trans_clos_hrel_extends.
-              apply hinhpr. exact step'.
-           ++ apply hinhpr. exact step'.
-        -- cbn. apply maponpaths. apply IHstep'.
-           ++ apply refl_trans_clos_hrel_extends.
-              apply hinhpr. exact step'.
-           ++ apply hinhpr. exact step'.
-        -- cbn; apply maponpaths, IHstep'.
-           ++ apply refl_trans_clos_hrel_extends;
-              apply hinhpr; exact step'.
-           ++ apply hinhpr; exact step'.
-        -- cbn; apply maponpaths, IHstep'.
-           ++ apply refl_trans_clos_hrel_extends;
-              apply hinhpr; exact step'.
-           ++ apply hinhpr; exact step'.
-      * exact h.
-    + apply idpath.
-    + etrans.
-      ++ apply IHstep'1.
-         apply hinhpr. exact step'1.
-      ++ apply IHstep'2.
-         apply hinhpr. exact step'2.
-  - exact step.
-Qed.
-
-Theorem isdefined_pcf (t : term ι) :
-  isdefined (⟦ t ⟧) <-> ∑ (n : nat), t ▹* numeral n.
-Proof.
-  split.
-  - intro p.
-    exists (value (⟦ t ⟧) p).
-    apply adequacy.
-  - intros [n step].
-    assert (denoteq : ⟦ t ⟧ = η n).
-    { etrans.
-      - eapply soundness.
-        exact step.
-      - apply denotational_semantics_numerals. }
-    exact (transportf isdefined (!denoteq) tt).
-Qed.
+End adequacy.
