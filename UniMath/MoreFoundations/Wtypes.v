@@ -1,4 +1,5 @@
 Require Import UniMath.Foundations.All.
+Require Import UniMath.MoreFoundations.PropExt.
 
 Section decidable.
 
@@ -44,14 +45,14 @@ Inductive Wtype {A : UU} (B : A -> UU) :=
 Context {A : UU}.
 Context (B : A -> UU).
 
-Context (Adec : isdeceq A).
+Context (Adeceq : isdeceq A).
 
 Fixpoint Wtype_code (u v : Wtype B) : UU :=
   match u with
   | sup _ a f =>
     match v with
     | sup _ a' f' =>
-      match (Adec a a') with
+      match (Adeceq a a') with
       | inr _ => empty
       | inl e => ∏ (b : B a), Wtype_code (f b) (f' (transportf B e b))
       end
@@ -62,9 +63,9 @@ Definition Wtype_r (w : Wtype B) : Wtype_code w w.
 Proof.
   induction w as [a f c].
   unfold Wtype_code.
-  induction (Adec a a) as [eq | neq].
+  induction (Adeceq a a) as [eq | neq].
   - assert (triveq : eq = idpath _).
-    { apply proofirrelevance, isasetifdeceq, Adec. }
+    { apply proofirrelevance, isasetifdeceq, Adeceq. }
     rewrite triveq. fold Wtype_code. exact c.
   - apply neq, idpath.
 Defined.
@@ -77,7 +78,7 @@ Proof.
   induction u as [a f IH].
   induction v as [a' f' _].
   unfold Wtype_code.
-  induction (Adec a a') as [eq | neq].
+  induction (Adeceq a a') as [eq | neq].
   - fold Wtype_code. intro c.
     assert (feq : ∏ (b : B a), f b = f' (transportf B eq b)).
     { intro b. apply (IH b (f' (transportf B eq b))).
@@ -97,7 +98,7 @@ Proof.
   induction u as [a f IH].
   induction v as [a' f' _].
   unfold Wtype_code.
-  induction (Adec a a') as [eq | neq].
+  induction (Adeceq a a') as [eq | neq].
   - fold Wtype_code.
     apply B_PiCompact.
     intro b.
@@ -136,6 +137,18 @@ Context {A : UU}.
 Context {B : A -> UU}.
 Context (t : A -> I).
 Context (s : (∑ (a : A), B a) -> I).
+
+(** This is the intuitive reason why indexedWtypes' sometime behave better
+    than indexedWtypes. *)
+Definition indexedWtype'_index_transport {a : A} {i j : I}
+           (p : t a = j) (q : i = j)
+           (f : ∏ (b : B a), indexedWtype' t s (s(a,,b))) :
+  transportb (indexedWtype' t s) q (indexedsup' t s j a p f) =
+  indexedsup' t s i a (p @ !q) f.
+Proof.
+  induction q. cbn. unfold idfun.
+  rewrite pathscomp0rid. apply idpath.
+Defined.
 
 Definition indexedWtype'_s_transport {a a' : A} (e : a = a') (b : B a) :
   s(a,,b) = s(a',,transportf B e b).
@@ -182,28 +195,6 @@ Definition indexedWtype'_encode (i : I) (u v : indexedWtype' t s i) :
   λ (p : u = v), transportf
                    (λ w : indexedWtype' t s i, indexedWtype'_code u w)
                    p (indexedWtype'_r u).
-
-
-
-Definition indexedWtype'_f_transport {a a' : A} (e : a = a')
-           (f' : ∏ (b' : B a'), indexedWtype' t s (s(a',,b'))) :
-  ∏ (b : B a), indexedWtype' t s (s(a,,b)).
-Proof.
-  intro b.
-  exact (transportb (indexedWtype' t s)
-                    (indexedWtype'_s_transport e b)
-                    (f' (transportf B e b))).
-Defined.
-
-Definition indexedWtype'_index_transport {a : A} {i j : I}
-           (p : t a = j) (q : i = j)
-           (f : ∏ (b : B a), indexedWtype' t s (s(a,,b))) :
-  transportb (indexedWtype' t s) q (indexedsup' t s j a p f) =
-  indexedsup' t s i a (p @ !q) f.
-Proof.
-  induction q. cbn. unfold idfun.
-  rewrite pathscomp0rid. apply idpath.
-Defined.
 
 Context (Iaset : isaset I).
 
@@ -321,7 +312,7 @@ Proof.
   apply IH.
 Defined.
 
-Context (Adec : isdeceq A).
+Context (Adeceq : isdeceq A).
 Context (Iaset : isaset I).
 Context (B_PiCompact : ∏ (a : A), picompact (B a)).
 
@@ -329,7 +320,55 @@ Definition indexedWtype_deceq (i : I) : isdeceq (indexedWtype t s i).
 Proof.
   eapply (isdeceq_retract (indexed_to_indexed' i)).
   - apply indexed_retractof_indexed'.
-  - exact (indexedWtype'_deceq t s Adec Iaset B_PiCompact i).
+  - exact (indexedWtype'_deceq t s Adeceq Iaset B_PiCompact i).
 Defined.
 
 End indexedWtypes.
+
+Section WtypesAlternativeProof.
+
+Context {A : UU}.
+Context (B : A -> UU).
+
+Definition Wtype_to_indexedWtype :
+  Wtype B -> indexedWtype (@tounit A) (@tounit (∑ (a : A), B a)) tt.
+Proof.
+  intro w. induction w as [a _ IH].
+  use indexedsup.
+  - exact a.
+  - exact IH.
+Defined.
+
+Definition indexedWtype_to_Wtype :
+  indexedWtype (@tounit A) (@tounit (∑ (a : A), B a)) tt -> Wtype B.
+Proof.
+  intro w. induction w as [a _ IH].
+  eapply sup.
+  exact IH.
+Defined.
+
+Definition Wtype_retractof_indexedWtype :
+  (indexedWtype_to_Wtype) ∘ (Wtype_to_indexedWtype) ~ idfun _.
+Proof.
+  intro w. unfold idfun.
+  induction w as [a f IH].
+  cbn.
+  apply maponpaths.
+  apply funextsec.
+  use IH.
+Defined.
+
+Context (Adeceq : isdeceq A).
+Context (B_PiCompact : ∏ (a : A), picompact (B a)).
+
+Definition Wtype_deceq' : isdeceq (Wtype B).
+Proof.
+  eapply (isdeceq_retract Wtype_to_indexedWtype).
+  - apply Wtype_retractof_indexedWtype.
+  - apply indexedWtype_deceq.
+    + exact Adeceq.
+    + apply isasetaprop. exact isapropunit.
+    + exact B_PiCompact.
+Defined.
+
+End WtypesAlternativeProof.
