@@ -138,8 +138,9 @@ Context {B : A -> UU}.
 Context (t : A -> I).
 Context (s : (∑ (a : A), B a) -> I).
 
-(** This is the intuitive reason why indexedWtypes' sometime behave better
-    than indexedWtypes. *)
+(** This is the intuitive reason why indexedWtypes' sometimes behave better
+    than indexedWtypes: we can express transports of indexedsup' as another
+    indexedsup'. *)
 Definition indexedWtype'_index_transport {a : A} {i j : I}
            (p : t a = j) (q : i = j)
            (f : ∏ (b : B a), indexedWtype' t s (s(a,,b))) :
