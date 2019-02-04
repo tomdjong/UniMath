@@ -79,15 +79,14 @@ Proof.
   induction v as [a' f' _].
   unfold Wtype_code.
   induction (Adeceq a a') as [eq | neq].
-  - fold Wtype_code. intro c.
-    assert (feq : ∏ (b : B a), f b = f' (transportf B eq b)).
-    { intro b. apply (IH b (f' (transportf B eq b))).
-      apply (c b). }
-    intermediate_path (sup B a (f' ∘ transportf B eq)).
-    + apply maponpaths.
-      apply funextfun.
-      exact feq.
-    + induction eq. apply idpath.
+  - induction eq.
+    fold Wtype_code.
+    intro c.
+    apply maponpaths.
+    apply funextfun.
+    intro b.
+    apply IH.
+    apply c.
   - apply fromempty.
 Defined.
 
@@ -199,41 +198,22 @@ Definition indexedWtype'_encode (i : I) (u v : indexedWtype' t s i) :
 
 Context (Iaset : isaset I).
 
-Definition indexedWtype'_decode_transport :
-  ∏ (i : I) (u : indexedWtype' t s i)
-    (j : I) (v : indexedWtype' t s j) (p : i = j),
-  indexedWtype'_code u (transportb (indexedWtype' t s) p v) ->
-  u = (transportb (indexedWtype' t s) p v).
-Proof.
-  intro i.
-  induction u as [i a p f IH].
-  intro j.
-  induction v as [i' a' p' f' _].
-  intro q.
-  rewrite (indexedWtype'_index_transport p' q f').
-  unfold indexedWtype'_code.
-  induction (Adec a a') as [e | ne].
-  - intro c.
-    assert (pathseq : p' @ ! q = (maponpaths t (!e)) @ p).
-    { apply proofirrelevance, Iaset. }
-    rewrite pathseq.
-    induction e. cbn in *. unfold idfun in c.
-    apply maponpaths.
-    apply funextsec.
-    intro b.
-    set (IH' := IH b _ (f' b) (idpath _)).
-    cbn in IH'. unfold idfun in IH'.
-    apply IH'.
-    apply c.
-  - apply fromempty.
-Defined.
-
 Definition indexedWtype'_decode (i : I) (u v : indexedWtype' t s i) :
   indexedWtype'_code u v -> u = v.
 Proof.
-  set (helper := indexedWtype'_decode_transport i u i v (idpath i)).
-  cbn in helper. unfold idfun in helper.
-  exact helper.
+  induction u as [i a p f IH]. induction v as [i a' p' f' _].
+  unfold indexedWtype'_code.
+  induction (Adec a a') as [e | ne].
+  - induction e.
+    cbn. unfold idfun.
+    intro c.
+    apply map_on_two_paths.
+    + apply proofirrelevance, Iaset.
+    + apply funextsec.
+      intro b.
+      apply IH.
+      apply c.
+  - apply fromempty.
 Defined.
 
 Context (B_PiCompact : ∏ (a : A), picompact (B a)).
@@ -331,22 +311,18 @@ Section WtypesAlternativeProof.
 Context {A : UU}.
 Context (B : A -> UU).
 
-Definition Wtype_to_indexedWtype :
-  Wtype B -> indexedWtype (@tounit A) (@tounit (∑ (a : A), B a)) tt.
-Proof.
-  intro w. induction w as [a _ IH].
-  use indexedsup.
-  - exact a.
-  - exact IH.
-Defined.
+Fixpoint Wtype_to_indexedWtype (w : Wtype B) :
+  indexedWtype (@tounit A) (@tounit (∑ (a : A), B a)) tt :=
+  match w with
+  | sup _ a f => indexedsup _ _ a (Wtype_to_indexedWtype ∘ f)
+  end.
 
-Definition indexedWtype_to_Wtype :
-  indexedWtype (@tounit A) (@tounit (∑ (a : A), B a)) tt -> Wtype B.
-Proof.
-  intro w. induction w as [a _ IH].
-  eapply sup.
-  exact IH.
-Defined.
+Fixpoint indexedWtype_to_Wtype
+         (w : indexedWtype (@tounit A) (@tounit (∑ (a : A), B a)) tt) :
+  Wtype B :=
+  match w with
+  | indexedsup _ _ a g => sup _ a (λ b : B a, indexedWtype_to_Wtype (g b))
+  end.
 
 Definition Wtype_retractof_indexedWtype :
   (indexedWtype_to_Wtype) ∘ (Wtype_to_indexedWtype) ~ idfun _.
@@ -355,7 +331,7 @@ Proof.
   induction w as [a f IH].
   cbn.
   apply maponpaths.
-  apply funextsec.
+  apply funextfun.
   use IH.
 Defined.
 
