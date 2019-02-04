@@ -35,6 +35,74 @@ Section picompact.
 Definition picompact (X : UU) := ∏ (Y : X -> UU),
                                  (∏ (x : X), decidable (Y x)) ->
                                  decidable (∏ (x : X), Y x).
+
+Definition picompact_empty : picompact (empty).
+Proof.
+  intros Y ptdec.
+  apply inl.
+  intro x.
+  induction x.
+Defined.
+
+Definition picompact_unit : picompact (unit).
+Proof.
+  intros Y ptdec.
+  induction (ptdec tt) as [pos | neg].
+  - apply inl.
+    intro t.
+    induction t.
+    exact pos.
+  - apply inr.
+    intro hyp.
+    apply neg.
+    apply hyp.
+Defined.
+
+Definition picompact_coprod (X Y : UU) :
+  picompact X -> picompact Y -> picompact (X ⨿ Y).
+Proof.
+  intros Xpc Ypc F ptdec.
+  set (FX := λ (x : X), F (inl x)).
+  set (FY := λ (y : Y), F (inr y)).
+  assert (FXptdec : ∏ (x : X), decidable (FX x)).
+  { intro x. exact (ptdec (inl x)). }
+  assert (FYptdec : ∏ (y : Y), decidable (FY y)).
+  { intro y. exact (ptdec (inr y)). }
+  assert (logeq : (∏ (x : X), FX x) × (∏ (y : Y), FY y)
+                  <->
+                  (∏ (z : X ⨿ Y), F z)).
+  { split.
+    - intro prodhyp.
+      intro z. induction z as [x | y].
+      + apply (pr1 prodhyp).
+      + apply (pr2 prodhyp).
+    - intro hyp. split.
+      + intro x. apply hyp.
+      + intro y. apply hyp. }
+  eapply decidable_iff.
+  - use logeq.
+  - apply decidable_dirprod.
+    + exact (Xpc FX FXptdec).
+    + exact (Ypc FY FYptdec).
+Defined.
+
+  induction (Xpc FX FXptdec) as [posX | negX].
+  - induction (Ypc FY FYptdec) as [posY | negY].
+    + apply inl. intro z.
+      induction z as [x | y].
+      * apply posX.
+      * apply posY.
+    + apply inr.
+      intro hyp. apply negY.
+      intro y.
+      apply hyp.
+  - apply inr.
+    intro hyp.
+    apply negX.
+    intro x.
+    apply hyp.
+Defined.
+
 End picompact.
 
 Section Wtypes.
