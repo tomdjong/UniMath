@@ -68,24 +68,6 @@ Proof.
   { intro x. exact (ptdec (inl x)). }
   assert (FYptdec : ∏ (y : Y), decidable (FY y)).
   { intro y. exact (ptdec (inr y)). }
-  assert (logeq : (∏ (x : X), FX x) × (∏ (y : Y), FY y)
-                  <->
-                  (∏ (z : X ⨿ Y), F z)).
-  { split.
-    - intro prodhyp.
-      intro z. induction z as [x | y].
-      + apply (pr1 prodhyp).
-      + apply (pr2 prodhyp).
-    - intro hyp. split.
-      + intro x. apply hyp.
-      + intro y. apply hyp. }
-  eapply decidable_iff.
-  - use logeq.
-  - apply decidable_dirprod.
-    + exact (Xpc FX FXptdec).
-    + exact (Ypc FY FYptdec).
-Defined.
-
   induction (Xpc FX FXptdec) as [posX | negX].
   - induction (Ypc FY FYptdec) as [posY | negY].
     + apply inl. intro z.
@@ -109,6 +91,59 @@ Section Wtypes.
 
 Inductive Wtype {A : UU} (B : A -> UU) :=
 | sup (a : A) (f : B a -> Wtype B) : Wtype B.
+
+Definition A_nat := unit ⨿ unit.
+Definition B_nat : A_nat -> UU.
+Proof.
+  intro c.
+  induction c as [left | right].
+  - exact empty.
+  - exact unit.
+Defined.
+
+Definition Wtype_nat := Wtype B_nat.
+
+Definition nat_as_Wtype : nat ≃ Wtype_nat.
+Proof.
+  use weq_iso.
+  - intro n.
+    induction n as [| m IH].
+    + exact (sup _ (inl tt) (@fromempty _)).
+    + apply (sup _ (inr tt)).
+      exact (λ _, IH).
+  - intro w.
+    induction w as [a f IH].
+    induction a as [left | right].
+    + exact 0.
+    + exact (S (IH tt)).
+  - cbn. intro n.
+    induction n as [| m IH].
+    + cbn. apply idpath.
+    + cbn. apply maponpaths.
+      exact IH.
+  - cbn. intro w.
+    induction w as [a f IH].
+    induction a as [left | right].
+    + cbn in *.
+      assert (uniteq : tt = left).
+      { apply proofirrelevance, isapropunit. }
+      rewrite uniteq.
+      apply maponpaths.
+      apply funextfun.
+      intro e. induction e.
+    + cbn in *.
+      assert (uniteq : tt = right).
+      { apply proofirrelevance, isapropunit. }
+      rewrite uniteq.
+      apply maponpaths.
+      apply funextfun.
+      rewrite <- uniteq.
+      intro t.
+      etrans.
+      * use IH.
+      * apply maponpaths.
+        apply proofirrelevance, isapropunit.
+Defined.
 
 Context {A : UU}.
 Context (B : A -> UU).
