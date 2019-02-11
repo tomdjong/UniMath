@@ -363,6 +363,113 @@ Context {B : A -> UU}.
 Context (t : A -> I).
 Context (s : (∑ (a : A), B a) -> I).
 
+Definition subtrees_type (a : A) := ∏ (b : B a), indexedWtype t s (s(a,,b)).
+
+Definition subtrees {i : I} : indexedWtype t s i -> ∑ (a : A), subtrees_type a.
+Proof.
+  intro w.
+  induction w as [a f _].
+  exact (a,,f).
+Defined.
+
+Definition dec_depeq {X : UU} (Y : X -> UU) (x : X) (y y' : Y x) :
+  isdeceq X -> (x,,y) = (x,,y') -> y = y'.
+Proof.
+  intros Xdeceq paireq.
+  apply total2_paths_equiv in paireq.
+  induction paireq as [eq1 eq2].
+  cbn in *.
+  assert (triveq : eq1 = idpath x).
+  { apply proofirrelevance, isasetifdeceq, Xdeceq. }
+  rewrite triveq in eq2.
+  exact eq2.
+Defined.
+
+Context (Adeceq : isdeceq A).
+Definition test (a : A) (f g : ∏ (b : B a), indexedWtype t s (s(a,,b))) :
+  indexedsup t s a f = indexedsup t s a g -> f = g.
+Proof.
+  intro supeq.
+  set (depeq := maponpaths subtrees supeq).
+  cbn in *.
+  exact (dec_depeq _ a f g Adeceq depeq).
+Defined.
+
+Definition getfib {i : I} : indexedWtype t s i -> ∑ (a : A), i = t a.
+Proof.
+  intro w.
+  induction w as [a _ _].
+  exact (a,,idpath (t a)).
+Defined.
+
+Definition getfib_transport {i j : I} (w : indexedWtype t s i)
+           (p : j = i) :
+           getfib (transportb (indexedWtype t s) p w) =
+           tpair (λ (x : A), j = t x) (pr1 (getfib w)) (p @ (pr2 (getfib w))).
+Proof.
+  induction p.
+  induction w as [a f _].
+  cbn in *.
+  apply idpath.
+Defined.
+
+Definition test2 : ∏ (i : I) (u : indexedWtype t s i)
+                     (j : I)
+                     (p : i = j)
+                     (v : indexedWtype t s j),
+                   decidable (u = transportb _ p v).
+Proof.
+  intros i u.
+  induction u as [a  f IH].
+  intros j p v.
+  induction v as [a' f' _].
+  assert (fibdec : ∏ (i : I), isdeceq (∑ (a : A), i = t a)).
+  { admit. }
+  induction (fibdec (t a) (a,,idpath (t a)) (a',,p)) as [eq | neq].
+  - apply total2_paths_equiv in eq.
+    induction eq as [e1 e2].
+    cbn in *.
+    induction e1.
+    cbn in e2. unfold idfun in e2.
+    rewrite <- e2.
+    cbn. unfold idfun.
+    assert (bpicompact : ∏ (a : A), picompact (B a)).
+    { admit. }
+    set (helper := bpicompact a _ (λ (b : B a), IH b (s(a,,b)) (idpath _) (f' b))).
+    cbn in helper. unfold idfun in helper.
+    induction helper as [feq | nfeq].
+    + apply inl.
+      apply maponpaths.
+      apply funextsec.
+      use feq.
+    + apply inr.
+      intro hyp.
+      apply nfeq.
+      apply eqtohomot.
+      apply test.
+      exact hyp.
+  - apply inr.
+    intro hyp.
+    apply neq.
+    set (fibeq := maponpaths getfib hyp).
+    cbn in fibeq.
+    etrans.
+    + apply fibeq.
+    + etrans.
+      * apply getfib_transport.
+      * cbn.
+        rewrite pathscomp0rid.
+        apply idpath.
+Admitted.
+
+Definition indexedWtype_deceq' (i : I) : isdeceq (indexedWtype t s i).
+Proof.
+  intros u v.
+  exact (test2 i u i (idpath _) v).
+Defined.
+
+
+(**************************************************************************)
 Definition indexed_to_indexed' (i : I) :
   indexedWtype t s i -> indexedWtype' t s i.
 Proof.
