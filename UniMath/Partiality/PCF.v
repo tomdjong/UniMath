@@ -70,8 +70,8 @@ Section operationalsemantics.
 Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | predzerostep :
       smallstep' ι (pred ` zero) zero
-  | predsuccstep (t : term ι) :
-      smallstep' ι (pred ` (succ ` t)) t
+  | predsuccstep (n : nat) :
+      smallstep' ι (pred ` (numeral (S n))) (numeral n)
   | ifzzerostep (s t : term ι) :
       smallstep' ι ((ifz ` s) ` t ` zero) s
   | ifzsuccstep (s t : term ι) (n : nat) :
