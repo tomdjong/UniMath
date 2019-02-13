@@ -408,8 +408,6 @@ Definition getfib_transport {i j : I} (w : indexedWtype t s i)
            tpair (λ (x : A), j = t x) (pr1 (getfib w)) (p @ (pr2 (getfib w))).
 Proof.
   induction p.
-  induction w as [a f _].
-  cbn in *.
   apply idpath.
 Defined.
 
