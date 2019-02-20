@@ -101,133 +101,137 @@ Qed.
 
 End reflexive_transitive_closure_hrel.
 
-Section reflexive_transitive_closure_step_hrel.
-  Context {X : UU}.
+Context {X : UU}.
+Inductive refltransclos_left (R : hrel X) : X -> X -> UU :=
+  | reflstep' : ∏ (x : X), refltransclos_left R x x
+  | leftstep  : ∏ (x y z : X), R x y -> refltransclos_left R y z ->
+                               refltransclos_left R x z.
 
-Inductive refl_trans_clos_step (R : hrel X) : nat -> X -> X -> UU :=
-  | base_step' (x y : X)              : R x y -> refl_trans_clos_step R 0 x y
-  | refl_step' (x : X)                : refl_trans_clos_step R 0 x x
-  | trans_step' (x y z : X) (n : nat) : R x y -> refl_trans_clos_step R n y z ->
-                                        refl_trans_clos_step R (S n) x z.
-(*  | monotone_step' (x y : X) (n : nat) : refl_trans_clos_step R n x y ->
-                                         refl_trans_clos_step R (S n) x y.*)
-
-Inductive refl_trans_clos' (R : hrel X) : X -> X -> UU :=
-  | refl_step'' (x : X) : refl_trans_clos' R x x
-  | trans_step'' (x y z : X) : refl_trans_clos' R x y -> R y z ->
-                               refl_trans_clos' R x z.
-
-Delimit Scope refltransclos' with refltransclos'.
-Local Open Scope refltransclos'.
-
-Context (R : hrel X).
-Notation "'R''" := (refl_trans_clos' R) : refltransclos'.
-
-Lemma refl_trans_clos'_extends : ∏ (x y : X), R x y -> R' x y.
+Definition refltransclos_left_trans (R : hrel X) (x y z : X) :
+  refltransclos_left R x y -> refltransclos_left R y z -> refltransclos_left R x z.
 Proof.
-  intros x y. apply trans_step''.
-  use refl_step''.
-Qed.
-
-Lemma refl_trans_clos'_refl : ∏ (x : X), R' x x.
-Proof.
-  use refl_step''.
-Qed.
-
-Lemma refl_trans_clos'_trans : ∏ (x y z : X), R' x y -> R' y z -> R' x z.
-Proof.
-  intros x y z R1 R2.
-  induction R2.
-  - exact R1.
-  - eapply trans_step''.
-    + apply IHR2.
-      exact R1.
+  intros rel1 rel2.
+  induction rel1.
+  - exact rel2.
+  - eapply leftstep.
     + exact h.
-Qed.
+    + apply IHrel1.
+      exact rel2.
+Defined.
 
-End reflexive_transitive_closure_step_hrel.
-
-Definition refl_trans_clos_equiv {X : UU} (R : hrel X) (x y : X) :
-  refl_trans_clos R x y <-> refl_trans_clos' R x y.
+Definition left_regular_equiv (R : hrel X) (x y : X) :
+  refltransclos_left R x y <-> refl_trans_clos R x y.
 Proof.
   split.
-  - use refl_trans_clos_univprop.
-    + use refl_trans_clos'_extends.
-    + use refl_trans_clos'_refl.
-    + use refl_trans_clos'_trans.
-  - intro left. induction left.
-    + use refl_step.
+  - intro rel.
+    induction rel.
+    + apply refl_step.
     + eapply trans_step.
-      ++ exact IHleft.
-      ++ apply base_step.
-         exact h.
+      * apply base_step.
+        exact h.
+      * exact IHrel.
+  - intro rel.
+    induction rel.
+    + eapply leftstep.
+      * exact h.
+      * apply reflstep'.
+    + apply reflstep'.
+    + eapply refltransclos_left_trans.
+      * exact IHrel1.
+      * exact IHrel2.
 Defined.
 
-(*Definition refl_trans_clos'_approx {X : UU} (R : hrel X) (x y : X) :
-  refl_trans_clos' R x y <-> ∑ (k : nat), refl_trans_clos_step R k x y.
+Definition refltransclos_step (R : hrel X) : nat -> X -> X -> UU.
+Proof.
+  intro n. induction n as [| m IH].
+  - intros x y. exact (x=y).
+  - intros x z. exact (∑ (y : X), R x y × IH y z).
+Defined.
+
+Definition lefttostep (R : hrel X) (x y : X) :
+  refltransclos_left R x y -> ∑ (k : nat), refltransclos_step R k x y.
+Proof.
+  intro rel.
+  induction rel.
+  - exists 0. cbn. apply idpath.
+  - induction IHrel as [m IH].
+    exists (S m).
+    simpl.
+    exists y.
+    exact (h,,IH).
+Defined.
+
+Definition steptoleft (R : hrel X) (k : nat) :
+  ∏ (x y : X), refltransclos_step R k x y -> refltransclos_left R x y.
+Proof.
+  induction k as [| m IH].
+  - intros x y rel. cbn in rel.
+    rewrite rel.
+    apply reflstep'.
+  - intros x z. simpl.
+    intros [y rels].
+    eapply leftstep.
+    + exact (pr1 rels).
+    + apply IH.
+      exact (pr2 rels).
+Defined.
+
+Definition stepleftequiv (R : hrel X) (x y : X) :
+  refltransclos_left R x y <-> ∑ (k : nat), refltransclos_step R k x y.
 Proof.
   split.
-  - intro left.
-    induction left.
-    + split with 0. use refl_step'.
-    + induction IHleft as [m rel].
-      split with (S m).
-      eapply trans_step'.
-      ++ exact rel.
-      ++ exact h.
-  - intros [k left].
-    induction left.
-    + use refl_trans_clos'_extends.
-      exact h.
-    + use refl_trans_clos'_refl.
-    + eapply trans_step''.
-      ++ exact IHleft.
-      ++ exact h.
-(*    + exact IHleft.      *)
-Defined.*)
-
-Definition refl_trans_clos_step_dec {X : UU} (R : hrel X) :
-  (∏ (x y z : X), R x y -> R x z -> y = z) ->
-  isdecrel R -> (∏ (x : X), decidable (∑ (y : X), R x y)) ->
-  isdeceq X -> ∏ (k : nat) (x y : X) , decidable (refl_trans_clos_step R k x y).
-Proof.
-  intros Rext Rdec Rsumdec Xdec.
-  induction k as [| m IHm].
-  - intros x y. induction (Rdec x y) as [r | nr].
-    + apply inl, base_step'. exact r.
-    + induction (Xdec x y) as [eq | neq].
-      ++ apply inl. rewrite eq. apply refl_step'.
-      ++ apply inr. intro Rstep. inversion Rstep.
-         +++ apply nr. assumption.
-         +++ apply neq. rewrite H1. apply idpath.
-  - intros x z. induction (Rsumdec x) as [Rx | nRx].
-    + induction Rx as [y Rxy].
-      induction (IHm y z) as [Ryz | nRyz].
-      ++ apply inl. eapply trans_step'.
-         +++ exact Rxy.
-         +++ exact Ryz.
-      ++ apply inr. intro Rsm.
-         inversion_clear Rsm.
-         set (yeq := Rext x y y0 Rxy X0).
-         rewrite <- yeq in X1.
-         assert (nmeq : n = m).
-         { apply invmaponpathsS. rewrite H. apply idpath. }
-         rewrite nmeq in X1.
-         apply nRyz. exact X1.
-    + apply inr. intro Rsm.
-      inversion_clear Rsm.
-      apply nRx. exists y.
-      assumption.
+  - apply lefttostep.
+  - intros [k rel].
+    eapply steptoleft.
+    exact rel.
 Defined.
 
-Definition refl_trans_clos_step_hrel {X : UU} (R : hrel X) (k : nat) (x y : X) :=
-  ∥ refl_trans_clos_step R k x y ∥.
+Definition refltransclos_step_hrel (R : hrel X) : nat -> X -> X -> UU :=
+  λ (k : nat) (x y : X), ∥ refltransclos_step R k x y ∥.
 
-Definition refl_trans_clos_step_hrel_dec {X : UU} (R : hrel X) :
-  (∏ (x y z : X), R x y -> R x z -> y = z) ->
-  isdecrel R -> (∏ (x : X), decidable (∑ (y : X), R x y)) ->
-  isdeceq X -> ∏ (k : nat) (x y : X) , decidable (refl_trans_clos_step_hrel R k x y).
+Definition refltransclos_left_hrel (R : hrel X) : X -> X -> UU :=
+  λ (x y : X), ∥ refltransclos_left R x y ∥.
+
+Definition lefttostep_hrel (R : hrel X) (x y : X) :
+  refltransclos_left_hrel R x y -> ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥.
 Proof.
-  intros Rext Rdec Rsumdec Xdec k x y. apply decidable_ishinh.
-  exact (refl_trans_clos_step_dec R Rext Rdec Rsumdec Xdec k x y).
+  apply hinhfun.
+  intro rel.
+  set (helper := lefttostep R x y rel).
+  induction helper as [m rel'].
+  exists m.
+  apply hinhpr.
+  exact rel'.
+Defined.
+
+Definition steptoleft_hrel_helper (R : hrel X) (k : nat) :
+  ∏ (x y : X), refltransclos_step_hrel R k x y -> refltransclos_left_hrel R x y.
+Proof.
+  intros x y.
+  apply hinhfun.
+  apply steptoleft.
+Defined.
+
+Definition steptoleft_hrel_helper' (R : hrel X) (x y : X) :
+  (∑ (k : nat), refltransclos_step_hrel R k x y) -> refltransclos_left_hrel R x y.
+Proof.
+  intros [k rel].
+  eapply steptoleft_hrel_helper.
+  exact rel.
+Defined.
+
+Definition steptoleft_hrel (R : hrel X) (x y : X) :
+  ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥ -> refltransclos_left_hrel R x y.
+Proof.
+  eapply factor_through_squash.
+  - apply isapropishinh.
+  - apply steptoleft_hrel_helper'.
+Defined.
+
+Definition stepleftequiv_hrel (R : hrel X) (x y : X) :
+  refltransclos_left_hrel R x y <-> ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥.
+Proof.
+  split.
+  - apply lefttostep_hrel.
+  - apply steptoleft_hrel.
 Defined.
