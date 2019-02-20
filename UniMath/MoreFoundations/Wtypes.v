@@ -501,7 +501,6 @@ Proof.
   apply IH.
 Defined.
 
-Context (Adeceq : isdeceq A).
 Context (Iaset : isaset I).
 Context (B_PiCompact : ∏ (a : A), picompact (B a)).
 
