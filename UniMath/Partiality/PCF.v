@@ -67,7 +67,35 @@ Notation "s ` t" := (app s t) (at level 50, left associativity) : PCF.
 
 Section operationalsemantics.
 
-Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
+Definition smallsteplike (R : ∏ (σ : type), hrel (term σ)) :=
+  R ι (pred ` zero) zero ×
+  (∏ (n : nat), R ι (pred ` (numeral (S n))) (numeral n)) ×
+  (∏ (s t : term ι), R ι ((ifz ` s) ` t ` zero) s) ×
+  (∏ (s t : term ι) (n : nat), R ι (ifz ` s ` t ` (succ ` (numeral n))) t) ×
+  (∏ (σ : type) (t : term (σ ⇨ σ)), R σ (fixp ` t) (t ` (fixp ` t))) ×
+  (∏ (σ τ : type) (s : term σ) (t : term τ), R σ (𝓀 ` s ` t) s) ×
+  (∏ (σ τ ρ : type) (s : term (σ ⇨ τ ⇨ ρ)) (t : term (σ ⇨ τ)) (r : term σ),
+   R ρ (𝓈 ` s ` t ` r) (s ` r ` (t ` r))) ×
+  (∏ (σ τ : type) (s t : term (σ ⇨ τ)) (r : term σ), R (σ ⇨ τ) s t -> R τ (s ` r) (t ` r)) ×
+  (∏ (s t : term ι), R ι s t -> R ι (pred ` s) (pred ` t)) ×
+  (∏ (s t : term ι), R ι s t -> R ι (succ ` s) (succ ` t)) ×
+  (∏ (r r' s t : term ι), R ι r r' -> R ι (ifz ` s ` t ` r)  (ifz ` s ` t ` r')).
+
+Definition smallstep' (σ : type) (s t : term σ) :=
+  ∏ (R : ∏ (σ : type), hrel (term σ)), smallsteplike R -> R σ s t.
+
+Definition smallstep {σ : type} : hrel (term σ).
+Proof.
+  intros s t.
+  use hProppair.
+  - exact (smallstep' σ s t).
+  - apply (impred_isaprop).
+    intro R.
+    apply isapropimpl.
+    apply propproperty.
+Defined.
+
+(*Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | predzerostep :
       smallstep' ι (pred ` zero) zero
   | predsuccstep (n : nat) :
@@ -89,10 +117,10 @@ Inductive smallstep' : ∏ (σ : type), term σ -> term σ -> UU :=
   | succargstep (s t : term ι) :
       smallstep' ι s t -> smallstep' ι (succ ` s) (succ ` t)
   | ifzargstep  (r r' s t : term ι) :
-      smallstep' ι r r' -> smallstep' ι (ifz ` s ` t ` r)  (ifz ` s ` t ` r').
+      smallstep' ι r r' -> smallstep' ι (ifz ` s ` t ` r)  (ifz ` s ` t ` r').*)
 
-Definition smallstep {σ : type} : hrel (term σ) :=
-  λ (s t : term σ), ∥ smallstep' σ s t ∥.
+(*Definition smallstep {σ : type} : hrel (term σ) :=
+  λ (s t : term σ), ∥ smallstep' σ s t ∥.*)
 
 Notation "s ▹ t" := (smallstep s t) (at level 40) : PCF.
 
@@ -111,10 +139,12 @@ Proof.
   intro rtstep.
   induction rtstep.
   - apply refl_trans_clos_extends.
-    apply (@factor_through_squash (smallstep' _ x y)).
-    + apply isapropishinh.
-    + intro sstep. apply hinhpr. apply hyp. exact sstep.
-    + exact h.
+    apply hyp.
+    exact h.
+(*    apply (@factor_through_squash (smallstep' _ x y)).
+    + apply propproperty. (* apply isapropishinh. *)
+    + intro sstep. apply hyp. exact sstep.
+    + exact h.*)
   - apply refl_trans_clos_refl.
   - eapply refl_trans_clos_trans.
     + exact IHrtstep1.
@@ -125,28 +155,37 @@ Lemma app_refltrans_smallstep {σ τ : type} (s t : term (σ ⇨ τ)) (r : term 
   s ▹* t -> (s ` r) ▹* (t ` r).
 Proof.
   apply (reflect_to_refltrans (λ x : term (σ ⇨ τ), x ` r)).
-  intros ? ?. apply appstep.
+  intros s' t'.
+  intro hyp.
+  intros R Rsuitable.
+  apply Rsuitable.
+  use hyp.
+  exact Rsuitable.
 Qed.
 
 Lemma succ_refltrans_smallstep (s t : term ι) :
   s ▹* t -> (succ ` s) ▹* (succ ` t).
 Proof.
   apply (reflect_to_refltrans (λ x : term ι, succ ` x)).
-  apply succargstep.
+  intros s' t' hyp R Rsuitable.
+  apply Rsuitable.
+  use hyp; exact Rsuitable.
 Qed.
 
 Lemma pred_refltrans_smallstep (s t : term ι) :
   s ▹* t -> (pred ` s) ▹* (pred ` t).
 Proof.
   apply (reflect_to_refltrans (λ x : term ι, pred ` x)).
-  apply predargstep.
+  intros s' t' hyp R Rsuitable; apply Rsuitable.
+  use hyp; exact Rsuitable.
 Qed.
 
 Lemma ifz_refltrans_smallstep (s t r r' : term ι) :
   r ▹* r' -> (ifz ` s ` t ` r) ▹* (ifz ` s ` t ` r').
 Proof.
   apply (reflect_to_refltrans (λ x: term ι, ifz ` s ` t ` x)).
-  intros ? ?. apply ifzargstep.
+  intros s' t' hyp R Rsuitable; apply Rsuitable.
+  use hyp; exact Rsuitable.
 Qed.
 
 End operationalsemantics.
@@ -428,41 +467,53 @@ Proof.
   - apply setproperty.
   - intro step'.
     induction step'.
-    + apply (@factor_through_squash (smallstep' σ x y)).
-      * use setproperty.
-      * intro step'.
-        induction step'.
-        -- apply idpath.
-        -- apply idpath.
-        -- cbn. rewrite fun_extension_after_η.
-           apply idpath.
-        -- change (⟦ ifz ` s ` t ` (succ ` numeral n) ⟧) with
-           (pr1 (⟦ ifz ` s ` t ⟧) (⟦ numeral (S n) ⟧)).
-           rewrite (denotational_semantics_numerals (S n)).
-           cbn. rewrite fun_extension_after_η.
-           apply idpath.
-        -- apply pathsinv0. apply leastfixedpoint_isfixedpoint.
-        -- apply idpath.
-        -- apply idpath.
-        -- cbn. apply (@eqtohomot _ _ (pr1 (⟦ s ⟧))).
-           apply maponpaths.
-           apply IHstep'.
-           ++ apply refl_trans_clos_hrel_extends.
-              apply hinhpr. exact step'.
-           ++ apply hinhpr. exact step'.
-        -- cbn. apply maponpaths. apply IHstep'.
-           ++ apply refl_trans_clos_hrel_extends.
-              apply hinhpr. exact step'.
-           ++ apply hinhpr. exact step'.
-        -- cbn; apply maponpaths, IHstep'.
-           ++ apply refl_trans_clos_hrel_extends;
-              apply hinhpr; exact step'.
-           ++ apply hinhpr; exact step'.
-        -- cbn; apply maponpaths, IHstep'.
-           ++ apply refl_trans_clos_hrel_extends;
-              apply hinhpr; exact step'.
-           ++ apply hinhpr; exact step'.
-      * exact h.
+    + set (eqrel' := λ (σ : type) (s t : term σ), ⟦ s ⟧ = ⟦ t ⟧).
+      assert (eqrel'hrel : ∏ (σ : type) (s t : term σ), isaprop (eqrel' σ s t)).
+      { intros. apply setproperty. }
+      set (eqrel := λ (σ : type) (s t : term σ), hProppair (eqrel' σ s t) (eqrel'hrel σ s t)).
+      assert (eqrelsuitable : smallsteplike eqrel).
+      { unfold smallsteplike.
+        split.
+        - apply idpath.
+        - split.
+          + intro n. apply idpath.
+          + split.
+            * intros s t. cbn. unfold eqrel'. cbn.
+              rewrite fun_extension_after_η.
+              apply idpath.
+            * split.
+              -- intros s t n.
+                 cbn. unfold eqrel'.
+                 change (⟦ ifz ` s ` t ` (succ ` numeral n) ⟧) with
+                 (pr1 (⟦ ifz ` s ` t ⟧) (⟦ numeral (S n) ⟧)).
+                 rewrite (denotational_semantics_numerals (S n)).
+                 cbn. rewrite fun_extension_after_η.
+                 apply idpath.
+              -- split.
+                 ++ intros τ t. apply pathsinv0. apply leastfixedpoint_isfixedpoint.
+                 ++ split.
+                    ** intros τ ρ s t. apply idpath.
+                    ** split.
+                       --- intros τ ρ ρ' s t r.
+                           apply idpath.
+                       --- split.
+                           +++ intros τ ρ s t r hyp.
+                               apply (@eqtohomot _ _ (pr1 (⟦ s ⟧))).
+                               apply maponpaths. apply hyp.
+                           +++ split.
+                               *** intros s t hyp.
+                                   cbn; unfold eqrel'.
+                                   cbn.
+                                   apply maponpaths.
+                                   apply hyp.
+                               *** split.
+                                   ---- intros s t hyp;
+                                        cbn; unfold eqrel';
+                                        cbn; apply maponpaths; apply hyp.
+                                   ---- intros r r' s t hyp.
+                                        cbn; unfold eqrel'.
+                                        cbn; apply maponpaths; apply hyp. }
+      exact (h eqrel eqrelsuitable).
     + apply idpath.
     + etrans.
       ++ apply IHstep'1.
@@ -537,12 +588,16 @@ Proof.
       exact (rel q).
     + rewrite eq. unfold numeral.
       apply hinhpr, refl_trans_clos_extends.
-      apply hinhpr. exact predzerostep.
+      unfold smallstep. cbn.
+      unfold smallstep'.
+      intros. unfold smallsteplike in X.
+      use (pr1 X).
   - unfold P. eapply refl_trans_clos_hrel_istrans.
     + eapply pred_refltrans_smallstep. exact (rel q).
     + rewrite eq. apply hinhpr.
-      apply refl_trans_clos_extends, hinhpr.
-      apply predsuccstep.
+      apply refl_trans_clos_extends.
+      unfold smallstep, smallstep'. intros R Rsuitable.
+      use (pr1 (pr2 (Rsuitable))).
 Defined.
 
 Definition adequacy_ifz : adequacy_relation (ι ⇨ ι ⇨ ι ⇨ ι) lifted_ifz ifz.
