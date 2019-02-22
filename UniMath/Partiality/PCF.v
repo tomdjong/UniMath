@@ -81,6 +81,22 @@ Definition smallsteplike (R : ∏ (σ : type), hrel (term σ)) :=
   (∏ (s t : term ι), R ι s t -> R ι (succ ` s) (succ ` t)) ×
   (∏ (r r' s t : term ι), R ι r r' -> R ι (ifz ` s ` t ` r)  (ifz ` s ` t ` r')).
 
+Definition ifzsuccstep {R : ∏ (σ : type), hrel (term σ)} :
+  smallsteplike R ->
+  (∏ (s t : term ι) (n : nat), R ι (ifz ` s ` t ` (succ ` (numeral n))) t) :=
+  λ x, pr1 (pr2 (pr2 (pr2 x))).
+
+Definition 𝓀step {R : ∏ (σ : type), hrel (term σ)} :
+  smallsteplike R ->
+  (∏ (σ τ : type) (s : term σ) (t : term τ), R σ (𝓀 ` s ` t) s) :=
+  λ x, pr1 (pr2 (pr2 (pr2 (pr2 (pr2 x))))).
+
+Definition 𝓈step {R : ∏ (σ : type), hrel (term σ)} :
+  smallsteplike R ->
+  (∏ (σ τ ρ : type) (s : term (σ ⇨ τ ⇨ ρ)) (t : term (σ ⇨ τ)) (r : term σ),
+   R ρ (𝓈 ` s ` t ` r) (s ` r ` (t ` r))) :=
+  λ x, pr1 (pr2 (pr2 (pr2 (pr2 (pr2 (pr2 x)))))).
+
 Definition smallstep' (σ : type) (s t : term σ) :=
   ∏ (R : ∏ (σ : type), hrel (term σ)), smallsteplike R -> R σ s t.
 
@@ -618,7 +634,7 @@ Proof.
       apply rel3.
     + apply (refl_trans_clos_hrel_istrans _ _ t1).
       * apply refl_trans_clos_hrel_extends.
-        apply hinhpr, ifzzerostep.
+        intros R Rsuitable. use (pr1 (pr2 (pr2 (Rsuitable)))).
       * apply rel1.
   - change (numeral (value (pr1 (pr1 (pr1 lifted_ifz l1) l2) l3) (p,,d))) with
     (numeral (value (ifz' (value l3 p) l1 l2) d)).
@@ -633,7 +649,8 @@ Proof.
       apply rel3.
     + apply (refl_trans_clos_hrel_istrans _ _ t2).
       * apply refl_trans_clos_hrel_extends.
-        apply hinhpr, ifzsuccstep.
+        intros R Rsuitable.
+        apply ifzsuccstep. exact Rsuitable.
       * apply rel2.
 Defined.
 
@@ -643,8 +660,8 @@ Proof.
   cbn.
   eapply adequacy_step.
   - apply refl_trans_clos_hrel_extends.
-    apply hinhpr.
-    apply 𝓀step.
+    intros R Rsuitable.
+    apply 𝓀step. exact Rsuitable.
   - exact rel.
 Defined.
 
@@ -656,8 +673,8 @@ Proof.
   cbn.
   eapply adequacy_step.
   - apply refl_trans_clos_hrel_extends.
-    apply hinhpr.
-    apply 𝓈step.
+    intros R Rsuitable.
+    apply 𝓈step. exact Rsuitable.
   - set (rel' := rel2 _ _ rel3).
     exact (rel1 _ _ rel3 _ _ rel').
 Defined.
@@ -697,8 +714,9 @@ Proof.
   - intro n. induction n as [ | m IH].
     + apply adequacy_bottom.
     + eapply adequacy_step.
-      ++ apply refl_trans_clos_hrel_extends, hinhpr.
-         apply fixpstep.
+      ++ apply refl_trans_clos_hrel_extends.
+         intros R Rsuitable.
+         apply (pr1 (pr2 (pr2 (pr2 (pr2 (Rsuitable)))))).
       ++ exact (rel _ _ IH).
   - apply pointwiselub_islubpointwise.
 Defined.
