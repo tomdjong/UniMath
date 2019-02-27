@@ -17,3 +17,4 @@ Univalence.v
 WeaklyConstant.v
 PropExt.v
 ClosureOfHrel.v
+Wtypes.v

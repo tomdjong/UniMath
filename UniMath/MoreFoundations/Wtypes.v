@@ -3,16 +3,17 @@
 Tom de Jong
 
 Created: February 2019
-Adapted from https://github.com/jashug/IWTypes/blob/master/FiberProperties.v
+
+Adapted from
+[https://github.com/jashug/IWTypes/blob/master/FiberProperties.v]
 
 *******************************************************************************)
 
-(** * Indexed W-types and a sufficient condition for when they have decidable
-      equality *)
+(** * A sufficient condition for decidable equality on indexed W-types *)
 (** ** Contents
 - Some lemmas on decidable (equality of) types ([decidable])
-- Definition and lemmas on Pi-compact types ([picompact])
-- Decidable equality on indexed W-types ([deceq_indexedWtypes])
+- Definition of and lemmas on Pi-compact types ([picompact])
+- Indexed W-types with decidable equality ([deceq_indexedWtypes])
 *)
 
 
@@ -50,7 +51,7 @@ Defined.
 
 End decidable.
 
-(** * Definition and lemmas on Pi-compact types *)
+(** * Definition of and lemmas on Pi-compact types *)
 Section picompact.
 
 Definition picompact (X : UU) := ∏ (Y : X -> UU),
@@ -108,7 +109,7 @@ Defined.
 
 End picompact.
 
-(** * Decidable equality on indexed W-types *)
+(** * Indexed W-types with decidable equality *)
 Section deceq_indexedWtypes.
 
 Inductive indexedWtype
