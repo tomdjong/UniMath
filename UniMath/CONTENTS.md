@@ -32,8 +32,6 @@ The packages and files are listed here in logical order: each file depends only 
    - [StructureIdentity.v](MoreFoundations/StructureIdentity.v)
    - [PartA.v](MoreFoundations/PartA.v)
    - [Univalence.v](MoreFoundations/Univalence.v)
-   - [PropExt.v](MoreFoundations/PropExt.v)
-   - [RetractOfIdentityType.v](MoreFoundations/RetractOfIdentityType.v)
    - [All.v](MoreFoundations/All.v)
 ## Package Combinatorics
    - [StandardFiniteSets.v](Combinatorics/StandardFiniteSets.v)
@@ -436,7 +434,3 @@ The packages and files are listed here in logical order: each file depends only 
    - [W/Uniqueness.v](Induction/W/Uniqueness.v)
    - [M/Chains.v](Induction/M/Chains.v)
    - [All.v](Induction/All.v)
-## Package PartialityDominances
-   - [PartialElements.v](PartialityDominances/PartialElements.v)
-   - [PartialFunctions.v](PartialityDominances/PartialFunctions.v)
-   - [All.v](PartialityDominances/All.v)
