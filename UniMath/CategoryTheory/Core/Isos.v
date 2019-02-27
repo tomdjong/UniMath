@@ -44,6 +44,12 @@ Definition iso {C: precategory_data}(a b : C) := total2 (fun f : a --> b => is_i
 Definition morphism_from_iso {C:precategory_data} {a b : C} (f : iso a b) : a --> b := pr1 f.
 Coercion morphism_from_iso : iso >-> precategory_morphisms.
 
+Definition mk_iso {C : precategory} {c c' : C} {f : c --> c'} (ii : is_iso f) : iso c c'.
+Proof.
+  exists f.
+  exact ii.
+Defined.
+
 Definition iso_is_iso {C: precategory_data} {a b : C} (f : iso a b) : is_iso f := pr2 f.
 
 Definition isopair {C: precategory_data}{a b : C} (f : a --> b) (fiso: is_iso f) : iso a b :=
@@ -870,22 +876,6 @@ Proof.
     simpl in H2. apply H2.
 Defined.
 
-<<<<<<< HEAD
-Lemma is_z_iso_is_iso_equiv {C : category} {a b : ob C} (f : a --> b) : is_z_isomorphism f ≃ is_iso f.
-Proof.
-  use weqiff.
-  - split.
-    + exact (is_iso_from_is_z_iso f).
-    + exact (is_z_iso_from_is_iso f).
-  - use isaprop_is_z_isomorphism. exact (homset_property C).
-  - use isaprop_is_iso.
-Defined.
-
-Lemma z_isomorphism_iso_equiv {C : category} (a b : ob C) : z_iso a b ≃ iso a b.
-Proof.
-  use weqfibtototal. exact is_z_iso_is_iso_equiv.
-Defined.
-=======
 Lemma is_z_iso_from_is_iso' (C : precategory) {b c : C} (f : b --> c) :
   is_iso' f -> is_z_isomorphism f.
 Proof.
@@ -904,7 +894,6 @@ Defined.
 
 Definition iso_to_z_iso {C : precategory} {b c : C} : iso b c -> z_iso b c
   := λ f, pr1 f ,, is_z_iso_from_is_iso (pr1 f) (pr2 f).
->>>>>>> 00855612710fc3dfd4fcd3aa576eccff3ce68c45
 
 (** The right inverse of an invertible morphism must be equal to the known (two-sided) inverse. *)
 (** TODO: Did I switch up right and left here vis a vis the conventional use? *)
