@@ -1,5 +1,25 @@
+(**
+
+Tom de Jong
+
+Created: November 2018
+
+Refactored and extended: February 2019
+
+*******************************************************************************)
+
+(** * Reflexive transitive closure of a (proposition valued) relation *)
+(** ** Contents
+- Reflexive transitive closure of a relation ([reflexive_transitive_closure_hrel])
+- The k-step reflexive transitive closure a relation
+  ([step_reflexive_transitive_closure_hrel])
+- Decidability of the k-step reflexive transitive closure under suitable
+  conditions ([decidable_step_refltrans])
+*)
+
 Require Import UniMath.Foundations.All.
 
+(** * Reflexive transitive closure of a relation *)
 Section reflexive_transitive_closure_hrel.
   Context {X : UU}.
 
@@ -101,6 +121,9 @@ Qed.
 
 End reflexive_transitive_closure_hrel.
 
+(** * The k-step reflexive transitive closure a relation *)
+Section step_reflexive_transitive_closure_hrel.
+
 Context {X : UU}.
 Inductive refltransclos_left (R : hrel X) : X -> X -> UU :=
   | reflstep' : ∏ (x : X), refltransclos_left R x x
@@ -108,7 +131,9 @@ Inductive refltransclos_left (R : hrel X) : X -> X -> UU :=
                                refltransclos_left R x z.
 
 Definition refltransclos_left_trans (R : hrel X) (x y z : X) :
-  refltransclos_left R x y -> refltransclos_left R y z -> refltransclos_left R x z.
+  refltransclos_left R x y ->
+  refltransclos_left R y z ->
+  refltransclos_left R x z.
 Proof.
   intros rel1 rel2.
   induction rel1.
@@ -186,14 +211,15 @@ Proof.
     exact rel.
 Defined.
 
-Definition refltransclos_step_hrel (R : hrel X) : nat -> X -> X -> UU :=
+Definition refltransclos_step_hrel (R : hrel X) :=
   λ (k : nat) (x y : X), ∥ refltransclos_step R k x y ∥.
 
-Definition refltransclos_left_hrel (R : hrel X) : X -> X -> UU :=
+Definition refltransclos_left_hrel (R : hrel X) :=
   λ (x y : X), ∥ refltransclos_left R x y ∥.
 
 Definition lefttostep_hrel (R : hrel X) (x y : X) :
-  refltransclos_left_hrel R x y -> ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥.
+  refltransclos_left_hrel R x y ->
+  ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥.
 Proof.
   apply hinhfun.
   intro rel.
@@ -213,7 +239,8 @@ Proof.
 Defined.
 
 Definition steptoleft_hrel_helper' (R : hrel X) (x y : X) :
-  (∑ (k : nat), refltransclos_step_hrel R k x y) -> refltransclos_left_hrel R x y.
+  (∑ (k : nat), refltransclos_step_hrel R k x y) ->
+  refltransclos_left_hrel R x y.
 Proof.
   intros [k rel].
   eapply steptoleft_hrel_helper.
@@ -221,7 +248,8 @@ Proof.
 Defined.
 
 Definition steptoleft_hrel (R : hrel X) (x y : X) :
-  ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥ -> refltransclos_left_hrel R x y.
+  ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥ ->
+  refltransclos_left_hrel R x y.
 Proof.
   eapply factor_through_squash.
   - apply isapropishinh.
@@ -229,9 +257,62 @@ Proof.
 Defined.
 
 Definition stepleftequiv_hrel (R : hrel X) (x y : X) :
-  refltransclos_left_hrel R x y <-> ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥.
+  refltransclos_left_hrel R x y
+  <->
+  ∥ ∑ (k : nat), refltransclos_step_hrel R k x y ∥.
 Proof.
   split.
   - apply lefttostep_hrel.
   - apply steptoleft_hrel.
 Defined.
+
+End step_reflexive_transitive_closure_hrel.
+
+(** * Decidability of the k-step reflexive transitive closure *)
+Section decidable_step_refltrans.
+
+Context {X : hSet}.
+
+Definition is_singlevalued (R : hrel X) :=
+  ∏ (x y y' : X), R x y -> R x y' -> y = y'.
+
+Definition isdecidable_hrel (R : hrel X) :=
+  ∏ (x y : X), decidable (R x y).
+
+Definition decidable_step (R : hrel X) :
+  isdeceq X ->
+  is_singlevalued R ->
+  (∏ (x : X), decidable (∑ (y : X), R x y)) ->
+  ∏ (k : nat), isdecidable_hrel (refltransclos_step_hrel R k).
+Proof.
+  intros Xdeceq Rsv Rsumdec.
+  intro k'.
+  intros x' y'.
+  apply decidable_ishinh.
+  generalize y' as y; generalize x' as x; clear x' y'.
+  generalize k' as k; clear k'.
+  induction k as [| m IHm].
+  - intros x y. cbn.
+    apply Xdeceq.
+  - intros x z.
+    induction (Rsumdec x) as [pos | neg].
+    + induction pos as [y r].
+      induction (IHm y z) as [pos' | neg'].
+      * apply inl.
+        exists y.
+        exact (r,,pos').
+      * apply inr.
+        intro hyp.
+        induction hyp as [y' pair].
+        apply neg'.
+        set (yeqy' := Rsv _ _ _ r (pr1 pair)).
+        rewrite yeqy'.
+        exact (pr2 pair).
+    + apply inr.
+      intro hyp.
+      induction hyp as [y pair].
+      apply neg.
+      exact (y,,pr1 pair).
+Defined.
+
+End decidable_step_refltrans.
