@@ -1,4 +1,3 @@
-DCPO.v
 BinaryOperations.v
 Monoids.v
 Groups.v
