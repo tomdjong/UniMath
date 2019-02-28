@@ -33,11 +33,11 @@ File listing
 
 - UniMath/Partiality/PartialElements.v
 
-  General theory of partial elements, i.e. the lift of a type and the lift of a
-  set as a dcpo with bottom 
+  General theory of partial elements, i.e. the lifting of a type and the lifting
+  of a set as a dcpo with bottom 
 - UniMath/Partiality/LiftMonad.v
 
-  The monad structure on the lift and the Kleisli extension as a dcpo morphism
+  The monad structure of the lifting and the Kleisli extension as a dcpo morphism
 - UniMath/Partiality/PCF.v
 
   The results on PCF: most importantly Soundness and Adequacy
@@ -46,6 +46,9 @@ File listing
 - UniMath/MoreFoundations/ClosureOfHrel.v
 
   Reflexive transitive closure of a (propositional valued) relation
+- UniMath/MoreFoundations/Wtypes.v
+
+  Indexed W-types and a sufficient condition for decidable equality on them
 - UniMath/MoreFoundations/PropExt.v
 
   Some consequences of Propositional Extensionality
