@@ -1,4 +1,4 @@
-The Scott model of PCF in constructive univalent mathematics
+The Scott Model of PCF in Univalent Type Theory
 ============================================================
 
 This is the [Coq](https://coq.inria.fr/) formalisation of the constructive Scott model of PCF.
