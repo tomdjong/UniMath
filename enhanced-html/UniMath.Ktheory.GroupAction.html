@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Ktheory.GroupAction</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1806"></a><h1 class="section">Group actions</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.UnivalenceAxiom</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Combinatorics.OrderedSets</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Ktheory.Utilities</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1807"></a><h2 class="section">Definitions</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">action_op</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span> := <span class="id" title="var">G</span> -&gt; <span class="id" title="var">X</span> -&gt; <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Record</span> <span class="id" title="var">ActionStructure</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">make</span> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">act_mult</span> : <span class="id" title="var">action_op</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">act_unit</span> : ∏ <span class="id" title="var">x</span>, <span class="id" title="var">act_mult</span> (<span class="id" title="var">unel</span> <span class="id" title="var">_</span>) <span class="id" title="var">x</span> = <span class="id" title="var">x</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">act_assoc</span> : ∏ <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>, <span class="id" title="var">act_mult</span> (<span class="id" title="var">op</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>) <span class="id" title="var">x</span> = <span class="id" title="var">act_mult</span> <span class="id" title="var">g</span> (<span class="id" title="var">act_mult</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">act_mult</span> {<span class="id" title="var">G</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <span class="id" title="var">Pack</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">ActionStructure'</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">act_mult</span> : <span class="id" title="var">action_op</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">act_unit</span> : ∏ <span class="id" title="var">x</span>, <span class="id" title="var">act_mult</span> (<span class="id" title="var">unel</span> <span class="id" title="var">_</span>) <span class="id" title="var">x</span> = <span class="id" title="var">x</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ∏ <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>, <span class="id" title="var">act_mult</span> (<span class="id" title="var">op</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>) <span class="id" title="var">x</span> = <span class="id" title="var">act_mult</span> <span class="id" title="var">g</span> (<span class="id" title="var">act_mult</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">pack</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>} : <span class="id" title="var">ActionStructure'</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">λ</span> <span class="id" title="var">ac</span>, <span class="id" title="var">make</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">ac</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">ac</span>)) (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">ac</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">unpack</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>} : <span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ActionStructure'</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">λ</span> <span class="id" title="var">ac</span>, (<span class="id" title="var">act_mult</span> <span class="id" title="var">ac</span>,,(<span class="id" title="var">act_unit</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">ac</span>,,<span class="id" title="var">act_assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">ac</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">h</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>} (<span class="id" title="var">ac</span>:<span class="id" title="var">ActionStructure'</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>) : <span class="id" title="var">unpack</span> (<span class="id" title="var">pack</span> <span class="id" title="var">ac</span>) = <span class="id" title="var">ac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="keyword">match</span> <span class="id" title="var">ac</span> <span class="id" title="keyword">as</span> <span class="id" title="var">t</span> <span class="id" title="keyword">return</span> (<span class="id" title="var">unpack</span> (<span class="id" title="var">pack</span> <span class="id" title="var">t</span>) = <span class="id" title="var">t</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">with</span> (<span class="id" title="var">act_mult</span>,,(<span class="id" title="var">act_unit</span>,,<span class="id" title="var">act_assoc</span>)) =&gt; <span class="id" title="var">idpath</span> (<span class="id" title="var">act_mult</span>,,(<span class="id" title="var">act_unit</span>,,<span class="id" title="var">act_assoc</span>)) <span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">k</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>} (<span class="id" title="var">ac</span>:<span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>) : <span class="id" title="var">pack</span> (<span class="id" title="var">unpack</span> <span class="id" title="var">ac</span>) = <span class="id" title="var">ac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="keyword">match</span> <span class="id" title="var">ac</span> <span class="id" title="keyword">as</span> <span class="id" title="var">i</span> <span class="id" title="keyword">return</span> (<span class="id" title="var">pack</span> (<span class="id" title="var">unpack</span> <span class="id" title="var">i</span>) = <span class="id" title="var">i</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">with</span> <span class="id" title="var">make</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">act_mult</span> <span class="id" title="var">act_unit</span> <span class="id" title="var">act_assoc</span> =&gt; <span class="id" title="var">idpath</span> <span class="id" title="var">_</span> <span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">weq</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>) : (<span class="id" title="var">ActionStructure'</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>) ≃ (<span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> <span class="id" title="var">pack</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">ac</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">unpack</span> <span class="id" title="var">ac</span>,,<span class="id" title="var">k</span> <span class="id" title="var">ac</span>). <span class="id" title="tactic">intros</span> [<span class="id" title="var">ac'</span> <span class="id" title="var">m</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">m</span>. <span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> := <span class="id" title="var">h</span> <span class="id" title="var">ac'</span>). <span class="id" title="tactic">destruct</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">reflexivity</span>. </div>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Pack</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaset_ActionStructure</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>) : <span class="id" title="var">isaset</span> (<span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isofhlevelweqf</span> 2 (<span class="id" title="var">Pack.weq</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveltotal2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">op</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveltotal2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hlevelntosn</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">un</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hlevelntosn</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) := <span class="id" title="var">total2</span> (<span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">makeAction</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">hSet</span>) (<span class="id" title="var">ac</span>:<span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">X</span>,,<span class="id" title="var">ac</span> : <span class="id" title="var">Action</span> <span class="id" title="var">G</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ac_set</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr1</span> <span class="id" title="var">X</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">ac_set</span> : <span class="id" title="var">Action</span> &gt;-&gt; <span class="id" title="var">hSet</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ac_type</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr1hSet</span> (<span class="id" title="var">ac_set</span> <span class="id" title="var">X</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ac_str</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span> : <span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span> (<span class="id" title="var">ac_set</span> <span class="id" title="var">X</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ac_mult</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) := <span class="id" title="var">act_mult</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">X</span>).<br/>
+<span class="id" title="keyword">Delimit</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">action_scope</span> <span class="id" title="keyword">with</span> <span class="id" title="var">action</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "g * x" := (<span class="id" title="var">ac_mult</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>) : <span class="id" title="var">action_scope</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">action_scope</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ac_assoc</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) := <span class="id" title="var">act_assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">X</span>) : ∏ <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>, (<span class="id" title="var">op</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)*<span class="id" title="var">x</span> = <span class="id" title="var">g</span>*(<span class="id" title="var">h</span>*<span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">right_mult</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) := <span class="id" title="var">λ</span> <span class="id" title="var">g</span>, <span class="id" title="var">g</span>*<span class="id" title="var">x</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">left_mult</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">g</span>:<span class="id" title="var">G</span>) := <span class="id" title="var">λ</span> <span class="id" title="var">x</span>:<span class="id" title="var">X</span>, <span class="id" title="var">g</span>*<span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_equivariant</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">f</span>:<span class="id" title="var">X</span>-&gt;<span class="id" title="var">Y</span>) :=<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">g</span> <span class="id" title="var">x</span>, <span class="id" title="var">f</span> (<span class="id" title="var">g</span>*<span class="id" title="var">x</span>) = <span class="id" title="var">g</span>*(<span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_equivariant_isaprop</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">f</span>:<span class="id" title="var">X</span>-&gt;<span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">is_equivariant</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. </div>
+
+<br/>
+</div>
+
+<div class="doc">
+The following fact is fundamental: it shows that our definition of
+    <span class="inlinecode"><span class="id" title="var">is_equivariant</span></span> captures all of the structure.  The proof reduces to
+    showing that if G acts on a set X in two ways, and the identity function is
+    equivariant, then the two actions are equal.  A similar fact will hold in
+    other cases: groups, rings, monoids, etc.  Refer to section 9.8 of the HoTT
+    book, on the "structure identity principle", a term coined by Peter Aczel. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">transport</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_equivariant_identity</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p</span>:<span class="id" title="var">ac_set</span> <span class="id" title="var">X</span> = <span class="id" title="var">ac_set</span> <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">weq</span> (<span class="id" title="var">p</span> # <span class="id" title="var">ac_str</span> <span class="id" title="var">X</span> = <span class="id" title="var">ac_str</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">is_equivariant</span> (<span class="id" title="var">cast</span> (<span class="id" title="var">ap</span> <span class="id" title="var">pr1hSet</span> <span class="id" title="var">p</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="var">revert</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">p</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> [<span class="id" title="var">Xm</span> <span class="id" title="var">Xu</span> <span class="id" title="var">Xa</span>]] [<span class="id" title="var">Y</span> [<span class="id" title="var">Ym</span> <span class="id" title="var">Yu</span> <span class="id" title="var">Ya</span>]] ? .<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">transportf</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">p</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">ap</span> <span class="id" title="var">act_mult</span> <span class="id" title="var">p</span>) <span class="id" title="var">g</span>) <span class="id" title="var">x</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">unfold</span> <span class="id" title="var">cast</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">p</span>:<span class="id" title="var">Xm</span>=<span class="id" title="var">Ym</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">i</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">i</span>. <span class="id" title="tactic">assert</span> (<span class="id" title="var">p</span>:<span class="id" title="var">Xu</span>=<span class="id" title="var">Yu</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">assert</span> (<span class="id" title="var">p</span>:<span class="id" title="var">Xa</span>=<span class="id" title="var">Ya</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isaset_ActionStructure</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="keyword">is</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">is_equivariant_isaprop</span>. } </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_equivariant_comp</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p</span>:<span class="id" title="var">X</span>-&gt;<span class="id" title="var">Y</span>) (<span class="id" title="var">i</span>:<span class="id" title="var">is_equivariant</span> <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">q</span>:<span class="id" title="var">Y</span>-&gt;<span class="id" title="var">Z</span>) (<span class="id" title="var">j</span>:<span class="id" title="var">is_equivariant</span> <span class="id" title="var">q</span>) : <span class="id" title="var">is_equivariant</span> (<span class="id" title="var">funcomp</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">ap</span> <span class="id" title="var">q</span> (<span class="id" title="var">i</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>) @ <span class="id" title="var">j</span> <span class="id" title="var">g</span> (<span class="id" title="var">p</span> <span class="id" title="var">x</span>)). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ActionMap</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) := <span class="id" title="var">total2</span> (@<span class="id" title="var">is_equivariant</span> <span class="id" title="var">_</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingFunction</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">f</span>:<span class="id" title="var">ActionMap</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) := <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">equivariance</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">f</span>:<span class="id" title="var">ActionMap</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) := <span class="id" title="var">pr2</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">underlyingFunction</span> : <span class="id" title="var">ActionMap</span> &gt;-&gt; <span class="id" title="var">Funclass</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">composeActionMap</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p</span>:<span class="id" title="var">ActionMap</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">q</span>:<span class="id" title="var">ActionMap</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>) : <span class="id" title="var">ActionMap</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="var">revert</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> <span class="id" title="var">i</span>] [<span class="id" title="var">q</span> <span class="id" title="var">j</span>]. <span class="id" title="tactic">exists</span> (<span class="id" title="var">funcomp</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_equivariant_comp</span>. <span class="id" title="tactic">assumption</span>. <span class="id" title="tactic">assumption</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ActionIso</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) :=<br/>
+&nbsp;&nbsp;∑ <span class="id" title="var">f</span>:(<span class="id" title="var">ac_set</span> <span class="id" title="var">X</span>) ≃ (<span class="id" title="var">ac_set</span> <span class="id" title="var">Y</span>), <span class="id" title="var">is_equivariant</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingIso</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">e</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) := <span class="id" title="var">pr1</span> <span class="id" title="var">e</span> : <span class="id" title="var">X</span> ≃ <span class="id" title="var">Y</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">underlyingIso</span> : <span class="id" title="var">ActionIso</span> &gt;-&gt; <span class="id" title="var">weq</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">underlyingIso_incl</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isincl</span> (<span class="id" title="var">underlyingIso</span> : <span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> -&gt; <span class="id" title="var">X</span> ≃ <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isinclpr1</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">is_equivariant_isaprop</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">underlyingIso_injectivity</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">e</span> <span class="id" title="var">f</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">e</span> = <span class="id" title="var">f</span>) ≃ (<span class="id" title="var">underlyingIso</span> <span class="id" title="var">e</span> = <span class="id" title="var">underlyingIso</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">weqonpathsincl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">underlyingIso_incl</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingActionMap</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">e</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1weq</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">e</span>),, <span class="id" title="var">pr2</span> <span class="id" title="var">e</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">idActionIso</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) : <span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">idweq</span> <span class="id" title="var">_</span>). <span class="id" title="tactic">intros</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">composeActionIso</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">e</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">f</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>) : <span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="var">revert</span> <span class="id" title="var">e</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">e</span> <span class="id" title="var">i</span>] [<span class="id" title="var">f</span> <span class="id" title="var">j</span>]. <span class="id" title="tactic">exists</span> (<span class="id" title="var">weqcomp</span> <span class="id" title="var">e</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">e</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">e</span> <span class="id" title="var">e'</span>], <span class="id" title="var">f</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">f</span> <span class="id" title="var">f'</span>]; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_equivariant_comp</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">i</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">j</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">path_to_ActionIso</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">e</span>:<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) : <span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">idActionIso</span> <span class="id" title="var">X</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">castAction</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">e</span>:<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">path_to_ActionIso</span> <span class="id" title="var">e</span> <span class="id" title="var">x</span>). </div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1808"></a><h2 class="section">Applications of univalence</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action_univalence_prelim</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) ≃ (<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">total2_paths_equiv</span> (<span class="id" title="var">ActionStructure</span> <span class="id" title="var">G</span>) <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqbandf</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">hSet_univalence</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">is_equivariant_identity</span> <span class="id" title="var">p</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">eqweqmap</span> (<span class="id" title="var">ap</span> <span class="id" title="var">is_equivariant</span> (<span class="id" title="var">pr1_eqweqmap</span> (<span class="id" title="var">ap</span> <span class="id" title="var">pr1hSet</span> <span class="id" title="var">p</span>)))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action_univalence_prelim_comp</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">p</span>:<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">Action_univalence_prelim</span> <span class="id" title="var">p</span> = <span class="id" title="var">path_to_ActionIso</span> <span class="id" title="var">p</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">path_to_ActionIsweq_iso</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>}  :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">isweq</span> (@<span class="id" title="var">path_to_ActionIso</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">isweqhomot</span> <span class="id" title="var">Action_univalence_prelim</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">path_to_ActionIso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Action_univalence_prelim_comp</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pr2</span> <span class="id" title="var">Action_univalence_prelim</span>)). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action_univalence</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) ≃ (<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> <span class="id" title="var">path_to_ActionIso</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">path_to_ActionIsweq_iso</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action_univalence_comp</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">p</span>:<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">Action_univalence</span> <span class="id" title="var">p</span> = <span class="id" title="var">path_to_ActionIso</span> <span class="id" title="var">p</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action_univalence_inv</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;: (<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) ≃ (<span class="id" title="var">X</span>=<span class="id" title="var">Y</span>) := <span class="id" title="var">invweq</span> <span class="id" title="var">Action_univalence</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action_univalence_inv_comp</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">f</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">path_to_ActionIso</span> (<span class="id" title="var">Action_univalence_inv</span> <span class="id" title="var">f</span>) = <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Action_univalence_inv</span>, <span class="id" title="var">Action_univalence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">homotweqinvweq</span> <span class="id" title="var">Action_univalence</span> <span class="id" title="var">f</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Action_univalence_inv_comp_eval</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>} (<span class="id" title="var">f</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">castAction</span> (<span class="id" title="var">Action_univalence_inv</span> <span class="id" title="var">f</span>) <span class="id" title="var">x</span> = <span class="id" title="var">f</span> <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ap</span> <span class="id" title="var">pr1weq</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ap</span> <span class="id" title="var">underlyingIso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Action_univalence_inv_comp</span> <span class="id" title="var">f</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">x</span>). </div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1809"></a><h2 class="section">Torsors</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_torsor</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">nonempty</span> <span class="id" title="var">X</span> × ∏ <span class="id" title="var">x</span>:<span class="id" title="var">X</span>, <span class="id" title="var">isweq</span> (<span class="id" title="var">right_mult</span> <span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_torsor_isaprop</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) : <span class="id" title="var">isaprop</span> (<span class="id" title="var">is_torsor</span> <span class="id" title="var">X</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>. { <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>. } </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Torsor</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) := <span class="id" title="var">total2</span> (@<span class="id" title="var">is_torsor</span> <span class="id" title="var">G</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingAction</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr1</span> <span class="id" title="var">X</span> : <span class="id" title="var">Action</span> <span class="id" title="var">G</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">underlyingAction</span> : <span class="id" title="var">Torsor</span> &gt;-&gt; <span class="id" title="var">Action</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_torsor_prop</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">torsor_nonempty</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr1</span> (<span class="id" title="var">is_torsor_prop</span> <span class="id" title="var">X</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">torsor_splitting</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr2</span> (<span class="id" title="var">is_torsor_prop</span> <span class="id" title="var">X</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">torsor_mult_weq</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">weqpair</span> (<span class="id" title="var">right_mult</span> <span class="id" title="var">x</span>) (<span class="id" title="var">torsor_splitting</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>) : <span class="id" title="var">G</span> ≃ <span class="id" title="var">X</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">torsor_update_nonempty</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">nonempty</span> <span class="id" title="var">X</span>) : <span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">exact</span> (<span class="id" title="var">underlyingAction</span> <span class="id" title="var">X</span>,,(<span class="id" title="var">x</span>,,<span class="id" title="var">pr2</span>(<span class="id" title="var">is_torsor_prop</span> <span class="id" title="var">X</span>))). </div>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">castTorsor</span> {<span class="id" title="var">G</span>} {<span class="id" title="var">T</span> <span class="id" title="var">T'</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>} (<span class="id" title="var">q</span>:<span class="id" title="var">T</span> = <span class="id" title="var">T'</span>) : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">exact</span> (<span class="id" title="var">castAction</span> (<span class="id" title="var">ap</span> <span class="id" title="var">underlyingAction</span> <span class="id" title="var">q</span>)). </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">underlyingAction_incl</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isincl</span> (<span class="id" title="var">underlyingAction</span> : <span class="id" title="var">Torsor</span> <span class="id" title="var">G</span> -&gt; <span class="id" title="var">Action</span> <span class="id" title="var">G</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">isinclpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">is_torsor_isaprop</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">underlyingAction_injectivity</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) ≃ (<span class="id" title="var">underlyingAction</span> <span class="id" title="var">X</span> = <span class="id" title="var">underlyingAction</span> <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">weqonpathsincl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">underlyingAction_incl</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingAction_injectivity_comp</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>} (<span class="id" title="var">p</span>:<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">underlyingAction_injectivity</span> <span class="id" title="var">p</span> = <span class="id" title="var">ap</span> <span class="id" title="var">underlyingAction</span> <span class="id" title="var">p</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingAction_injectivity_comp'</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr1weq</span> (@<span class="id" title="var">underlyingAction_injectivity</span> <span class="id" title="var">G</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;= @<span class="id" title="var">ap</span> (<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">Action</span> <span class="id" title="var">G</span>) (@<span class="id" title="var">underlyingAction</span> <span class="id" title="var">G</span>) <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingAction_injectivity_inv_comp</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span>:<span class="id" title="var">underlyingAction</span> <span class="id" title="var">X</span> = <span class="id" title="var">underlyingAction</span> <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">ap</span> <span class="id" title="var">underlyingAction</span> (<span class="id" title="var">invmap</span> <span class="id" title="var">underlyingAction_injectivity</span> <span class="id" title="var">f</span>) = <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">homotweqinvweq</span> <span class="id" title="var">underlyingAction_injectivity</span> <span class="id" title="var">f</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PointedTorsor</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) := ∑ <span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>, <span class="id" title="var">X</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingTorsor</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">PointedTorsor</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr1</span> <span class="id" title="var">X</span> : <span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">underlyingTorsor</span> : <span class="id" title="var">PointedTorsor</span> &gt;-&gt; <span class="id" title="var">Torsor</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">underlyingPoint</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">PointedTorsor</span> <span class="id" title="var">G</span>) := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span> : <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_quotient</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">y</span> <span class="id" title="var">x</span>:<span class="id" title="var">X</span>) : ∃! <span class="id" title="var">g</span>, <span class="id" title="var">g</span>*<span class="id" title="var">x</span> = <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">is_torsor_prop</span> <span class="id" title="var">X</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">quotient</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">y</span> <span class="id" title="var">x</span>:<span class="id" title="var">X</span>) := <span class="id" title="var">pr1</span> (<span class="id" title="var">thePoint</span> (<span class="id" title="var">is_quotient</span> <span class="id" title="var">X</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>)) : <span class="id" title="var">G</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "y / x" := (<span class="id" title="var">quotient</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>) : <span class="id" title="var">action_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">quotient_times</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">y</span> <span class="id" title="var">x</span>:<span class="id" title="var">X</span>) : (<span class="id" title="var">y</span>/<span class="id" title="var">x</span>)*<span class="id" title="var">x</span> = <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">thePoint</span> (<span class="id" title="var">is_quotient</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>))). </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">quotient_uniqueness</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">y</span> <span class="id" title="var">x</span>:<span class="id" title="var">X</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">G</span>) : <span class="id" title="var">g</span>*<span class="id" title="var">x</span> = <span class="id" title="var">y</span> -&gt; <span class="id" title="var">g</span> = <span class="id" title="var">y</span>/<span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">ap</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">uniqueness</span> (<span class="id" title="var">is_quotient</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>) (<span class="id" title="var">g</span>,,<span class="id" title="var">e</span>))). </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">quotient_mult</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) : (<span class="id" title="var">g</span>*<span class="id" title="var">x</span>)/<span class="id" title="var">x</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">quotient_uniqueness</span>. <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">quotient_1</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) : <span class="id" title="var">x</span>/<span class="id" title="var">x</span> = 1%<span class="id" title="var">multmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">quotient_uniqueness</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">act_unit</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">quotient_product</span> {<span class="id" title="var">G</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">z</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>:<span class="id" title="var">X</span>) : <span class="id" title="var">op</span> (<span class="id" title="var">z</span>/<span class="id" title="var">y</span>) (<span class="id" title="var">y</span>/<span class="id" title="var">x</span>) = <span class="id" title="var">z</span>/<span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">quotient_uniqueness</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">ac_assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ <span class="id" title="var">ap</span> (<span class="id" title="var">left_mult</span> (<span class="id" title="var">z</span>/<span class="id" title="var">y</span>)) (<span class="id" title="var">quotient_times</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ <span class="id" title="var">quotient_times</span> <span class="id" title="var">_</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivialTorsor</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) : <span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">makeAction</span> <span class="id" title="var">G</span> (<span class="id" title="var">make</span> <span class="id" title="var">G</span> <span class="id" title="var">G</span> <span class="id" title="var">op</span> (<span class="id" title="var">lunax</span> <span class="id" title="var">G</span>) (<span class="id" title="var">assocax</span> <span class="id" title="var">G</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">hinhpr</span> (<span class="id" title="var">unel</span> <span class="id" title="var">G</span>),,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">isweq_iso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">g</span>, <span class="id" title="var">op</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">g</span>, <span class="id" title="var">op</span> <span class="id" title="var">g</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">g</span>, <span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>) @ <span class="id" title="var">ap</span> (<span class="id" title="var">op</span> <span class="id" title="var">g</span>) (<span class="id" title="var">grrinvax</span> <span class="id" title="var">G</span> <span class="id" title="var">x</span>) @ <span class="id" title="var">runax</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">g</span>, <span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>) <span class="id" title="var">x</span> @ <span class="id" title="var">ap</span> (<span class="id" title="var">op</span> <span class="id" title="var">g</span>) (<span class="id" title="var">grlinvax</span> <span class="id" title="var">G</span> <span class="id" title="var">x</span>) @ <span class="id" title="var">runax</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pointedTrivialTorsor</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) : <span class="id" title="var">PointedTorsor</span> <span class="id" title="var">G</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>). <span class="id" title="tactic">exact</span> (<span class="id" title="var">unel</span> <span class="id" title="var">G</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">univ_function</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) : <span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span> -&gt; <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">apply</span> <span class="id" title="var">right_mult</span>. <span class="id" title="tactic">assumption</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">univ_function_pointed</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">univ_function</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span> (<span class="id" title="var">unel</span> <span class="id" title="var">_</span>) = <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">act_unit</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">univ_function_is_equivariant</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_equivariant</span> (<span class="id" title="var">univ_function</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">act_assoc</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">triviality_isomorphism</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">ActionIso</span> (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>) <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">torsor_mult_weq</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>,, <span class="id" title="var">univ_function_is_equivariant</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivialTorsor_weq</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">G</span>) : (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>) ≃ (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span>, <span class="id" title="var">op</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>). <span class="id" title="tactic">apply</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span>, <span class="id" title="var">op</span> <span class="id" title="var">h</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">G</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span>, <span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">ap</span> (<span class="id" title="var">op</span> <span class="id" title="var">_</span>) (<span class="id" title="var">grrinvax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) @ <span class="id" title="var">runax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span>, <span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">ap</span> (<span class="id" title="var">op</span> <span class="id" title="var">_</span>) (<span class="id" title="var">grlinvax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) @ <span class="id" title="var">runax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>). }<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivialTorsorAuto</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">G</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">ActionIso</span> (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">trivialTorsor_weq</span> <span class="id" title="var">G</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span> <span class="id" title="var">g</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">pr1weq_injectivity</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span>:<span class="id" title="var">X</span> ≃ <span class="id" title="var">Y</span>) : (<span class="id" title="var">f</span> = <span class="id" title="var">g</span>) ≃ (<span class="id" title="var">pr1weq</span> <span class="id" title="var">f</span> = <span class="id" title="var">pr1weq</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">weqonpathsincl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isinclpr1weq</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">autos</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) : <span class="id" title="var">G</span> ≃ (<span class="id" title="var">ActionIso</span> (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">trivialTorsorAuto</span> <span class="id" title="var">G</span>). <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">f</span> (<span class="id" title="var">unel</span> <span class="id" title="var">G</span>)). } { <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">lunax</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">invweq</span> (<span class="id" title="var">underlyingIso_injectivity</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invweq</span> (<span class="id" title="var">pr1weq_injectivity</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> ((! (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>) <span class="id" title="var">g</span> (<span class="id" title="var">unel</span> <span class="id" title="var">G</span>)) @ (<span class="id" title="var">ap</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">runax</span> <span class="id" title="var">G</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">autos_comp</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">G</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">underlyingIso</span> (<span class="id" title="var">autos</span> <span class="id" title="var">G</span> <span class="id" title="var">g</span>) = <span class="id" title="var">trivialTorsor_weq</span> <span class="id" title="var">G</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">autos_comp_apply</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">g</span> <span class="id" title="var">h</span>:<span class="id" title="var">G</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">autos</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span> = (<span class="id" title="var">h</span> * <span class="id" title="var">g</span>)%<span class="id" title="var">multmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">trivialTorsorAuto_unit</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">trivialTorsorAuto</span> <span class="id" title="var">G</span> (<span class="id" title="var">unel</span> <span class="id" title="var">_</span>) = <span class="id" title="var">idActionIso</span> <span class="id" title="var">_</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeEquality</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="var">k</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">is_equivariant_isaprop</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeEquality</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">runax</span> <span class="id" title="var">G</span> <span class="id" title="var">x</span>). } }<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">trivialTorsorAuto_mult</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">g</span> <span class="id" title="var">h</span>:<span class="id" title="var">G</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">composeActionIso</span> (<span class="id" title="var">trivialTorsorAuto</span> <span class="id" title="var">G</span> <span class="id" title="var">g</span>) (<span class="id" title="var">trivialTorsorAuto</span> <span class="id" title="var">G</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;= (<span class="id" title="var">trivialTorsorAuto</span> <span class="id" title="var">G</span> (<span class="id" title="var">op</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeEquality</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">is_equivariant_isaprop</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeEquality</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>). } }<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1810"></a><h2 class="section">Applications of univalence</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Torsor_univalence</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>} : (<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) ≃ (<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqcomp</span> <span class="id" title="var">underlyingAction_injectivity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Action_univalence</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Torsor_univalence_comp</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>} (<span class="id" title="var">p</span>:<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">Torsor_univalence</span> <span class="id" title="var">p</span> = <span class="id" title="var">path_to_ActionIso</span> (<span class="id" title="var">ap</span> <span class="id" title="var">underlyingAction</span> <span class="id" title="var">p</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Torsor_univalence_inv_comp_eval</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">castTorsor</span> (<span class="id" title="var">invmap</span> <span class="id" title="var">Torsor_univalence</span> <span class="id" title="var">f</span>) <span class="id" title="var">x</span> = <span class="id" title="var">f</span> <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Torsor_univalence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">castTorsor</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">invmapweqcomp</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">weqcomp</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">underlyingAction_injectivity_inv_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Action_univalence_inv_comp_eval</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">torsor_eqweq_to_path</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>} : <span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> -&gt; <span class="id" title="var">X</span> = <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">exact</span> ((<span class="id" title="var">invweq</span> <span class="id" title="var">Torsor_univalence</span>) <span class="id" title="var">f</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PointedActionIso</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">PointedTorsor</span> <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= ∑ <span class="id" title="var">f</span>:<span class="id" title="var">ActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>, <span class="id" title="var">f</span> (<span class="id" title="var">underlyingPoint</span> <span class="id" title="var">X</span>) = <span class="id" title="var">underlyingPoint</span> <span class="id" title="var">Y</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pointed_triviality_isomorphism</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} (<span class="id" title="var">X</span>:<span class="id" title="var">PointedTorsor</span> <span class="id" title="var">G</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">PointedActionIso</span> (<span class="id" title="var">pointedTrivialTorsor</span> <span class="id" title="var">G</span>) <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="var">revert</span> <span class="id" title="var">X</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> <span class="id" title="var">x</span>]. <span class="id" title="tactic">exists</span> (<span class="id" title="var">triviality_isomorphism</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">univ_function_pointed</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PointedTorsor_univalence</span> {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} {<span class="id" title="var">X</span> <span class="id" title="var">Y</span>:<span class="id" title="var">PointedTorsor</span> <span class="id" title="var">G</span>} :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) ≃ (<span class="id" title="var">PointedActionIso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">total2_paths_equiv</span> <span class="id" title="var">_</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqbandf</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">weqonpathsincl</span> <span class="id" title="var">underlyingAction</span> <span class="id" title="var">underlyingAction_incl</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Action_univalence</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">X</span> <span class="id" title="var">x</span>], <span class="id" title="var">Y</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">Y</span> <span class="id" title="var">y</span>]; <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">idweq</span> <span class="id" title="var">_</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ClassifyingSpace</span> <span class="id" title="var">G</span> := <span class="id" title="var">pointedType</span> (<span class="id" title="var">Torsor</span> <span class="id" title="var">G</span>) (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">G</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">E</span> := <span class="id" title="var">PointedTorsor</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">B</span> := <span class="id" title="var">ClassifyingSpace</span>.<br/>
+<span class="id" title="keyword">Definition</span> π {<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>} := <span class="id" title="var">underlyingTorsor</span> : <span class="id" title="var">E</span> <span class="id" title="var">G</span> -&gt; <span class="id" title="var">B</span> <span class="id" title="var">G</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isconnBG</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) : <span class="id" title="var">isconnected</span> (<span class="id" title="var">B</span> <span class="id" title="var">G</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">base_connected</span> (<span class="id" title="var">trivialTorsor</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">squash_to_prop</span> (<span class="id" title="var">torsor_nonempty</span> <span class="id" title="var">X</span>)). { <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">torsor_eqweq_to_path</span> (<span class="id" title="var">triviality_isomorphism</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscontrEG</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) : <span class="id" title="var">iscontr</span> (<span class="id" title="var">E</span> <span class="id" title="var">G</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exists</span> (<span class="id" title="var">pointedTrivialTorsor</span> <span class="id" title="var">G</span>). <span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> <span class="id" title="var">x</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">invweq</span> <span class="id" title="var">PointedTorsor_univalence</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pointed_triviality_isomorphism</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">loopsBG</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) : <span class="id" title="var">weq</span> (<span class="id" title="var">Ω</span> (<span class="id" title="var">B</span> <span class="id" title="var">G</span>)) <span class="id" title="var">G</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqcomp</span> <span class="id" title="var">_</span> (<span class="id" title="var">invweq</span> <span class="id" title="var">Torsor_univalence</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">autos</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">loopsBG_comp</span> (<span class="id" title="var">G</span>:<span class="id" title="var">gr</span>) (<span class="id" title="var">g</span> <span class="id" title="var">h</span>:<span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">castTorsor</span> (<span class="id" title="var">invmap</span> (<span class="id" title="var">loopsBG</span> <span class="id" title="var">G</span>) <span class="id" title="var">g</span>) <span class="id" title="var">h</span> = (<span class="id" title="var">h</span>*<span class="id" title="var">g</span>)%<span class="id" title="var">multmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">loopsBG</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">invinv</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">weqcomp</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">Torsor_univalence_inv_comp_eval</span> (<span class="id" title="var">trivialTorsorAuto</span> <span class="id" title="var">G</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+</div>
+
+<div class="doc">
+Theorem <span class="inlinecode"><span class="id" title="var">loopsBG</span></span> also follows from the Rezk Completion theorem of the CategoryTheory
+    package.  To see that, regard G as a category with one object.  Consider a
+    merely representable functor F : G^op -&gt; Set.  Let X be F of the object *.
+    Apply F to the arrows to get an action of G on X.  Try to prove that X is a
+    torsor.  Since being a torsor is a mere property, we may assume F is
+    actually representable.  There is only one object *, so F is isomorphic to
+    h</i>*.  Apply h* to * and we get Hom, which is G, regarded as a G-set.
+    That's a torsor.  So the Rezk completion RCG is equivalent to BG, the type
+    of G-torsors.  Now the theorem also says there is an equivalence G -&gt; RCG.
+    So RCG is connected and its loop space is G.
+
+<div class="paragraph"> </div>
+
+    A formalization of that argument should be added eventually. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

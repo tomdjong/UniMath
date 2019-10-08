@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Core.Categories</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab710"></a><h1 class="section">Categories</h1>
+
+
+<div class="paragraph"> </div>
+
+  Authors: Benedikt Ahrens, Chris Kapulkin, Mike Shulman
+  January 2013
+ 
+<div class="paragraph"> </div>
+
+<a name="lab711"></a><h2 class="section">Contents :</h2>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> precategories: homs are arbitrary types <span class="inlinecode"><span class="id" title="var">precategory</span></span>
+
+</li>
+<li> categories: hom-types are sets <span class="inlinecode"><span class="id" title="var">category</span></span>
+
+</li>
+</ul>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Notations</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab712"></a><h1 class="section">Definition of a precategory</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_ob_mor</span> : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= ∑ <span class="id" title="var">ob</span> : <span class="id" title="var">UU</span>, <span class="id" title="var">ob</span> -&gt; <span class="id" title="var">ob</span> -&gt; <span class="id" title="var">UU</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_ob_mor_pair</span> (<span class="id" title="var">ob</span> : <span class="id" title="var">UU</span>)(<span class="id" title="var">mor</span> : <span class="id" title="var">ob</span> -&gt; <span class="id" title="var">ob</span> -&gt; <span class="id" title="var">UU</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">precategory_ob_mor</span> := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">ob</span> <span class="id" title="var">mor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ob</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_ob_mor</span>) : <span class="id" title="var">UU</span> := @<span class="id" title="var">pr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">ob</span> : <span class="id" title="var">precategory_ob_mor</span> &gt;-&gt; <span class="id" title="var">UU</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_morphisms</span> { <span class="id" title="var">C</span> : <span class="id" title="var">precategory_ob_mor</span> } :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">C</span> -&gt;  <span class="id" title="var">C</span> -&gt; <span class="id" title="var">UU</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We introduce notation for morphisms  in order for this notation not to pollute subsequent files,
+    we define this notation within the scope "cat" 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Delimit</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span> <span class="id" title="keyword">with</span> <span class="id" title="var">cat</span>. <span class="id" title="keyword">Delimit</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span> <span class="id" title="keyword">with</span> <span class="id" title="var">Cat</span>. <span class="id" title="keyword">Delimit</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat_deprecated</span> <span class="id" title="keyword">with</span> <span class="id" title="var">cat_deprecated</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;a --&gt; b" := (<span class="id" title="var">precategory_morphisms</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) : <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;b &lt;-- a" := (<span class="id" title="var">precategory_morphisms</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">only</span> <span class="id" title="var">parsing</span>) : <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;C ⟦ a , b ⟧" := (<span class="id" title="var">precategory_morphisms</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>) <span class="id" title="var">a</span> <span class="id" title="var">b</span>) : <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab713"></a><h2 class="section"><span class="inlinecode"><span class="id" title="var">precategory_data</span></span></h2>
+ data of a precategory :
+<ul class="doclist">
+<li> objects
+
+</li>
+<li> morphisms
+
+</li>
+<li> identity morphisms
+
+</li>
+<li> composition
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_id_comp</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_ob_mor</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">c</span> --&gt; <span class="id" title="var">c</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span> -&gt; <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span> -&gt; <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>). 
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_data</span> : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">X</span>, <span class="id" title="var">precategory_id_comp</span> <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_data_pair</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_ob_mor</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">id</span> : ∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">c</span> --&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">comp</span>: ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span> -&gt; <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span> -&gt; <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">precategory_data</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">C</span> (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">id</span> <span class="id" title="var">comp</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_ob_mor_from_precategory_data</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">precategory_ob_mor</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">precategory_ob_mor_from_precategory_data</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">precategory_data</span> &gt;-&gt; <span class="id" title="var">precategory_ob_mor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">identity</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>}<br/>
+&nbsp;&nbsp;: ∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">c</span> --&gt; <span class="id" title="var">c</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "1" := (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) : <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">compose</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>} { <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span> }<br/>
+&nbsp;&nbsp;: <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span> -&gt; <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span> -&gt; <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>) <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;f ;; g" := (<span class="id" title="var">compose</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) : <span class="id" title="var">cat_deprecated</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;f · g" := (<span class="id" title="var">compose</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) : <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;g ∘ f" := (<span class="id" title="var">compose</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) (<span class="id" title="var">only</span> <span class="id" title="var">parsing</span>) : <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">postcompose</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">compose</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab714"></a><h2 class="section">Axioms of a precategory</h2>
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> identity is left and right neutral for composition
+
+</li>
+<li> composition is associative
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_precategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">identity</span> <span class="id" title="var">a</span> · <span class="id" title="var">f</span> = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">f</span> · <span class="id" title="var">identity</span> <span class="id" title="var">b</span> = <span class="id" title="var">f</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>), <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>) = (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>), (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span> = <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_precategory_one_assoc</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">identity</span> <span class="id" title="var">a</span> · <span class="id" title="var">f</span> = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">f</span> · <span class="id" title="var">identity</span> <span class="id" title="var">b</span> = <span class="id" title="var">f</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>), <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>) = (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_precategory_one_assoc_to_two</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_precategory_one_assoc</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">is_precategory</span> <span class="id" title="var">C</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">λ</span> <span class="id" title="var">i</span>, (<span class="id" title="var">pr11</span> <span class="id" title="var">i</span>,,<span class="id" title="var">pr21</span> <span class="id" title="var">i</span>),,(<span class="id" title="var">pr2</span> <span class="id" title="var">i</span>,,<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>, <span class="id" title="var">pathsinv0</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">i</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_is_precategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H1</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">identity</span> <span class="id" title="var">a</span> · <span class="id" title="var">f</span> = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H2</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">f</span> · <span class="id" title="var">identity</span> <span class="id" title="var">b</span> = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H3</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>), <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>) = (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H4</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>), (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span> = <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>))<br/>
+&nbsp;&nbsp;: <span class="id" title="var">is_precategory</span> <span class="id" title="var">C</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">H1</span>,,<span class="id" title="var">H2</span>),,(<span class="id" title="var">H3</span>,,<span class="id" title="var">H4</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_is_precategory_one_assoc</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H1</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">identity</span> <span class="id" title="var">a</span> · <span class="id" title="var">f</span> = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H2</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">f</span> · <span class="id" title="var">identity</span> <span class="id" title="var">b</span> = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H3</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>), <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>) = (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">is_precategory</span> <span class="id" title="var">C</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">H1</span>,,<span class="id" title="var">H2</span>),,(<span class="id" title="var">H3</span>,,<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>, <span class="id" title="var">pathsinv0</span> (<span class="id" title="var">H3</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory</span> := <span class="id" title="var">total2</span> <span class="id" title="var">is_precategory</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_precategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">is_precategory</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">precategory</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">C</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_precategory_one_assoc</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">is_precategory_one_assoc</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">precategory</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">C</span> (<span class="id" title="var">is_precategory_one_assoc_to_two</span> <span class="id" title="var">C</span> <span class="id" title="var">H</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_data_from_precategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">precategory_data</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">precategory_data_from_precategory</span> : <span class="id" title="var">precategory</span> &gt;-&gt; <span class="id" title="var">precategory_data</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">has_homsets</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_ob_mor</span>) : <span class="id" title="var">UU</span> := ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>, <span class="id" title="var">isaset</span> (<span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_has_homsets</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_ob_mor</span>) : <span class="id" title="var">isaprop</span> (<span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisaset</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">category</span> := ∑ <span class="id" title="var">C</span>:<span class="id" title="var">precategory</span>, <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">category_pair</span> <span class="id" title="var">C</span> <span class="id" title="var">h</span> : <span class="id" title="var">category</span> := <span class="id" title="var">C</span>,,<span class="id" title="var">h</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">category_to_precategory</span> : <span class="id" title="var">category</span> -&gt; <span class="id" title="var">precategory</span> := <span class="id" title="var">pr1</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">category_to_precategory</span> : <span class="id" title="var">category</span> &gt;-&gt; <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">homset_property</span> (<span class="id" title="var">C</span> : <span class="id" title="var">category</span>) : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_pair</span> (<span class="id" title="var">C</span>:<span class="id" title="var">precategory_data</span>) (<span class="id" title="var">i</span>:<span class="id" title="var">is_precategory</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">precategory</span> := <span class="id" title="var">C</span>,,<span class="id" title="var">i</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">makecategory</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">obj</span> : <span class="id" title="var">UU</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">mor</span> : <span class="id" title="var">obj</span> -&gt; <span class="id" title="var">obj</span> -&gt; <span class="id" title="var">UU</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">homsets</span> : ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">isaset</span> (<span class="id" title="var">mor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">identity</span> : ∏ <span class="id" title="var">i</span>, <span class="id" title="var">mor</span> <span class="id" title="var">i</span> <span class="id" title="var">i</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">compose</span> : ∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span> <span class="id" title="var">k</span> (<span class="id" title="var">f</span>:<span class="id" title="var">mor</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">mor</span> <span class="id" title="var">j</span> <span class="id" title="var">k</span>), <span class="id" title="var">mor</span> <span class="id" title="var">i</span> <span class="id" title="var">k</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">right</span> : ∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span> (<span class="id" title="var">f</span>:<span class="id" title="var">mor</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>), <span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">i</span>) <span class="id" title="var">f</span> = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">left</span>  : ∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span> (<span class="id" title="var">f</span>:<span class="id" title="var">mor</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>), <span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> (<span class="id" title="var">identity</span> <span class="id" title="var">j</span>) = <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">associativity</span> : ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> (<span class="id" title="var">f</span>:<span class="id" title="var">mor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">mor</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>) (<span class="id" title="var">h</span>:<span class="id" title="var">mor</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> (<span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>) = <span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">associativity'</span> : ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> (<span class="id" title="var">f</span>:<span class="id" title="var">mor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">g</span>:<span class="id" title="var">mor</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>) (<span class="id" title="var">h</span>:<span class="id" title="var">mor</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span> = <span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> (<span class="id" title="var">compose</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>))<br/>
+&nbsp;&nbsp;: <span class="id" title="var">category</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">precategory_pair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">precategory_data_pair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">precategory_ob_mor_pair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">obj</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>, <span class="id" title="var">mor</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">identity</span> <span class="id" title="var">compose</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="tactic">right</span>,,<span class="id" title="tactic">left</span>),,(<span class="id" title="keyword">associativity</span>,,<span class="id" title="var">associativity'</span>))),,<span class="id" title="var">homsets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_is_precategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>)(<span class="id" title="var">hs</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">isaprop</span> (<span class="id" title="var">is_precategory</span> <span class="id" title="var">C</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveltotal2</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveltotal2</span>. { <span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveltotal2</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>. }<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>. }<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">id_left</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) :<br/>
+&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">identity</span> <span class="id" title="var">a</span> · <span class="id" title="var">f</span> = <span class="id" title="var">f</span> := <span class="id" title="var">pr112</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">id_right</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) :<br/>
+&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> · <span class="id" title="var">identity</span> <span class="id" title="var">b</span> = <span class="id" title="var">f</span> := <span class="id" title="var">pr212</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">assoc</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) :<br/>
+&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>) = (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span> := <span class="id" title="var">pr122</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">assoc'</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) :<br/>
+&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span> = <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>) := <span class="id" title="var">pr222</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">id_left</span> [<span class="id" title="var">C</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>] <span class="id" title="var">f</span>.<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">id_right</span> [<span class="id" title="var">C</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>] <span class="id" title="var">f</span>.<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">assoc</span> [<span class="id" title="var">C</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>] <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>.<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">assoc'</span> [<span class="id" title="var">C</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>] <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">assoc4</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">e</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>) (<span class="id" title="var">i</span> : <span class="id" title="var">d</span> --&gt; <span class="id" title="var">e</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) · <span class="id" title="var">h</span>) · <span class="id" title="var">i</span> = <span class="id" title="var">f</span> · (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>) · <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">remove_id_left</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">a</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">h</span> = <span class="id" title="var">identity</span> <span class="id" title="var">_</span> -&gt; <span class="id" title="var">f</span> = <span class="id" title="var">g</span> -&gt; <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">eq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">identity</span> <span class="id" title="var">_</span> · <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">intermediate_path</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">eq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">remove_id_right</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">b</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">h</span> = <span class="id" title="var">identity</span> <span class="id" title="var">_</span> -&gt; <span class="id" title="var">f</span> = <span class="id" title="var">g</span> -&gt; <span class="id" title="var">f</span> · <span class="id" title="var">h</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">eq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">f</span> · <span class="id" title="var">identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">intermediate_path</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">eq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">id_conjugation</span> {<span class="id" title="var">A</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">a</span>)  (<span class="id" title="var">x</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">x</span> = <span class="id" title="var">identity</span> <span class="id" title="var">_</span> -&gt; <span class="id" title="var">f</span> · <span class="id" title="var">g</span> = <span class="id" title="var">identity</span> <span class="id" title="var">_</span> -&gt; <span class="id" title="var">f</span> · <span class="id" title="var">x</span> · <span class="id" title="var">g</span> = <span class="id" title="var">identity</span> <span class="id" title="var">_</span> .<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">H'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">cancel_postcomposition</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>: <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) : <span class="id" title="var">f</span> = <span class="id" title="var">f'</span> -&gt; <span class="id" title="var">f</span> · <span class="id" title="var">g</span> = <span class="id" title="var">f'</span> · <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">cancel_precomposition</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>: <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) : <span class="id" title="var">f</span> = <span class="id" title="var">f'</span> -&gt; <span class="id" title="var">g</span> · <span class="id" title="var">f</span> = <span class="id" title="var">g</span> · <span class="id" title="var">f'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Any equality on objects a and b induces a morphism from a to b 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">idtomor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">identity</span> <span class="id" title="var">a</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">idtomor_inv</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">a</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">identity</span> <span class="id" title="var">a</span>).<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

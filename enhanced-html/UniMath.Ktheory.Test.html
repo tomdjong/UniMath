@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Ktheory.Test</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+testing whether our way of doing coproducts fits with SubstitutionSystems  
+<div class="paragraph"> </div>
+
+ ******************************************
+Benedikt Ahrens, March 2015
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.total2_paths</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Ktheory.Representation</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="var">UniMath.Ktheory.Precategories</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">interface</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">category</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isCoproductCocone</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">co</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">ia</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">co</span>) (<span class="id" title="var">ib</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">co</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">binarySumProperty</span> <span class="id" title="var">ia</span> <span class="id" title="var">ib</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_isCoproductCocone</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">co</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">ia</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">co</span>) (<span class="id" title="var">ib</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">co</span>) :<br/>
+&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∃! <span class="id" title="var">k</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">co</span>, <span class="id" title="var">c</span>⟧,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">ia</span> · <span class="id" title="var">k</span> = <span class="id" title="var">f</span> ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">ib</span> · <span class="id" title="var">k</span> = <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;-&gt;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">isCoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">co</span> <span class="id" title="var">ia</span> <span class="id" title="var">ib</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">c</span> <span class="id" title="var">fg</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">iscontrweqf</span> <span class="id" title="var">_</span> (<span class="id" title="var">u</span> <span class="id" title="var">c</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">fg</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">fg</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">d</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">weqiff</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">ee</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodeq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">ee</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">ee</span>). } }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">ee</span>. <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">HomPair_1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">ee</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">HomPair_2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">ee</span>). } } }<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">homset_property</span> <span class="id" title="var">C</span>). }<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>. }<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">CoproductCocone</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) := <span class="id" title="var">BinarySum</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_CoproductCocone</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isCoproductCocone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> -&gt; <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">λ</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">i</span>, <span class="id" title="var">c</span>,,(<span class="id" title="var">f</span>,,<span class="id" title="var">g</span>),,<span class="id" title="var">i</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Coproducts</span> := <span class="id" title="var">BinarySums</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">hasCoproducts</span> (<span class="id" title="var">C</span>:<span class="id" title="var">category</span>) := ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span>:<span class="id" title="var">C</span>), ∥ <span class="id" title="var">BinarySum</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> ∥.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">CoproductObject</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) : <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">universalObject</span> <span class="id" title="var">CC</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">CoproductIn1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>): <span class="id" title="var">a</span> --&gt; <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">in_1</span> <span class="id" title="var">CC</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">CoproductIn2</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">in_2</span> <span class="id" title="var">CC</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">CoproductArrow</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) {<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span> --&gt; <span class="id" title="var">c</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">binarySumMap</span> <span class="id" title="var">CC</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">CoproductIn1Commutes</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) <span class="id" title="var">g</span>, <span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CC</span> · <span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CC</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>  = <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">binarySum_in_1_eqn</span> <span class="id" title="var">CC</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">CoproductIn2Commutes</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) <span class="id" title="var">g</span>, <span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CC</span> · <span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CC</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">binarySum_in_2_eqn</span> <span class="id" title="var">CC</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">CoproductArrowUnique</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">x</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">x</span>) (<span class="id" title="var">k</span> : <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span> --&gt; <span class="id" title="var">x</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CC</span> · <span class="id" title="var">k</span> = <span class="id" title="var">f</span> -&gt; <span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CC</span> · <span class="id" title="var">k</span> = <span class="id" title="var">g</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">k</span> = <span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CC</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">binarySumMapUniqueness</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">refine</span> (<span class="id" title="var">u</span> @ <span class="id" title="var">_</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">CoproductIn1Commutes</span>. }<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">refine</span> (<span class="id" title="var">v</span> @ <span class="id" title="var">_</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">CoproductIn2Commutes</span>. }<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">CoproductArrowEta</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span> --&gt; <span class="id" title="var">x</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> = <span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CC</span> (<span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CC</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CC</span> · <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">CoproductArrowUnique</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">CoproductOfArrows</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CCab</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) {<span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CCcd</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">d</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductObject</span> <span class="id" title="var">CCab</span> --&gt; <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CCcd</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CCab</span> (<span class="id" title="var">f</span> · <span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CCcd</span>) (<span class="id" title="var">g</span> · <span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CCcd</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">CoproductOfArrowsIn1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CCab</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) {<span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CCcd</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">d</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CCab</span> · <span class="id" title="var">CoproductOfArrows</span> <span class="id" title="var">CCab</span> <span class="id" title="var">CCcd</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">f</span> · <span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CCcd</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">CoproductOfArrows</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">CoproductIn1Commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">CoproductOfArrowsIn2</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CCab</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) {<span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CCcd</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">d</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CCab</span> · <span class="id" title="var">CoproductOfArrows</span> <span class="id" title="var">CCab</span> <span class="id" title="var">CCcd</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">g</span> · <span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CCcd</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">CoproductOfArrows</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">CoproductIn2Commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">precompWithCoproductArrow</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CCab</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) {<span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CCcd</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">d</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">x</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">k</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">x</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">d</span> --&gt; <span class="id" title="var">x</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductOfArrows</span> <span class="id" title="var">CCab</span> <span class="id" title="var">CCcd</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> · <span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CCcd</span> <span class="id" title="var">k</span> <span class="id" title="var">h</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CCab</span> (<span class="id" title="var">f</span> · <span class="id" title="var">k</span>) (<span class="id" title="var">g</span> · <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">CoproductArrowUnique</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">CoproductOfArrowsIn1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, <span class="id" title="var">CoproductIn1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, <span class="id" title="var">CoproductOfArrowsIn2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, <span class="id" title="var">CoproductIn2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">postcompWithCoproductArrow</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">CCab</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) {<span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) {<span class="id" title="var">x</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">k</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">x</span>)  :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CCab</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> · <span class="id" title="var">k</span> = <span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CCab</span> (<span class="id" title="var">f</span> · <span class="id" title="var">k</span>) (<span class="id" title="var">g</span> · <span class="id" title="var">k</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">CoproductArrowUnique</span>.<br/>
+&nbsp;&nbsp;-  <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, <span class="id" title="var">CoproductIn1Commutes</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;-  <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, <span class="id" title="var">CoproductIn2Commutes</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">coproduct_unique</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">H</span> : <span class="id" title="var">is_univalent</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">from_Coproduct_to_Coproduct</span> (<span class="id" title="var">CC</span> <span class="id" title="var">CC'</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span> --&gt; <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">CoproductArrow</span> <span class="id" title="var">CC</span>  (<span class="id" title="var">CoproductIn1</span> <span class="id" title="var">_</span> ) (<span class="id" title="var">CoproductIn2</span> <span class="id" title="var">_</span> )).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Coproduct_endo_is_identity</span> (<span class="id" title="var">CC</span> : <span class="id" title="var">CoproductCocone</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">k</span> : <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span> --&gt; <span class="id" title="var">CoproductObject</span> <span class="id" title="var">CC</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H1</span> : <span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CC</span> · <span class="id" title="var">k</span> = <span class="id" title="var">CoproductIn1</span> <span class="id" title="var">CC</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H2</span> : <span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CC</span> · <span class="id" title="var">k</span> = <span class="id" title="var">CoproductIn2</span> <span class="id" title="var">CC</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">identity</span> <span class="id" title="var">_</span> = <span class="id" title="var">k</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">coproduct_unique</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">interface</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_functor_pointwise_coprod</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">category</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">HD</span> : <span class="id" title="var">Coproducts</span> <span class="id" title="var">D</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">hsD</span> := <span class="id" title="var">homset_property</span> <span class="id" title="var">D</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">coproduct_functor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Coproducts_functor_precat</span> : <span class="id" title="var">Coproducts</span> (<span class="id" title="var">functor_category</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functorBinarySum</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">HD</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">coproduct_functor</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> := <span class="id" title="var">universalObject</span> (<span class="id" title="var">functorBinarySum</span> <span class="id" title="var">HD</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">coproduct_functor</span>.<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_functor_pointwise_coprod</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

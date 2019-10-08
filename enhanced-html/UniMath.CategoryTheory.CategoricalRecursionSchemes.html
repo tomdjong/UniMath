@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.CategoricalRecursionSchemes</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Author : Hichem Saghrouni
+Internship at IRIT, 2018
+Under the supervision of Ralph Matthes
+
+<div class="paragraph"> </div>
+
+Later continued by Ralph Matthes (R.M.), see the end of this comment.
+
+<div class="paragraph"> </div>
+
+Work on the paper
+HINZE, R. and WU, N., 2016. Unifying structured recursion schemes: An Extended Study. Journal of Functional Programming, vol. 26, https://doi.org/10.1017/S0956796815000258.
+
+<div class="paragraph"> </div>
+
+The purpose of this file is to formalize in UniMath the recursion scheme
+presented by Hinze and Wu, with their original approach making use of
+liftings and conjugates.
+
+<div class="paragraph"> </div>
+
+For this, we formalize the notions of
+<ul class="doclist">
+<li> Distributive Laws, which are natural transformations between
+
+</li>
+</ul>
+compositions of functors
+<ul class="doclist">
+<li> Conjugates, which induce a binary relation between distributive laws,
+
+</li>
+</ul>
+defined by certain identities found in this document
+<ul class="doclist">
+<li> Liftings, which constitute a specific type of functors between F-Algebras
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+These constructions finally allow us to follow the proof by Hinze and Wu
+of their theorem (found under "Theorem 5.2 (Adjoint folds)" in their
+paper) and thus reprove it formally.
+
+<div class="paragraph"> </div>
+
+Added by R.M.: how canonically defined liftings compose
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorAlgebras</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.EndofunctorsMonoidal</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.initial</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">DefDistrLaw</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) (<span class="id" title="var">F'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C</span>) (<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">D</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the definition of Hinze and Wu - no other laws required for being considered a distributive law 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">DistrLaw</span>  : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans</span> (<span class="id" title="var">H</span> ∙ <span class="id" title="var">F</span>) (<span class="id" title="var">F'</span> ∙ <span class="id" title="var">K</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+a small help for later type-checking 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">DistrLaw_data</span>  : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans_data</span> (<span class="id" title="var">H</span> ∙ <span class="id" title="var">F</span>) (<span class="id" title="var">F'</span> ∙ <span class="id" title="var">K</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">DefDistrLaw</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">OperationsDistrLaws</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">comp_distr_laws</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">C''</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> <span class="id" title="var">D''</span> : <span class="id" title="var">precategory</span>}{<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}{<span class="id" title="var">F'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">F''</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C''</span> <span class="id" title="var">D''</span>}{<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C</span>}{<span class="id" title="var">H'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C''</span> <span class="id" title="var">C'</span>}{<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">D</span>}{<span class="id" title="var">K'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D''</span> <span class="id" title="var">D'</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F</span> <span class="id" title="var">F'</span> <span class="id" title="var">H</span> <span class="id" title="var">K</span>) (<span class="id" title="var">lambda'</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F'</span> <span class="id" title="var">F''</span> <span class="id" title="var">H'</span> <span class="id" title="var">K'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">DistrLaw</span> <span class="id" title="var">F</span> <span class="id" title="var">F''</span> (<span class="id" title="var">H'</span> ∙ <span class="id" title="var">H</span> ) (<span class="id" title="var">K'</span> ∙ <span class="id" title="var">K</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">α_functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">α_functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pre_whisker</span> <span class="id" title="var">H'</span> <span class="id" title="var">lambda</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">α_functor_inv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">post_whisker</span> <span class="id" title="var">lambda'</span> <span class="id" title="var">K</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">id_distr_law</span>  {<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">DistrLaw</span> <span class="id" title="var">F</span> <span class="id" title="var">F</span> (<span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span>) (<span class="id" title="var">functor_identity</span> <span class="id" title="var">D</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ_functor</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> ρ<span class="id" title="var">_functor_inv</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">comp_distr_laws_assoc</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">C''</span> <span class="id" title="var">C'''</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> <span class="id" title="var">D''</span> <span class="id" title="var">D'''</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>}  {<span class="id" title="var">F''</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C''</span> <span class="id" title="var">D''</span>} {<span class="id" title="var">F'''</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'''</span> <span class="id" title="var">D'''</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C</span>} {<span class="id" title="var">H'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C''</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">H''</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'''</span> <span class="id" title="var">C''</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">D</span>} {<span class="id" title="var">K'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D''</span> <span class="id" title="var">D'</span>} {<span class="id" title="var">K''</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'''</span> <span class="id" title="var">D''</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>) (<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F</span> <span class="id" title="var">F'</span> <span class="id" title="var">H</span> <span class="id" title="var">K</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">lambda'</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F'</span> <span class="id" title="var">F''</span> <span class="id" title="var">H'</span> <span class="id" title="var">K'</span>) (<span class="id" title="var">lambda''</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F''</span> <span class="id" title="var">F'''</span> <span class="id" title="var">H''</span> <span class="id" title="var">K''</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">comp_distr_laws</span> (<span class="id" title="var">comp_distr_laws</span> <span class="id" title="var">lambda</span> <span class="id" title="var">lambda'</span>) <span class="id" title="var">lambda''</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">comp_distr_laws</span> <span class="id" title="var">lambda</span> (<span class="id" title="var">comp_distr_laws</span> <span class="id" title="var">lambda'</span> <span class="id" title="var">lambda''</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">aux1</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">lambda</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>. &nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">id_distr_law_left</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">C'</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">F'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C</span>) (<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>) (<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F</span> <span class="id" title="var">F'</span> <span class="id" title="var">H</span> <span class="id" title="var">K</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">comp_distr_laws</span> (<span class="id" title="var">id_distr_law</span> <span class="id" title="var">F</span>) <span class="id" title="var">lambda</span>  = <span class="id" title="var">lambda</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">F'</span> <span class="id" title="var">H</span> <span class="id" title="var">K</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">lambda</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">id_distr_law_right</span> {<span class="id" title="var">C'</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">F'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>) :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C</span>) (<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>) (<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F</span> <span class="id" title="var">F'</span> <span class="id" title="var">H</span> <span class="id" title="var">K</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">comp_distr_laws</span> <span class="id" title="var">lambda</span> (<span class="id" title="var">id_distr_law</span> <span class="id" title="var">F'</span>)  = <span class="id" title="var">lambda</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">K</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">lambda</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">OperationsDistrLaws</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Conjugates</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">adjuncts_mutually_inverse1</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">A</span> : <span class="id" title="var">D</span>} {<span class="id" title="var">B</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">L</span> <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">R</span> <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">f</span> = φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span> -&gt; φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">η</span> := <span class="id" title="var">unit_from_are_adjoints</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ε</span> := <span class="id" title="var">counit_from_are_adjoints</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">triangle_right</span> := <span class="id" title="var">triangle_id_right_ad</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">unit_from_are_adjoints</span> <span class="id" title="var">h</span>) <span class="id" title="keyword">with</span> <span class="id" title="var">η</span> <span class="id" title="tactic">in</span> <span class="id" title="var">triangle_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">counit_from_are_adjoints</span> <span class="id" title="var">h</span>) <span class="id" title="keyword">with</span> <span class="id" title="var">ε</span> <span class="id" title="tactic">in</span> <span class="id" title="var">triangle_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> φ<span class="id" title="var">_adj</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">hyp</span> : <span class="id" title="var">f</span> = (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> φ<span class="id" title="var">_adj_inv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (# <span class="id" title="var">R</span> (# <span class="id" title="var">L</span> <span class="id" title="var">g</span>)) <span class="id" title="keyword">with</span> (# (<span class="id" title="var">L</span> ∙ <span class="id" title="var">R</span>) <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">Hη</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">η</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hη</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;-  <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">triangle_right</span> <span class="id" title="var">B</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">adjuncts_mutually_inverse2</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">A</span> : <span class="id" title="var">D</span>} {<span class="id" title="var">B</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">L</span> <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">R</span> <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span> = <span class="id" title="var">g</span> -&gt; <span class="id" title="var">f</span> = φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">η</span> := <span class="id" title="var">unit_from_are_adjoints</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ε</span> := <span class="id" title="var">counit_from_are_adjoints</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">triangle_left</span> := <span class="id" title="var">triangle_id_left_ad</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> φ<span class="id" title="var">_adj_inv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">hyp</span> : <span class="id" title="var">g</span> = (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> φ<span class="id" title="var">_adj</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> ( # <span class="id" title="var">L</span> (# <span class="id" title="var">R</span> <span class="id" title="var">f</span>)) <span class="id" title="keyword">with</span> (# (<span class="id" title="var">R</span> ∙ <span class="id" title="var">L</span>) <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">Hε</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">ε</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hε</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">triangle_left</span> <span class="id" title="var">A</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">are_conjugates</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>}{<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(σ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span>) (τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">A</span> : <span class="id" title="var">D</span>) (<span class="id" title="var">B</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : (<span class="id" title="var">L</span> <span class="id" title="var">A</span>) --&gt; <span class="id" title="var">B</span>),<br/>
+&nbsp;&nbsp;φ<span class="id" title="var">_adj</span> <span class="id" title="var">h'</span> (<span class="id" title="var">nat_trans_data_from_nat_trans</span> σ <span class="id" title="var">A</span> · #<span class="id" title="var">H</span> <span class="id" title="var">f</span>) = #<span class="id" title="var">K</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span>) · <span class="id" title="var">nat_trans_data_from_nat_trans</span> τ <span class="id" title="var">B</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">are_conjugates'</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>}  {<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(σ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span>) (τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">A</span> : <span class="id" title="var">D</span>) (<span class="id" title="var">B</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">R</span> <span class="id" title="var">B</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans_data_from_nat_trans</span> σ <span class="id" title="var">A</span> · #<span class="id" title="var">H</span> (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>) = φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h'</span> (#<span class="id" title="var">K</span> <span class="id" title="var">g</span> · <span class="id" title="var">nat_trans_data_from_nat_trans</span> τ <span class="id" title="var">B</span> ).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_are_conjugates</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>} {<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(σ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span>) (τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) (<span class="id" title="var">hs</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">D'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">are_conjugates</span> <span class="id" title="var">h</span> <span class="id" title="var">h'</span> σ τ).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_are_conjugates'</span>  {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>} {<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(σ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span>) (τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) (<span class="id" title="var">hs</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">are_conjugates'</span> <span class="id" title="var">h</span> <span class="id" title="var">h'</span> σ τ).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">are_conjugates_is_are_conjugates'</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>} {<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> } (<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(σ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span>) (τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hsC'</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C'</span>) (<span class="id" title="var">hsD'</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">D'</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">are_conjugates</span> <span class="id" title="var">h</span> <span class="id" title="var">h'</span> σ τ = <span class="id" title="var">are_conjugates'</span> <span class="id" title="var">h</span> <span class="id" title="var">h'</span> σ τ.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">propositionalUnivalenceAxiom</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_are_conjugates</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_are_conjugates'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">P</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span> <span class="id" title="tactic">in</span> <span class="id" title="var">P</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">hyp</span> := (<span class="id" title="var">P</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">adjuncts_mutually_inverse2</span> <span class="id" title="tactic">in</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">hyp2</span> : # <span class="id" title="var">K</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>)) = # <span class="id" title="var">K</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_after_</span>φ<span class="id" title="var">_adj_inv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 : {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hyp2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">P</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span> <span class="id" title="tactic">in</span> <span class="id" title="var">P</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">hyp</span> := (<span class="id" title="var">P</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">adjuncts_mutually_inverse1</span> <span class="id" title="var">h'</span> (<span class="id" title="var">pr1</span> σ <span class="id" title="var">A</span> · # <span class="id" title="var">H</span> (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span>))) (# <span class="id" title="var">K</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span>) · <span class="id" title="var">pr1</span> τ <span class="id" title="var">B</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">hyp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2 : {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_inv_after_</span>φ<span class="id" title="var">_adj</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hyp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> σ<span class="id" title="var">_data_from_</span>τ {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>} {<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) : <span class="id" title="var">DistrLaw_data</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">A</span> : <span class="id" title="var">D</span>, φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h'</span> (#<span class="id" title="var">K</span> (<span class="id" title="var">unit_from_are_adjoints</span> <span class="id" title="var">h</span> <span class="id" title="var">A</span>) · <span class="id" title="var">nat_trans_data_from_nat_trans</span> τ (<span class="id" title="var">L</span> <span class="id" title="var">A</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> σ<span class="id" title="var">_from_</span>τ {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>} {<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>) (τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">mk_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (σ<span class="id" title="var">_data_from_</span>τ <span class="id" title="var">h</span> <span class="id" title="var">h'</span> τ)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> σ<span class="id" title="var">_data_from_</span>τ.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_inv_natural_precomp</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_inv_natural_postcomp</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;2: {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H</span>τ := <span class="id" title="var">nat_trans_ax</span> τ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span>  (# <span class="id" title="var">R'</span> (# <span class="id" title="var">H</span> (# <span class="id" title="var">L</span> <span class="id" title="var">f</span>))) <span class="id" title="keyword">with</span> ( # (<span class="id" title="var">H</span> ∙ <span class="id" title="var">R'</span>) (#<span class="id" title="var">L</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>τ.<br/>
+&nbsp;&nbsp;}<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (# (<span class="id" title="var">R</span> ∙ <span class="id" title="var">K</span>) (# <span class="id" title="var">L</span> <span class="id" title="var">f</span>)) <span class="id" title="keyword">with</span> (# <span class="id" title="var">K</span> (# (<span class="id" title="var">L</span> ∙ <span class="id" title="var">R</span>) <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;2 : {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">Hη</span> := <span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">unit_from_are_adjoints</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hη</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> σ<span class="id" title="var">_from_</span>τ<span class="id" title="var">_is_conjugate</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>} {<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>} {<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C'</span>) (τ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">are_conjugates'</span> <span class="id" title="var">h</span> <span class="id" title="var">h'</span> (σ<span class="id" title="var">_from_</span>τ <span class="id" title="var">h</span> <span class="id" title="var">h'</span> τ) τ.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> σ<span class="id" title="var">_from_</span>τ.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> σ<span class="id" title="var">_data_from_</span>τ.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">η</span> := (<span class="id" title="var">unit_from_are_adjoints</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_inv_natural_postcomp</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H</span>τ := <span class="id" title="var">nat_trans_ax</span> τ).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>τ.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (# (<span class="id" title="var">R</span> ∙ <span class="id" title="var">K</span>) (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>)) <span class="id" title="keyword">with</span> (# <span class="id" title="var">K</span> (# <span class="id" title="var">R</span> (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">nat_trans_data_from_nat_trans</span> <span class="id" title="var">η</span> <span class="id" title="var">A</span> · # <span class="id" title="var">R</span> (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>)) <span class="id" title="keyword">with</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> (φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_after_</span>φ<span class="id" title="var">_adj_inv</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> τ<span class="id" title="var">_data_from_</span>σ {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">R'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">D'</span>} {<span class="id" title="var">H</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">K</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D'</span> }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) (<span class="id" title="var">h'</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L'</span> <span class="id" title="var">R'</span>) (σ : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L'</span> <span class="id" title="var">L</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">DistrLaw_data</span> <span class="id" title="var">K</span> <span class="id" title="var">H</span> <span class="id" title="var">R</span> <span class="id" title="var">R'</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">B</span> : <span class="id" title="var">C</span>, φ<span class="id" title="var">_adj</span> <span class="id" title="var">h'</span> (<span class="id" title="var">nat_trans_data_from_nat_trans</span> σ (<span class="id" title="var">R</span> <span class="id" title="var">B</span>) · #<span class="id" title="var">H</span> (<span class="id" title="var">counit_from_are_adjoints</span> <span class="id" title="var">h</span> <span class="id" title="var">B</span>)).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Conjugates</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Liftings</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_lifting</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">hsD</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>) {<span class="id" title="var">F</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>} {<span class="id" title="var">G</span>: <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D</span>} (<span class="id" title="var">H</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) (<span class="id" title="var">HH</span>: <span class="id" title="var">functor</span> (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">F</span> <span class="id" title="var">hsC</span>) (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">G</span> <span class="id" title="var">hsD</span>)): <span class="id" title="var">UU</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">UF</span> := <span class="id" title="var">forget_algebras</span> <span class="id" title="var">F</span> <span class="id" title="var">hsC</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">UG</span> := <span class="id" title="var">forget_algebras</span> <span class="id" title="var">G</span> <span class="id" title="var">hsD</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">UF</span> ∙ <span class="id" title="var">H</span> = <span class="id" title="var">HH</span> ∙ <span class="id" title="var">UG</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lifting_from_distr_law_data</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">hsD</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>) {<span class="id" title="var">F</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>} {<span class="id" title="var">G</span>: <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D</span>} {<span class="id" title="var">H</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>} (<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">G</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">H</span>): <span class="id" title="var">functor_data</span> (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">F</span> <span class="id" title="var">hsC</span>) (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">G</span> <span class="id" title="var">hsD</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_functor_data</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Aa</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">A</span> := <span class="id" title="var">alg_carrier</span> <span class="id" title="var">_</span> <span class="id" title="var">Aa</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">a</span> := <span class="id" title="var">alg_map</span> <span class="id" title="var">_</span> <span class="id" title="var">Aa</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">B</span> := <span class="id" title="var">H</span> <span class="id" title="var">A</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">b</span> := <span class="id" title="var">nat_trans_data_from_nat_trans</span> <span class="id" title="var">lambda</span> <span class="id" title="var">A</span> · (# <span class="id" title="var">H</span> <span class="id" title="var">a</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">B</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">b</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Aa</span> <span class="id" title="var">Bb</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H_lambda_h</span> := #<span class="id" title="var">H</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">algebra_mor</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H_lambda_h</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">is_algebra_mor</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">H_lambda_h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ax</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">lambda</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ax</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">h_commutes</span> := <span class="id" title="var">algebra_mor_commutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (# (<span class="id" title="var">F</span> ∙ <span class="id" title="var">H</span>) <span class="id" title="var">h</span>) <span class="id" title="keyword">with</span> (# <span class="id" title="var">H</span> (# <span class="id" title="var">F</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">functor_comp</span> <span class="id" title="var">H</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">h_commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lifting_from_distr_law</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">hsD</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>) {<span class="id" title="var">F</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>} {<span class="id" title="var">G</span>: <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D</span>} {<span class="id" title="var">H</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>} (<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">G</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">H</span>): <span class="id" title="var">functor</span> (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">F</span> <span class="id" title="var">hsC</span>) (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">G</span> <span class="id" title="var">hsD</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">HH_data</span> := <span class="id" title="var">lifting_from_distr_law_data</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> <span class="id" title="var">lambda</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_functor</span> <span class="id" title="var">HH_data</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Aa</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">HH_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">lifting_from_distr_law_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.MoreFoundations.Tactics.show_id_type</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">algebra_mor_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Aa</span> <span class="id" title="var">Bb</span> <span class="id" title="var">Cc</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">HH_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">lifting_from_distr_law_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.MoreFoundations.Tactics.show_id_type</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">algebra_mor_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">lifting_from_distr_law_is_lifting</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">hsD</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>) {<span class="id" title="var">F</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>} {<span class="id" title="var">G</span>: <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D</span>} (<span class="id" title="var">H</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) (<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">G</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">H</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_lifting</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> <span class="id" title="var">H</span> (<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> <span class="id" title="var">lambda</span> ).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">is_lifting</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">Hλ</span> := <span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> <span class="id" title="var">lambda</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_eq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">UniMath.MoreFoundations.Tactics.show_id_type</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+a simple preparation for the next lemma - strictly speaking, not even needed 
+</div>
+<div class="code">
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">get_sides_of_eq</span> := <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> |- @<span class="id" title="var">paths</span> <span class="id" title="var">_</span> ?<span class="id" title="var">L</span> ?<span class="id" title="var">R</span> =&gt; <span class="id" title="tactic">set</span> (<span class="id" title="tactic">left</span> := <span class="id" title="var">L</span>); <span class="id" title="tactic">set</span> (<span class="id" title="tactic">right</span> := <span class="id" title="var">R</span>) <span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">idtomor</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> } <span class="id" title="var">_</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+unnamed result by Hinze &amp; Wu, mentioned in their Sect. 3.2.1 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">liftings_from_distr_laws_compose</span> {<span class="id" title="var">C</span> <span class="id" title="var">C'</span> <span class="id" title="var">C''</span>: <span class="id" title="var">precategory</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">hsC'</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C'</span>) (<span class="id" title="var">hsC''</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C''</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>} {<span class="id" title="var">F'</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">F''</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C''</span> <span class="id" title="var">C''</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">H</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>} {<span class="id" title="var">H'</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C''</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">lambda</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F'</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">H</span>)(<span class="id" title="var">lambda'</span> : <span class="id" title="var">DistrLaw</span> <span class="id" title="var">F''</span> <span class="id" title="var">F'</span> <span class="id" title="var">H'</span> <span class="id" title="var">H'</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsC'</span> <span class="id" title="var">lambda</span> ∙ <span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC'</span> <span class="id" title="var">hsC''</span> <span class="id" title="var">lambda'</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsC''</span> (<span class="id" title="var">H</span> := <span class="id" title="var">H</span> ∙ <span class="id" title="var">H'</span>) (<span class="id" title="var">comp_distr_laws</span> <span class="id" title="var">lambda'</span> <span class="id" title="var">lambda</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_eq</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> (<span class="id" title="var">has_homsets_FunctorAlg</span> <span class="id" title="var">_</span> <span class="id" title="var">hsC''</span>). }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">get_sides_of_eq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">left'</span> := <span class="id" title="var">functor_composite_data</span> (<span class="id" title="var">lifting_from_distr_law_data</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsC'</span> <span class="id" title="var">lambda</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">lifting_from_distr_law_data</span> <span class="id" title="var">hsC'</span> <span class="id" title="var">hsC''</span> <span class="id" title="var">lambda'</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">right'</span> := <span class="id" title="var">lifting_from_distr_law_data</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsC''</span> (<span class="id" title="var">comp_distr_laws</span> <span class="id" title="var">lambda'</span> <span class="id" title="var">lambda</span>)<br/>
+&nbsp;&nbsp;&nbsp;: <span class="id" title="var">functor_data</span> (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">F</span> <span class="id" title="var">hsC</span>) (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">F''</span> <span class="id" title="var">hsC''</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">transparent</span> <span class="id" title="tactic">assert</span> (<span class="id" title="var">okonobs</span>: (<span class="id" title="var">functor_on_objects</span> <span class="id" title="var">left'</span> ~ <span class="id" title="var">functor_on_objects</span> <span class="id" title="var">right'</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="var">alg</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">H'</span> (<span class="id" title="var">H</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F</span> <span class="id" title="var">alg</span>))) <span class="id" title="var">p</span> )).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp</span>).<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">functor_data_eq_from_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">okonobs</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">alg1</span> <span class="id" title="var">alg2</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">algebra_mor_eq</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">assumption</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.MoreFoundations.Tactics.show_id_type</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">idtomor_FunctorAlg_commutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">okonobs</span> <span class="id" title="var">alg2</span>)).<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;2: {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.MoreFoundations.Tactics.show_id_type</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">idtomor_FunctorAlg_commutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">okonobs</span> <span class="id" title="var">alg1</span>)).<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hyp</span>: (<span class="id" title="var">idtomor</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F''</span>) (<span class="id" title="var">okonobs</span> <span class="id" title="var">alg1</span>)) = <span class="id" title="var">identity</span> <span class="id" title="var">_</span>) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idtomor</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F''</span>) (<span class="id" title="var">okonobs</span> <span class="id" title="var">alg2</span>)) = <span class="id" title="var">identity</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">unfold</span> <span class="id" title="var">okonobs</span>; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpathscomp</span> (<span class="id" title="var">λ</span> <span class="id" title="var">p</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">C''</span> ⟦ <span class="id" title="var">F''</span> (<span class="id" title="var">H'</span> (<span class="id" title="var">H</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F</span> <span class="id" title="var">alg1</span>))), <span class="id" title="var">H'</span> (<span class="id" title="var">H</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F</span> <span class="id" title="var">alg1</span>)) ⟧,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">tpair</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">X</span>: <span class="id" title="var">C''</span> =&gt; <span class="id" title="var">C''</span> ⟦ <span class="id" title="var">F''</span> <span class="id" title="var">X</span>, <span class="id" title="var">X</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H'</span> (<span class="id" title="var">H</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F</span> <span class="id" title="var">alg1</span>))) <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F''</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">UniMath.MoreFoundations.PartA.maponpaths_for_constant_function</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpathscomp</span> (<span class="id" title="var">λ</span> <span class="id" title="var">p</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">C''</span> ⟦ <span class="id" title="var">F''</span> (<span class="id" title="var">H'</span> (<span class="id" title="var">H</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F</span> <span class="id" title="var">alg2</span>))), <span class="id" title="var">H'</span> (<span class="id" title="var">H</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F</span> <span class="id" title="var">alg2</span>)) ⟧,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">tpair</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">X</span>: <span class="id" title="var">C''</span> =&gt; <span class="id" title="var">C''</span> ⟦ <span class="id" title="var">F''</span> <span class="id" title="var">X</span>, <span class="id" title="var">X</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H'</span> (<span class="id" title="var">H</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F</span> <span class="id" title="var">alg2</span>))) <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">alg_carrier</span> <span class="id" title="var">F''</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">UniMath.MoreFoundations.PartA.maponpaths_for_constant_function</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">Hyp</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">Hyp1</span> <span class="id" title="var">Hyp2</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hyp1</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hyp2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Liftings</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">AdjointFolds</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "↓ f" := (<span class="id" title="var">mor_from_algebra_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 3, <span class="id" title="var">format</span> "↓ f").<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span>: <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">hsD</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;{<span class="id" title="var">L</span>: <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">C</span>} {<span class="id" title="var">R</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>}  (<span class="id" title="var">h</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">L</span> <span class="id" title="var">R</span>) {<span class="id" title="var">CC</span>: <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>} {<span class="id" title="var">DD</span>: <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">D</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">μDD_Initial</span> : <span class="id" title="var">Initial</span> (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">DD</span> <span class="id" title="var">hsD</span>))<br/>
+&nbsp;&nbsp;{σ: <span class="id" title="var">DistrLaw</span> <span class="id" title="var">L</span> <span class="id" title="var">L</span> <span class="id" title="var">DD</span> <span class="id" title="var">CC</span>} {τ: <span class="id" title="var">DistrLaw</span> <span class="id" title="var">DD</span> <span class="id" title="var">CC</span> <span class="id" title="var">R</span> <span class="id" title="var">R</span>} (<span class="id" title="var">hh</span>: <span class="id" title="var">are_conjugates</span> <span class="id" title="var">h</span> <span class="id" title="var">h</span> σ τ)<br/>
+&nbsp;&nbsp;{<span class="id" title="var">B</span>: <span class="id" title="var">C</span>} (<span class="id" title="var">b</span>: <span class="id" title="var">CC</span> <span class="id" title="var">B</span> --&gt; <span class="id" title="var">B</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">AF</span> := <span class="id" title="var">FunctorAlg</span> <span class="id" title="var">CC</span> <span class="id" title="var">hsC</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">AlgConstr</span> (<span class="id" title="var">A</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">a</span> : <span class="id" title="var">CC</span> <span class="id" title="var">A</span> --&gt; <span class="id" title="var">A</span>) : <span class="id" title="var">AF</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">B</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">b</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">μDD</span>: <span class="id" title="var">D</span> := <span class="id" title="var">alg_carrier</span> <span class="id" title="var">_</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">μDD_Initial</span>).<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">inDD</span>: <span class="id" title="var">DD</span>(<span class="id" title="var">μDD</span>) --&gt; <span class="id" title="var">μDD</span> := <span class="id" title="var">alg_map</span> <span class="id" title="var">_</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">μDD_Initial</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">traho_of_Hinze_Wu</span> : <span class="id" title="var">L</span> <span class="id" title="var">μDD</span> --&gt; <span class="id" title="var">B</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">x</span> := φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span> ↓(<span class="id" title="var">InitialArrow</span> <span class="id" title="var">μDD_Initial</span> (<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> τ (<span class="id" title="var">AlgConstr</span> <span class="id" title="var">B</span> <span class="id" title="var">b</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">x</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> φ<span class="id" title="var">_adj_traho_of_Hinze_Wu</span> : <span class="id" title="var">algebra_mor</span> <span class="id" title="var">DD</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">μDD_Initial</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> τ) (<span class="id" title="var">AlgConstr</span> <span class="id" title="var">B</span> <span class="id" title="var">b</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">traho_of_Hinze_Wu</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">traho_of_Hinze_Wu</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> φ<span class="id" title="var">_adj_after_</span>φ<span class="id" title="var">_adj_inv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">algebra_mor_commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">traho_of_Hinze_Wu_ok</span> : #<span class="id" title="var">L</span> <span class="id" title="var">inDD</span> · <span class="id" title="var">traho_of_Hinze_Wu</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat_trans_data_from_nat_trans</span> σ <span class="id" title="var">μDD</span> · # <span class="id" title="var">CC</span> <span class="id" title="var">traho_of_Hinze_Wu</span> · <span class="id" title="var">b</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> φ<span class="id" title="var">_adj_inv_after_</span>φ<span class="id" title="var">_adj</span> .<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">R</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> φ<span class="id" title="var">_adj_inv_after_</span>φ<span class="id" title="var">_adj</span> .<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">R</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> φ<span class="id" title="var">_adj_natural_postcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> φ<span class="id" title="var">_adj_natural_precomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">hh</span> .<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">nat_trans_data_from_nat_trans</span> τ <span class="id" title="var">B</span> · # <span class="id" title="var">R</span> <span class="id" title="var">b</span>) <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">alg_map</span> <span class="id" title="var">DD</span> ((<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> τ) (<span class="id" title="var">AlgConstr</span> <span class="id" title="var">B</span> <span class="id" title="var">b</span>))).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span>  (<span class="id" title="var">algebra_mor_commutes</span> <span class="id" title="var">DD</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> φ<span class="id" title="var">_adj_traho_of_Hinze_Wu</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> φ<span class="id" title="var">_adj_h_x</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span> ⟦ <span class="id" title="var">L</span> <span class="id" title="var">μDD</span>, <span class="id" title="var">B</span> ⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Hyp</span>: # <span class="id" title="var">DD</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>) · <span class="id" title="var">alg_map</span> <span class="id" title="var">DD</span> ((<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> τ)(<span class="id" title="var">AlgConstr</span> <span class="id" title="var">B</span> <span class="id" title="var">b</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inDD</span> · φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">algebra_mor</span> <span class="id" title="var">DD</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">μDD_Initial</span>) ((<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> τ) (<span class="id" title="var">AlgConstr</span> <span class="id" title="var">B</span> <span class="id" title="var">b</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hyp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> φ<span class="id" title="var">_adj_h_x_equals_initial_arrow</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span> ⟦ <span class="id" title="var">L</span> <span class="id" title="var">μDD</span>, <span class="id" title="var">B</span> ⟧) :<br/>
+&nbsp;&nbsp;# <span class="id" title="var">DD</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>) · <span class="id" title="var">alg_map</span> <span class="id" title="var">DD</span>((<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> τ)(<span class="id" title="var">AlgConstr</span> <span class="id" title="var">B</span> <span class="id" title="var">b</span>)) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">inDD</span> · φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span> -&gt;<br/>
+&nbsp;&nbsp;φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span> = ↓ (<span class="id" title="var">InitialArrow</span> <span class="id" title="var">μDD_Initial</span> ((<span class="id" title="var">lifting_from_distr_law</span> <span class="id" title="var">hsC</span> <span class="id" title="var">hsD</span> τ) (<span class="id" title="var">AlgConstr</span> <span class="id" title="var">B</span> <span class="id" title="var">b</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Hyp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">aux</span> := <span class="id" title="var">InitialArrowUnique</span> <span class="id" title="var">μDD_Initial</span> <span class="id" title="var">_</span> (φ<span class="id" title="var">_adj_h_x</span> <span class="id" title="var">x</span> <span class="id" title="var">Hyp</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">aux'</span> := <span class="id" title="var">mor_from_algebra_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (φ<span class="id" title="var">_adj_h_x</span> <span class="id" title="var">x</span> <span class="id" title="var">Hyp</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">aux'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>) <span class="id" title="keyword">with</span> (<span class="id" title="var">mor_from_algebra_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (φ<span class="id" title="var">_adj_h_x</span> <span class="id" title="var">x</span> <span class="id" title="var">Hyp</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">aux</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The following formalizes Theorem 5.2 (Adjoint folds) of Hinze and Wu. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">TheoremOfHinzeAndWu</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">iscontr</span> (∑ <span class="id" title="var">x</span> : <span class="id" title="var">L</span> <span class="id" title="var">μDD</span> --&gt; <span class="id" title="var">B</span>, #<span class="id" title="var">L</span> <span class="id" title="var">inDD</span> · <span class="id" title="var">x</span> = <span class="id" title="var">nat_trans_data_from_nat_trans</span> σ <span class="id" title="var">μDD</span> · # <span class="id" title="var">CC</span> <span class="id" title="var">x</span> · <span class="id" title="var">b</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">traho_of_Hinze_Wu</span>,, <span class="id" title="var">traho_of_Hinze_Wu_ok</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">t</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">x</span> <span class="id" title="var">hyp</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">same</span>: <span class="id" title="var">x</span> = <span class="id" title="var">traho_of_Hinze_Wu</span>).<br/>
+&nbsp;&nbsp;2: {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">same</span>.<br/>
+&nbsp;&nbsp;}<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (φ<span class="id" title="var">_adj_inv_after_</span>φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;2: {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (φ<span class="id" title="var">_adj_inv_after_</span>φ<span class="id" title="var">_adj</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">traho_of_Hinze_Wu</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (φ<span class="id" title="var">_adj_after_</span>φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">h</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_h_x_equals_initial_arrow</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hh</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_natural_postcomp</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;2 : {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_natural_precomp</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hyp</span>.<br/>
+
+<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">AdjointFolds</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

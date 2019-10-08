@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Bicategories.DisplayedBicats.Examples.Trivial</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1716"></a><h2 class="section">Trivial display.</h2>
+
+
+<div class="paragraph"> </div>
+
+   Every bicategory is, in a trivial way, a displayed bicategory over any other
+   bicategory.                                                                         
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.PartA</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.DisplayedCats.Auxiliary</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.DisplayedCats.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.DisplayedCats.Constructions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Bicat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">Bicat.Notations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Examples.Initial</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Examples.Final</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.DisplayedBicats.DispBicat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">DispBicat.Notations</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">mor_disp_scope</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">transportf_trivial</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">UU</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">A</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">x</span> = <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> : <span class="id" title="var">A</span>, <span class="id" title="var">B</span>) <span class="id" title="var">p</span> <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Trivial_Displayed</span>.<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#B"><span class="id" title="variable">B</span></a></span> is the the base bicategory and <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#C"><span class="id" title="variable">C</span></a></span> is the bicategory that we trivially
+    display over <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#B"><span class="id" title="variable">B</span></a></span>.                                                                  
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> (<span class="id" title="var">B</span> <span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivial_disp_cat_ob_mor</span> : <span class="id" title="var">disp_cat_ob_mor</span> <span class="id" title="var">B</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">mk_disp_cat_ob_mor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">B</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : <span class="id" title="var">B</span>, <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> (<span class="id" title="var">_</span> <span class="id" title="var">_</span> : <span class="id" title="var">B</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) <span class="id" title="var">_</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">b</span>⟧).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivial_disp_cat_id_comp</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">disp_cat_id_comp</span> <span class="id" title="var">B</span> <span class="id" title="var">trivial_disp_cat_ob_mor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= (<span class="id" title="var">λ</span> (<span class="id" title="var">_</span> : <span class="id" title="var">B</span>) (<span class="id" title="var">a</span> : <span class="id" title="var">C</span>), <span class="id" title="var">identity</span> <span class="id" title="var">a</span>),,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> (<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> : <span class="id" title="var">B</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">b</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>,<span class="id" title="var">c</span>⟧), <span class="id" title="var">f</span> · <span class="id" title="var">g</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivial_disp_cat_data</span> : <span class="id" title="var">disp_cat_data</span> <span class="id" title="var">B</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">trivial_disp_cat_ob_mor</span>,, <span class="id" title="var">trivial_disp_cat_id_comp</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivial_disp_prebicat_1_id_comp_cells</span> : <span class="id" title="var">disp_prebicat_1_id_comp_cells</span> <span class="id" title="var">B</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">tpair</span> (<span class="id" title="var">λ</span> <span class="id" title="var">C</span>:<span class="id" title="var">disp_cat_data</span> <span class="id" title="var">B</span>, <span class="id" title="var">disp_2cell_struct</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">trivial_disp_cat_data</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>, <span class="id" title="var">f</span> ==&gt; <span class="id" title="var">g</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivial_displayed_data</span> : <span class="id" title="var">disp_prebicat_data</span> <span class="id" title="var">B</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">trivial_disp_prebicat_1_id_comp_cells</span>,, <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>, <span class="id" title="var">id2</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>, <span class="id" title="var">lunitor</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>, <span class="id" title="var">runitor</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>, <span class="id" title="var">linvunitor</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>, <span class="id" title="var">rinvunitor</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>, <span class="id" title="var">rassociator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>, <span class="id" title="var">lassociator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">vcomp2</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g1</span> <span class="id" title="var">g2</span> <span class="id" title="var">x</span>, <span class="id" title="var">lwhisker</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>, <span class="id" title="var">rwhisker</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">trivial_disp_prebicat_laws</span> : <span class="id" title="var">disp_prebicat_laws</span> <span class="id" title="var">trivial_displayed_data</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>; <span class="id" title="tactic">red</span>; <span class="id" title="var">cbn</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">id2_left</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">id2_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">vassocr</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">lwhisker_id2</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">id2_rwhisker</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">lwhisker_vcomp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">rwhisker_vcomp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_lunitor</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_runitor</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">lwhisker_lwhisker</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">rwhisker_lwhisker</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">rwhisker_rwhisker</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_whisker</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">lunitor_linvunitor</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">runitor_rinvunitor</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">rinvunitor_runitor</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">lassociator_rassociator</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">rassociator_lassociator</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">runitor_rwhisker</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">lassociator_lassociator</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_trivial</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">trivial_displayed</span> : <span class="id" title="var">disp_prebicat</span> <span class="id" title="var">B</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">trivial_displayed_data</span>,, <span class="id" title="var">trivial_disp_prebicat_laws</span>.<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Trivial_Displayed</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

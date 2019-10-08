@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.ExactCategories.Tests</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Exact category prerequisite tests 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Monics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Epis</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.zero</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.kernels</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.cokernels</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pullbacks</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pushouts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.BinDirectSums</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.limits.Opp</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.CategoriesWithBinOps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.TransportMorphisms</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.opp_precat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoriesWithAbgrops</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.PreAdditive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Morphisms</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Additive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Subcategory.Full</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.MoreFoundations.Notations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.MoreFoundations.PartA</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.MoreFoundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.BinaryOperations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Import</span> <span class="id" title="var">AddNotation</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">addmonoid</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">abgr</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">logic</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">isZero</span> {<span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">BinDirectSumOb</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_binop</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">grinv</span> {<span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">BinDirectSum</span> {<span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_Pr1</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_Pr2</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_In1</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_In2</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_BinOpId</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_IdIn1</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_IdIn2</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_Unel1</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">to_Unel2</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">MorphismPair</span> : <span class="id" title="tactic">clear</span> <span class="id" title="var">implicits</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">morphism_from_iso</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">ToBinDirectSum</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> {<span class="id" title="var">_</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">isBinDirectSum</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>}.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.ExactCategories.ExactCategories</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">C</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span>:<span class="id" title="var">C</span>) (<span class="id" title="var">f</span>: <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">isMonic</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>) <span class="id" title="var">f</span> = <span class="id" title="var">isEpi</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>^<span class="id" title="var">op</span>) <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">C</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span>:<span class="id" title="var">C</span>) (<span class="id" title="var">f</span>: <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>), <span class="id" title="var">isEpi</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>) <span class="id" title="var">f</span> = <span class="id" title="var">isMonic</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>^<span class="id" title="var">op</span>) <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+</div>
+
+<div class="doc">
+Here's why we prefer to use z_iso instead of iso : 
+</div>
+<div class="code">
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">C</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span>:<span class="id" title="var">C</span>) (<span class="id" title="var">f</span>:<span class="id" title="var">z_iso</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>), <span class="id" title="var">z_iso_inv</span> (<span class="id" title="var">z_iso_inv</span> <span class="id" title="var">f</span>) = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">C</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span>:<span class="id" title="var">C</span>) (<span class="id" title="var">f</span>:<span class="id" title="var">z_iso</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>) <span class="id" title="var">a</span> <span class="id" title="var">b</span>), <span class="id" title="var">opp_z_iso</span> (<span class="id" title="var">opp_z_iso</span> <span class="id" title="var">f</span>) = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">C</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span>:<span class="id" title="var">C</span>) (<span class="id" title="var">f</span>:<span class="id" title="var">z_iso</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>^<span class="id" title="var">op</span>) <span class="id" title="var">b</span> <span class="id" title="var">a</span>), <span class="id" title="var">opp_z_iso</span> (<span class="id" title="var">opp_z_iso</span> <span class="id" title="var">f</span>) = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span> : <span class="id" title="var">precategory</span>) {<span class="id" title="var">X</span>:<span class="id" title="keyword">Type</span>} (<span class="id" title="var">j</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">M</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">induced_precategory</span> <span class="id" title="var">M</span>^<span class="id" title="var">op</span> <span class="id" title="var">j</span> = (<span class="id" title="var">induced_precategory</span> <span class="id" title="var">M</span> <span class="id" title="var">j</span>)^<span class="id" title="var">op</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">P</span>:<span class="id" title="var">MorphismPair</span> <span class="id" title="var">M</span>), <span class="id" title="var">MorphismPair_opp</span> (<span class="id" title="var">MorphismPair_opp</span> <span class="id" title="var">P</span>) = <span class="id" title="var">P</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">C</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">B</span> --&gt; <span class="id" title="var">C</span>), <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">Pushout</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">M</span>^<span class="id" title="var">op</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">C</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">C</span>), <span class="id" title="var">Pushout</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">Pullback</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">M</span>^<span class="id" title="var">op</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span> : <span class="id" title="var">precategoryWithBinOps</span>), <span class="id" title="var">oppositePrecategoryWithBinOps</span> (<span class="id" title="var">oppositePrecategoryWithBinOps</span> <span class="id" title="var">M</span>) = <span class="id" title="var">M</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span>:<span class="id" title="var">precategoryWithBinOps</span>} {<span class="id" title="var">X</span>:<span class="id" title="keyword">Type</span>} (<span class="id" title="var">j</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">M</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">oppositePrecategoryWithBinOps</span> (<span class="id" title="var">induced_precategoryWithBinOps</span> <span class="id" title="var">M</span> <span class="id" title="var">j</span>) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">induced_precategoryWithBinOps</span> (<span class="id" title="var">oppositePrecategoryWithBinOps</span> <span class="id" title="var">M</span>) <span class="id" title="var">j</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. </div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span> : <span class="id" title="var">categoryWithAbgrops</span>), <span class="id" title="var">oppositeCategoryWithAbgrops</span> (<span class="id" title="var">oppositeCategoryWithAbgrops</span> <span class="id" title="var">M</span>) = <span class="id" title="var">M</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span>:<span class="id" title="var">categoryWithAbgrops</span>} {<span class="id" title="var">X</span>:<span class="id" title="keyword">Type</span>} (<span class="id" title="var">j</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">M</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">oppositeCategoryWithAbgrops</span> (<span class="id" title="var">induced_categoryWithAbgrops</span> <span class="id" title="var">M</span> <span class="id" title="var">j</span>) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">induced_categoryWithAbgrops</span> (<span class="id" title="var">oppositeCategoryWithAbgrops</span> <span class="id" title="var">M</span>) <span class="id" title="var">j</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. </div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span> : <span class="id" title="var">PreAdditive</span>), <span class="id" title="var">oppositePreAdditive</span> (<span class="id" title="var">oppositePreAdditive</span> <span class="id" title="var">M</span>) = <span class="id" title="var">M</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">xy</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">oppositeBinDirectSum</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositePreAdditive</span> <span class="id" title="var">M</span>) (<span class="id" title="var">oppositeBinDirectSum</span> <span class="id" title="var">xy</span>) = <span class="id" title="var">xy</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">AB</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>), <span class="id" title="var">reverseBinDirectSum</span> (<span class="id" title="var">oppositeBinDirectSum</span> <span class="id" title="var">AB</span>) = <span class="id" title="var">oppositeBinDirectSum</span> (<span class="id" title="var">reverseBinDirectSum</span> <span class="id" title="var">AB</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">AB</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>), <span class="id" title="var">reverseBinDirectSum</span> (<span class="id" title="var">reverseBinDirectSum</span> <span class="id" title="var">AB</span>) = <span class="id" title="var">AB</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Fail</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">hom</span> (<span class="id" title="var">C</span>:<span class="id" title="var">precategory_data</span>) : <span class="id" title="var">ob</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">UU</span> := <span class="id" title="var">λ</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span>, <span class="id" title="var">precategory_morphisms</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">Hom</span> (<span class="id" title="var">C</span> : <span class="id" title="var">category</span>) : <span class="id" title="var">ob</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">hSet</span> := <span class="id" title="var">λ</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span>, <span class="id" title="var">hSetpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">homset_property</span> <span class="id" title="var">C</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span>).<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">Hom_add</span> (<span class="id" title="var">C</span> : <span class="id" title="var">PreAdditive</span>) : <span class="id" title="var">ob</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">abgr</span> := <span class="id" title="var">λ</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span>, (@<span class="id" title="var">to_abgr</span> <span class="id" title="var">C</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Sanity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> (<span class="id" title="var">M</span> : <span class="id" title="var">category</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">Hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">f</span>. <span class="id" title="keyword">Defined</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">g</span>. <span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Sanity</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Sanity2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> (<span class="id" title="var">M</span> : <span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">Hom_add</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">Hom_add</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">f</span>. <span class="id" title="keyword">Defined</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">Hom_add</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">g</span>. <span class="id" title="keyword">Defined</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">Hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">f</span>. <span class="id" title="keyword">Defined</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">Hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">h</span>. <span class="id" title="keyword">Defined</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">g</span>. <span class="id" title="keyword">Defined</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Goal</span> <span class="id" title="var">hom</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">h</span>. <span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Sanity2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">P</span>:<span class="id" title="var">MorphismPair</span> <span class="id" title="var">M</span>), <span class="id" title="var">MorphismPair_opp</span> (<span class="id" title="var">MorphismPair_opp</span> <span class="id" title="var">P</span>) = <span class="id" title="var">P</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">p</span>:<span class="id" title="var">MorphismPair</span> (<span class="id" title="var">M</span>^<span class="id" title="var">op</span>)), <span class="id" title="var">MorphismPair</span> <span class="id" title="var">M</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">MorphismPair_opp</span> <span class="id" title="var">p</span>).<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">P</span> <span class="id" title="var">Q</span> : <span class="id" title="var">MorphismPair</span> <span class="id" title="var">M</span>^<span class="id" title="var">op</span>) (<span class="id" title="var">f</span>:<span class="id" title="var">MorphismPairIsomorphism</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opp_MorphismPairIsomorphism</span> (<span class="id" title="var">opp_MorphismPairIsomorphism</span> <span class="id" title="var">f</span>) = <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">P</span> <span class="id" title="var">Q</span> : <span class="id" title="var">MorphismPair</span> <span class="id" title="var">M</span>^<span class="id" title="var">op</span>),<br/>
+&nbsp;<span class="id" title="var">MorphismPairIsomorphism</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">M</span>^<span class="id" title="var">op</span>) <span class="id" title="var">P</span> <span class="id" title="var">Q</span> -&gt;<br/>
+&nbsp;<span class="id" title="var">MorphismPairIsomorphism</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">M</span>) (<span class="id" title="var">MorphismPair_opp</span> <span class="id" title="var">Q</span>) (<span class="id" title="var">MorphismPair_opp</span> <span class="id" title="var">P</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">opp_MorphismPairIsomorphism</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">M</span>^<span class="id" title="var">op</span>) ).<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span> : <span class="id" title="var">AdditiveCategory</span>), <span class="id" title="var">oppositeAdditiveCategory</span> (<span class="id" title="var">oppositeAdditiveCategory</span> <span class="id" title="var">M</span>) = <span class="id" title="var">M</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span>:<span class="id" title="var">AdditiveCategory</span>} {<span class="id" title="var">X</span>:<span class="id" title="keyword">Type</span>} (<span class="id" title="var">j</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">M</span>) (<span class="id" title="var">su</span> : <span class="id" title="var">sums_lift</span> <span class="id" title="var">M</span> <span class="id" title="var">j</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opp_sums_lift</span> (<span class="id" title="var">oppositeAdditiveCategory</span> <span class="id" title="var">M</span>) <span class="id" title="var">j</span> (<span class="id" title="var">opp_sums_lift</span> <span class="id" title="var">M</span> <span class="id" title="var">j</span> <span class="id" title="var">su</span>) = <span class="id" title="var">su</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategoryData</span>), <span class="id" title="var">oppositeExactCategoryData</span> (<span class="id" title="var">oppositeExactCategoryData</span> <span class="id" title="var">M</span>) = <span class="id" title="var">M</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategory</span>), <span class="id" title="var">ExactCategoryDataToAdditiveCategory</span> (<span class="id" title="var">ExactCategoryToData</span> (<span class="id" title="var">oppositeExactCategory</span> <span class="id" title="var">M</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="id" title="var">oppositeAdditiveCategory</span> (<span class="id" title="var">ExactCategoryDataToAdditiveCategory</span> (<span class="id" title="var">ExactCategoryToData</span> <span class="id" title="var">M</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategory</span>), <span class="id" title="var">oppositeExactCategory</span> (<span class="id" title="var">oppositeExactCategory</span> <span class="id" title="var">M</span>) = <span class="id" title="var">M</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">isAdmissibleMonomorphism</span> <span class="id" title="var">f</span> = <span class="id" title="var">isAdmissibleEpimorphism</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositeExactCategory</span> <span class="id" title="var">M</span>) (<span class="id" title="var">opp_mor</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>), <span class="id" title="var">isAdmissibleEpimorphism</span> <span class="id" title="var">f</span> = <span class="id" title="var">isAdmissibleMonomorphism</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositeExactCategory</span> <span class="id" title="var">M</span>) (<span class="id" title="var">opp_mor</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">AdmissibleMonomorphism</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> = @<span class="id" title="var">AdmissibleEpimorphism</span> (<span class="id" title="var">oppositeExactCategory</span> <span class="id" title="var">M</span>) <span class="id" title="var">B</span> <span class="id" title="var">A</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">AdmissibleEpimorphism</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> = @<span class="id" title="var">AdmissibleMonomorphism</span> (<span class="id" title="var">oppositeExactCategory</span> <span class="id" title="var">M</span>) <span class="id" title="var">B</span> <span class="id" title="var">A</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span> : <span class="id" title="var">ExactCategory</span>} {<span class="id" title="var">A</span>:<span class="id" title="var">M</span>} (<span class="id" title="var">Z</span>:<span class="id" title="var">Zero</span> <span class="id" title="var">M</span>), <span class="id" title="var">Mor1</span> (<span class="id" title="var">TrivialExactSequence</span> <span class="id" title="var">A</span> <span class="id" title="var">Z</span>) = <span class="id" title="var">identity</span> <span class="id" title="var">A</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span> : <span class="id" title="var">ExactCategory</span>} {<span class="id" title="var">A</span>:<span class="id" title="var">M</span>} (<span class="id" title="var">Z</span>:<span class="id" title="var">Zero</span> <span class="id" title="var">M</span>), <span class="id" title="var">Ob3</span> (<span class="id" title="var">TrivialExactSequence</span> <span class="id" title="var">A</span> <span class="id" title="var">Z</span>) = <span class="id" title="var">Z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span> : <span class="id" title="var">ExactCategory</span>} {<span class="id" title="var">A</span>:<span class="id" title="var">M</span>} (<span class="id" title="var">Z</span>:<span class="id" title="var">Zero</span> <span class="id" title="var">M</span>), <span class="id" title="var">Mor2</span> (<span class="id" title="var">TrivialExactSequence'</span> <span class="id" title="var">Z</span> <span class="id" title="var">A</span>) = <span class="id" title="var">identity</span> <span class="id" title="var">A</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span> : <span class="id" title="var">ExactCategory</span>} {<span class="id" title="var">A</span>:<span class="id" title="var">M</span>} (<span class="id" title="var">Z</span>:<span class="id" title="var">Zero</span> <span class="id" title="var">M</span>), <span class="id" title="var">Ob1</span> (<span class="id" title="var">TrivialExactSequence'</span> <span class="id" title="var">Z</span> <span class="id" title="var">A</span>) = <span class="id" title="var">Z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span>:<span class="id" title="var">ExactCategory</span>} {<span class="id" title="var">X</span>:<span class="id" title="keyword">Type</span>} (<span class="id" title="var">j</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">M</span>) (<span class="id" title="var">ce</span> : <span class="id" title="var">exts_lift</span> <span class="id" title="var">M</span> <span class="id" title="var">j</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opp_exts_lift</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositeExactCategory</span> <span class="id" title="var">M</span>) <span class="id" title="var">j</span> (<span class="id" title="var">opp_exts_lift</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">M</span>) <span class="id" title="var">j</span> <span class="id" title="var">ce</span>) = <span class="id" title="var">ce</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Exact category tests 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">A'</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">g'</span> : <span class="id" title="var">A'</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">i</span>:<span class="id" title="var">IsoArrowTo</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opposite_IsoArrowFrom</span> (<span class="id" title="var">opposite_IsoArrowTo</span> <span class="id" title="var">i</span>) = <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">B'</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">g'</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B'</span>) (<span class="id" title="var">i</span>:<span class="id" title="var">IsoArrowFrom</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opposite_IsoArrowTo</span> (<span class="id" title="var">opposite_IsoArrowFrom</span> <span class="id" title="var">i</span>) = <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>} {<span class="id" title="var">X</span>:<span class="id" title="keyword">Type</span>} (<span class="id" title="var">j</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">M</span>) (<span class="id" title="var">hz</span> : <span class="id" title="var">zero_lifts</span> <span class="id" title="var">M</span> <span class="id" title="var">j</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opp_zero_lifts</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">opp_precat</span> <span class="id" title="var">M</span>) <span class="id" title="var">j</span> (<span class="id" title="var">opp_zero_lifts</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">M</span>) <span class="id" title="var">j</span> <span class="id" title="var">hz</span>) = <span class="id" title="var">hz</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">category</span>), <span class="id" title="var">oppositeCategory</span> (<span class="id" title="var">oppositeCategory</span> <span class="id" title="var">M</span>) = <span class="id" title="var">M</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span>:<span class="id" title="var">category</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">M</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">a</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">a</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p1</span> : <span class="id" title="var">d</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">p2</span> : <span class="id" title="var">d</span> --&gt; <span class="id" title="var">c</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">isPullback'</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> = <span class="id" title="var">isPushout'</span> (<span class="id" title="var">M</span> := <span class="id" title="var">oppositeCategory</span> <span class="id" title="var">M</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Goal</span> ∏ {<span class="id" title="var">M</span>:<span class="id" title="var">category</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">M</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">in1</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">d</span>) (<span class="id" title="var">in2</span> : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">d</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">isPushout'</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">in1</span> <span class="id" title="var">in2</span> = <span class="id" title="var">isPullback'</span> (<span class="id" title="var">M</span> := <span class="id" title="var">oppositeCategory</span> <span class="id" title="var">M</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">in1</span> <span class="id" title="var">in2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">A'</span> <span class="id" title="var">B</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">g'</span> : <span class="id" title="var">A'</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">i</span>:<span class="id" title="var">IsoArrowTo</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opposite_IsoArrowFrom</span> (<span class="id" title="var">opposite_IsoArrowTo</span> <span class="id" title="var">i</span>) = <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">precategory</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">B'</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">g'</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B'</span>) (<span class="id" title="var">i</span>:<span class="id" title="var">IsoArrowFrom</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">opposite_IsoArrowTo</span> (<span class="id" title="var">opposite_IsoArrowFrom</span> <span class="id" title="var">i</span>) = <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">y</span> --&gt; <span class="id" title="var">z</span>), <span class="id" title="var">isKernel'</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">M</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">isCokernel'</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositePreAdditive</span> <span class="id" title="var">M</span>) <span class="id" title="var">g</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span>:<span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">M</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">y</span> --&gt; <span class="id" title="var">z</span>), <span class="id" title="var">isCokernel'</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">M</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">isKernel'</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositePreAdditive</span> <span class="id" title="var">M</span>) <span class="id" title="var">g</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span> :<span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> <span class="id" title="var">A'</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">i</span> : <span class="id" title="var">A</span> &lt;-- <span class="id" title="var">B</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">B</span> &lt;-- <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pr</span> : <span class="id" title="var">isKernelCokernelPair</span> <span class="id" title="var">p</span> <span class="id" title="var">i</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">r</span> : <span class="id" title="var">A</span> &lt;-- <span class="id" title="var">A'</span>) (<span class="id" title="var">pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">i</span> <span class="id" title="var">r</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">PairPullbackMap</span> <span class="id" title="var">pr</span> <span class="id" title="var">r</span> <span class="id" title="var">pb</span><br/>
+&nbsp;&nbsp;=<br/>
+&nbsp;&nbsp;<span class="id" title="var">PairPushoutMap</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositePreAdditive</span> <span class="id" title="var">M</span>) (<span class="id" title="var">opposite_isKernelCokernelPair</span> <span class="id" title="var">pr</span>) <span class="id" title="var">r</span> <span class="id" title="var">pb</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Goal</span> ∏ (<span class="id" title="var">M</span> :<span class="id" title="var">PreAdditive</span>) (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> <span class="id" title="var">A'</span>:<span class="id" title="var">M</span>) (<span class="id" title="var">i</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">B</span> --&gt; <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pr</span> : <span class="id" title="var">isKernelCokernelPair</span> <span class="id" title="var">i</span> <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">r</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">A'</span>) (<span class="id" title="var">po</span> : <span class="id" title="var">Pushout</span> <span class="id" title="var">i</span> <span class="id" title="var">r</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">PairPushoutMap</span> <span class="id" title="var">pr</span> <span class="id" title="var">r</span> <span class="id" title="var">po</span><br/>
+&nbsp;&nbsp;=<br/>
+&nbsp;&nbsp;<span class="id" title="var">PairPullbackMap</span> (<span class="id" title="var">M</span>:=<span class="id" title="var">oppositePreAdditive</span> <span class="id" title="var">M</span>) (<span class="id" title="var">opposite_isKernelCokernelPair</span> <span class="id" title="var">pr</span>) <span class="id" title="var">r</span> <span class="id" title="var">po</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

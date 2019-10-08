@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Tactics.Groups_Tactics</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Author: Michael A. Warren (maw@mawarren.net). Date: Spring 2015. Description: Some tactics for groups.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Tactics.Utilities</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Tactics.Monoids_Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">multmonoid</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">gr_preclean</span> <span class="id" title="var">G</span> := <span class="id" title="var">monoid_clean</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">gr_preclean_in</span> <span class="id" title="var">G</span> <span class="id" title="var">t</span> := <span class="id" title="var">monoid_clean_in</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>) <span class="id" title="var">t</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">gr_preclean_all</span> <span class="id" title="var">G</span> := <span class="id" title="var">monoid_clean_all</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">gr_prezap</span> <span class="id" title="var">G</span> := <span class="id" title="var">monoid_zap</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">gr_group_in</span> <span class="id" title="var">G</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">assocop_group_in</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>) (@<span class="id" title="var">op</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>)) <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">gr_group</span> <span class="id" title="var">G</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> := <span class="id" title="var">assocop_group</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>) (@<span class="id" title="var">op</span> (<span class="id" title="var">grtomonoid</span> <span class="id" title="var">G</span>)) <span class="id" title="var">s</span> <span class="id" title="var">t</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">gr_clean</span> <span class="id" title="var">G</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">gr_preclean</span> <span class="id" title="var">G</span>; <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">grlinvax</span> <span class="id" title="var">G</span>); <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">grrinvax</span> <span class="id" title="var">G</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="var">gr_preclean</span> <span class="id" title="var">G</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span> [?<span class="id" title="var">y</span> * ?<span class="id" title="var">x</span> * (@<span class="id" title="var">grinv</span> <span class="id" title="var">G</span> ?<span class="id" title="var">x</span>)] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assocax</span> <span class="id" title="var">G</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> (@<span class="id" title="var">grinv</span> <span class="id" title="var">G</span> <span class="id" title="var">x</span>)), (<span class="id" title="var">grrinvax</span> <span class="id" title="var">G</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">gr_clean</span> <span class="id" title="var">G</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span> [?<span class="id" title="var">y</span> * (@<span class="id" title="var">grinv</span> <span class="id" title="var">G</span> ?<span class="id" title="var">x</span>) * ?<span class="id" title="var">x</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assocax</span> <span class="id" title="var">G</span> <span class="id" title="var">y</span> (@<span class="id" title="var">grinv</span> <span class="id" title="var">G</span> <span class="id" title="var">x</span>) <span class="id" title="var">x</span>), (<span class="id" title="var">grlinvax</span> <span class="id" title="var">G</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">gr_clean</span> <span class="id" title="var">G</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="var">gr_preclean</span> <span class="id" title="var">G</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Tests
+</div>
+<div class="code">
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

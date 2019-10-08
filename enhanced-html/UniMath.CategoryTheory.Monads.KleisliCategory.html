@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Monads.KleisliCategory</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+**********************************************************
+Contents:
+<ul class="doclist">
+<li> Definition of the Kleisli category of a monad.
+
+</li>
+<li> The canonical adjunction between a category C and the Kleisli
+          category of a monad on C.
+
+</li>
+</ul>
+TODO:
+<ul class="doclist">
+<li> Show that this definition is equivalent to the Kleisli category of a
+          relative monad with respect to the identity functor.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Written by: Brandon Doherty (July 2018)
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monads.Monads</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Monad_Lemmas</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">bind_comp_η</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">a</span> , <span class="id" title="var">b</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">bind</span> (<span class="id" title="var">f</span> · (<span class="id" title="var">η</span> <span class="id" title="var">T</span>) <span class="id" title="var">b</span>) = # <span class="id" title="var">T</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">bind</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind_η</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">bind_identity</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">bind</span> (<span class="id" title="var">identity</span> (<span class="id" title="var">T</span> <span class="id" title="var">a</span>)) = (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) <span class="id" title="var">a</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">bind</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Monad_Lemmas</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Kleisli_Categories</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kleisli_precat_ob_mor_monad</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">precategory_ob_mor</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">X</span> --&gt; <span class="id" title="var">T</span> <span class="id" title="var">Y</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kleisli_precat_data_monad</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">precategory_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">precategory_data_pair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">Kleisli_precat_ob_mor_monad</span> <span class="id" title="var">T</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">f</span> · (<span class="id" title="var">bind</span> <span class="id" title="var">g</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Kleisli_precat_monad_is_precat</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_precategory</span> (<span class="id" title="var">Kleisli_precat_data_monad</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_precategory_one_assoc_to_two</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">identity</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">η_bind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">identity</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind_η</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">bind_bind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">assoc</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kleisli_precat_monad</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : <span class="id" title="var">precategory</span> := (<span class="id" title="var">Kleisli_precat_data_monad</span> <span class="id" title="var">T</span>,,<span class="id" title="var">Kleisli_precat_monad_is_precat</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Kleisli_precat_monad_has_homsets</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) : <span class="id" title="var">has_homsets</span> (<span class="id" title="var">Kleisli_precat_data_monad</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kleisli_cat_monad</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>): <span class="id" title="var">category</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">Kleisli_precat_monad</span> <span class="id" title="var">T</span>,, <span class="id" title="var">Kleisli_precat_monad_has_homsets</span> <span class="id" title="var">T</span><br/>
+&nbsp;&nbsp;(<span class="id" title="var">homset_property</span> <span class="id" title="var">C</span>)).<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Left_Kleisli_functor_data</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span>: <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor_data</span> <span class="id" title="var">C</span> (<span class="id" title="var">Kleisli_precat_monad</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_functor_data</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">f</span> · (<span class="id" title="var">η</span> <span class="id" title="var">T</span>) <span class="id" title="var">b</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Left_Kleisli_is_functor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span>: <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_functor</span> (<span class="id" title="var">Left_Kleisli_functor_data</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Left_Kleisli_functor_data</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Left_Kleisli_functor_data</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 (<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">η_bind</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Left_Kleisli_functor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor</span> <span class="id" title="var">C</span> (<span class="id" title="var">Kleisli_precat_monad</span> <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">Left_Kleisli_functor_data</span> <span class="id" title="var">T</span>,,<span class="id" title="var">Left_Kleisli_is_functor</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Right_Kleisli_functor_data</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor_data</span> (<span class="id" title="var">Kleisli_precat_monad</span> <span class="id" title="var">T</span>) <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_functor_data</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Right_Kleisli_is_functor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_functor</span> (<span class="id" title="var">Right_Kleisli_functor_data</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Right_Kleisli_functor_data</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">identity</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_on_morphisms</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind_η</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind_bind</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Right_Kleisli_functor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor</span> (<span class="id" title="var">Kleisli_precat_monad</span> <span class="id" title="var">T</span>) <span class="id" title="var">C</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">Right_Kleisli_functor_data</span> <span class="id" title="var">T</span>,,<span class="id" title="var">Right_Kleisli_is_functor</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kleisli_functor_left_right_compose</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Left_Kleisli_functor</span> <span class="id" title="var">T</span>) ∙ (<span class="id" title="var">Right_Kleisli_functor</span> <span class="id" title="var">T</span>) = <span class="id" title="var">T</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">functor_eq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">functor_data_eq_from_nat_trans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">a</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind_comp_η</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kleisli_homset_iso</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : <span class="id" title="var">natural_hom_weq</span> (<span class="id" title="var">Left_Kleisli_functor</span> <span class="id" title="var">T</span>) (<span class="id" title="var">Right_Kleisli_functor</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">η_bind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kleisli_functors_are_adjoints</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : <span class="id" title="var">are_adjoints</span> (<span class="id" title="var">Left_Kleisli_functor</span> <span class="id" title="var">T</span>) (<span class="id" title="var">Right_Kleisli_functor</span> <span class="id" title="var">T</span>) := <span class="id" title="var">adj_from_nathomweq</span> (<span class="id" title="var">Kleisli_homset_iso</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Left_Kleisli_is_left_adjoint</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">is_left_adjoint</span> (<span class="id" title="var">Left_Kleisli_functor</span> <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">are_adjoints_to_is_left_adjoint</span> (<span class="id" title="var">Left_Kleisli_functor</span> <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Right_Kleisli_functor</span> <span class="id" title="var">T</span>) (<span class="id" title="var">Kleisli_functors_are_adjoints</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Right_Kleisli_is_right_adjoint</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">is_right_adjoint</span> (<span class="id" title="var">Right_Kleisli_functor</span> <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">are_adjoints_to_is_right_adjoint</span> (<span class="id" title="var">Left_Kleisli_functor</span> <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Right_Kleisli_functor</span> <span class="id" title="var">T</span>) (<span class="id" title="var">Kleisli_functors_are_adjoints</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">Kleisli_adjunction_monad_eq</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>)  : <span class="id" title="var">Monad_from_adjunction</span> (<span class="id" title="var">Kleisli_functors_are_adjoints</span> <span class="id" title="var">T</span>) = <span class="id" title="var">T</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">Monad_eq_raw_data</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">total2_paths_equiv</span>; <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">total2_paths_equiv</span>; <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">total2_paths_equiv</span>; <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 (<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind_comp_η</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_const</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bind_identity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_const</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Kleisli_Categories</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

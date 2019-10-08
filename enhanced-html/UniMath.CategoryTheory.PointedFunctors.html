@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.PointedFunctors</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+**********************************************************
+
+<div class="paragraph"> </div>
+
+Benedikt Ahrens, Ralph Matthes
+
+<div class="paragraph"> </div>
+
+SubstitutionSystems
+
+<div class="paragraph"> </div>
+
+2015
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+ **********************************************************
+
+<div class="paragraph"> </div>
+
+Contents :
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li>    Definition of precategory of pointed endofunctors
+
+</li>
+<li>    Forgetful functor to precategory of endofunctors
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_ptd</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_obj</span> : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>, <span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span> ⟹ <span class="id" title="var">F</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">functor_from_ptd_obj</span> (<span class="id" title="var">F</span> : <span class="id" title="var">ptd_obj</span>) : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_pt</span> (<span class="id" title="var">F</span> : <span class="id" title="var">ptd_obj</span>) : <span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span> ⟹ <span class="id" title="var">F</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_ptd_mor</span> {<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ptd_obj</span>}(<span class="id" title="var">α</span>: <span class="id" title="var">F</span> ⟹ <span class="id" title="var">G</span>) : <span class="id" title="var">UU</span> := ∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">ptd_pt</span> <span class="id" title="var">F</span> <span class="id" title="var">c</span> · <span class="id" title="var">α</span> <span class="id" title="var">c</span> = <span class="id" title="var">ptd_pt</span> <span class="id" title="var">G</span> <span class="id" title="var">c</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_mor</span> (<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ptd_obj</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;∑ <span class="id" title="var">α</span> : <span class="id" title="var">F</span> ⟹ <span class="id" title="var">G</span>, <span class="id" title="var">is_ptd_mor</span> <span class="id" title="var">α</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">nat_trans_from_ptd_mor</span> {<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ptd_obj</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>) : <span class="id" title="var">nat_trans</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">a</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_ptd_mor</span> {<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ptd_obj</span>} (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">a</span> = <span class="id" title="var">b</span> ≃ (<span class="id" title="var">a</span> : <span class="id" title="var">F</span> ⟹ <span class="id" title="var">G</span>) = <span class="id" title="var">b</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeInjectivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intros</span> ?.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_mor_commutes</span> {<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ptd_obj</span>} (<span class="id" title="var">α</span> : <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;: ∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">ptd_pt</span> <span class="id" title="var">F</span> <span class="id" title="var">c</span> · <span class="id" title="var">α</span> <span class="id" title="var">c</span> = <span class="id" title="var">ptd_pt</span> <span class="id" title="var">G</span> <span class="id" title="var">c</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">α</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_id</span> (<span class="id" title="var">F</span> : <span class="id" title="var">ptd_obj</span>) : <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">F</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">nat_trans_id</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>) .<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_comp</span> {<span class="id" title="var">F</span> <span class="id" title="var">F'</span> <span class="id" title="var">F''</span> : <span class="id" title="var">ptd_obj</span>} (<span class="id" title="var">α</span> : <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">F'</span>) (<span class="id" title="var">α'</span> : <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F'</span> <span class="id" title="var">F''</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">F''</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">α</span> <span class="id" title="var">α'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H</span>:=<span class="id" title="var">ptd_mor_commutes</span> <span class="id" title="var">α</span> <span class="id" title="var">c</span>); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H</span>:=<span class="id" title="var">ptd_mor_commutes</span> <span class="id" title="var">α'</span> <span class="id" title="var">c</span>); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span> ).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">ptd_obj</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">ptd_mor</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_precategory_data</span> : <span class="id" title="var">precategory_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">ptd_ob_mor</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">ptd_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> @<span class="id" title="var">ptd_comp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_precategory_ptd</span> : <span class="id" title="var">is_precategory</span> <span class="id" title="var">ptd_precategory_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">invmap</span> (<span class="id" title="var">eq_ptd_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> )).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">id_left</span> (<span class="id" title="var">functor_precategory</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">invmap</span> (<span class="id" title="var">eq_ptd_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> )).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">id_right</span> (<span class="id" title="var">functor_precategory</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">hs</span> )).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">invmap</span> (<span class="id" title="var">eq_ptd_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> )).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">assoc</span> (<span class="id" title="var">functor_precategory</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">hs</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">invmap</span> (<span class="id" title="var">eq_ptd_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> )).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">assoc'</span> (<span class="id" title="var">functor_precategory</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">hs</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_Ptd</span> : <span class="id" title="var">precategory</span> := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">is_precategory_ptd</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">id_Ptd</span> : <span class="id" title="var">precategory_Ptd</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">nat_trans_id</span> <span class="id" title="var">_</span> ).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_ptd_mor_precat</span> {<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">precategory_Ptd</span>} (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">a</span> = <span class="id" title="var">b</span> ≃ (<span class="id" title="var">a</span> : <span class="id" title="var">ptd_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>) = <span class="id" title="var">b</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idisweq</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Forgetful functor to functor category 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ptd_forget_data</span> : <span class="id" title="var">functor_data</span> <span class="id" title="var">precategory_Ptd</span> [<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hs</span>].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_functor_ptd_forget</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">ptd_forget_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_idax</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_compax</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">functor_ptd_forget</span> : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">is_functor_ptd_forget</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_ptd</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

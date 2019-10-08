@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.SimplicialSets</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1072"></a><h1 class="section">Homotopy theory of simplicial sets.</h1>
+
+
+<div class="paragraph"> </div>
+
+Vladimir Voevodsky
+
+<div class="paragraph"> </div>
+
+started on Nov. 22, 2014 (with Alexander Vishik)
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Combinatorics.FiniteSets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.opp_precat</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">stn</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monfunstn</span> ( <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span> ) : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">f</span> : ⟦ <span class="id" title="var">n</span> ⟧ -&gt; ⟦ <span class="id" title="var">m</span> ⟧, ∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span>: ⟦<span class="id" title="var">n</span>⟧), <span class="id" title="var">x</span> ≤ <span class="id" title="var">y</span> -&gt; <span class="id" title="var">f</span> <span class="id" title="var">x</span> ≤ <span class="id" title="var">f</span> <span class="id" title="var">y</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monfunstnpair</span> { <span class="id" title="var">m</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span> } <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> := (<span class="id" title="var">f</span>,,<span class="id" title="keyword">is</span>) : <span class="id" title="var">monfunstn</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monfunstnpr1</span> {<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>} : <span class="id" title="var">monfunstn</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>  -&gt; ⟦ <span class="id" title="var">n</span> ⟧ -&gt; ⟦ <span class="id" title="var">m</span> ⟧ := <span class="id" title="var">pr1</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">monfunstnpr1_isInjective</span> {<span class="id" title="var">m</span> <span class="id" title="var">n</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">monfunstn</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span>) : <span class="id" title="var">monfunstnpr1</span> <span class="id" title="var">f</span> = <span class="id" title="var">monfunstnpr1</span> <span class="id" title="var">g</span> -&gt; <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">h</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">j</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">e</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">monfunstnpr1</span> : <span class="id" title="var">monfunstn</span> &gt;-&gt; <span class="id" title="var">Funclass</span> .<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isasetmonfunstn</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">isaset</span> ( <span class="id" title="var">monfunstn</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> ) .<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> . <span class="id" title="tactic">apply</span> ( <span class="id" title="var">isofhleveltotal2</span> 2 ) .<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetstn</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">j</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isasetaprop</span>, <span class="id" title="var">propproperty</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monfunstnid</span> <span class="id" title="var">n</span> : <span class="id" title="var">monfunstn</span> <span class="id" title="var">n</span> <span class="id" title="var">n</span> := <span class="id" title="var">monfunstnpair</span> (<span class="id" title="var">idfun</span> <span class="id" title="var">_</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="keyword">is</span>, <span class="id" title="keyword">is</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monfunstncomp</span> { <span class="id" title="var">n</span> <span class="id" title="var">m</span> <span class="id" title="var">k</span> : <span class="id" title="var">nat</span> } ( <span class="id" title="var">f</span> : <span class="id" title="var">monfunstn</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> ) ( <span class="id" title="var">g</span> : <span class="id" title="var">monfunstn</span> <span class="id" title="var">m</span> <span class="id" title="var">k</span> ) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monfunstn</span> <span class="id" title="var">n</span> <span class="id" title="var">k</span> .<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> . <span class="id" title="tactic">exists</span> ( <span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span> ) . <span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span> <span class="id" title="var">l</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> ( <span class="id" title="var">pr2</span> <span class="id" title="var">g</span> ). <span class="id" title="tactic">apply</span> ( <span class="id" title="var">pr2</span> <span class="id" title="var">f</span> ) . <span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precatDelta</span> : <span class="id" title="var">precategory</span> .<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">exists</span> <span class="id" title="var">nat</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">monfunstn</span> (<span class="id" title="var">S</span> <span class="id" title="var">m</span>) (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monfunstnid</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">l</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">monfunstncomp</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>). } } }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_precategory_one_assoc_to_two</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> <span class="id" title="var">f</span>. <span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">monfunstnpr1_isInjective</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> <span class="id" title="var">f</span>. <span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">monfunstnpr1_isInjective</span>. } }<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> <span class="id" title="var">o</span> <span class="id" title="var">p</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>. <span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">monfunstnpr1_isInjective</span>. }<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">sSet</span> := [ <span class="id" title="var">precatDelta</span>^<span class="id" title="var">op</span> , <span class="id" title="var">HSET</span>, <span class="id" title="var">pr2</span> <span class="id" title="var">is_univalent_HSET</span> ] .<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

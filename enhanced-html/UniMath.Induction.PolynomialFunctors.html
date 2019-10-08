@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Induction.PolynomialFunctors</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab2238"></a><h2 class="section">Polynomial functors</h2>
+
+
+<div class="paragraph"> </div>
+
+    Using the formalism of a polynomial functor, one can build any functor
+    combining constant types, +, and ×, where the variable X is to the right
+    of the arrow →.
+
+<div class="paragraph"> </div>
+
+    W-types are (up to isomorphism) initial algebras of polynomial functors,
+    whereas M-types are final coalgebras.
+
+<div class="paragraph"> </div>
+
+    (Definition 2 in Ahrens, Capriotti, and Spadotti)
+
+<div class="paragraph"> </div>
+
+    Author: Langston Barrett (@siddharthist)
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Preamble</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartA</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.UnivalenceAxiom</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorAlgebras</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.Types</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">PolynomialFunctors</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> (<span class="id" title="var">A</span> : <span class="id" title="var">UU</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> (<span class="id" title="var">B</span> : <span class="id" title="var">A</span> → <span class="id" title="var">UU</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">polynomial_functor_obj</span> := <span class="id" title="keyword">fun</span> (<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>) =&gt; ∑ (<span class="id" title="var">a</span> : <span class="id" title="var">A</span>), <span class="id" title="var">B</span> <span class="id" title="var">a</span> → <span class="id" title="var">X</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The action on arrows is defined by composition in the second projection. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">polynomial_functor_arr</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">polynomial_functor_obj</span> <span class="id" title="var">X</span>) → (<span class="id" title="var">polynomial_functor_obj</span> <span class="id" title="var">Y</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">fun</span> <span class="id" title="var">o</span> =&gt; (<span class="id" title="var">pr1</span> <span class="id" title="var">o</span>,, (<span class="id" title="var">f</span> ∘ <span class="id" title="var">pr2</span> <span class="id" title="var">o</span>)%<span class="id" title="var">functions</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Polynomial functors aren't functors in the usual sense, since UU is an
+      (∞,1)-category. However, they are functors in the sense of UniMath's
+      definition. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">polynomial_functor_data</span> : <span class="id" title="var">functor_data</span> <span class="id" title="var">type_precat</span> <span class="id" title="var">type_precat</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">functor_data_constr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">polynomial_functor_obj</span> : <span class="id" title="var">type_precat</span> → <span class="id" title="var">type_precat</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<span class="id" title="var">polynomial_functor_arr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">polynomial_functor_is_functor</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">polynomial_functor_data</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> ? ? ? ? ?.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">polynomial_functor</span> : <span class="id" title="var">functor</span> <span class="id" title="var">type_precat</span> <span class="id" title="var">type_precat</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mk_functor</span> <span class="id" title="var">polynomial_functor_data</span> <span class="id" title="var">polynomial_functor_is_functor</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+An algebra with an uncurried structure map 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">polynomial_alg_uncurried</span> : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∑ (<span class="id" title="var">X</span> : <span class="id" title="var">ob</span> <span class="id" title="var">type_precat</span>), ∏ (<span class="id" title="var">a</span> : <span class="id" title="var">A</span>), (<span class="id" title="var">B</span> <span class="id" title="var">a</span> → <span class="id" title="var">X</span>) → <span class="id" title="var">X</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The uncurried and curried versions are equivalent 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">polynomial_alg_uncurried_equiv</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">polynomial_alg_uncurried</span> ≃ (<span class="id" title="var">algebra_ob</span> <span class="id" title="var">polynomial_functor</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">weq_iso</span> (<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>,, <span class="id" title="var">uncurry</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>,, <span class="id" title="var">curry</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>))));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">PolynomialFunctors</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

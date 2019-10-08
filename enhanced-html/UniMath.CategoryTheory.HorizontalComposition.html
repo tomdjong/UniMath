@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.HorizontalComposition</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+**********************************************************
+
+<div class="paragraph"> </div>
+
+Contents:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Definition of horizontal composition for natural transformations (<span class="inlinecode"><span class="id" title="var">horcomp</span></span>)
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Written by: Benedikt Ahrens, Ralph Matthes (2015)
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">horizontal_composition</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">E</span> : <span class="id" title="var">precategory</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">F</span> <span class="id" title="var">F'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>.<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">G</span> <span class="id" title="var">G'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">E</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">α</span> : <span class="id" title="var">F</span> ⟹ <span class="id" title="var">F'</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">β</span> : <span class="id" title="var">G</span> ⟹ <span class="id" title="var">G'</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_nat_trans_horcomp</span> : <span class="id" title="var">is_nat_trans</span> (<span class="id" title="var">G</span> □ <span class="id" title="var">F</span>) (<span class="id" title="var">G'</span> □ <span class="id" title="var">F'</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">β</span> (<span class="id" title="var">F</span> <span class="id" title="var">c</span>) · #<span class="id" title="var">G'</span> (<span class="id" title="var">α</span> <span class="id" title="var">_</span> )).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, <span class="id" title="var">nat_trans_ax</span>, &lt;- !<span class="id" title="var">assoc</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- !<span class="id" title="var">functor_comp</span>, <span class="id" title="var">nat_trans_ax</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">horcomp</span> : <span class="id" title="var">nat_trans</span> (<span class="id" title="var">G</span> □ <span class="id" title="var">F</span>) (<span class="id" title="var">G'</span> □ <span class="id" title="var">F'</span>) := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">is_nat_trans_horcomp</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">horizontal_composition</span>.<br/>
+
+<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">horcomp</span> { <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> } { <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> } <span class="id" title="var">_</span> <span class="id" title="var">_</span> .<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">horcomp_id_prewhisker</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">E</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsE</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">E</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">X</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) (<span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">E</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">nat_trans</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">horcomp</span> (<span class="id" title="var">nat_trans_id</span> <span class="id" title="var">X</span>) <span class="id" title="var">f</span> = <span class="id" title="var">pre_whisker</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hsE</span>); <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>, <span class="id" title="var">id_right</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">horcomp_id_left</span> (<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">X</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>) (<span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>)(<span class="id" title="var">f</span> : <span class="id" title="var">nat_trans</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span>)<br/>
+&nbsp;&nbsp;:<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>, <span class="id" title="var">horcomp</span> (<span class="id" title="var">nat_trans_id</span> <span class="id" title="var">X</span>) <span class="id" title="var">f</span> <span class="id" title="var">c</span> = <span class="id" title="var">f</span> (<span class="id" title="var">X</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>, <span class="id" title="var">id_right</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">horcomp_id_postwhisker</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>)<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hsB</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">B</span>) (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">X</span> <span class="id" title="var">X'</span> : [<span class="id" title="var">A</span>, <span class="id" title="var">B</span>, <span class="id" title="var">hsB</span>]) (<span class="id" title="var">α</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">X'</span>)<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Z</span> : [<span class="id" title="var">B</span> ,<span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>])<br/>
+&nbsp;&nbsp;: <span class="id" title="var">horcomp</span> <span class="id" title="var">α</span> (<span class="id" title="var">nat_trans_id</span> <span class="id" title="var">_</span> ) = <span class="id" title="var">post_whisker</span> <span class="id" title="var">α</span> <span class="id" title="var">Z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hsC</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">a</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">functorial_composition_data</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">hsB</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">B</span>) (<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor_data</span> (<span class="id" title="var">precategory_binproduct_data</span> [<span class="id" title="var">A</span>, <span class="id" title="var">B</span>, <span class="id" title="var">hsB</span>] [<span class="id" title="var">B</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>])<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="var">A</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">λ</span> <span class="id" title="var">FG</span>, <span class="id" title="var">functor_composite</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">FG</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">FG</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">αβ</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">αβ</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">α</span> <span class="id" title="var">β</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">horcomp</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">functorial_composition</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">hsB</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">B</span>) (<span class="id" title="var">hsC</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor</span> (<span class="id" title="var">precategory_binproduct</span> [<span class="id" title="var">A</span>, <span class="id" title="var">B</span>, <span class="id" title="var">hsB</span>] [<span class="id" title="var">B</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>]) [<span class="id" title="var">A</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">functorial_composition_data</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> <span class="id" title="var">hsB</span> <span class="id" title="var">hsC</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_idax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">FG</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">remove_id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">functor_id</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">FG</span>) ((<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">FG</span>)) <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_compax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">FG1</span> <span class="id" title="var">FG2</span> <span class="id" title="var">FG3</span> <span class="id" title="var">αβ1</span> <span class="id" title="var">αβ2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">αβ1</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">α1</span> <span class="id" title="var">β1</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">αβ2</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">α2</span> <span class="id" title="var">β2</span>].<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- ?<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">functor_comp</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> -&gt; ?<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_ax</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">horcomp_pre_post</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">C</span> <span class="id" title="var">D</span>:<span class="id" title="var">precategory</span>) ( <span class="id" title="var">E</span> : <span class="id" title="var">category</span>) (<span class="id" title="var">F</span> <span class="id" title="var">F'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) (<span class="id" title="var">G</span> <span class="id" title="var">G'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">D</span> <span class="id" title="var">E</span>) (<span class="id" title="var">f</span>:<span class="id" title="var">nat_trans</span> <span class="id" title="var">F</span> <span class="id" title="var">F'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span>:<span class="id" title="var">nat_trans</span> <span class="id" title="var">G</span> <span class="id" title="var">G'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">horcomp</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">compose</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">functor_category</span> <span class="id" title="var">C</span> <span class="id" title="var">E</span>) (<span class="id" title="var">a</span>:= (<span class="id" title="var">G</span> □ <span class="id" title="var">F</span>)) (<span class="id" title="var">b</span>:= (<span class="id" title="var">G'</span> □ <span class="id" title="var">F</span>)) (<span class="id" title="var">c</span>:= (<span class="id" title="var">G'</span> □ <span class="id" title="var">F'</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pre_whisker</span> <span class="id" title="var">F</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">post_whisker</span> <span class="id" title="var">f</span> <span class="id" title="var">G'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Monads.MonadAlgebras</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+***************************************************************
+
+<div class="paragraph"> </div>
+
+Contents :
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Definition of the category of algebras of a monad
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> The free-forgetful adjunction between a category C and the
+    category of algebras of a monad on C
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> For monads S, T on C: lifting of T to a monad on the category
+    of S-algebras
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monads.Monads</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monads.Derivative</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">rewrite_cbn</span> <span class="id" title="var">x</span> := <span class="id" title="keyword">let</span> <span class="id" title="var">H</span> := <span class="id" title="tactic">fresh</span> <span class="id" title="tactic">in</span> (<span class="id" title="tactic">set</span> (<span class="id" title="var">H</span> := <span class="id" title="var">x</span>); <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span>).<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">rewrite_cbn_inv</span> <span class="id" title="var">x</span> := <span class="id" title="keyword">let</span> <span class="id" title="var">H</span> := <span class="id" title="tactic">fresh</span> <span class="id" title="tactic">in</span> (<span class="id" title="tactic">set</span> (<span class="id" title="var">H</span> := <span class="id" title="var">x</span>); <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Algebras</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of an algebra of a monad T 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Algebra_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_data</span> : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">X</span> : <span class="id" title="var">C</span>, <span class="id" title="var">T</span> <span class="id" title="var">X</span> --&gt; <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">Alg_carrier</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra_data</span>) : <span class="id" title="var">C</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Alg_map</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra_data</span>) : <span class="id" title="var">T</span> <span class="id" title="var">X</span> --&gt; <span class="id" title="var">X</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_laws</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra_data</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span> · <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span> = <span class="id" title="var">identity</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;× (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span> · <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span> = #<span class="id" title="var">T</span> (<span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span>) · <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra</span> : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">X</span> : <span class="id" title="var">Algebra_data</span>, <span class="id" title="var">Algebra_laws</span> <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">Algebra_data_from_Algebra</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra</span>) : <span class="id" title="var">Algebra_data</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_idlaw</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra</span>) : <span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span> · <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span> = <span class="id" title="var">identity</span> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_multlaw</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra</span>) : <span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span> · <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span> = #<span class="id" title="var">T</span> (<span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span>) · <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_Algebra</span> (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">Algebra</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> (<span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law1</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law3</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Algebra_def</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Data for the category of algebras of the monad T, following FunctorAlgebras.v 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Algebra_precategory_data</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_Algebra_mor</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">Algebra</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span> · <span class="id" title="var">f</span> = #<span class="id" title="var">T</span> <span class="id" title="var">f</span> · <span class="id" title="var">Alg_map</span> <span class="id" title="var">Y</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_mor</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">Algebra</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= ∑ <span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>, <span class="id" title="var">is_Algebra_mor</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">mor_from_Algebra_mor</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">Algebra</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">Algebra_mor</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_mor_commutes</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">Algebra</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">Algebra_mor</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">Alg_map</span> <span class="id" title="var">X</span> · <span class="id" title="var">f</span> = #<span class="id" title="var">T</span> <span class="id" title="var">f</span> · <span class="id" title="var">Alg_map</span> <span class="id" title="var">Y</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_mor_id</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra</span>) : <span class="id" title="var">Algebra_mor</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">unfold</span> <span class="id" title="var">is_Algebra_mor</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>, <span class="id" title="var">id_right</span>, <span class="id" title="var">id_left</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_mor_comp</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> : <span class="id" title="var">Algebra</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">Algebra_mor</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Algebra_mor</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">Algebra_mor</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">unfold</span> <span class="id" title="var">is_Algebra_mor</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Algebra_mor_commutes</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Algebra_mor_commutes</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>, <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_Alg_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">Algebra</span>,, <span class="id" title="var">Algebra_mor</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">precategory_Alg_data</span> : <span class="id" title="var">precategory_data</span><br/>
+&nbsp;&nbsp;:= (<span class="id" title="var">precategory_Alg_ob_mor</span>,, <span class="id" title="var">Algebra_mor_id</span>,, <span class="id" title="var">Algebra_mor_comp</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Algebra_precategory_data</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Algebras</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of the category MonadAlg of algebras for T. Requires that C is a category. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Algebra_category</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Algebra_mor_eq</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">Algebra</span> <span class="id" title="var">T</span>} {<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">Algebra_mor</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>}<br/>
+&nbsp;&nbsp;: (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) = <span class="id" title="var">g</span> ≃ <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeInjectivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_precategory_precategory_Alg_data</span> : <span class="id" title="var">is_precategory</span> (<span class="id" title="var">precategory_Alg_data</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">mk_is_precategory</span>; <span class="id" title="tactic">intros</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Algebra_mor_eq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">assoc'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">MonadAlg</span> : <span class="id" title="var">precategory</span> := ( <span class="id" title="var">_</span>,, <span class="id" title="var">is_precategory_precategory_Alg_data</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">has_homsets_MonadAlg</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">MonadAlg</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isofhleveltotal2</span> 2).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isasetaprop</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Algebra_category</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Adjunction between MonadAlg T and C, with right adjoint the forgetful functor
+   and left adjoint the free algebra functor. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Algebra_adjunction</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">forget_Alg_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">T</span>) <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">X</span> =&gt; (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra</span> <span class="id" title="var">T</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">f</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">forget_Alg</span> : <span class="id" title="var">functor</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">T</span>) <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">forget_Alg_data</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="tactic">red</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_Alg_data</span> : <span class="id" title="var">functor_data</span> <span class="id" title="var">C</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">free_Algebra</span> <span class="id" title="var">T</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (#<span class="id" title="var">T</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>)).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_Alg</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">T</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">free_Alg_data</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="tactic">red</span>; <span class="id" title="tactic">intros</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality'</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_forgetful_are_adjoints</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">free_Alg</span> <span class="id" title="var">forget_Alg</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_are_adjoints</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">mk_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">η</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">Alg_map</span> <span class="id" title="var">T</span> (<span class="id" title="var">X</span> : <span class="id" title="var">Algebra</span> <span class="id" title="var">T</span>),, <span class="id" title="var">Algebra_multlaw</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Algebra_mor_eq</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">Algebra_mor_eq</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law2</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Algebra_idlaw</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">forget_free_is_T</span> : <span class="id" title="var">free_Alg</span> ∙ <span class="id" title="var">forget_Alg</span> = <span class="id" title="var">T</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_eq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Alg_adjunction_monad_eq</span> : <span class="id" title="var">Monad_from_adjunction</span> <span class="id" title="var">free_forgetful_are_adjoints</span> = <span class="id" title="var">T</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_eq_raw_data</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Algebra_adjunction</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Liftings</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} (<span class="id" title="var">S</span> <span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A lifting of (T, η, μ) is a monad (T', η', μ') on (MonadAlg S) which commutes with the
+forgetful functor:
+<pre>
+                    T'
+  (MonadAlg S) ----------&gt; (MonadAlg S)
+       |                        |
+       | forget_Alg             | forget_Alg
+       |                        |
+       V                        V
+       C ---------------------&gt; C
+                    T
+</pre>
+and forget_Alg ∙ η = η' ∙ forget_Alg,
+    forget_Alg ∙ μ = μ' ∙ forget_Alg.
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_eq</span> (<span class="id" title="var">T'</span> : <span class="id" title="var">Monad</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>)) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">functor_composite_data</span> (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>) <span class="id" title="var">T</span>  =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">functor_composite_data</span> <span class="id" title="var">T'</span> (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_η_commutes</span> (<span class="id" title="var">T'</span> : <span class="id" title="var">Monad</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>)) (<span class="id" title="var">e</span> : <span class="id" title="var">lift_eq</span> <span class="id" title="var">T'</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">transportf</span> <span class="id" title="var">_</span> <span class="id" title="var">e</span> (<span class="id" title="var">pre_whisker</span> (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>) (<span class="id" title="var">η</span> <span class="id" title="var">T</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">post_whisker</span> (<span class="id" title="var">η</span> <span class="id" title="var">T'</span>) (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eq2</span> (<span class="id" title="var">T'</span> : <span class="id" title="var">Monad</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>))(<span class="id" title="var">e</span> : <span class="id" title="var">lift_eq</span> <span class="id" title="var">T'</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">functor_composite_data</span> (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>) (<span class="id" title="var">functor_composite_data</span> <span class="id" title="var">T</span> <span class="id" title="var">T</span>) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor_composite_data</span> (<span class="id" title="var">functor_composite_data</span> <span class="id" title="var">T'</span> <span class="id" title="var">T'</span>) (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">X</span> =&gt; <span class="id" title="var">functor_composite_data</span> <span class="id" title="var">X</span> <span class="id" title="var">T</span>) <span class="id" title="var">e</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">functor_composite_data</span> <span class="id" title="var">T'</span>) <span class="id" title="var">e</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_μ_commutes</span> (<span class="id" title="var">T'</span> : <span class="id" title="var">Monad</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>)) (<span class="id" title="var">e</span> : <span class="id" title="var">lift_eq</span> <span class="id" title="var">T'</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">transportf</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">X</span> =&gt; <span class="id" title="var">X</span> ⟹ (<span class="id" title="var">T'</span> ∙ <span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>)) (<span class="id" title="var">eq2</span> <span class="id" title="var">T'</span> <span class="id" title="var">e</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">transportf</span> <span class="id" title="var">_</span> <span class="id" title="var">e</span> (<span class="id" title="var">pre_whisker</span> (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>) (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>)))  =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">post_whisker</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T'</span>) (<span class="id" title="var">forget_Alg</span> <span class="id" title="var">S</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lifting</span> : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= ∑ <span class="id" title="var">T'</span> : <span class="id" title="var">Monad</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∑ <span class="id" title="var">e</span> : <span class="id" title="var">lift_eq</span> <span class="id" title="var">T'</span>, (<span class="id" title="var">lift_η_commutes</span> <span class="id" title="var">T'</span> <span class="id" title="var">e</span>) × (<span class="id" title="var">lift_μ_commutes</span> <span class="id" title="var">T'</span> <span class="id" title="var">e</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A distributive law of S over T induces a lifting of T to S-Algebras 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Lifting_from_dist_law</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span>  {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">T_on_SAlg</span> : <span class="id" title="var">Algebra</span> <span class="id" title="var">S</span> -&gt; <span class="id" title="var">Algebra</span> <span class="id" title="var">S</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> (<span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">a</span> <span class="id" title="var">X</span> · (# <span class="id" title="var">T</span>) (<span class="id" title="var">Alg_map</span> <span class="id" title="var">S</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_id</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">Algebra_idlaw</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">monad_dist_law1</span> <span class="id" title="var">l</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> 2 <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc4</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rewrite_cbn</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">a</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Alg_map</span> <span class="id" title="var">S</span> <span class="id" title="var">X</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rewrite_cbn_inv</span> (<span class="id" title="var">monad_dist_law4</span> <span class="id" title="var">l</span> <span class="id" title="var">X</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc4</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rewrite_cbn</span> (<span class="id" title="var">Algebra_multlaw</span> <span class="id" title="var">S</span> <span class="id" title="var">X</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">assoc</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_functor</span> : (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>) ⟶ (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_functor</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> <span class="id" title="var">T_on_SAlg</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> ((# <span class="id" title="var">T</span>) (<span class="id" title="var">mor_from_Algebra_mor</span> <span class="id" title="var">S</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">red</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Algebra_mor_commutes</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> 2 <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="tactic">red</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality'</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_η</span> : <span class="id" title="var">functor_identity</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>) ⟹ <span class="id" title="var">lift_functor</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>. <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">red</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rewrite_cbn</span> (<span class="id" title="var">monad_dist_law2</span> <span class="id" title="var">l</span> <span class="id" title="var">X</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>)) |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_μ</span> : <span class="id" title="var">lift_functor</span> ∙ <span class="id" title="var">lift_functor</span> ⟹ <span class="id" title="var">lift_functor</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>. <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">red</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc4</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rewrite_cbn_inv</span> (<span class="id" title="var">monad_dist_law3</span> <span class="id" title="var">l</span> <span class="id" title="var">X</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rewrite_cbn</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Alg_map</span> <span class="id" title="var">S</span> <span class="id" title="var">X</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">assoc</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>)) |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_monad</span> : <span class="id" title="var">Monad</span> (<span class="id" title="var">MonadAlg</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> ((<span class="id" title="var">lift_functor</span> ,, <span class="id" title="var">lift_μ</span>) ,, <span class="id" title="var">lift_η</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">split</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law1</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law2</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>] |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law3</span> |<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>] ]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lifting_from_dist_law</span> : <span class="id" title="var">lifting</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">lift_monad</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Lifting_from_dist_law</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+TODO: Construct distributive law from lifting, show distributive laws are equivalent
+          to liftings. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Liftings</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

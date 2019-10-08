@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Algebra.Lattice</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab578"></a><h1 class="section">Lattice</h1>
+ Catherine Lelay. Nov. 2016 - 
+<div class="paragraph"> </div>
+
+Definition of a lattice: (Burris, S., &amp; Sankappanavar, H. P. (2006).
+A Course in Universal Algebra-With 36 Illustrations. Chapter I)
+A lattice is a set with two binary operators min and max such that:
+<ul class="doclist">
+<li> min and max are associative
+
+</li>
+<li> min and max are commutative
+
+</li>
+<li> ∏ x y : X, min x (max x y) = x
+
+</li>
+<li> ∏ x y : X, max x (min x y) = x
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+In a lattice, we can define a partial order:
+<ul class="doclist">
+<li> le := λ (x y : X), min is x y = x
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Lattice with a strict order:
+A lattice with a strict order gt is lattice such that:
+<ul class="doclist">
+<li> ∏ (x y : X), (¬ gt x y) &lt;-&gt; le x y
+
+</li>
+<li> ∏ x y z : X, gt x z → gt y z → gt (min x y) z
+
+</li>
+<li> ∏ x y z : X, gt z x → gt z y → gt z (max is x y)
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Lattice with a total and decidable order:
+<ul class="doclist">
+<li> le is total and decidable
+
+</li>
+<li> it is a lattice with a strong order 
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Lattice in an abelian monoid:
+<ul class="doclist">
+<li> compatibility and cancelation of addition for le
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Truncated minus is a lattice:
+<ul class="doclist">
+<li> a function minus such that: ∏ (x y : X), (minus x y) + y = max x y 
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab579"></a><h2 class="section">Strong Order</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isStrongOrder</span> {<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) := <span class="id" title="var">istrans</span> <span class="id" title="var">R</span> × <span class="id" title="var">iscotrans</span> <span class="id" title="var">R</span> × <span class="id" title="var">isirrefl</span> <span class="id" title="var">R</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">StrongOrder</span> (<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>) := ∑ <span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>, <span class="id" title="var">isStrongOrder</span> <span class="id" title="var">R</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pairStrongOrder</span> {<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) (<span class="id" title="keyword">is</span> : <span class="id" title="var">isStrongOrder</span> <span class="id" title="var">R</span>) : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">tpair</span> (<span class="id" title="var">λ</span> <span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>, <span class="id" title="var">isStrongOrder</span> <span class="id" title="var">R</span> ) <span class="id" title="var">R</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pr1StrongOrder</span> {<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>} : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span> → <span class="id" title="var">hrel</span> <span class="id" title="var">X</span> := <span class="id" title="var">pr1</span>.<br/>
+<span class="id" title="keyword">Coercion</span>  <span class="id" title="var">pr1StrongOrder</span> : <span class="id" title="var">StrongOrder</span> &gt;-&gt; <span class="id" title="var">hrel</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">so_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>}.<br/>
+<span class="id" title="keyword">Context</span> (<span class="id" title="var">R</span> : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">istrans_StrongOrder</span> : <span class="id" title="var">istrans</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">R</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">iscotrans_StrongOrder</span> : <span class="id" title="var">iscotrans</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">R</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isirrefl_StrongOrder</span> : <span class="id" title="var">isirrefl</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">R</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isasymm_StrongOrder</span> : <span class="id" title="var">isasymm</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">istransandirrefltoasymm</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">istrans_StrongOrder</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isirrefl_StrongOrder</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">so_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isStrongOrder_setquot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">eqrel</span> <span class="id" title="var">X</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">iscomprelrel</span> <span class="id" title="var">R</span> <span class="id" title="var">L</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isStrongOrder</span> <span class="id" title="var">L</span> → <span class="id" title="var">isStrongOrder</span> (<span class="id" title="var">quotrel</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; [ | <span class="id" title="tactic">split</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">istransquotrel</span>, (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">iscotransquotrel</span>, (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isirreflquotrel</span>, (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)).<br/>
+</div>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">StrongOrder_setquot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">eqrel</span> <span class="id" title="var">X</span>} {<span class="id" title="var">L</span> : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">iscomprelrel</span> <span class="id" title="var">R</span> <span class="id" title="var">L</span>) : <span class="id" title="var">StrongOrder</span> (<span class="id" title="var">setquot</span> <span class="id" title="var">R</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">quotrel</span> <span class="id" title="keyword">is</span>,, <span class="id" title="var">isStrongOrder_setquot</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">L</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab580"></a><h2 class="section">Definition</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">latticeop</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">min</span> <span class="id" title="var">max</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;((<span class="id" title="var">isassoc</span> <span class="id" title="var">min</span>) × (<span class="id" title="var">iscomm</span> <span class="id" title="var">min</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× ((<span class="id" title="var">isassoc</span> <span class="id" title="var">max</span>) × (<span class="id" title="var">iscomm</span> <span class="id" title="var">max</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">min</span> <span class="id" title="var">x</span> (<span class="id" title="var">max</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) = <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">max</span> <span class="id" title="var">x</span> (<span class="id" title="var">min</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) = <span class="id" title="var">x</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lattice</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) := ∑ <span class="id" title="var">min</span> <span class="id" title="var">max</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>, <span class="id" title="var">latticeop</span> <span class="id" title="var">min</span> <span class="id" title="var">max</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mklattice</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">min</span> <span class="id" title="var">max</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>} : <span class="id" title="var">latticeop</span> <span class="id" title="var">min</span> <span class="id" title="var">max</span> → <span class="id" title="var">lattice</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> (<span class="id" title="keyword">is</span> : <span class="id" title="var">latticeop</span> <span class="id" title="var">min</span> <span class="id" title="var">max</span>), <span class="id" title="var">min</span>,, <span class="id" title="var">max</span> ,, <span class="id" title="keyword">is</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) : <span class="id" title="var">binop</span> <span class="id" title="var">X</span> := <span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) : <span class="id" title="var">binop</span> <span class="id" title="var">X</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Bounded lattices 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bounded_latticeop</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) (<span class="id" title="var">bot</span> <span class="id" title="var">top</span> : <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">islunit</span> (<span class="id" title="var">Lmax</span> <span class="id" title="var">l</span>) <span class="id" title="var">bot</span>) × (<span class="id" title="var">islunit</span> (<span class="id" title="var">Lmin</span> <span class="id" title="var">l</span>) <span class="id" title="var">top</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bounded_lattice</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) :=<br/>
+&nbsp;&nbsp;∑ (<span class="id" title="var">l</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) (<span class="id" title="var">bot</span> <span class="id" title="var">top</span> : <span class="id" title="var">X</span>), <span class="id" title="var">bounded_latticeop</span> <span class="id" title="var">l</span> <span class="id" title="var">bot</span> <span class="id" title="var">top</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mkbounded_lattice</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">l</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>} {<span class="id" title="var">bot</span> <span class="id" title="var">top</span> : <span class="id" title="var">X</span>} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">bounded_latticeop</span> <span class="id" title="var">l</span> <span class="id" title="var">bot</span> <span class="id" title="var">top</span> → <span class="id" title="var">bounded_lattice</span> <span class="id" title="var">X</span> := <span class="id" title="var">λ</span> <span class="id" title="var">bl</span>, <span class="id" title="var">l</span>,, <span class="id" title="var">bot</span>,, <span class="id" title="var">top</span>,, <span class="id" title="var">bl</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bounded_lattice_to_lattice</span> <span class="id" title="var">X</span> : <span class="id" title="var">bounded_lattice</span> <span class="id" title="var">X</span> → <span class="id" title="var">lattice</span> <span class="id" title="var">X</span> := <span class="id" title="var">pr1</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">bounded_lattice_to_lattice</span> : <span class="id" title="var">bounded_lattice</span> &gt;-&gt; <span class="id" title="var">lattice</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lbot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">bounded_lattice</span> <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Ltop</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">bounded_lattice</span> <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">lattice_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isassoc_Lmin</span> : <span class="id" title="var">isassoc</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">iscomm_Lmin</span> : <span class="id" title="var">iscomm</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isassoc_Lmax</span> : <span class="id" title="var">isassoc</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>)))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">iscomm_Lmax</span> : <span class="id" title="var">iscomm</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>)))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin_absorb</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) = <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>)))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax_absorb</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) = <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>)))).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_id</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">x</span> = <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">b</span> := <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">Lmax_absorb</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">Lmin_absorb</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_id</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">x</span> = <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">b</span> := <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">Lmin_absorb</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_absorb</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">lattice_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">bounded_lattice_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">bounded_lattice</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">islunit_Lmax_Lbot</span> : <span class="id" title="var">islunit</span> (<span class="id" title="var">Lmax</span> <span class="id" title="var">l</span>) (<span class="id" title="var">Lbot</span> <span class="id" title="var">l</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">l</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">islunit_Lmin_Ltop</span> : <span class="id" title="var">islunit</span> (<span class="id" title="var">Lmin</span> <span class="id" title="var">l</span>) (<span class="id" title="var">Ltop</span> <span class="id" title="var">l</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">l</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_Lbot</span> (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">Lmin</span> <span class="id" title="var">l</span> (<span class="id" title="var">Lbot</span> <span class="id" title="var">l</span>) <span class="id" title="var">x</span> = <span class="id" title="var">Lbot</span> <span class="id" title="var">l</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">islunit_Lmax_Lbot</span> <span class="id" title="var">x</span>), <span class="id" title="var">Lmin_absorb</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_Ltop</span> (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">Lmax</span> <span class="id" title="var">l</span> (<span class="id" title="var">Ltop</span> <span class="id" title="var">l</span>) <span class="id" title="var">x</span> = <span class="id" title="var">Ltop</span> <span class="id" title="var">l</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">islunit_Lmin_Ltop</span> <span class="id" title="var">x</span>), <span class="id" title="var">Lmax_absorb</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">bounded_lattice_pty</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab581"></a><h2 class="section">Partial order in a lattice</h2>
+
+<div class="paragraph"> </div>
+
+ <span class="inlinecode"><span class="id" title="var">Lle</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lle</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">hProppair</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">x</span>) ((<span class="id" title="var">pr2</span> <span class="id" title="var">X</span>) (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">lattice_le</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isrefl_Lle</span> : <span class="id" title="var">isrefl</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmin_id</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isantisymm_Lle</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isantisymm</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hxy</span> <span class="id" title="var">Hyx</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathscomp0</span> <span class="id" title="keyword">with</span> (1 := <span class="id" title="var">pathsinv0</span> <span class="id" title="var">Hxy</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathscomp0</span> <span class="id" title="keyword">with</span> (2 := <span class="id" title="var">Hyx</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iscomm_Lmin</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_Lle</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> &lt;- &lt;-.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">isassoc_Lmin</span>, <span class="id" title="var">Lmin_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isPartialOrder_Lle</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isPartialOrder</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; [ <span class="id" title="tactic">split</span> | ].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">istrans_Lle</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">isrefl_Lle</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">isantisymm_Lle</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_le_l</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">iscomm_Lmin</span>, &lt;- <span class="id" title="var">isassoc_Lmin</span>, <span class="id" title="var">Lmin_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_le_r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">iscomm_Lmin</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmin_le_l</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_le_case</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> &lt;- &lt;-.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">iscomm_Lmin</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>), &lt;- <span class="id" title="var">isassoc_Lmin</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">isassoc_Lmin</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span>), <span class="id" title="var">Lmin_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">isassoc_Lmin</span>, (<span class="id" title="var">iscomm_Lmin</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">isassoc_Lmin</span>, &lt;- (<span class="id" title="var">isassoc_Lmin</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>), <span class="id" title="var">Lmin_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">isassoc_Lmin</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_le_l</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmin_absorb</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_le_r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">iscomm_Lmax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_le_l</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_le_case</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>) (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>)<br/>
+&nbsp;&nbsp;→ ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> &lt;- &lt;-.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmin_le_r</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_le_eq_l</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_le_eq_r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">iscomm_Lmin</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_le_eq_l</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> &lt;-.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">iscomm_Lmin</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_absorb</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_le_eq_r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">iscomm_Lmax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_le_eq_l</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">lattice_le</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">Lge</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lge</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Lge_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isrefl_Lge</span> : <span class="id" title="var">isrefl</span> (<span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">isrefl_Lle</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isantisymm_Lge</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isantisymm</span> (<span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hle</span> <span class="id" title="var">Hge</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isantisymm_Lle</span> <span class="id" title="keyword">is</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hge</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hle</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_Lge</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> (<span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">Hxy</span> <span class="id" title="var">Hyz</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">istrans_Lle</span> <span class="id" title="keyword">is</span>) <span class="id" title="keyword">with</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hyz</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hxy</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isPartialOrder_Lge</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isPartialOrder</span> (<span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; [ <span class="id" title="tactic">split</span> | ].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">istrans_Lge</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">isrefl_Lge</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">isantisymm_Lge</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin_ge_l</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmin_le_l</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin_ge_r</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmin_le_r</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin_ge_case</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">z</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmin_le_case</span> <span class="id" title="keyword">is</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax_ge_l</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmax_le_l</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax_ge_r</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">y</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmax_le_r</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax_ge_case</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>) (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>)<br/>
+&nbsp;&nbsp;→ ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmax_le_case</span> <span class="id" title="keyword">is</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin_ge_eq_l</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmin_le_eq_l</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin_ge_eq_r</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">y</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmin_le_eq_r</span> <span class="id" title="keyword">is</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax_ge_eq_l</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmax_le_eq_l</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax_ge_eq_r</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">y</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lmax_le_eq_r</span> <span class="id" title="keyword">is</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Lge_pty</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab582"></a><h2 class="section">Lattice with a strong order</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">latticewithgtrel</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) (<span class="id" title="var">gt</span> : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, (¬ (<span class="id" title="var">gt</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)) &lt;-&gt; <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">gt</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> → <span class="id" title="var">gt</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">gt</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">gt</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span> → <span class="id" title="var">gt</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span> → <span class="id" title="var">gt</span> <span class="id" title="var">z</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">latticewithgt</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) :=<br/>
+&nbsp;&nbsp;∑ (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) (<span class="id" title="var">gt</span> : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span>), <span class="id" title="var">latticewithgtrel</span> <span class="id" title="keyword">is</span> <span class="id" title="var">gt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lattice_latticewithgt</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} : <span class="id" title="var">latticewithgt</span> <span class="id" title="var">X</span> → <span class="id" title="var">lattice</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">lattice_latticewithgt</span> : <span class="id" title="var">latticewithgt</span> &gt;-&gt; <span class="id" title="var">lattice</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">Lgt</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lgt</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">latticewithgt</span> <span class="id" title="var">X</span>) : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">latticewithgt_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">latticewithgt</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">notLgt_Lle</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, (¬ <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>)) <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lle_notLgt</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → ¬ <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>)) <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isirrefl_Lgt</span> : <span class="id" title="var">isirrefl</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">isirrefl_StrongOrder</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">istrans_Lgt</span> : <span class="id" title="var">istrans</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans_StrongOrder</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">iscotrans_Lgt</span> : <span class="id" title="var">iscotrans</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">iscotrans_StrongOrder</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isasymm_Lgt</span> : <span class="id" title="var">isasymm</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">isasymm_StrongOrder</span> (<span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lgt_Lge</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">notLgt_Lle</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">isasymm_Lgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_Lgt_Lge</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">Hgt</span> <span class="id" title="var">Hge</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">iscotrans_Lgt</span> <span class="id" title="var">_</span> <span class="id" title="var">z</span> <span class="id" title="var">_</span> <span class="id" title="var">Hgt</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">Lle_notLgt</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hge</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_Lge_Lgt</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">Hge</span> <span class="id" title="var">Hgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">iscotrans_Lgt</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">_</span> <span class="id" title="var">Hgt</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">Lle_notLgt</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hge</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmin_Lgt</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">z</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Lmax_Lgt</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">z</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">latticewithgt_pty</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab583"></a><h2 class="section">Lattice with a total order</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">latticedec</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) :=<br/>
+&nbsp;&nbsp;∑ <span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>, <span class="id" title="var">istotal</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>) × (<span class="id" title="var">isdecrel</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lattice_latticedec</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">latticedec</span> <span class="id" title="var">X</span>) : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">lattice_latticedec</span> : <span class="id" title="var">latticedec</span> &gt;-&gt; <span class="id" title="var">lattice</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">istotal_latticedec</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">latticedec</span> <span class="id" title="var">X</span>) : <span class="id" title="var">istotal</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isdecrel_latticedec</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">latticedec</span> <span class="id" title="var">X</span>) : <span class="id" title="var">isdecrel</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">latticedec_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">latticedec</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_case_strong</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">P</span> : <span class="id" title="var">X</span> → <span class="id" title="var">UU</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">P</span> <span class="id" title="var">x</span>) → (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> → <span class="id" title="var">P</span> <span class="id" title="var">y</span>) → <span class="id" title="var">P</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hx</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isdecrel_latticedec</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">Lmin_le_eq_l</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hx</span>, <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">enough</span> (<span class="id" title="var">H0</span> : <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">Lmin_le_eq_r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hy</span>, <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">generalize</span> (<span class="id" title="var">istotal_latticedec</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>, <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>, <span class="id" title="var">H</span>, <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmin_case</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">P</span> : <span class="id" title="var">X</span> → <span class="id" title="var">UU</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">P</span> <span class="id" title="var">x</span> → <span class="id" title="var">P</span> <span class="id" title="var">y</span> → <span class="id" title="var">P</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hx</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmin_case_strong</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hy</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_case_strong</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">P</span> : <span class="id" title="var">X</span> → <span class="id" title="var">UU</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> → <span class="id" title="var">P</span> <span class="id" title="var">x</span>) → (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">P</span> <span class="id" title="var">y</span>) → <span class="id" title="var">P</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hx</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isdecrel_latticedec</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">Lmax_le_eq_r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hy</span>, <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">enough</span> (<span class="id" title="var">H0</span> : <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">Lmax_le_eq_l</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hx</span>, <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">generalize</span> (<span class="id" title="var">istotal_latticedec</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>, <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>, <span class="id" title="var">H</span>, <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Lmax_case</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">P</span> : <span class="id" title="var">X</span> → <span class="id" title="var">UU</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">P</span> <span class="id" title="var">x</span> → <span class="id" title="var">P</span> <span class="id" title="var">y</span> → <span class="id" title="var">P</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hx</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_case_strong</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hy</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">latticedec_pty</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It is a lattice with a strong order 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">latticedec_gt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">latticedec</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">latticedec_gt_rel</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">hneg</span> (<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">latticedec_gt_ge</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">latticedec_gt_rel</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lge</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hxy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">istotal_latticedec</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>, <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">Hxy</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_latticedec_gt_rel</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">latticedec_gt_rel</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">Hxy</span> <span class="id" title="var">Hyz</span> <span class="id" title="var">Hxz</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">Hxy</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">istrans_Lle</span> <span class="id" title="keyword">with</span> <span class="id" title="var">z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hxz</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">latticedec_gt_ge</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hyz</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscotrans_latticedec_gt_rel</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">iscotrans</span> <span class="id" title="var">latticedec_gt_rel</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">Hxz</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">isdecrel_latticedec</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hxy</span> | <span class="id" title="var">Hyx</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>, <span class="id" title="var">ii2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hyz</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">Hxz</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">istrans_Lle</span> <span class="id" title="keyword">with</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hxy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hyz</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>, <span class="id" title="var">ii1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hyx</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">latticedec_gt_so</span> : <span class="id" title="var">StrongOrder</span> <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">latticedec_gt_rel</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; [ | <span class="id" title="tactic">split</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">istrans_latticedec_gt_rel</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">iscotrans_latticedec_gt_rel</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">Hx</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isrefl_Lle</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">latticedec_notgtle</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), ¬ <span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">isdecrel_latticedec</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">H0</span> | <span class="id" title="var">H0</span>].<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>, <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">latticedec_lenotgt</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → ¬ <span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">H0</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">latticedec_gtmin</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span><br/>
+&nbsp;&nbsp;→ <span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">latticedec_gt_so</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">Hxz</span> <span class="id" title="var">Hyz</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">Lmin_case</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">λ</span> <span class="id" title="var">t</span> : <span class="id" title="var">X</span>, <span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">t</span> <span class="id" title="var">z</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hxz</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hyz</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">latticedec_gtmax</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">z</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;→ <span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">z</span> <span class="id" title="var">y</span> → <span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">z</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">Hxz</span> <span class="id" title="var">Hyz</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">Lmax_case</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">latticedec_gt_so</span> <span class="id" title="var">z</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hxz</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hyz</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">latticedec_gt</span> : <span class="id" title="var">latticewithgt</span> <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">lattice_latticedec</span> <span class="id" title="keyword">is</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">latticedec_gt_so</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">latticedec_notgtle</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">latticedec_lenotgt</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">latticedec_gtmin</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">latticedec_gtmax</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">latticedec_gt</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab584"></a><h2 class="section">Lattice in an abmonoid</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">addmonoid</span>.<br/>
+<span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids.AddNotation</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">lattice_abmonoid</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is0</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">y</span> + <span class="id" title="var">x</span> = <span class="id" title="var">z</span> + <span class="id" title="var">x</span> → <span class="id" title="var">y</span> = <span class="id" title="var">z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is2</span> : <span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">op</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">op_le_r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">x</span> + <span class="id" title="var">k</span>) (<span class="id" title="var">y</span> + <span class="id" title="var">k</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Lle</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">is2</span>, <span class="id" title="var">H</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">op_le_r'</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">x</span> + <span class="id" title="var">k</span>) (<span class="id" title="var">y</span> + <span class="id" title="var">k</span>) → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is0</span> <span class="id" title="var">k</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">is2</span>, <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">lattice_abmonoid</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab585"></a><h2 class="section">Truncated minus</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">istruncminus</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) (<span class="id" title="var">minus</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">minus</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> + <span class="id" title="var">y</span> = <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_istruncminus</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) (<span class="id" title="var">minus</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">istruncminus</span> <span class="id" title="keyword">is</span> <span class="id" title="var">minus</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">X</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">extruncminus</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;∑ <span class="id" title="var">minus</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>, <span class="id" title="var">istruncminus</span> <span class="id" title="keyword">is</span> <span class="id" title="var">minus</span>.<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_extruncminus</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hop</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">y</span> + <span class="id" title="var">x</span> = <span class="id" title="var">z</span> + <span class="id" title="var">x</span> → <span class="id" title="var">y</span> = <span class="id" title="var">z</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">extruncminus</span> <span class="id" title="keyword">is</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">minus1</span> <span class="id" title="var">minus2</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">subtypeEquality'</span> (<span class="id" title="var">s</span> := <span class="id" title="var">minus1</span>) (<span class="id" title="var">s'</span> := <span class="id" title="var">minus2</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">iscontrloopsifisaset</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isaset_total2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaset</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaset</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">X</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">minus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isasetaprop</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_istruncminus</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">weqfunextsec</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfunextsec</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">Hop</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">minus1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, (<span class="id" title="var">pr2</span> <span class="id" title="var">minus2</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_istruncminus</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">truncminus</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} {<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>} (<span class="id" title="var">ex</span> : <span class="id" title="var">extruncminus</span> <span class="id" title="keyword">is</span>) : <span class="id" title="var">binop</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span> <span class="id" title="var">ex</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istruncminus_ex</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} {<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>} (<span class="id" title="var">ex</span> : <span class="id" title="var">extruncminus</span> <span class="id" title="keyword">is</span>) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> + <span class="id" title="var">y</span> = <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">ex</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">truncminus_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ex</span> : <span class="id" title="var">extruncminus</span> <span class="id" title="keyword">is</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is1</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">y</span> + <span class="id" title="var">x</span> = <span class="id" title="var">z</span> + <span class="id" title="var">x</span> → <span class="id" title="var">y</span> = <span class="id" title="var">z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is2</span> : <span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">op</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is3</span> : <span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">op</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is4</span> : <span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>) (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is5</span> : <span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>) (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_0_r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> 0 = <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">runax</span> <span class="id" title="var">_</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">istruncminus_ex</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_eq_0</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">istruncminus_ex</span>, <span class="id" title="var">lunax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_le_eq_r</span>, <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_0_l_ge0</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> 0 <span class="id" title="var">x</span> → <span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> 0 <span class="id" title="var">x</span> = 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">truncminus_eq_0</span>, <span class="id" title="var">Hx</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_0_l_le0</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> 0 → <span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> 0 <span class="id" title="var">x</span> + <span class="id" title="var">x</span> = 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_le_eq_l</span>, <span class="id" title="var">Hx</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_ge_0</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> 0 (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">op_le_r'</span> <span class="id" title="var">_</span> <span class="id" title="var">is1</span> <span class="id" title="var">is3</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">istruncminus_ex</span>, <span class="id" title="var">lunax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_ge_r</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_le</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> 0 <span class="id" title="var">x</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> 0 <span class="id" title="var">y</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hx</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">op_le_r'</span> <span class="id" title="var">_</span> <span class="id" title="var">is1</span> <span class="id" title="var">is3</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lmax_le_case</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">is5</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">istrans_Lle</span> <span class="id" title="keyword">with</span> (0 + <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">lunax</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isrefl_Lle</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">op_le_r</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">istrans_Lle</span> <span class="id" title="keyword">with</span> (0 + <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">lunax</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isrefl_Lle</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">op_le_r</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_truncminus</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> 0 <span class="id" title="var">x</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">y</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>) = <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hx</span> <span class="id" title="var">Hxy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>), !<span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">Lmax_le_eq_l</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hxy</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">truncminus_le</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">istrans_Lle</span> <span class="id" title="keyword">with</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hxy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_le_r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">k</span>) (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">y</span> <span class="id" title="var">k</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> &lt;-.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">k</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">is3</span>, !<span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">is4</span>, <span class="id" title="var">isassoc_Lmin</span>, <span class="id" title="var">Lmin_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_le_l</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> → <span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span>) (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">k</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">is3</span>, <span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">is3</span>, <span class="id" title="var">assocax</span>, (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span>), &lt;- <span class="id" title="var">assocax</span>, <span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">is2</span>, (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span>), &lt;- <span class="id" title="var">is4</span>, !(<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">k</span>), &lt;- <span class="id" title="var">is3</span>, <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_Lmax_l</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">k</span> = <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">k</span>) (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">y</span> <span class="id" title="var">k</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">k</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">is2</span>, !<span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">isassoc_Lmax</span>, (<span class="id" title="var">iscomm_Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">k</span>), <span class="id" title="var">isassoc_Lmax</span>, <span class="id" title="var">Lmax_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_Lmax_r</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lle</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">y</span> + <span class="id" title="var">y</span>) (<span class="id" title="var">x</span> + <span class="id" title="var">x</span>)) (<span class="id" title="var">x</span> + <span class="id" title="var">y</span>) →<br/>
+&nbsp;&nbsp;<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">k</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) = <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span>) (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">k</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">is3</span>, <span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)), !<span class="id" title="var">is2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)), !<span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">iscomm_Lmax</span> <span class="id" title="var">_</span> (<span class="id" title="var">_</span>*<span class="id" title="var">_</span>)%<span class="id" title="var">multmonoid</span> (<span class="id" title="var">Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">isassoc_Lmax</span>, !(<span class="id" title="var">iscomm_Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">k</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">is4</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">is2</span>, <span class="id" title="var">is3</span>, !<span class="id" title="var">is2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assocax</span>, (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>), &lt;- <span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">istruncminus_ex</span>, <span class="id" title="var">is2</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">is2</span>, <span class="id" title="var">is3</span>, !<span class="id" title="var">is2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assocax</span>, (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)), !<span class="id" title="var">assocax</span>, (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)), <span class="id" title="var">is2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)), <span class="id" title="var">is2</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> 4!(<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">isassoc_Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">x</span> * (<span class="id" title="var">y</span> * <span class="id" title="var">y</span>))%<span class="id" title="var">multmonoid</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">iscomm_Lmax</span> <span class="id" title="var">_</span> (<span class="id" title="var">x</span> * (<span class="id" title="var">y</span> * <span class="id" title="var">y</span>))%<span class="id" title="var">multmonoid</span> (<span class="id" title="var">Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">is4</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">iscomm_Lmax</span> <span class="id" title="var">_</span> (<span class="id" title="var">x</span> * (<span class="id" title="var">x</span> * <span class="id" title="var">y</span>))%<span class="id" title="var">multmonoid</span> (<span class="id" title="var">k</span> * (<span class="id" title="var">y</span> * <span class="id" title="var">y</span>))%<span class="id" title="var">multmonoid</span>), &lt;- <span class="id" title="var">is4</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">k</span>), &lt;- !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">is3</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">iscomm_Lmax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">x</span> * <span class="id" title="var">y</span> * <span class="id" title="var">k</span>)%<span class="id" title="var">multmonoid</span>), &lt;- !<span class="id" title="var">isassoc_Lmax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">Lmax_le_eq_l</span> <span class="id" title="var">_</span> (<span class="id" title="var">x</span> * <span class="id" title="var">y</span> * <span class="id" title="var">k</span>)%<span class="id" title="var">multmonoid</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">y</span> * <span class="id" title="var">y</span>) (<span class="id" title="var">x</span> * <span class="id" title="var">x</span>) * <span class="id" title="var">k</span>)%<span class="id" title="var">multmonoid</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">op_le_r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">is3</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_Lmin_l</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> (<span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">k</span> = <span class="id" title="var">Lmin</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">k</span>) (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">y</span> <span class="id" title="var">k</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">k</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">k</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">is3</span>, !<span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is4</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">truncminus_pty</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">abgr_truncminus</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="keyword">is</span> : <span class="id" title="var">lattice</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isrdistr</span> (<span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">op</span> →<br/>
+&nbsp;&nbsp;<span class="id" title="var">istruncminus</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrtoabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="keyword">is</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lmax</span> <span class="id" title="keyword">is</span> 0 (<span class="id" title="var">x</span> + <span class="id" title="var">grinv</span> <span class="id" title="var">X</span> <span class="id" title="var">y</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>, <span class="id" title="var">assocax</span>, <span class="id" title="var">grlinvax</span>, <span class="id" title="var">lunax</span>, <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iscomm_Lmax</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">truncminus_gt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">is</span> : <span class="id" title="var">latticewithgt</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ex</span> : <span class="id" title="var">extruncminus</span> <span class="id" title="keyword">is</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is0</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">y</span> + <span class="id" title="var">x</span>) (<span class="id" title="var">z</span> + <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is1</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">y</span> + <span class="id" title="var">x</span>) (<span class="id" title="var">z</span> + <span class="id" title="var">x</span>) → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_pos</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is1</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">lunax</span>, <span class="id" title="var">istruncminus_ex</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Lmax_le_eq_l</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lgt_Lge</span>, <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truncminus_pos'</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> (<span class="id" title="var">truncminus</span> <span class="id" title="var">ex</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) 0 → <span class="id" title="var">Lgt</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is0</span> <span class="id" title="var">y</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">Hgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">istruncminus_ex</span>, <span class="id" title="var">lunax</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">Lmax_le_eq_l</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">notLgt_Lle</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> ; <span class="id" title="var">revert</span> <span class="id" title="var">Hgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lle_notLgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Lmax_le_eq_r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isrefl_Lle</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lgt_Lge</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">truncminus_gt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">hProp_lattice</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">hProp_lattice</span> : <span class="id" title="var">lattice</span> (<span class="id" title="var">hProp</span>,,<span class="id" title="var">isasethProp</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mklattice</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>; <span class="id" title="tactic">exact</span> (<span class="id" title="var">P</span> ∧ <span class="id" title="var">Q</span>).<br/>
+- <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>; <span class="id" title="tactic">exact</span> (<span class="id" title="var">P</span> ∨ <span class="id" title="var">Q</span>).<br/>
+- <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span> <span class="id" title="var">R</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isassoc_hconj</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">iscomm_hconj</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span> <span class="id" title="var">R</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isassoc_hdisj</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">iscomm_hdisj</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hconj_absorb_hdisj</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hdisj_absorb_hconj</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">hProp_bounded_lattice</span> : <span class="id" title="var">bounded_lattice</span> (<span class="id" title="var">hProp</span>,,<span class="id" title="var">isasethProp</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mkbounded_lattice</span>.<br/>
+- <span class="id" title="tactic">exact</span> <span class="id" title="var">hProp_lattice</span>.<br/>
+- <span class="id" title="tactic">exact</span> <span class="id" title="var">hfalse</span>.<br/>
+- <span class="id" title="tactic">exact</span> <span class="id" title="var">htrue</span>.<br/>
+- <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hfalse_hdisj</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">P</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">htrue_hconj</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">hProp_lattice</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

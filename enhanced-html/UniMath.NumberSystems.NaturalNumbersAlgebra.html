@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.NumberSystems.NaturalNumbersAlgebra</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab620"></a><h1 class="section">Facts about the natural numbers that depend on definitions from algebra</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Foundations.NaturalNumbers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.NegativePropositions</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.Archimedean</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.Domains_and_Fields</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.IteratedBinaryOperations</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">nataddabmonoid</span> : <span class="id" title="var">abmonoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoidpair</span> (<span class="id" title="var">setwithbinoppair</span> <span class="id" title="var">natset</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">n</span> + <span class="id" title="var">m</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natplusassoc</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<span class="id" title="var">isunitalpair</span> <span class="id" title="var">natset</span> <span class="id" title="var">_</span> 0 (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natplusl0</span> <span class="id" title="var">natplusr0</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">natpluscomm</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">natmultabmonoid</span> : <span class="id" title="var">abmonoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoidpair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">setwithbinoppair</span> <span class="id" title="var">natset</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">n</span> * <span class="id" title="var">m</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natmultassoc</span> (@<span class="id" title="var">isunitalpair</span> <span class="id" title="var">natset</span> <span class="id" title="var">_</span> 1 (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natmultl1</span> <span class="id" title="var">natmultr1</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">natmultcomm</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab621"></a><h3 class="section">Submonoid of non-zero elements in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#nat"><span class="id" title="inductive">nat</span></a></span></h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">nat_scope</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">natnonzero</span> : @<span class="id" title="var">subabmonoid</span> <span class="id" title="var">natmultabmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> : <span class="id" title="var">natset</span>, <span class="id" title="var">a</span> ≠ 0). <span class="id" title="tactic">unfold</span> <span class="id" title="var">issubmonoid</span>. <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">issubsetwithbinop</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">a'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">natneq0andmult</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">a'</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ct</span> (<span class="id" title="var">natneq</span>, <span class="id" title="var">isdecrel_natneq</span>, 1, 0)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natnonzerocomm</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">natnonzero</span>) :<br/>
+&nbsp;&nbsp;(@<span class="id" title="var">op</span> <span class="id" title="var">natnonzero</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) = (@<span class="id" title="var">op</span> <span class="id" title="var">natnonzero</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">_</span> (<span class="id" title="var">isinclpr1carrier</span> <span class="id" title="var">_</span>) (@<span class="id" title="var">op</span> <span class="id" title="var">natnonzero</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (@<span class="id" title="var">op</span> <span class="id" title="var">natnonzero</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natmultcomm</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">nat_plus_commutativity</span> : <span class="id" title="var">isCommutative_fun_mon</span> <span class="id" title="var">nataddabmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ? ? ?. <span class="id" title="tactic">apply</span> <span class="id" title="var">weqtoeqstn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_weq</span> (∑ <span class="id" title="var">i</span>, <span class="id" title="var">stn</span> (<span class="id" title="var">x</span> <span class="id" title="var">i</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">intermediate_weq</span> (∑ <span class="id" title="var">i</span>, <span class="id" title="var">stn</span> (<span class="id" title="var">x</span>(<span class="id" title="var">f</span> <span class="id" title="var">i</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">iterop_fun_nat</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">weqstnsum1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">weqfp</span> <span class="id" title="var">_</span> (<span class="id" title="var">stn</span>∘<span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">iterop_fun_nat</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">weqstnsum1</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">nat_plus_commutativity</span> {<span class="id" title="var">_</span>} <span class="id" title="var">_</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">finsum</span> {<span class="id" title="var">X</span>} (<span class="id" title="var">fin</span> : <span class="id" title="var">isfinite</span> <span class="id" title="var">X</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">isfinite</span>,<span class="id" title="var">finstruct</span>,<span class="id" title="var">nelstruct</span> <span class="id" title="tactic">in</span> <span class="id" title="var">fin</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">squash_to_set</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isasetnat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> (<span class="id" title="var">x</span> : ∑ <span class="id" title="var">n</span>, <span class="id" title="var">stn</span> <span class="id" title="var">n</span> ≃ <span class="id" title="var">X</span>), <span class="id" title="var">iterop_fun_mon</span> (<span class="id" title="var">M</span> := <span class="id" title="var">nataddabmonoid</span>) (<span class="id" title="var">f</span> ∘ <span class="id" title="var">pr2</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">_</span> <span class="id" title="var">fin</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">n</span> <span class="id" title="var">x</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">x'</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">n'</span> <span class="id" title="var">x'</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">p</span> := <span class="id" title="var">weqtoeqstn</span> (<span class="id" title="var">invweq</span> <span class="id" title="var">x'</span> ∘ <span class="id" title="var">x</span>)%<span class="id" title="var">weq</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">w</span> := <span class="id" title="var">nat_plus_commutativity</span> (<span class="id" title="var">f</span> ∘ <span class="id" title="var">x'</span>) (<span class="id" title="var">invweq</span> <span class="id" title="var">x'</span> ∘ <span class="id" title="var">x</span>)%<span class="id" title="var">weq</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> @ <span class="id" title="var">w</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">iterop_fun_mon</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">weqcomp_to_funcomp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>. <span class="id" title="tactic">exact</span> (! <span class="id" title="var">homotweqinvweq</span> <span class="id" title="var">x'</span> (<span class="id" title="var">x</span> <span class="id" title="var">i</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab622"></a><h3 class="section"><span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#nat"><span class="id" title="inductive">nat</span></a></span> as a commutative rig</h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">natcommrig</span> : <span class="id" title="var">commrig</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">setwith2binoppair</span> <span class="id" title="var">natset</span> (<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">n</span> + <span class="id" title="var">m</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">n</span> * <span class="id" title="var">m</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natplusassoc</span> (@<span class="id" title="var">isunitalpair</span> <span class="id" title="var">natset</span> <span class="id" title="var">_</span> 0 (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natplusl0</span> <span class="id" title="var">natplusr0</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">natpluscomm</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natmultassoc</span> (@<span class="id" title="var">isunitalpair</span> <span class="id" title="var">natset</span> <span class="id" title="var">_</span> 1 (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natmultl1</span> <span class="id" title="var">natmultr1</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natmult0n</span> <span class="id" title="var">natmultn0</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">natldistr</span> <span class="id" title="var">natrdistr</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">iscomm</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natmultcomm</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">nattorig_nat</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">nattorig</span> (<span class="id" title="var">X</span> := <span class="id" title="var">natcommrig</span>) <span class="id" title="var">n</span> = <span class="id" title="var">n</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorigS</span>, <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab623"></a><h3 class="section">Properties of comparisons in the terminology of algebra1.v</h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">rig_scope</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><a class="idref" href="UniMath.Foundations.NaturalNumbers.html#natgth"><span class="id" title="definition">natgth</span></a></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isplushrelnatgth</span> : @<span class="id" title="var">isbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natgth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natgthandplusl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natgthandplusr</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isinvplushrelnatgth</span> : @<span class="id" title="var">isinvbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natgth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natgthandpluslinv</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natgthandplusrinv</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isinvmulthrelnatgth</span> : @<span class="id" title="var">isinvbinophrel</span> <span class="id" title="var">natmultabmonoid</span> <span class="id" title="var">natgth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlthandmultlinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlthandmultrinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isrigmultgtnatgth</span> : <span class="id" title="var">isrigmultgt</span> <span class="id" title="var">natcommrig</span> <span class="id" title="var">natgth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">a</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">a</span> <span class="id" title="var">IHa</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> ? ? ? <span class="id" title="var">rab</span> <span class="id" title="var">rcd</span>. <span class="id" title="var">contradicts</span> <span class="id" title="var">rab</span> (<span class="id" title="var">negnatgth0n</span> <span class="id" title="var">b</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> ? ? ? <span class="id" title="var">rab</span> <span class="id" title="var">rcd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">b</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">b</span> <span class="id" title="var">IHb</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> 2 <span class="id" title="var">natplusr0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natlthandmultl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> <span class="id" title="var">rcd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">rer</span> := <span class="id" title="var">abmonoidrer</span> <span class="id" title="var">nataddabmonoid</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">op1</span>, <span class="id" title="var">op2</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">rer</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">d</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">rer</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">op1</span>, <span class="id" title="var">op2</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natpluscomm</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">natlthandplusr</span> (<span class="id" title="var">a</span> * <span class="id" title="var">d</span> + <span class="id" title="var">b</span> * <span class="id" title="var">c</span>) (<span class="id" title="var">a</span> * <span class="id" title="var">c</span> + <span class="id" title="var">b</span> * <span class="id" title="var">d</span>) (<span class="id" title="var">d</span> + <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">IHa</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">rab</span> <span class="id" title="var">rcd</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isinvrigmultgtnatgth</span> : <span class="id" title="var">isinvrigmultgt</span> <span class="id" title="var">natcommrig</span> <span class="id" title="var">natgth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">rer</span> := <span class="id" title="var">abmonoidrer</span> <span class="id" title="var">nataddabmonoid</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">rer</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isinvrigmultgtif</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>. <span class="id" title="tactic">generalize</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">d</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">d</span> <span class="id" title="var">IHd</span> ].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">g</span> <span class="id" title="var">gab</span>. <span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> ((<span class="id" title="var">a</span> * <span class="id" title="var">c</span> + <span class="id" title="var">b</span> * 0) &gt; (<span class="id" title="var">a</span> * 0 + <span class="id" title="var">b</span> * <span class="id" title="var">c</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">c</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natmultn0</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">destruct</span> (<span class="id" title="var">isirreflnatgth</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">natgthsn0</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">g</span> <span class="id" title="var">gab</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">c</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> ((<span class="id" title="var">a</span> * 0 + <span class="id" title="var">b</span> * <span class="id" title="var">S</span> <span class="id" title="var">d</span>) &gt; (<span class="id" title="var">a</span> * <span class="id" title="var">S</span> <span class="id" title="var">d</span> + <span class="id" title="var">b</span> * 0))) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natmultn0</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natmultn0</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natplusl0</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natplusr0</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">g'</span> := <span class="id" title="var">natgthandmultrinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">isasymmnatgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">gab</span> <span class="id" title="var">g'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">natgth</span> (<span class="id" title="var">a</span> * <span class="id" title="var">S</span> <span class="id" title="var">c</span> + <span class="id" title="var">b</span> * <span class="id" title="var">S</span> <span class="id" title="var">d</span>) (<span class="id" title="var">a</span> * <span class="id" title="var">S</span> <span class="id" title="var">d</span> + <span class="id" title="var">b</span> * <span class="id" title="var">S</span> <span class="id" title="var">c</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">multnsm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">multnsm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">multnsm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">multnsm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">rer</span> <span class="id" title="var">_</span> (<span class="id" title="var">a</span> * <span class="id" title="var">c</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">rer</span> <span class="id" title="var">_</span> (<span class="id" title="var">a</span> * <span class="id" title="var">d</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">g'</span> := <span class="id" title="var">natgthandpluslinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">a</span> + <span class="id" title="var">b</span>) <span class="id" title="var">g</span>). <span class="id" title="tactic">apply</span> (<span class="id" title="var">IHd</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">g'</span> <span class="id" title="var">gab</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><a class="idref" href="UniMath.Foundations.NaturalNumbers.html#natlth"><span class="id" title="definition">natlth</span></a></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isplushrelnatlth</span> : @<span class="id" title="var">isbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natlth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natgthandplusl</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natgthandplusr</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isinvplushrelnatlth</span> : @<span class="id" title="var">isinvbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natlth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natgthandpluslinv</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natgthandplusrinv</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isinvmulthrelnatlth</span> : @<span class="id" title="var">isinvbinophrel</span> <span class="id" title="var">natmultabmonoid</span> <span class="id" title="var">natlth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlthandmultlinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlthandmultrinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><a class="idref" href="UniMath.Foundations.NaturalNumbers.html#natleh"><span class="id" title="definition">natleh</span></a></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isplushrelnatleh</span> : @<span class="id" title="var">isbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natleh</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natlehandplusl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natlehandplusr</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isinvplushrelnatleh</span> : @<span class="id" title="var">isinvbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natleh</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natlehandpluslinv</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">natlehandplusrinv</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ispartinvmulthrelnatleh</span> : @<span class="id" title="var">ispartinvbinophrel</span> <span class="id" title="var">natmultabmonoid</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">x</span> ≠ 0) <span class="id" title="var">natleh</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandmultlinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandmultrinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><a class="idref" href="UniMath.Foundations.NaturalNumbers.html#natgeh"><span class="id" title="definition">natgeh</span></a></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isplushrelnatgeh</span> : @<span class="id" title="var">isbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natgeh</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandplusl</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandplusr</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isinvplushrelnatgeh</span> : @<span class="id" title="var">isinvbinophrel</span> <span class="id" title="var">nataddabmonoid</span> <span class="id" title="var">natgeh</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandpluslinv</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandplusrinv</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ispartinvmulthrelnatgeh</span> : @<span class="id" title="var">ispartinvbinophrel</span> <span class="id" title="var">natmultabmonoid</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">x</span> ≠ 0) <span class="id" title="var">natgeh</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandmultlinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">natlehandmultrinv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">s</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab624"></a><h3 class="section"><span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#nat"><span class="id" title="inductive">nat</span></a></span> is an archimedean rig</h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchnat_diff</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">nat</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">y1</span> &gt; <span class="id" title="var">y2</span> → ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">n</span> * <span class="id" title="var">y1</span> &gt; 1 + <span class="id" title="var">n</span> * <span class="id" title="var">y2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natlthchoice2</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">Hy</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">Hy</span> | &lt;-].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 1%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 2%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">multsnm</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">natplusr0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natgthandplusl</span>, <span class="id" title="var">natgthsnn</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchnat_gth</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">nat</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">n</span> &gt; <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">natgthsnn</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchnat_pos</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">nat</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">n</span> + <span class="id" title="var">x</span> &gt; 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">exists</span> 1%<span class="id" title="var">nat</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchnat</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchrig</span> (<span class="id" title="var">X</span> := <span class="id" title="var">natcommrig</span>) <span class="id" title="var">natgth</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchnat_diff</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorig_nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchnat_gth</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorig_nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n'</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchnat_pos</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorig_nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n'</span>).<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Bicategories.BicatOfBicategory</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1727"></a><h1 class="section">Bicategories</h1>
+
+    Benedikt Ahrens, Marco Maggesi
+    February 2018
+ ********************************************************************************* 
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.HorizontalComposition</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.WkCatEnrichment.prebicategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.WkCatEnrichment.whiskering</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Bicat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">Bicat.Notations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.WkCatEnrichment.Notations</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_left_left</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>) {<span class="id" title="var">h</span> <span class="id" title="var">i</span> : <span class="id" title="var">c</span> -1-&gt; <span class="id" title="var">d</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">h</span> -2-&gt; <span class="id" title="var">i</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">whisker_left</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>) ;<span class="id" title="var">v</span>; <span class="id" title="var">associator_2mor</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">i</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">associator_2mor</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_left</span> (<span class="id" title="var">f</span> ;1; <span class="id" title="var">g</span>) <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">associator_naturality</span> | <span class="id" title="tactic">idtac</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths_2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">horizontal_comp_id</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_left_right</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">i</span> : <span class="id" title="var">c</span> -1-&gt; <span class="id" title="var">d</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">h</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">whisker_right</span> <span class="id" title="var">x</span> <span class="id" title="var">i</span>) ;<span class="id" title="var">v</span>; <span class="id" title="var">associator_2mor</span> <span class="id" title="var">f</span> <span class="id" title="var">h</span> <span class="id" title="var">i</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">associator_2mor</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">i</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> (<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>) <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">associator_naturality</span> (<span class="id" title="var">identity</span> <span class="id" title="var">f</span>) <span class="id" title="var">x</span> (<span class="id" title="var">identity</span> <span class="id" title="var">i</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_right_right</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>) (<span class="id" title="var">i</span> : <span class="id" title="var">c</span> -1-&gt; <span class="id" title="var">d</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">associator_2mor</span> <span class="id" title="var">f</span> <span class="id" title="var">h</span> <span class="id" title="var">i</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> (<span class="id" title="var">whisker_right</span> <span class="id" title="var">x</span> <span class="id" title="var">h</span>) <span class="id" title="var">i</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">whisker_right</span> <span class="id" title="var">x</span> (<span class="id" title="var">h</span> ;1; <span class="id" title="var">i</span>) ;<span class="id" title="var">v</span>; <span class="id" title="var">associator_2mor</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">associator_naturality</span> | <span class="id" title="tactic">idtac</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths_2</span>, <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">horizontal_comp_id</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">unfold_data</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bcat_precategory_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">C</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">homprecat</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bcat_cell_struct</span> : <span class="id" title="var">prebicat_2cell_struct</span> <span class="id" title="var">bcat_precategory_ob_mor</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">λ</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">homprecat</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>), (<span class="id" title="var">homprecat</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) ⟦ <span class="id" title="var">f</span>, <span class="id" title="var">g</span> ⟧.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bcat_ob_mor_cells</span> : ∑ (<span class="id" title="var">C</span> : <span class="id" title="var">precategory_ob_mor</span>), <span class="id" title="var">prebicat_2cell_struct</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">bcat_precategory_ob_mor</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">bcat_cell_struct</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bcat_1_id_comp_cells</span> : <span class="id" title="var">prebicat_1_id_comp_cells</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> <span class="id" title="var">bcat_precategory_ob_mor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">compose1</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">bcat_cell_struct</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bcat_2_id_comp_struct</span> : <span class="id" title="var">prebicat_2_id_comp_struct</span> <span class="id" title="var">bcat_1_id_comp_cells</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">bcat_cell_struct</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">associator_2mor</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">x</span> · <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g1</span> <span class="id" title="var">g2</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">whisker_right</span> <span class="id" title="var">x</span> <span class="id" title="var">g</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bcat_data</span> : ∑ <span class="id" title="var">C</span>, <span class="id" title="var">prebicat_2_id_comp_struct</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">bcat_1_id_comp_cells</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">bcat_2_id_comp_struct</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">bcat_laws</span> : <span class="id" title="var">prebicat_laws</span> <span class="id" title="var">bcat_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">id2</span>, <span class="id" title="var">vcomp2</span>, <span class="id" title="var">runitor</span>, <span class="id" title="var">lunitor</span>, <span class="id" title="var">rinvunitor</span>, <span class="id" title="var">linvunitor</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rassociator</span>, <span class="id" title="var">lassociator</span>, <span class="id" title="var">lwhisker</span>, <span class="id" title="var">rwhisker</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">bcat_precategory_ob_mor</span>, <span class="id" title="var">bcat_cell_struct</span>, <span class="id" title="var">bcat_ob_mor_cells</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">bcat_1_id_comp_cells</span>, <span class="id" title="var">bcat_2_id_comp_struct</span>, <span class="id" title="var">bcat_data</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">first</span> [ <span class="id" title="tactic">intros</span> <span class="id" title="tactic">until</span> 1 | <span class="id" title="tactic">intros</span> ].<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_left_id_2mor</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_right_id_2mor</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">whisker_left_on_comp</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">whisker_right_on_comp</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">left_unitor_naturality</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">right_unitor_naturality</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_left_left</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_left_right</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_right_right</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">twomor_naturality</span>.<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iso_inv_after_iso</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iso_after_iso_inv</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iso_inv_after_iso</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iso_after_iso_inv</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iso_inv_after_iso</span> (<span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iso_after_iso_inv</span> (<span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, (<span class="id" title="var">triangle_axiom</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, (<span class="id" title="var">pentagon_axiom</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">bcat</span> : <span class="id" title="var">prebicat</span> := (<span class="id" title="var">bcat_data</span>,, <span class="id" title="var">bcat_laws</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">unfold_data</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

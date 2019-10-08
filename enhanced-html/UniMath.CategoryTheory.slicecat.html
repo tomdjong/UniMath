@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.slicecat</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+**********************************************************
+
+<div class="paragraph"> </div>
+
+Anders Mörtberg, Benedikt Ahrens, 2015-2016
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+ **********************************************************
+
+<div class="paragraph"> </div>
+
+Contents:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Definition of slice precategories, C/x (assumes that C has homsets)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Proof that the forgetful functor <span class="inlinecode"><span class="id" title="var">slicecat_to_cat</span></span> : C/x → C is
+  a left adjoint if C has binary products (<span class="inlinecode"><span class="id" title="var">is_left_adjoint_slicecat_to_cat</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Proof that C/x is a univalent_category if C is
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Proof that any morphism C<span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#x"><span class="id" title="variable">x</span></a>,<a class="idref" href="UniMath.Foundations.PartA.html#y"><span class="id" title="variable">y</span></a></span> induces a functor from C/x to C/y
+  (<span class="inlinecode"><span class="id" title="var">slicecat_functor</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Colimits in slice categories (<span class="inlinecode"><span class="id" title="var">slice_precat_colims</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Binary products in slice categories of categories with pullbacks
+  (<span class="inlinecode"><span class="id" title="var">BinProducts_slice_precat</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Binary coproducts in slice categories of categories with binary
+  coproducts (<span class="inlinecode"><span class="id" title="var">BinCoproducts_slice_precat</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Coproducts in slice categories of categories with coproducts
+  (<span class="inlinecode"><span class="id" title="var">Coproducts_slice_precat</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Initial object in slice categories with initial object
+  (<span class="inlinecode"><span class="id" title="var">Initial_slice_precat</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Terminal object in slice categories (<span class="inlinecode"><span class="id" title="var">Terminal_slice_precat</span></span>)
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> Base change functor (<span class="inlinecode"><span class="id" title="var">base_change_functor</span></span>) and proof that
+  it is right adjoint to slicecat_functor
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Univalence</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pullbacks</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.coproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.initial</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.terminal</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.exponentials</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1114"></a><h1 class="section">Definition of slice categories</h1>
+ Given a category C and x : obj C. The slice category C/x is given by:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> obj C/x: pairs (a,f) where f : a -&gt; x
+
+<div class="paragraph"> </div>
+
+
+</li>
+<li> morphism (a,f) -&gt; (b,g): morphism h : a -&gt; b with
+<pre>
+           h
+       a - - -&gt; b
+       |       /
+       |     /
+     f |   / g
+       | /
+       v
+       x
+</pre>
+    where h · g = f
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slice_precat_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_ob</span> := <span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">x</span>⟧).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_mor</span> (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">slicecat_ob</span>) := <span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span>, <span class="id" title="var">pr2</span> <span class="id" title="var">f</span> = <span class="id" title="var">h</span> · <span class="id" title="var">pr2</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_ob_object</span> (<span class="id" title="var">f</span> : <span class="id" title="var">slicecat_ob</span>) : <span class="id" title="var">ob</span> <span class="id" title="var">C</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_ob_morphism</span> (<span class="id" title="var">f</span> : <span class="id" title="var">slicecat_ob</span>) : <span class="id" title="var">C</span>⟦<span class="id" title="var">slicecat_ob_object</span> <span class="id" title="var">f</span>, <span class="id" title="var">x</span>⟧ := <span class="id" title="var">pr2</span> <span class="id" title="var">f</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_mor_morphism</span> {<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">slicecat_ob</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">slicecat_mor</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">C</span>⟦<span class="id" title="var">slicecat_ob_object</span> <span class="id" title="var">f</span>, <span class="id" title="var">slicecat_ob_object</span> <span class="id" title="var">g</span>⟧ := <span class="id" title="var">pr1</span> <span class="id" title="var">h</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_mor_comm</span> {<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">slicecat_ob</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">slicecat_mor</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">slicecat_ob_morphism</span> <span class="id" title="var">f</span>) = (<span class="id" title="var">slicecat_mor_morphism</span> <span class="id" title="var">h</span>) · (<span class="id" title="var">slicecat_ob_morphism</span> <span class="id" title="var">g</span>) := <span class="id" title="var">pr2</span> <span class="id" title="var">h</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_precat_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span> := (<span class="id" title="var">slicecat_ob</span>,,<span class="id" title="var">slicecat_mor</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">id_slice_precat</span> (<span class="id" title="var">c</span> : <span class="id" title="var">slice_precat_ob_mor</span>) : <span class="id" title="var">c</span> --&gt; <span class="id" title="var">c</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (!(<span class="id" title="var">id_left</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">comp_slice_precat_subproof</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">slice_precat_ob_mor</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) : <span class="id" title="var">pr2</span> <span class="id" title="var">a</span> = (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span> · <span class="id" title="var">pr1</span> <span class="id" title="var">g</span>) · <span class="id" title="var">pr2</span> <span class="id" title="var">c</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, (!(<span class="id" title="var">pr2</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">comp_slice_precat</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">slice_precat_ob_mor</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> --&gt; <span class="id" title="var">c</span>) : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">c</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">pr1</span> <span class="id" title="var">f</span> · <span class="id" title="var">pr1</span> <span class="id" title="var">g</span>,,<span class="id" title="var">comp_slice_precat_subproof</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_precat_data</span> : <span class="id" title="var">precategory_data</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">precategory_data_pair</span> <span class="id" title="var">_</span> <span class="id" title="var">id_slice_precat</span> <span class="id" title="var">comp_slice_precat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_precategory_slice_precat_data</span> (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_precategory</span> <span class="id" title="var">slice_precat_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">simpl</span>.<br/>
+* <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">f</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h</span> <span class="id" title="var">hP</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality</span>; [ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span> ].<br/>
+* <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">f</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h</span> <span class="id" title="var">hP</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality</span>; [ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span> ].<br/>
+* <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality</span>; [ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">assoc</span> ].<br/>
+* <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality</span>; [ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">assoc'</span> ].<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_precat</span> (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) : <span class="id" title="var">precategory</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">_</span>,,<span class="id" title="var">is_precategory_slice_precat_data</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slice_precat_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slice_precat_theory</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">has_homsets_slice_precat</span> : <span class="id" title="var">has_homsets</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+<span class="id" title="tactic">induction</span> <span class="id" title="var">a</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">a</span> <span class="id" title="var">f</span>]; <span class="id" title="tactic">induction</span> <span class="id" title="var">b</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">b</span> <span class="id" title="var">g</span>]; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">isofhleveltotal2</span> 2); [ <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> | <span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>].<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">isasetaprop</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_mor_slicecat</span> (<span class="id" title="var">af</span> <span class="id" title="var">bg</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">C</span>/<span class="id" title="var">x</span>⟦<span class="id" title="var">af</span>,<span class="id" title="var">bg</span>⟧) : <span class="id" title="var">pr1</span> <span class="id" title="var">f</span> = <span class="id" title="var">pr1</span> <span class="id" title="var">g</span> -&gt; <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intro</span> <span class="id" title="var">heq</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">total2_paths_f</span> <span class="id" title="var">heq</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_iso_slicecat</span> (<span class="id" title="var">af</span> <span class="id" title="var">bg</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">iso</span> <span class="id" title="var">af</span> <span class="id" title="var">bg</span>) : <span class="id" title="var">pr1</span> <span class="id" title="var">f</span> = <span class="id" title="var">pr1</span> <span class="id" title="var">g</span> -&gt; <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">induction</span> <span class="id" title="var">f</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">f</span> <span class="id" title="var">fP</span>]; <span class="id" title="tactic">induction</span> <span class="id" title="var">g</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">g</span> <span class="id" title="var">gP</span>]; <span class="id" title="tactic">intro</span> <span class="id" title="var">eq</span>.<br/>
+<span class="id" title="var">use</span> (<span class="id" title="var">subtypePairEquality</span> <span class="id" title="var">_</span> <span class="id" title="var">eq</span>).<br/>
+<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_iso</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+It suffices that the underlying morphism is an iso to get an iso in
+    the slice category 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iso_to_slice_precat_iso</span> (<span class="id" title="var">af</span> <span class="id" title="var">bg</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">af</span> --&gt; <span class="id" title="var">bg</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">isoh</span> : <span class="id" title="var">is_iso</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h</span>)) : <span class="id" title="var">is_iso</span> <span class="id" title="var">h</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">induction</span> (<span class="id" title="var">is_z_iso_from_is_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">isoh</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">hinv</span> [<span class="id" title="var">h1</span> <span class="id" title="var">h2</span>]].<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">pinv</span> : <span class="id" title="var">hinv</span> · <span class="id" title="var">pr2</span> <span class="id" title="var">af</span> = <span class="id" title="var">pr2</span> <span class="id" title="var">bg</span>).<br/>
+{ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">id_left</span>, &lt;- <span class="id" title="var">h2</span>, &lt;- <span class="id" title="var">assoc</span>, (!(<span class="id" title="var">pr2</span> <span class="id" title="var">h</span>)); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>. }<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">is_iso_from_is_z_iso</span>.<br/>
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">hinv</span>,,!<span class="id" title="var">pinv</span>).<br/>
+<span class="id" title="tactic">split</span>; (<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality</span>; [ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> |]); <span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+An iso in the slice category gives an iso in the base category 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slice_precat_iso_to_iso</span>  (<span class="id" title="var">af</span> <span class="id" title="var">bg</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">af</span> --&gt; <span class="id" title="var">bg</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">p</span> : <span class="id" title="var">is_iso</span> <span class="id" title="var">h</span>) : <span class="id" title="var">is_iso</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">induction</span> (<span class="id" title="var">is_z_iso_from_is_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">hinv</span> [<span class="id" title="var">h1</span> <span class="id" title="var">h2</span>]].<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">is_iso_from_is_z_iso</span>.<br/>
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">hinv</span>); <span class="id" title="tactic">split</span>.<br/>
+- <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> <span class="id" title="var">h1</span>).<br/>
+- <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> <span class="id" title="var">h2</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">weq_iso</span> (<span class="id" title="var">af</span> <span class="id" title="var">bg</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">weq</span> (<span class="id" title="var">iso</span> <span class="id" title="var">af</span> <span class="id" title="var">bg</span>) (<span class="id" title="var">total2</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">h</span> : <span class="id" title="var">iso</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">af</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">bg</span>) =&gt; <span class="id" title="var">pr2</span> <span class="id" title="var">af</span> = <span class="id" title="var">h</span> · <span class="id" title="var">pr2</span> <span class="id" title="var">bg</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">weqtotal2asstor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>.<br/>
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">weqtotal2asstor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">weqdirprodcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">weqimplimpl</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_iso</span>.<br/>
+- <span class="id" title="tactic">intro</span> <span class="id" title="var">hp</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">iso_to_slice_precat_iso</span>; <span class="id" title="tactic">assumption</span>.<br/>
+- <span class="id" title="tactic">intro</span> <span class="id" title="var">hp</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">slice_precat_iso_to_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">hp</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The forgetful functor from C/x to C 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_to_cat</span> : <span class="id" title="var">functor</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>) <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_functor</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">pr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">pr1</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">red</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Right adjoint to slicecat_to_cat 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">cat_to_slicecat</span> (<span class="id" title="var">BPC</span> : <span class="id" title="var">BinProducts</span> <span class="id" title="var">C</span>) : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mk_functor</span>.<br/>
++ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">BPC</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductPr1</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">BinProductOfArrows</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">x</span>) <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="var">cbn</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductOfArrowsPr1</span>, <span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
++ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">A</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinProductArrowUnique</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>, <span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">a3</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductOfArrows_comp</span>, <span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_left_adjoint_slicecat_to_cat</span> (<span class="id" title="var">BPC</span> : <span class="id" title="var">BinProducts</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_left_adjoint</span> <span class="id" title="var">slicecat_to_cat</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">cat_to_slicecat</span> <span class="id" title="var">BPC</span>).<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">mk_are_adjoints</span>.<br/>
++ <span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">F</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>)); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">F</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">postcompWithBinProductArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductArrowUnique</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, <span class="id" title="var">BinProductPr1Commutes</span>, <span class="id" title="var">id_right</span>, (<span class="id" title="var">pr2</span> <span class="id" title="var">F</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, <span class="id" title="var">BinProductPr2Commutes</span>, <span class="id" title="var">id_left</span>, <span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
++ <span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">Y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductPr2</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrowsPr2</span>.<br/>
++ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">Y</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">Y</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">postcompWithBinProductArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinProductArrowUnique</span>; <span class="id" title="tactic">trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>, <span class="id" title="var">id_left</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slice_precat_theory</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1115"></a><h1 class="section">Proof that C/x is a univalent_category if C is.</h1>
+ This is exercise 9.1 in the HoTT book 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_theory</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">is_catC</span> : <span class="id" title="var">is_univalent</span> <span class="id" title="var">C</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / x" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">x</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_catC</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">id_weq_iso_slicecat</span> (<span class="id" title="var">af</span> <span class="id" title="var">bg</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) : (<span class="id" title="var">af</span> = <span class="id" title="var">bg</span>) ≃ (<span class="id" title="var">iso</span> <span class="id" title="var">af</span> <span class="id" title="var">bg</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">set</span> (<span class="id" title="var">a</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">af</span>); <span class="id" title="tactic">set</span> (<span class="id" title="var">f</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">af</span>); <span class="id" title="tactic">set</span> (<span class="id" title="var">b</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">bg</span>); <span class="id" title="tactic">set</span> (<span class="id" title="var">g</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">bg</span>).<br/>
+
+<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">weq1</span> : <span class="id" title="var">weq</span> (<span class="id" title="var">af</span> = <span class="id" title="var">bg</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">total2</span> (<span class="id" title="keyword">fun</span> (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) =&gt; <span class="id" title="var">transportf</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">af</span>) = <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">total2_paths_equiv</span> <span class="id" title="var">_</span> <span class="id" title="var">af</span> <span class="id" title="var">bg</span>).<br/>
+
+<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">weq2</span> : <span class="id" title="var">weq</span> (<span class="id" title="var">total2</span> (<span class="id" title="keyword">fun</span> (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) =&gt; <span class="id" title="var">transportf</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">af</span>) = <span class="id" title="var">g</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">total2</span> (<span class="id" title="keyword">fun</span> (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) =&gt; <span class="id" title="var">idtoiso</span> (! <span class="id" title="var">p</span>) · <span class="id" title="var">f</span> = <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">idtoiso_precompose</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>.<br/>
+
+<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">weq3</span> : <span class="id" title="var">weq</span> (<span class="id" title="var">total2</span> (<span class="id" title="keyword">fun</span> (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) =&gt; <span class="id" title="var">idtoiso</span> (! <span class="id" title="var">p</span>) · <span class="id" title="var">f</span> = <span class="id" title="var">g</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span> : <span class="id" title="var">iso</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">f</span> = <span class="id" title="var">h</span> · <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">weqbandf</span> (<span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">is_catC</span>) <span class="id" title="var">a</span> <span class="id" title="var">b</span>))); <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">idtoiso_inv</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqimplimpl</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_catC</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">Hp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">Hp</span>, <span class="id" title="var">assoc</span>, <span class="id" title="var">iso_inv_after_iso</span>, <span class="id" title="var">id_left</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hp</span>, <span class="id" title="var">assoc</span>, <span class="id" title="var">iso_after_iso_inv</span>, <span class="id" title="var">id_left</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+
+<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">weq4</span> : <span class="id" title="var">weq</span> (<span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span> : <span class="id" title="var">iso</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">f</span> = <span class="id" title="var">h</span> · <span class="id" title="var">g</span>)) (<span class="id" title="var">iso</span> <span class="id" title="var">af</span> <span class="id" title="var">bg</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">weq_iso</span>.<br/>
+
+<br/>
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">weqcomp</span> <span class="id" title="var">weq1</span> (<span class="id" title="var">weqcomp</span> <span class="id" title="var">weq2</span> (<span class="id" title="var">weqcomp</span> <span class="id" title="var">weq3</span> <span class="id" title="var">weq4</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_univalent_slicecat</span> : <span class="id" title="var">is_univalent</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">split</span>; [| <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>]; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+<span class="id" title="tactic">set</span> (<span class="id" title="var">h</span> := <span class="id" title="var">id_weq_iso_slicecat</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>).<br/>
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweqhomot</span> <span class="id" title="var">h</span>); [<span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>|<span class="id" title="tactic">induction</span> <span class="id" title="var">h</span>; <span class="id" title="tactic">trivial</span>].<br/>
+<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_iso</span>, <span class="id" title="var">eq_mor_slicecat</span>, <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_theory</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1116"></a><h1 class="section">A morphism x --&gt; y in the base category induces a functor between C/x and C/y</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_functor_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) {<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">x</span>,<span class="id" title="var">y</span>⟧).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_functor_ob</span> (<span class="id" title="var">af</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) : <span class="id" title="var">C</span> / <span class="id" title="var">y</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">pr1</span> <span class="id" title="var">af</span>,,<span class="id" title="var">pr2</span> <span class="id" title="var">af</span> · <span class="id" title="var">f</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slicecat_functor_subproof</span> (<span class="id" title="var">af</span> <span class="id" title="var">bg</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>/<span class="id" title="var">x</span>⟦<span class="id" title="var">af</span>,<span class="id" title="var">bg</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr2</span> <span class="id" title="var">af</span> · <span class="id" title="var">f</span> = <span class="id" title="var">pr1</span> <span class="id" title="var">h</span> · (<span class="id" title="var">pr2</span> <span class="id" title="var">bg</span> · <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, &lt;- (<span class="id" title="var">pr2</span> <span class="id" title="var">h</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_functor_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>) (<span class="id" title="var">C</span> / <span class="id" title="var">y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">tpair</span> (<span class="id" title="var">λ</span> <span class="id" title="var">F</span>, ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">C</span>/<span class="id" title="var">x</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">b</span>⟧ → <span class="id" title="var">C</span>/<span class="id" title="var">y</span>⟦<span class="id" title="var">F</span> <span class="id" title="var">a</span>,<span class="id" title="var">F</span> <span class="id" title="var">b</span>⟧) <span class="id" title="var">slicecat_functor_ob</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">h</span>, (<span class="id" title="var">pr1</span> <span class="id" title="var">h</span>,,<span class="id" title="var">slicecat_functor_subproof</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_functor_slicecat_functor</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">slicecat_functor_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">split</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>, <span class="id" title="var">idpath</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>, <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slicecat_functor</span> : <span class="id" title="var">functor</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>) (<span class="id" title="var">C</span> / <span class="id" title="var">y</span>) :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">slicecat_functor_data</span>,,<span class="id" title="var">is_functor_slicecat_functor</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_functor_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_functor_theory</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slicecat_functor_identity_ob</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">slicecat_functor_ob</span> <span class="id" title="var">hsC</span> (<span class="id" title="var">identity</span> <span class="id" title="var">x</span>) = <span class="id" title="var">functor_identity</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">af</span>.<br/>
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">slicecat_functor_ob</span>.<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slicecat_functor_identity</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">x</span>) = <span class="id" title="var">functor_identity</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">functor_eq</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">has_homsets_slice_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">two_arg_paths_f</span> (<span class="id" title="var">slicecat_functor_identity_ob</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">a</span> <span class="id" title="var">f</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">b</span> <span class="id" title="var">g</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">h</span> <span class="id" title="var">hh</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_of_functor_map_is_pointwise</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">double_transport</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">slicecat_mor</span>, <span class="id" title="var">slice_precat_ob_mor</span>, <span class="id" title="var">slicecat_mor</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality</span>; [<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> | ].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">slicecat_functor_identity_ob</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">toforallpaths_funextsec</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">id_right</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">id_right</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slicecat_functor_comp_ob</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">x</span>,<span class="id" title="var">y</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">y</span>,<span class="id" title="var">z</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">slicecat_functor_ob</span> <span class="id" title="var">hsC</span> (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) =<br/>
+&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">slicecat_functor_ob</span> <span class="id" title="var">hsC</span> <span class="id" title="var">g</span> (<span class="id" title="var">slicecat_functor_ob</span> <span class="id" title="var">hsC</span> <span class="id" title="var">f</span> <span class="id" title="var">a</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">af</span>.<br/>
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">slicecat_functor_ob</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slicecat_functor_comp</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">x</span>,<span class="id" title="var">y</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">y</span>,<span class="id" title="var">z</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">hsC</span> (<span class="id" title="var">f</span> · <span class="id" title="var">g</span>) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor_composite</span> (<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>) (<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">functor_eq</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">has_homsets_slice_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)); <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">slicecat_functor_data</span>; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_composite_data</span>; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">two_arg_paths_f</span> (<span class="id" title="var">slicecat_functor_comp_ob</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">a</span> <span class="id" title="var">fax</span>].<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">b</span> <span class="id" title="var">fbx</span>].<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">h</span> <span class="id" title="var">hh</span>].<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_of_functor_map_is_pointwise</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">double_transport</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">slicecat_mor</span>, <span class="id" title="var">slice_precat_ob_mor</span>, <span class="id" title="var">slicecat_mor</span>.<br/>
+<span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypePairEquality</span>; [<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span> | ].<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">slicecat_functor_comp_ob</span>.<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">toforallpaths_funextsec</span>; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">H1</span> : <span class="id" title="var">transportf</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> : <span class="id" title="var">C</span> / <span class="id" title="var">z</span> =&gt; <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> --&gt; <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Foundations.PartA.internal_paths_rew_r</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span> <span class="id" title="var">p</span> = <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span> <span class="id" title="var">_</span>) (<span class="id" title="var">idpath</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span> <span class="id" title="var">_</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">assoc</span> <span class="id" title="var">fax</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)) <span class="id" title="var">h</span> = <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">assoc</span> <span class="id" title="var">fax</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">H2</span> : ∏ <span class="id" title="var">h'</span>, <span class="id" title="var">h'</span> = <span class="id" title="var">h</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> : <span class="id" title="var">C</span> / <span class="id" title="var">z</span> =&gt; <span class="id" title="var">a</span> --&gt; <span class="id" title="var">pr1</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Foundations.PartA.internal_paths_rew_r</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">b</span> <span class="id" title="var">p</span> = <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">b</span> <span class="id" title="var">_</span>) (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">assoc</span> <span class="id" title="var">fbx</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)) <span class="id" title="var">h'</span> = <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">h'</span> <span class="id" title="var">eq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">assoc</span> <span class="id" title="var">fbx</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>); <span class="id" title="tactic">rewrite</span> <span class="id" title="var">eq</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_functor_theory</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1117"></a><h1 class="section">Colimits in slice categories</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_colimits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> (<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>) {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">U</span> : <span class="id" title="var">functor</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>) <span class="id" title="var">C</span> := <span class="id" title="var">slicecat_to_cat</span> <span class="id" title="var">hsC</span> <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slice_precat_isColimCocone</span> (<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>)) (<span class="id" title="var">a</span> : <span class="id" title="var">C</span> / <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">cc</span> : <span class="id" title="var">cocone</span> <span class="id" title="var">d</span> <span class="id" title="var">a</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">isColimCocone</span> (<span class="id" title="var">mapdiagram</span> <span class="id" title="var">U</span> <span class="id" title="var">d</span>) (<span class="id" title="var">U</span> <span class="id" title="var">a</span>) (<span class="id" title="var">mapcocone</span> <span class="id" title="var">U</span> <span class="id" title="var">d</span> <span class="id" title="var">cc</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isColimCocone</span> <span class="id" title="var">d</span> <span class="id" title="var">a</span> <span class="id" title="var">cc</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">set</span> (<span class="id" title="var">CC</span> := <span class="id" title="var">mk_ColimCocone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+<span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">ccy</span>.<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
++ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">colimArrow</span> <span class="id" title="var">CC</span>), (<span class="id" title="var">mapcocone</span> <span class="id" title="var">U</span> <span class="id" title="var">_</span> <span class="id" title="var">ccy</span>).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> (<span class="id" title="var">postcompWithColimArrow</span> <span class="id" title="var">_</span> <span class="id" title="var">CC</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y</span>) (<span class="id" title="var">mapcocone</span> <span class="id" title="var">U</span> <span class="id" title="var">d</span> <span class="id" title="var">ccy</span>))|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, (<span class="id" title="var">colimArrowUnique</span> <span class="id" title="var">CC</span>); <span class="id" title="tactic">intros</span> <span class="id" title="var">u</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> (!(<span class="id" title="var">pr2</span> (<span class="id" title="var">coconeIn</span> <span class="id" title="var">cc</span> <span class="id" title="var">u</span>)))|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">coconeIn</span> <span class="id" title="var">ccy</span> <span class="id" title="var">u</span>))).<br/>
++ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">u</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>; [<span class="id" title="tactic">intros</span> <span class="id" title="var">xx</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>|]; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">colimArrowCommutes</span> <span class="id" title="var">CC</span>)).<br/>
++ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">u</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>).<br/>
++ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">Hf</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">colimArrowUnique</span> <span class="id" title="var">CC</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">u</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">Hf</span> <span class="id" title="var">u</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slice_precat_ColimCocone</span> (<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">ColimCocone</span> (<span class="id" title="var">mapdiagram</span> <span class="id" title="var">U</span> <span class="id" title="var">d</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">ColimCocone</span> <span class="id" title="var">d</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mk_ColimCocone</span>.<br/>
+- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">colim</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">colimArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_cocone</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">dob</span> <span class="id" title="var">d</span> <span class="id" title="var">v</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">e</span>; <span class="id" title="tactic">apply</span> (! <span class="id" title="var">pr2</span> (<span class="id" title="var">dmor</span> <span class="id" title="var">d</span> <span class="id" title="var">e</span>))).<br/>
+- <span class="id" title="var">use</span> <span class="id" title="var">mk_cocone</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">colimIn</span> <span class="id" title="var">H</span> <span class="id" title="var">v</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, (<span class="id" title="var">colimArrowCommutes</span> <span class="id" title="var">H</span>)).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">e</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>, (<span class="id" title="var">coconeInCommutes</span> (<span class="id" title="var">colimCocone</span> <span class="id" title="var">H</span>))).<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">ccy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">colimArrow</span>, (<span class="id" title="var">mapcocone</span> <span class="id" title="var">U</span> <span class="id" title="var">_</span> <span class="id" title="var">ccy</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">colimArrowUnique</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">colimArrowCommutes</span> <span class="id" title="var">H</span> <span class="id" title="var">_</span> (<span class="id" title="var">mapcocone</span> <span class="id" title="var">U</span> <span class="id" title="var">_</span> <span class="id" title="var">ccy</span>) <span class="id" title="var">v</span>)|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">ccy</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">f</span> <span class="id" title="var">Hf</span>]; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> (! <span class="id" title="var">pr2</span> (<span class="id" title="var">f</span> <span class="id" title="var">v</span>))).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">colimArrowCommutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">mapcocone</span> <span class="id" title="var">U</span> <span class="id" title="var">d</span> <span class="id" title="var">ccy</span>))).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">Hf</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">apply</span> <span class="id" title="var">colimArrowUnique</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">Hf</span> <span class="id" title="var">v</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_colimits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slice_precat_colims_of_shape</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;{<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">CC</span> : <span class="id" title="var">Colims_of_shape</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Colims_of_shape</span> <span class="id" title="var">g</span> (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">x</span> <span class="id" title="var">hsC</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">slice_precat_ColimCocone</span>, <span class="id" title="var">CC</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">slice_precat_colims</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">CC</span> : <span class="id" title="var">Colims</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Colims</span> (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">x</span> <span class="id" title="var">hsC</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">g</span> <span class="id" title="var">d</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">slice_precat_ColimCocone</span>, <span class="id" title="var">CC</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1118"></a><h1 class="section">Moving between Binary products in slice categories and Pullbacks in base category</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_binproducts</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pullback_to_slice_binprod</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">Z</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">A</span> --&gt; <span class="id" title="var">Z</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">B</span> --&gt; <span class="id" title="var">Z</span>} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> -&gt; <span class="id" title="var">BinProduct</span> (<span class="id" title="var">C</span> / <span class="id" title="var">Z</span>) (<span class="id" title="var">A</span> ,, <span class="id" title="var">f</span>) (<span class="id" title="var">B</span> ,, <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">P</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> (((<span class="id" title="var">PullbackObject</span> <span class="id" title="var">P</span> ,, (<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">P</span>) · <span class="id" title="var">f</span>) ,, (((<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">P</span>) ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) ,, (((<span class="id" title="var">PullbackPr2</span> <span class="id" title="var">P</span>) ,, (<span class="id" title="var">PullbackSqrCommutes</span> <span class="id" title="var">P</span>))))) ,, <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Y</span> [<span class="id" title="var">j</span> <span class="id" title="var">jeq</span>] [<span class="id" title="var">k</span> <span class="id" title="var">keq</span>]; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">jeq</span> , <span class="id" title="var">keq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">P</span> <span class="id" title="var">_</span> <span class="id" title="var">j</span> <span class="id" title="var">k</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">jeq</span> , <span class="id" title="var">keq</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="var">cbn</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, <span class="id" title="var">PullbackArrow_PullbackPr1</span>, &lt;- <span class="id" title="var">jeq</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackArrow_PullbackPr1</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackArrow_PullbackPr2</span> ]).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">h</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">h</span> [<span class="id" title="var">H1</span> <span class="id" title="var">H2</span>]; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>, <span class="id" title="var">PullbackArrowUnique</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> <span class="id" title="var">H1</span>) | <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> <span class="id" title="var">H2</span>) ]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">BinProducts_slice_precat</span> (<span class="id" title="var">PC</span> : <span class="id" title="var">Pullbacks</span> <span class="id" title="var">C</span>) : ∏ <span class="id" title="var">x</span>, <span class="id" title="var">BinProducts</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>) :=<br/>
+&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">pullback_to_slice_binprod</span> (<span class="id" title="var">PC</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">b</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_binprod_to_pullback</span> {<span class="id" title="var">Z</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">AZ</span> <span class="id" title="var">BZ</span> : <span class="id" title="var">C</span> / <span class="id" title="var">Z</span>} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinProduct</span> (<span class="id" title="var">C</span> / <span class="id" title="var">Z</span>) <span class="id" title="var">AZ</span> <span class="id" title="var">BZ</span> → <span class="id" title="var">Pullback</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">AZ</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">BZ</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">AZ</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">A</span> <span class="id" title="var">f</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">BZ</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">B</span> <span class="id" title="var">g</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [[[<span class="id" title="var">P</span> <span class="id" title="var">h</span>] [[<span class="id" title="var">l</span> <span class="id" title="var">leq</span>] [<span class="id" title="var">r</span> <span class="id" title="var">req</span>]]] <span class="id" title="var">PisProd</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> ((<span class="id" title="var">P</span> ,, <span class="id" title="var">l</span> ,, <span class="id" title="var">r</span>) ,, (! <span class="id" title="var">leq</span> @ <span class="id" title="var">req</span>) ,, <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Y</span> <span class="id" title="var">j</span> <span class="id" title="var">k</span> <span class="id" title="var">Yeq</span>. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">PisProd</span> (<span class="id" title="var">Y</span> ,, <span class="id" title="var">j</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">j</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">k</span> ,, <span class="id" title="var">Yeq</span>))))).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">PisProd</span> (<span class="id" title="var">Y</span> ,, <span class="id" title="var">j</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">j</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">k</span> ,, <span class="id" title="var">Yeq</span>))))) ,,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">PisProd</span> (<span class="id" title="var">Y</span> ,, <span class="id" title="var">j</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">j</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">k</span> ,, <span class="id" title="var">Yeq</span>))))))).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveldirprod</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">hsC</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">t</span> <span class="id" title="var">teqs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">PisProd</span> (<span class="id" title="var">Y</span> ,, <span class="id" title="var">j</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">j</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">k</span> ,, <span class="id" title="var">Yeq</span>)) ((<span class="id" title="var">t</span> ,, (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">x</span> · <span class="id" title="var">f</span>) (!(<span class="id" title="var">pr1</span> <span class="id" title="var">teqs</span>)) @ !(<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) @ <span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">t</span> · <span class="id" title="var">x</span>) (!<span class="id" title="var">leq</span>))) ,, <span class="id" title="var">_</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; [<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">teqs</span>) | <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">teqs</span>)]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Pullbacks_from_slice_BinProducts</span> (<span class="id" title="var">BP</span> : ∏ <span class="id" title="var">x</span>, <span class="id" title="var">BinProducts</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>)) : <span class="id" title="var">Pullbacks</span> <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>, <span class="id" title="var">slice_binprod_to_pullback</span> (<span class="id" title="var">BP</span> <span class="id" title="var">x</span> (<span class="id" title="var">a</span> ,, <span class="id" title="var">f</span>) (<span class="id" title="var">b</span> ,, <span class="id" title="var">g</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_binproducts</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1119"></a><h1 class="section">Binary coproducts in slice categories of categories with binary coproducts</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_bincoproducts</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">BC</span> : <span class="id" title="var">BinCoproducts</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">BinCoproducts_slice_precat</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">BinCoproducts</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">mk_BinCoproduct</span>.<br/>
++ <span class="id" title="tactic">exists</span> (<span class="id" title="var">BinCoproductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">a</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">b</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">b</span>)).<br/>
++ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn1</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="var">cbn</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn1Commutes</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
++ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn2</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="var">cbn</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn2Commutes</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
++ <span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> (<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinCoproductArrowUnique</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, (<span class="id" title="var">BinCoproductIn1Commutes</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">a</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">b</span>))), (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, (<span class="id" title="var">BinCoproductIn2Commutes</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">a</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">b</span>))), (<span class="id" title="var">pr2</span> <span class="id" title="var">g</span>)]; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">split</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn1Commutes</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn2Commutes</span> ]).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> [&lt;- &lt;-]; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>, <span class="id" title="var">BinCoproductArrowUnique</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_bincoproducts</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1120"></a><h1 class="section">Coproducts in slice categories of categories with coproducts</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_coproducts</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">I</span> : <span class="id" title="var">UU</span>) (<span class="id" title="var">BC</span> : <span class="id" title="var">Coproducts</span> <span class="id" title="var">I</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Coproducts_slice_precat</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">Coproducts</span> <span class="id" title="var">I</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span>.<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">mk_Coproduct</span>.<br/>
++ <span class="id" title="tactic">exists</span> (<span class="id" title="var">CoproductObject</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">λ</span> <span class="id" title="var">i</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">a</span> <span class="id" title="var">i</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">CoproductArrow</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">a</span> <span class="id" title="var">i</span>)).<br/>
++ <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>; <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">CoproductIn</span> <span class="id" title="var">I</span> <span class="id" title="var">C</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">λ</span> <span class="id" title="var">i</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">a</span> <span class="id" title="var">i</span>))) <span class="id" title="var">i</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">CoproductInCommutes</span> <span class="id" title="var">I</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">λ</span> <span class="id" title="var">i</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">a</span> <span class="id" title="var">i</span>)))); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
++ <span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> (<span class="id" title="var">CoproductArrow</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">i</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">f</span> <span class="id" title="var">i</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">CoproductArrowUnique</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, (<span class="id" title="var">CoproductInCommutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">λ</span> <span class="id" title="var">i</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">a</span> <span class="id" title="var">i</span>)))), (<span class="id" title="var">pr2</span> (<span class="id" title="var">f</span> <span class="id" title="var">i</span>)); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">i</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>, (<span class="id" title="var">CoproductInCommutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">BC</span> (<span class="id" title="var">λ</span> <span class="id" title="var">i0</span> : <span class="id" title="var">I</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">a</span> <span class="id" title="var">i0</span>))))).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">Hy</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>, <span class="id" title="var">CoproductArrowUnique</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">i</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">Hy</span> <span class="id" title="var">i</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_coproducts</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_initial</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">IC</span> : <span class="id" title="var">Initial</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Initial_slice_precat</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">Initial</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mk_Initial</span>.<br/>
+- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">IC</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">InitialArrow</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">InitialArrow</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">InitialArrowUnique</span>).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">Hf</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">InitialArrowUnique</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_initial</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">slicecat_terminal</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Terminal_slice_precat</span> (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">Terminal</span> (<span class="id" title="var">C</span> / <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mk_Terminal</span>.<br/>
+- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">identity</span> <span class="id" title="var">x</span>).<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> -&gt;; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">slicecat_terminal</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Base change functor: https://ncatlab.org/nlab/show/base+change 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">base_change</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) (<span class="id" title="var">PC</span> : <span class="id" title="var">Pullbacks</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">base_change_functor_data</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) : <span class="id" title="var">functor_data</span> (<span class="id" title="var">C</span> / <span class="id" title="var">c'</span>) (<span class="id" title="var">C</span> / <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">Af'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">PullbackObject</span> (<span class="id" title="var">PC</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Af'</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackPr1</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">PullbackArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackPr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackPr2</span> <span class="id" title="var">_</span> · <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, &lt;- (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>), <span class="id" title="var">PullbackSqrCommutes</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr1</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_functor_base_change_functor</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) :<br/>
+&nbsp;<span class="id" title="var">is_functor</span> (<span class="id" title="var">base_change_functor_data</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">split</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">eq_mor_slicecat</span> <span class="id" title="var">hsC</span>); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">PullbackArrowUnique</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>, ?<span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">eq_mor_slicecat</span> <span class="id" title="var">hsC</span>); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">PullbackArrowUnique</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, !<span class="id" title="var">PullbackArrow_PullbackPr1</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, <span class="id" title="var">PullbackArrow_PullbackPr2</span>, !<span class="id" title="var">assoc</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PullbackArrow_PullbackPr2</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">base_change_functor</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) : <span class="id" title="var">functor</span> (<span class="id" title="var">C</span> / <span class="id" title="var">c'</span>) (<span class="id" title="var">C</span> / <span class="id" title="var">c</span>) :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">base_change_functor_data</span> <span class="id" title="var">g</span>,,<span class="id" title="var">is_functor_base_change_functor</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">eta</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans</span> (<span class="id" title="var">functor_identity</span> (<span class="id" title="var">C</span> / <span class="id" title="var">c</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span> (<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">hsC</span> <span class="id" title="var">g</span>) (<span class="id" title="var">base_change_functor</span> <span class="id" title="var">g</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> (<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr1</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">postCompWithPullbackArrow</span>|].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">PullbackArrowUnique</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, !<span class="id" title="var">PullbackArrow_PullbackPr1</span>, &lt;- (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>); <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, <span class="id" title="var">PullbackArrow_PullbackPr2</span>, <span class="id" title="var">assoc</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PullbackArrow_PullbackPr2</span>, <span class="id" title="var">id_right</span>, <span class="id" title="var">id_left</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">eps</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans</span> (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">base_change_functor</span> <span class="id" title="var">g</span>) (<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">hsC</span> <span class="id" title="var">g</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_identity</span> (<span class="id" title="var">C</span> / <span class="id" title="var">c'</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">PullbackPr2</span> <span class="id" title="var">_</span>); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackSqrCommutes</span>).<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>  <span class="id" title="var">y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr2</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">form_adjunction_eta_eps</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">form_adjunction</span> (<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">hsC</span> <span class="id" title="var">g</span>) (<span class="id" title="var">base_change_functor</span> <span class="id" title="var">g</span>) (<span class="id" title="var">eta</span> <span class="id" title="var">g</span>) (<span class="id" title="var">eps</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr2</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">eq_mor_slicecat</span> <span class="id" title="var">hsC</span>); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">PullbackEndo_is_identity</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, !<span class="id" title="var">PullbackArrow_PullbackPr1</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, <span class="id" title="var">PullbackArrow_PullbackPr2</span>, <span class="id" title="var">assoc</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PullbackArrow_PullbackPr2</span>, <span class="id" title="var">id_left</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">are_adjoints_slicecat_functor_base_change</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">are_adjoints</span> (<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">hsC</span> <span class="id" title="var">g</span>) (<span class="id" title="var">base_change_functor</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">eta</span> <span class="id" title="var">g</span>,,<span class="id" title="var">eps</span> <span class="id" title="var">g</span>).<br/>
+<span class="id" title="tactic">exact</span> (<span class="id" title="var">form_adjunction_eta_eps</span> <span class="id" title="var">g</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+If the base change functor has a right adjoint, called dependent product, then C / c has
+    exponentials. The formal proof is inspired by Proposition 2.1 from:
+    https://ncatlab.org/nlab/show/locally+cartesian+closed+categoryin_category_theory
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">dependent_product</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> (<span class="id" title="var">H</span> : ∏ {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧), <span class="id" title="var">is_left_adjoint</span> (<span class="id" title="var">base_change_functor</span> <span class="id" title="var">g</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">dependent_product_functor</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor</span> (<span class="id" title="var">C</span> / <span class="id" title="var">c</span>) (<span class="id" title="var">C</span> / <span class="id" title="var">c'</span>) := <span class="id" title="var">right_adjoint</span> (<span class="id" title="var">H</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">BPC</span> <span class="id" title="var">c</span> : <span class="id" title="var">BinProducts</span> (<span class="id" title="var">C</span> / <span class="id" title="var">c</span>) := @<span class="id" title="var">BinProducts_slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">PC</span> <span class="id" title="var">c</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">const_prod_functor1_slicecat</span> <span class="id" title="var">c</span> (<span class="id" title="var">Af</span> : <span class="id" title="var">C</span> / <span class="id" title="var">c</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">constprod_functor1</span> (<span class="id" title="var">BPC</span> <span class="id" title="var">c</span>) <span class="id" title="var">Af</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor_composite</span> (<span class="id" title="var">base_change_functor</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Af</span>)) (<span class="id" title="var">slicecat_functor</span> <span class="id" title="var">hsC</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Af</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>.<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">functor_data_eq</span>.<br/>
+- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">eq_mor_slicecat</span> <span class="id" title="var">hsC</span>); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackArrowUnique</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr1</span>, <span class="id" title="var">id_right</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr2</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">dependent_product_to_exponentials</span> <span class="id" title="var">c</span> : <span class="id" title="var">Exponentials</span> (<span class="id" title="var">BPC</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">Af</span>.<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
++ <span class="id" title="tactic">apply</span> (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">base_change_functor</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Af</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dependent_product_functor</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Af</span>))).<br/>
++ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">const_prod_functor1_slicecat</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">are_adjoints_functor_composite</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">H</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">are_adjoints_slicecat_functor_base_change</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">dependent_product</span>.<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">base_change</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

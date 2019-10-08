@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Bicategories.Bicategories.Univalence</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1678"></a><h1 class="section">Univalence for bicategories</h1>
+
+    Benedikt Ahrens, Marco Maggesi
+    May 2018
+ ********************************************************************************* 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Bicat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">Bicat.Notations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Unitors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Invertible_2cells</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Adjunctions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.BicategoryLaws</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">bicategory_scope</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Idtoiso</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">internal_adjunction_data_identity</span> (<span class="id" title="var">a</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">left_adjoint_data</span> (<span class="id" title="var">identity</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">identity</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">linvunitor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">a</span>),, <span class="id" title="var">lunitor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">a</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_internal_adjunction_identity</span> (<span class="id" title="var">a</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">left_adjoint_axioms</span> (<span class="id" title="var">internal_adjunction_data_identity</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths_2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> (!<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">lunitor_lwhisker</span> | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">lunitor_runitor_identity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> (!<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">rwhisker_vcomp</span> | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">linvunitor_lunitor</span> | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id2_rwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id2_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">lunitor_runitor_identity</span> | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths_2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> (!<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">lunitor_runitor_identity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">runitor_rwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> (!<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">lwhisker_vcomp</span> | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> (!<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths_2</span>, <span class="id" title="var">lwhisker_id2</span> | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id2_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">lunitor_runitor_identity</span> | ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">rinvunitor_runitor</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">internal_adjoint_equivalence_identity</span> (<span class="id" title="var">a</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">adjoint_equivalence</span> <span class="id" title="var">a</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">identity</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">internal_adjunction_data_identity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">split</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">is_internal_adjunction_identity</span> |].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">is_invertible_2cell_linvunitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">is_invertible_2cell_lunitor</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">idtoiso_2_0</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">a</span> = <span class="id" title="var">b</span> -&gt; <span class="id" title="var">adjoint_equivalence</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> 1.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">internal_adjoint_equivalence_identity</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">idtoiso_2_1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">b</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">f</span> = <span class="id" title="var">g</span> -&gt; <span class="id" title="var">invertible_2cell</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> 1. <span class="id" title="tactic">apply</span> <span class="id" title="var">id2_invertible_2cell</span>.<br/>
+</div>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Idtoiso</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_univalent_2_1</span> (<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">b</span>⟧), <span class="id" title="var">isweq</span> (<span class="id" title="var">idtoiso_2_1</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_univalent_2_0</span> (<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>), <span class="id" title="var">isweq</span> (<span class="id" title="var">idtoiso_2_0</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_univalent_2</span> (<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">is_univalent_2_0</span> <span class="id" title="var">C</span> × <span class="id" title="var">is_univalent_2_1</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isaprop_is_univalent_2_1</span> (<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">isaprop</span> (<span class="id" title="var">is_univalent_2_1</span> <span class="id" title="var">C</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">do</span> 4 (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span> ; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isaprop_is_univalent_2_0</span> (<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">isaprop</span> (<span class="id" title="var">is_univalent_2_0</span> <span class="id" title="var">C</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span> ; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isotoid_2_1</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HC</span> : <span class="id" title="var">is_univalent_2_1</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">b</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α</span> : <span class="id" title="var">invertible_2cell</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">f</span> = <span class="id" title="var">g</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">invmap</span> (<span class="id" title="var">idtoiso_2_1</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> ,, <span class="id" title="var">HC</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">α</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isotoid_2_0</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HC</span> : <span class="id" title="var">is_univalent_2_0</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">adjoint_equivalence</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">a</span> = <span class="id" title="var">b</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">invmap</span> (<span class="id" title="var">idtoiso_2_0</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> ,, <span class="id" title="var">HC</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) <span class="id" title="var">f</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

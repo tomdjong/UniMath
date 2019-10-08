@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Equivalences.FullyFaithful</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab827"></a><h1 class="section">Fully faithful functors and equivalences</h1>
+
+
+<div class="paragraph"> </div>
+
+Authors: Benedikt Ahrens, Chris Kapulkin, Mike Shulman (January 2013)
+Revised by: Marco Maggesi (November 2017), Langston Barrett (April 2018)
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<a name="lab828"></a><h2 class="section">Contents :</h2>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Fully faithful functor from an equivalence
+
+</li>
+<li> Functor from an equivalence is essentially surjective
+
+</li>
+<li> Fully faithful essentially surjective functors preserve all <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Propositions.html#hProp"><span class="id" title="definition">hProp</span></a></span>s on
+   hom-types
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Equivalences.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab829"></a><h2 class="section">Fully faithful functor from an equivalence</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">from_equiv_to_fully_faithful</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">F</span> : <span class="id" title="var">A</span> ⟶ <span class="id" title="var">B</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">H</span> : <span class="id" title="var">adj_equivalence_of_precats</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">G</span> : <span class="id" title="var">B</span> ⟶ <span class="id" title="var">A</span> := <span class="id" title="var">adj_equivalence_inv</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">eta</span> : ∏ <span class="id" title="var">a</span> : <span class="id" title="var">A</span>, <span class="id" title="var">iso</span> <span class="id" title="var">a</span> (<span class="id" title="var">G</span> (<span class="id" title="var">F</span> <span class="id" title="var">a</span>))<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">unit_pointwise_iso_from_adj_equivalence</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">eps</span> : ∏ <span class="id" title="var">b</span> : <span class="id" title="var">B</span>, <span class="id" title="var">iso</span> (<span class="id" title="var">F</span> (<span class="id" title="var">G</span> <span class="id" title="var">b</span>)) <span class="id" title="var">b</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">counit_pointwise_iso_from_adj_equivalence</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">inverse</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">B</span>⟦<span class="id" title="var">F</span> <span class="id" title="var">a</span>, <span class="id" title="var">F</span> <span class="id" title="var">b</span>⟧) : <span class="id" title="var">A</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">eta</span> <span class="id" title="var">a</span> · #<span class="id" title="var">G</span> <span class="id" title="var">g</span> · <span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">eta</span> <span class="id" title="var">b</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">inverse_is_inverse_1</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> --&gt; <span class="id" title="var">b</span>) : <span class="id" title="var">inverse</span> (#<span class="id" title="var">F</span> <span class="id" title="var">f</span>) = <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">inverse</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H'</span> := <span class="id" title="var">nat_trans_ax</span>  (<span class="id" title="var">adjunit</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>; <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H'</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H'</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">f</span> · <span class="id" title="var">identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H'</span> := <span class="id" title="var">iso_inv_after_iso</span> (<span class="id" title="var">eta</span> <span class="id" title="var">b</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">triangle_id_inverse</span> (<span class="id" title="var">a</span> : <span class="id" title="var">A</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">iso_inv_from_iso</span> (<span class="id" title="var">functor_on_iso</span> <span class="id" title="var">F</span> (<span class="id" title="var">eta</span> <span class="id" title="var">a</span>)) = <span class="id" title="var">eps</span> (<span class="id" title="var">F</span> <span class="id" title="var">a</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_iso</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> | [ |- ?<span class="id" title="var">x</span> = ?<span class="id" title="var">y</span> ] =&gt; <span class="id" title="tactic">transitivity</span> (<span class="id" title="var">x</span> · <span class="id" title="var">identity</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_on_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H'</span> := <span class="id" title="var">triangle_id_left_ad</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>)) <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">triangle_id_inverse'</span> (<span class="id" title="var">a</span> : <span class="id" title="var">A</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">functor_on_iso</span> <span class="id" title="var">F</span> (<span class="id" title="var">eta</span> <span class="id" title="var">a</span>)) = <span class="id" title="var">eps</span> (<span class="id" title="var">F</span> <span class="id" title="var">a</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">base_paths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">triangle_id_inverse</span> <span class="id" title="var">a</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">inverse_is_inverse_2</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> (<span class="id" title="var">g</span> : <span class="id" title="var">F</span> <span class="id" title="var">a</span> --&gt; <span class="id" title="var">F</span> <span class="id" title="var">b</span>) : #<span class="id" title="var">F</span> (<span class="id" title="var">inverse</span> <span class="id" title="var">g</span>) = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">inverse</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_on_inv_from_iso</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">triangle_id_inverse'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H'</span> := <span class="id" title="var">nat_trans_ax</span>  (<span class="id" title="var">adjcounit</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H'</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H'</span> := <span class="id" title="var">pathsinv0</span> (<span class="id" title="var">triangle_id_left_ad</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>)) <span class="id" title="var">a</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> [|- ?<span class="id" title="var">f</span> · ?<span class="id" title="var">g</span> = ?<span class="id" title="var">h</span>] =&gt; <span class="id" title="tactic">assert</span> (<span class="id" title="var">H''</span> : <span class="id" title="var">identity</span> <span class="id" title="var">_</span> = <span class="id" title="var">f</span>) <span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">apply</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H''</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fully_faithful_from_equivalence</span> : <span class="id" title="var">fully_faithful</span> <span class="id" title="var">F</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">fully_faithful</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> (@<span class="id" title="var">inverse</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">inverse_is_inverse_1</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">inverse_is_inverse_2</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab830"></a><h2 class="section">Functor from an equivalence is essentially surjective</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">functor_from_equivalence_is_essentially_surjective</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">essentially_surjective</span> <span class="id" title="var">F</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">essentially_surjective</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">G</span> <span class="id" title="var">b</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">counit_pointwise_iso_from_adj_equivalence</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">from_equiv_to_fully_faithful</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab831"></a><h2 class="section">Fully faithful essentially surjective functors preserve all <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Propositions.html#hProp"><span class="id" title="definition">hProp</span></a></span>s on hom-types</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">HomtypeProperties</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+For every hom-type in D, there merely exists a hom-type in C to which
+      it is equivalent. For split essentially surjective functors, this
+      could be strengthened to an untruncated version. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ff_es_homtype_weq</span> (<span class="id" title="var">FFF</span> : <span class="id" title="var">fully_faithful</span> <span class="id" title="var">F</span>) (<span class="id" title="var">FES</span> : <span class="id" title="var">essentially_surjective</span> <span class="id" title="var">F</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">d</span> <span class="id" title="var">d'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">D</span>, ∥ ∑ <span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>,  <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">c'</span>⟧ ≃ <span class="id" title="var">D</span>⟦<span class="id" title="var">d</span>, <span class="id" title="var">d'</span>⟧ ∥).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Obtain the c, c' for which F c ≅ d and F c' ≅ d'. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">squash_to_prop</span> (<span class="id" title="var">FES</span> <span class="id" title="var">d</span>)); [<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropishinh</span>|]; <span class="id" title="tactic">intros</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">squash_to_prop</span> (<span class="id" title="var">FES</span> <span class="id" title="var">d'</span>)); [<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropishinh</span>|]; <span class="id" title="tactic">intros</span> <span class="id" title="var">c'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>), (<span class="id" title="var">pr1</span> <span class="id" title="var">c'</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Homsets between isomorphic objects are equivalent. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">intermediate_weq</span> (<span class="id" title="var">D</span> ⟦ <span class="id" title="var">F</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>), <span class="id" title="var">F</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c'</span>) ⟧).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">weq_from_fully_faithful</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">intermediate_weq</span> (<span class="id" title="var">D</span> ⟦ <span class="id" title="var">F</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>), <span class="id" title="var">d'</span> ⟧).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <span class="id" title="var">weqpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_comp_left_isweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Unshelve</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <span class="id" title="var">weqpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_comp_right_weq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Unshelve</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">iso_inv_from_is_iso</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c</span>))).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ff_es_homtype_property</span> (<span class="id" title="var">FFF</span> : <span class="id" title="var">fully_faithful</span> <span class="id" title="var">F</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">FES</span> : <span class="id" title="var">essentially_surjective</span> <span class="id" title="var">F</span>) (<span class="id" title="var">P</span> : <span class="id" title="var">UU</span> → <span class="id" title="var">hProp</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">prop</span> : ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>, <span class="id" title="var">P</span> (<span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧)) : (∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">ob</span> <span class="id" title="var">D</span>, <span class="id" title="var">P</span> (<span class="id" title="var">D</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">squash_to_prop</span> (<span class="id" title="var">ff_es_homtype_weq</span> <span class="id" title="var">FFF</span> <span class="id" title="var">FES</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>|]; <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">transportf</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">P</span> (<span class="id" title="var">C</span>⟦(<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>), (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>))⟧)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqtopaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">prop</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Corollary: Equivalences preserve <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Propositions.html#hProp"><span class="id" title="definition">hProp</span></a></span>s on hom-types. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Corollary</span> <span class="id" title="var">equivalence_homtype_property</span> (<span class="id" title="var">E</span> : <span class="id" title="var">adj_equivalence_of_precats</span> <span class="id" title="var">F</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">P</span> : <span class="id" title="var">UU</span> → <span class="id" title="var">hProp</span>) (<span class="id" title="var">prop</span> : ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>, <span class="id" title="var">P</span> (<span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧)) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">ob</span> <span class="id" title="var">D</span>, <span class="id" title="var">P</span> (<span class="id" title="var">D</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ff_es_homtype_property</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">fully_faithful_from_equivalence</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_from_equivalence_is_essentially_surjective</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Corollary: Fully faithful essentially surjective functors preserve the
+      property of having hom-sets. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Corollary</span> <span class="id" title="var">ff_es_preserves_homsets</span> (<span class="id" title="var">FFF</span> : <span class="id" title="var">fully_faithful</span> <span class="id" title="var">F</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">FES</span> : <span class="id" title="var">essentially_surjective</span> <span class="id" title="var">F</span>) (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>) : <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">ff_es_homtype_property</span> <span class="id" title="var">FFF</span> <span class="id" title="var">FES</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">t</span>, <span class="id" title="var">hProppair</span> <span class="id" title="var">_</span> (<span class="id" title="var">isapropisaset</span> <span class="id" title="var">t</span>)) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hsC</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Other applications: ff/es functors preserve univalence, being a groupoid,
+      merely having any type of (co)limits, etc. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">HomtypeProperties</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

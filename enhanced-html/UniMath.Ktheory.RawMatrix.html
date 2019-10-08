@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Ktheory.RawMatrix</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1758"></a><h2 class="section">raw matrices</h2>
+
+
+<div class="paragraph"> </div>
+
+       Raw matrices of a map are formed from a product decomposition of
+       the target or from a sum decomposition of the source.  We call
+       them "raw" to distinguish them from matrices formed from direct
+       sum decompositions. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Foundations.Sets</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Ktheory.Representation</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Ktheory.Utilities</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Ktheory.Precategories</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">to_row</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>} {<span class="id" title="var">I</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">B</span>:<span class="id" title="var">Sum</span> <span class="id" title="var">b</span>) {<span class="id" title="var">d</span>:<span class="id" title="var">ob</span> <span class="id" title="var">C</span>} :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">universalObject</span> <span class="id" title="var">B</span>) <span class="id" title="var">d</span>) ≃ (∏ <span class="id" title="var">j</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">b</span> <span class="id" title="var">j</span>) <span class="id" title="var">d</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">universalProperty</span> <span class="id" title="var">B</span> <span class="id" title="var">d</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">from_row</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>}  {<span class="id" title="var">I</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">B</span>:<span class="id" title="var">Sum</span> <span class="id" title="var">b</span>) {<span class="id" title="var">d</span>:<span class="id" title="var">ob</span> <span class="id" title="var">C</span>} :<br/>
+&nbsp;&nbsp;(∏ <span class="id" title="var">j</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">b</span> <span class="id" title="var">j</span>) <span class="id" title="var">d</span>) ≃ (<span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">universalObject</span> <span class="id" title="var">B</span>) <span class="id" title="var">d</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">to_row</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">from_row_entry</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>} {<span class="id" title="var">I</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">B</span>:<span class="id" title="var">Sum</span> <span class="id" title="var">b</span>) {<span class="id" title="var">d</span>:<span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : ∏ <span class="id" title="var">j</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">b</span> <span class="id" title="var">j</span>) <span class="id" title="var">d</span>) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">j</span>, <span class="id" title="var">from_row</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span> ∘ <span class="id" title="var">opp_mor</span> (<span class="id" title="var">universalElement</span> <span class="id" title="var">B</span> <span class="id" title="var">j</span>) = <span class="id" title="var">f</span> <span class="id" title="var">j</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">homotweqinvweq</span> (<span class="id" title="var">to_row</span> <span class="id" title="var">B</span>) <span class="id" title="var">f</span>) <span class="id" title="var">j</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">to_col</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>} {<span class="id" title="var">I</span>} {<span class="id" title="var">d</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">D</span>:<span class="id" title="var">Product</span> <span class="id" title="var">d</span>) {<span class="id" title="var">b</span>:<span class="id" title="var">ob</span> <span class="id" title="var">C</span>} :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Hom</span> <span class="id" title="var">C</span> <span class="id" title="var">b</span> (<span class="id" title="var">universalObject</span> <span class="id" title="var">D</span>)) ≃ (∏ <span class="id" title="var">i</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> <span class="id" title="var">b</span> (<span class="id" title="var">d</span> <span class="id" title="var">i</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">universalProperty</span> <span class="id" title="var">D</span> <span class="id" title="var">b</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">from_col</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>} {<span class="id" title="var">I</span>} {<span class="id" title="var">d</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">D</span>:<span class="id" title="var">Product</span> <span class="id" title="var">d</span>) {<span class="id" title="var">b</span>:<span class="id" title="var">ob</span> <span class="id" title="var">C</span>} :<br/>
+&nbsp;(∏ <span class="id" title="var">i</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> <span class="id" title="var">b</span> (<span class="id" title="var">d</span> <span class="id" title="var">i</span>)) ≃ (<span class="id" title="var">Hom</span> <span class="id" title="var">C</span> <span class="id" title="var">b</span> (<span class="id" title="var">universalObject</span> <span class="id" title="var">D</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">to_col</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">from_col_entry</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>} {<span class="id" title="var">I</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">D</span>:<span class="id" title="var">Product</span> <span class="id" title="var">b</span>) {<span class="id" title="var">d</span>:<span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : ∏ <span class="id" title="var">i</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> <span class="id" title="var">d</span> (<span class="id" title="var">b</span> <span class="id" title="var">i</span>)) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">i</span>, <span class="id" title="var">universalElement</span> <span class="id" title="var">D</span> <span class="id" title="var">i</span> ∘ <span class="id" title="var">from_col</span> <span class="id" title="var">D</span> <span class="id" title="var">f</span> = <span class="id" title="var">f</span> <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">homotweqinvweq</span> (<span class="id" title="var">to_col</span> <span class="id" title="var">D</span>) <span class="id" title="var">f</span> ) <span class="id" title="var">i</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">to_matrix</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">I</span>} {<span class="id" title="var">d</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">D</span>:<span class="id" title="var">Product</span> <span class="id" title="var">d</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">J</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">J</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">B</span>:<span class="id" title="var">Sum</span> <span class="id" title="var">b</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">universalObject</span> <span class="id" title="var">B</span>) (<span class="id" title="var">universalObject</span> <span class="id" title="var">D</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;≃<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">b</span> <span class="id" title="var">j</span>) (<span class="id" title="var">d</span> <span class="id" title="var">i</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> @<span class="id" title="var">weqcomp</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">Y</span> := ∏ <span class="id" title="var">i</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">universalObject</span> <span class="id" title="var">B</span>) (<span class="id" title="var">d</span> <span class="id" title="var">i</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">to_col</span>. }<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">weqonsecfibers</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">to_row</span>. }<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">from_matrix</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">I</span>} {<span class="id" title="var">d</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">D</span>:<span class="id" title="var">Product</span> <span class="id" title="var">d</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">J</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">J</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">B</span>:<span class="id" title="var">Sum</span> <span class="id" title="var">b</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">weq</span> (∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">b</span> <span class="id" title="var">j</span>) (<span class="id" title="var">d</span> <span class="id" title="var">i</span>)) (<span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">universalObject</span> <span class="id" title="var">B</span>) (<span class="id" title="var">universalObject</span> <span class="id" title="var">D</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">to_matrix</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">from_matrix_entry</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">I</span>} {<span class="id" title="var">d</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">D</span>:<span class="id" title="var">Product</span> <span class="id" title="var">d</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">J</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">J</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">B</span>:<span class="id" title="var">Sum</span> <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : ∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">b</span> <span class="id" title="var">j</span>) (<span class="id" title="var">d</span> <span class="id" title="var">i</span>)) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span>, (<span class="id" title="var">universalElement</span> <span class="id" title="var">D</span> <span class="id" title="var">i</span> ∘ <span class="id" title="var">from_matrix</span> <span class="id" title="var">D</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span>) ∘ <span class="id" title="var">opp_mor</span> (<span class="id" title="var">universalElement</span> <span class="id" title="var">B</span> <span class="id" title="var">j</span>) = <span class="id" title="var">f</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">homotweqinvweq</span> (<span class="id" title="var">to_matrix</span> <span class="id" title="var">D</span> <span class="id" title="var">B</span>) <span class="id" title="var">f</span>) <span class="id" title="var">i</span>) <span class="id" title="var">j</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">from_matrix_entry_assoc</span> {<span class="id" title="var">C</span>:<span class="id" title="var">category</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">I</span>} {<span class="id" title="var">d</span>:<span class="id" title="var">I</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">D</span>:<span class="id" title="var">Product</span> <span class="id" title="var">d</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">J</span>} {<span class="id" title="var">b</span>:<span class="id" title="var">J</span> -&gt; <span class="id" title="var">ob</span> <span class="id" title="var">C</span>} (<span class="id" title="var">B</span>:<span class="id" title="var">Sum</span> <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : ∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span>, <span class="id" title="var">Hom</span> <span class="id" title="var">C</span> (<span class="id" title="var">b</span> <span class="id" title="var">j</span>) (<span class="id" title="var">d</span> <span class="id" title="var">i</span>)) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">i</span> <span class="id" title="var">j</span>, <span class="id" title="var">universalElement</span> <span class="id" title="var">D</span> <span class="id" title="var">i</span> ∘ (<span class="id" title="var">from_matrix</span> <span class="id" title="var">D</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span> ∘ <span class="id" title="var">opp_mor</span>(<span class="id" title="var">universalElement</span> <span class="id" title="var">B</span> <span class="id" title="var">j</span>)) = <span class="id" title="var">f</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">from_matrix_entry</span> <span class="id" title="var">D</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>). </div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

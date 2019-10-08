@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.categories.flds</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1407"></a><h1 class="section">Category of flds</h1>
+<a name="lab1408"></a><h2 class="section">Contents</h2>
+
+<ul class="doclist">
+<li> Precategory of flds
+
+</li>
+<li> Category of flds
+ 
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.UnivalenceAxiom</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.BinaryOperations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.RigsAndRings</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Domains_and_Fields</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1409"></a><h1 class="section">Precategory of flds</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_fld_precategory</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_fun_space</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">fld</span>) : <span class="id" title="var">hSet</span> := <span class="id" title="var">hSetpair</span> (<span class="id" title="var">ringfun</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) (<span class="id" title="var">isasetrigfun</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_precategory_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">tpair</span> (<span class="id" title="var">λ</span> <span class="id" title="var">ob</span> : <span class="id" title="var">UU</span>, <span class="id" title="var">ob</span> -&gt; <span class="id" title="var">ob</span> -&gt; <span class="id" title="var">UU</span>) <span class="id" title="var">fld</span> (<span class="id" title="var">λ</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">fld</span>, <span class="id" title="var">fld_fun_space</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_precategory_data</span> : <span class="id" title="var">precategory_data</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">precategory_data_pair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">fld_precategory_ob_mor</span> (<span class="id" title="var">λ</span> (<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>), (<span class="id" title="var">rigisotorigfun</span> (<span class="id" title="var">idrigiso</span> <span class="id" title="var">X</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">ringfun</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">ringfun</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>) =&gt; <span class="id" title="var">rigfuncomp</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_id_left</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">ringfun</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rigfuncomp</span> (<span class="id" title="var">rigisotorigfun</span> (<span class="id" title="var">idrigiso</span> <span class="id" title="var">X</span>)) <span class="id" title="var">f</span> = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">rigfun_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_id_left</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_id_right</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">ringfun</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rigfuncomp</span> <span class="id" title="var">f</span> (<span class="id" title="var">rigisotorigfun</span> (<span class="id" title="var">idrigiso</span> <span class="id" title="var">Y</span>)) = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">rigfun_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_id_right</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_assoc</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">W</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">ringfun</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">ringfun</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">ringfun</span> <span class="id" title="var">Z</span> <span class="id" title="var">W</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rigfuncomp</span> <span class="id" title="var">f</span> (<span class="id" title="var">rigfuncomp</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>) = <span class="id" title="var">rigfuncomp</span> (<span class="id" title="var">rigfuncomp</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">rigfun_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_assoc</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_precategory_fld_precategory_data</span> : <span class="id" title="var">is_precategory</span> <span class="id" title="var">fld_precategory_data</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_is_precategory_one_assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>. <span class="id" title="var">use</span> <span class="id" title="var">fld_id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>. <span class="id" title="var">use</span> <span class="id" title="var">fld_id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>. <span class="id" title="var">use</span> <span class="id" title="var">fld_assoc</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_precategory</span> : <span class="id" title="var">precategory</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mk_precategory</span> <span class="id" title="var">fld_precategory_data</span> <span class="id" title="var">is_precategory_fld_precategory_data</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">has_homsets_fld_precategory</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">fld_precategory</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>. <span class="id" title="var">use</span> <span class="id" title="var">isasetrigfun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_fld_precategory</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1410"></a><h1 class="section">Category of flds</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_fld_category</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1411"></a><h2 class="section">(rigiso X Y) ≃ (iso X Y)</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_iso_is_equiv</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1rigfun</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">inv_from_iso</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">subtypeInjectivity</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">iso_inv_after_iso</span> <span class="id" title="var">f</span>)) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span>. <span class="id" title="var">use</span> <span class="id" title="var">isapropisrigfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">subtypeInjectivity</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">iso_after_iso_inv</span> <span class="id" title="var">f</span>)) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span>. <span class="id" title="var">use</span> <span class="id" title="var">isapropisrigfun</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_iso_is_equiv</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_iso_equiv</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) : <span class="id" title="var">iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> -&gt; <span class="id" title="var">ringiso</span> (<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">fld</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">ringisopair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">weqpair</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>)) (<span class="id" title="var">fld_iso_is_equiv</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_equiv_is_iso</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">ringiso</span> (<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">fld</span>)) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;@<span class="id" title="var">is_iso</span> <span class="id" title="var">fld_precategory</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> (<span class="id" title="var">ringfunconstr</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">is_iso_qinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">ringfunconstr</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">invrigiso</span> <span class="id" title="var">f</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">mk_is_inverse_in_precat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">rigfun_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>. <span class="id" title="var">use</span> <span class="id" title="var">homotinvweqweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">rigfun_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="var">use</span> <span class="id" title="var">homotweqinvweq</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_equiv_is_iso</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_equiv_iso</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) : <span class="id" title="var">ringiso</span> (<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">fld</span>) -&gt; <span class="id" title="var">iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">exact</span> (@<span class="id" title="var">isopair</span> <span class="id" title="var">fld_precategory</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> (<span class="id" title="var">ringfunconstr</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">fld_equiv_is_iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_iso_equiv_is_equiv</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">fld_precategory</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">fld_iso_equiv</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">fld_equiv_iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>. <span class="id" title="var">use</span> <span class="id" title="var">eq_iso</span>. <span class="id" title="var">use</span> <span class="id" title="var">rigfun_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="var">use</span> <span class="id" title="var">rigiso_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span>. <span class="id" title="var">use</span> <span class="id" title="var">isapropisweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_iso_equiv_is_equiv</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_iso_equiv_weq</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">weq</span> (<span class="id" title="var">iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">ringiso</span> (<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">fld</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">fld_iso_equiv</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">fld_iso_equiv_is_equiv</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fld_equiv_iso_is_equiv</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">fld_equiv_iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">fld_iso_equiv</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="var">use</span> <span class="id" title="var">rigiso_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span>. <span class="id" title="var">use</span> <span class="id" title="var">isapropisweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>. <span class="id" title="var">use</span> <span class="id" title="var">eq_iso</span>. <span class="id" title="var">use</span> <span class="id" title="var">rigfun_paths</span>. <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_equiv_iso_is_equiv</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_equiv_weq_iso</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ringiso</span> (<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">fld</span>)) ≃ (<span class="id" title="var">iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">fld_equiv_iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">fld_equiv_iso_is_equiv</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1412"></a><h2 class="section">Category of flds</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_precategory_isweq</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">fld_precategory</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">λ</span> <span class="id" title="var">p</span> : <span class="id" title="var">X</span> = <span class="id" title="var">Y</span>, <span class="id" title="var">idtoiso</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (@<span class="id" title="var">isweqhomot</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">X</span> = <span class="id" title="var">Y</span>) (<span class="id" title="var">iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pr1weq</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">fld_univalence</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">fld_equiv_weq_iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">weqproperty</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">fld_univalence</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">fld_equiv_weq_iso</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">weqcomp_to_funcomp_app</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">proofirrelevance</span>. <span class="id" title="var">use</span> <span class="id" title="var">isaprop_is_iso</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Opaque</span> <span class="id" title="var">fld_precategory_isweq</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_precategory_is_univalent</span> : <span class="id" title="var">is_univalent</span> <span class="id" title="var">fld_precategory</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_is_univalent</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">fld_precategory_isweq</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">has_homsets_fld_precategory</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_category</span> : <span class="id" title="var">univalent_category</span> := <span class="id" title="var">mk_category</span> <span class="id" title="var">fld_precategory</span> <span class="id" title="var">fld_precategory_is_univalent</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_fld_category</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

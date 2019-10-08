@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.elems_slice_equiv</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+**********************************************************
+Matthew Weaver, 2017
+
+<div class="paragraph"> </div>
+
+ **********************************************************
+Contents : Equivalence of the categories PreShv ∫P and
+           PreShv C / P for any P in PreShv C
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.Equivalences.Core</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Core</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.categories.HSET.MonoEpiIso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.slicecat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.opp_precat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.Presheaf</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.ElementsOp</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1510"></a><h1 class="section">Proof that PreShv ∫P ≃ PreShv C / P</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">elems_slice_equiv</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">ap_PreShv</span> {<span class="id" title="var">X</span> : <span class="id" title="var">precategory</span>} := <span class="id" title="keyword">fun</span> (<span class="id" title="var">P</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">X</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) =&gt; <span class="id" title="var">pr1hSet</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "##" := <span class="id" title="var">ap_PreShv</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">P</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1511"></a><h2 class="section">Construction of the functor from PreShv ∫P to PreShv C / P</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_ob</span> := @<span class="id" title="var">make_ob</span> <span class="id" title="var">C</span> <span class="id" title="var">P</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_mor</span> := @<span class="id" title="var">make_mor</span> <span class="id" title="var">C</span> <span class="id" title="var">P</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_funct_fun</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) : <span class="id" title="var">C</span>^<span class="id" title="var">op</span> → <span class="id" title="var">SET</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">X</span>, <span class="id" title="var">total2_hSet</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">p</span> : ##<span class="id" title="var">P</span> <span class="id" title="var">X</span> =&gt; (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">mk_ob</span> <span class="id" title="var">X</span> <span class="id" title="var">p</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_funct_mor</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">C</span>^<span class="id" title="var">op</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreShv_to_slice_ob_funct_fun</span> <span class="id" title="var">F</span> <span class="id" title="var">X</span> --&gt; <span class="id" title="var">PreShv_to_slice_ob_funct_fun</span> <span class="id" title="var">F</span> <span class="id" title="var">Y</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, # (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>) ,, # (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">mor_to_el_mor</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">C</span>) <span class="id" title="var">f</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)) (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_funct_data</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) : <span class="id" title="var">functor_data</span> <span class="id" title="var">C</span>^<span class="id" title="var">op</span> <span class="id" title="var">SET</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreShv_to_slice_ob_funct_fun</span> <span class="id" title="var">F</span> ,, @<span class="id" title="var">PreShv_to_slice_ob_funct_mor</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_is_funct</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) : <span class="id" title="var">is_functor</span> (<span class="id" title="var">PreShv_to_slice_ob_funct_data</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">I</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intros</span> [ρ <span class="id" title="var">u</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">functor_id</span> <span class="id" title="var">P</span> <span class="id" title="var">I</span>) ρ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">etrans</span>; [<span class="id" title="var">use</span> <span class="id" title="var">transportf_make_ob</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_PreShv</span>|]; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">mor_to_el_mor_id</span> ρ), <span class="id" title="var">transportfbinv</span>, (<span class="id" title="var">functor_id</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">I</span> <span class="id" title="var">J</span> <span class="id" title="var">K</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intros</span> [ρ <span class="id" title="var">u</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">functor_comp</span> <span class="id" title="var">P</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) ρ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">etrans</span>; [<span class="id" title="var">use</span> <span class="id" title="var">transportf_make_ob</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_PreShv</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">mor_to_el_mor_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>), <span class="id" title="var">transportfbinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> <span class="id" title="var">u</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eqtohomot</span>, (<span class="id" title="var">functor_comp</span> <span class="id" title="var">F</span> (<span class="id" title="var">mor_to_el_mor</span> <span class="id" title="var">f</span> ρ) (<span class="id" title="var">mor_to_el_mor</span> <span class="id" title="var">g</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> ρ))).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_is_funct'</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) : <span class="id" title="var">is_functor</span> (<span class="id" title="var">PreShv_to_slice_ob_funct_data</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> | <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> <span class="id" title="var">q</span>].<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">set</span> (<span class="id" title="var">T</span> := ∑ <span class="id" title="var">p'</span> : ## <span class="id" title="var">P</span> <span class="id" title="var">X</span>, <span class="id" title="var">p'</span> = # (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">p</span> : <span class="id" title="var">UU</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T'</span> := ∑ <span class="id" title="var">p'</span> : ## <span class="id" title="var">P</span> <span class="id" title="var">X</span>, (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">X</span> ,, <span class="id" title="var">p</span>) --&gt; (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">X</span> ,, <span class="id" title="var">p'</span>) : <span class="id" title="var">UU</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">phi</span> := <span class="id" title="var">λ</span> (<span class="id" title="var">x</span> : <span class="id" title="var">T</span>), <span class="id" title="var">mk_mor</span> (<span class="id" title="var">X</span> ,, <span class="id" title="var">pr1</span> <span class="id" title="var">x</span>) (<span class="id" title="var">X</span> ,, <span class="id" title="var">p</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">G</span> := <span class="id" title="var">λ</span> (<span class="id" title="var">x</span> : <span class="id" title="var">T</span>), <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> ,, # (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">phi</span> <span class="id" title="var">x</span>) : <span class="id" title="var">T'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">e</span> := <span class="id" title="keyword">fun</span> (<span class="id" title="var">x</span> : ∫<span class="id" title="var">P</span>) =&gt; <span class="id" title="var">eqtohomot</span> (!((<span class="id" title="var">functor_id</span> <span class="id" title="var">P</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>))) (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">h</span> := <span class="id" title="var">λ</span> (<span class="id" title="var">x</span> : <span class="id" title="var">T'</span>), <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> ,, (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) <span class="id" title="var">q</span> : <span class="id" title="var">pr1hSet</span> (<span class="id" title="var">PreShv_to_slice_ob_funct_fun</span> <span class="id" title="var">F</span> <span class="id" title="var">X</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">funcomp</span> <span class="id" title="var">G</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">connectedcoconustot</span> ((# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">p</span>) ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">p</span> ,, <span class="id" title="var">e</span> (<span class="id" title="var">X</span> ,, <span class="id" title="var">p</span>))) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (@<span class="id" title="var">pair_path_in2</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">pr1hSet</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">X</span> ,, <span class="id" title="var">x</span>))) <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">eqtohomot</span> <span class="id" title="var">_</span> <span class="id" title="var">q</span> @ <span class="id" title="var">eqtohomot</span> (<span class="id" title="var">functor_id</span> <span class="id" title="var">F</span> (<span class="id" title="var">X</span> ,, <span class="id" title="var">p</span>)) <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">maponpaths</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">rewrite</span> <span class="id" title="var">idpath_transportf</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">eqset</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">set</span> (<span class="id" title="var">T</span> := ∑ <span class="id" title="var">p'</span> : ## <span class="id" title="var">P</span> <span class="id" title="var">Z</span>, <span class="id" title="var">p'</span> = # (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>) <span class="id" title="var">p</span> : <span class="id" title="var">UU</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T'</span> := ∑ <span class="id" title="var">p'</span> : ## <span class="id" title="var">P</span> <span class="id" title="var">Z</span>, (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">X</span> ,, <span class="id" title="var">p</span>) --&gt; (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">Z</span> ,, <span class="id" title="var">p'</span>) : <span class="id" title="var">UU</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">phi</span> := <span class="id" title="var">λ</span> (<span class="id" title="var">x</span> : <span class="id" title="var">T</span>), <span class="id" title="var">mk_mor</span> (<span class="id" title="var">Z</span> ,, <span class="id" title="var">pr1</span> <span class="id" title="var">x</span>) (<span class="id" title="var">X</span> ,, <span class="id" title="var">p</span>) (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">G</span> := <span class="id" title="var">λ</span> (<span class="id" title="var">x</span> : <span class="id" title="var">T</span>), (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span> ,, # (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">phi</span> <span class="id" title="var">x</span>)) : <span class="id" title="var">T'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">e</span> := <span class="id" title="keyword">fun</span> (<span class="id" title="var">z</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span> : ∫<span class="id" title="var">P</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">z</span> --&gt; <span class="id" title="var">y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">y</span> --&gt; <span class="id" title="var">x</span>) =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>) @ <span class="id" title="var">maponpaths</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>)) (<span class="id" title="var">pr2</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ (<span class="id" title="var">eqtohomot</span> (!(<span class="id" title="var">functor_comp</span> <span class="id" title="var">P</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">g</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>)) (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">h</span> := <span class="id" title="var">λ</span> (<span class="id" title="var">x</span> : <span class="id" title="var">T'</span>), <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> ,, (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) <span class="id" title="var">q</span> : <span class="id" title="var">pr1hSet</span> (<span class="id" title="var">PreShv_to_slice_ob_funct_fun</span> <span class="id" title="var">F</span> <span class="id" title="var">Z</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">funcomp</span> <span class="id" title="var">G</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">connectedcoconustot</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>) <span class="id" title="var">p</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">g</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> <span class="id" title="var">p</span>) ,,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">e</span> (<span class="id" title="var">mk_ob</span> <span class="id" title="var">Z</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">g</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> <span class="id" title="var">p</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">mk_ob</span> <span class="id" title="var">Y</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> <span class="id" title="var">p</span>)) (<span class="id" title="var">mk_ob</span> <span class="id" title="var">X</span> <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">f</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>))) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (@<span class="id" title="var">pair_path_in2</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">pr1hSet</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">Z</span> ,, <span class="id" title="var">x</span>))) (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">g</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> <span class="id" title="var">p</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">eqtohomot</span> <span class="id" title="var">_</span> <span class="id" title="var">q</span> @ <span class="id" title="var">eqtohomot</span> (@<span class="id" title="var">functor_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">F</span> (<span class="id" title="var">mk_ob</span> <span class="id" title="var">X</span> <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">mk_ob</span> <span class="id" title="var">Y</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> <span class="id" title="var">p</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">mk_ob</span> <span class="id" title="var">Z</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">g</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span> <span class="id" title="var">p</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> ,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">g</span>,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)) <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">maponpaths</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">rewrite</span> <span class="id" title="var">idpath_transportf</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">eqset</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_funct</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreShv_to_slice_ob_funct_data</span> <span class="id" title="var">F</span> ,, <span class="id" title="var">PreShv_to_slice_ob_is_funct</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_nat_fun</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) : (∑ (<span class="id" title="var">Px</span> :##<span class="id" title="var">P</span> <span class="id" title="var">x</span>), ##<span class="id" title="var">F</span> (<span class="id" title="var">x</span>,, <span class="id" title="var">Px</span>)) → ##<span class="id" title="var">P</span> <span class="id" title="var">x</span> := <span class="id" title="var">pr1</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span> → <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">PreShv_to_slice_ob_funct</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">exists</span> (<span class="id" title="var">PreShv_to_slice_ob_nat_fun</span> <span class="id" title="var">F</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_nat</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∑ <span class="id" title="var">Px</span> : ## <span class="id" title="var">P</span> <span class="id" title="var">c</span>, ## <span class="id" title="var">X</span> (<span class="id" title="var">c</span>,, <span class="id" title="var">Px</span>)) → (∑ <span class="id" title="var">Px</span> : ## <span class="id" title="var">P</span> <span class="id" title="var">c</span>, ## <span class="id" title="var">Y</span> (<span class="id" title="var">c</span>,, <span class="id" title="var">Px</span>)) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">p</span> ,, (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">c</span> ,, (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)) (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_ob_isnat</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_nat_trans</span> (<span class="id" title="var">PreShv_to_slice_ob_funct_data</span> <span class="id" title="var">X</span>) (<span class="id" title="var">PreShv_to_slice_ob_funct_data</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">PreShv_to_slice_ob_nat</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pair_path_in2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> ((<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>) (<span class="id" title="var">c</span> ,, <span class="id" title="var">pr1</span> <span class="id" title="var">p</span>) (<span class="id" title="var">c'</span>,, # (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">g</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)) (<span class="id" title="var">g</span>,, <span class="id" title="var">idpath</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">g</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)))) (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_mor</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreShv_to_slice_ob</span> <span class="id" title="var">X</span> --&gt; <span class="id" title="var">PreShv_to_slice_ob</span> <span class="id" title="var">Y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">PreShv_to_slice_ob_nat</span> <span class="id" title="var">f</span> ,, <span class="id" title="var">PreShv_to_slice_ob_isnat</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreShv_to_slice_ob</span> ,, @<span class="id" title="var">PreShv_to_slice_mor</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice_is_funct</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">PreShv_to_slice_data</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>; [<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> | <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">PreShv_to_slice_ob_nat</span> , <span class="id" title="var">PreShv_to_slice_ob_funct_fun</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_to_slice</span> : <span class="id" title="var">functor</span> (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreShv_to_slice_data</span> ,, <span class="id" title="var">PreShv_to_slice_is_funct</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1512"></a><h2 class="section">Construction of the functor from PreShv C / P to PreShv ∫P</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_ob_ob</span> (<span class="id" title="var">Q</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) : (∫<span class="id" title="var">P</span>)^<span class="id" title="var">op</span> → <span class="id" title="var">SET</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">p</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">hfiber</span> ((<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Q</span>)) (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)) (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>) ,,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isaset_hfiber</span> ((<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Q</span>)) (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)) (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>) (<span class="id" title="var">pr2</span> (((<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Q</span>)) (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)))) (<span class="id" title="var">pr2</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>))).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_ob_mor</span> (<span class="id" title="var">Q</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) {<span class="id" title="var">F</span> <span class="id" title="var">G</span> : (∫<span class="id" title="var">P</span>)^<span class="id" title="var">op</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_to_PreShv_ob_ob</span> <span class="id" title="var">Q</span> <span class="id" title="var">F</span> --&gt; <span class="id" title="var">slice_to_PreShv_ob_ob</span> <span class="id" title="var">Q</span> <span class="id" title="var">G</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">s</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">Q</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">Q</span> <span class="id" title="var">Qmor</span>] <span class="id" title="var">Qisfunct</span>] [<span class="id" title="var">Qnat</span> <span class="id" title="var">Qisnat</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">F</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">x</span> <span class="id" title="var">Px</span>]. <span class="id" title="tactic">destruct</span> <span class="id" title="var">G</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">y</span> <span class="id" title="var">Py</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">f</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">f</span> <span class="id" title="var">feq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">hfibersgftog</span> (<span class="id" title="var">Qmor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>) (<span class="id" title="var">Qnat</span> <span class="id" title="var">y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">s</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">feq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">Qisnat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">s</span>) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (# (<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">f</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">s</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_ob_funct_data</span> (<span class="id" title="var">Q</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) : <span class="id" title="var">functor_data</span> ((∫<span class="id" title="var">P</span>)^<span class="id" title="var">op</span>) <span class="id" title="var">SET</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_to_PreShv_ob_ob</span> <span class="id" title="var">Q</span> ,, @<span class="id" title="var">slice_to_PreShv_ob_mor</span> <span class="id" title="var">Q</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_ob_is_funct</span> (<span class="id" title="var">Q</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) : <span class="id" title="var">is_functor</span> (<span class="id" title="var">slice_to_PreShv_ob_funct_data</span> <span class="id" title="var">Q</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">intros</span> [<span class="id" title="var">x</span> <span class="id" title="var">Px</span>] | <span class="id" title="tactic">intros</span> [<span class="id" title="var">x</span> <span class="id" title="var">Px</span>] [<span class="id" title="var">y</span> <span class="id" title="var">Py</span>] [<span class="id" title="var">z</span> <span class="id" title="var">Pz</span>] [<span class="id" title="var">f</span> <span class="id" title="var">feq</span>] [<span class="id" title="var">g</span> <span class="id" title="var">geq</span>]];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">Q</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">Q</span> <span class="id" title="var">Qmor</span>] <span class="id" title="var">Qisfunct</span>] [<span class="id" title="var">Qnat</span> <span class="id" title="var">Qisnat</span>]];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">pr1</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelfpr1</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ?; <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">eqset</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">Qisfunct</span>) <span class="id" title="var">x</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> ((<span class="id" title="var">pr2</span> <span class="id" title="var">Qisfunct</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_ob</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span> → <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">Q</span>,  <span class="id" title="var">slice_to_PreShv_ob_funct_data</span> <span class="id" title="var">Q</span> ,,  <span class="id" title="var">slice_to_PreShv_ob_is_funct</span> <span class="id" title="var">Q</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_ob_nat</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) (<span class="id" title="var">e</span> : ∫<span class="id" title="var">P</span>^<span class="id" title="var">op</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">slice_to_PreShv_ob_ob</span> <span class="id" title="var">X</span>) <span class="id" title="var">e</span> --&gt; (<span class="id" title="var">slice_to_PreShv_ob_ob</span> <span class="id" title="var">Y</span>) <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">e</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">e</span> <span class="id" title="var">Pe</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, <span class="id" title="var">hfibersgftog</span> ((<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">F</span>)) <span class="id" title="var">e</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Y</span>)) <span class="id" title="var">e</span>) <span class="id" title="var">Pe</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">hfiber</span> (<span class="id" title="var">x</span> <span class="id" title="var">e</span>) <span class="id" title="var">Pe</span>) (<span class="id" title="var">base_paths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">F</span>)) <span class="id" title="var">p</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_ob_is_nat</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_nat_trans</span> (<span class="id" title="var">slice_to_PreShv_ob</span> <span class="id" title="var">X</span> : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) (<span class="id" title="var">slice_to_PreShv_ob</span> <span class="id" title="var">Y</span> : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) (<span class="id" title="var">slice_to_PreShv_ob_nat</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">e</span> <span class="id" title="var">Pe</span>] [<span class="id" title="var">e'</span> <span class="id" title="var">Pe'</span>] [<span class="id" title="var">f</span> <span class="id" title="var">feq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">X</span> <span class="id" title="var">Xmor</span>] <span class="id" title="var">Xisfunct</span>] [<span class="id" title="var">Xnat</span> <span class="id" title="var">Xisnat</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">Y</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">Y</span> <span class="id" title="var">Ymor</span>] <span class="id" title="var">Yisfunct</span>] [<span class="id" title="var">Ynat</span> <span class="id" title="var">Yisnat</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">F</span> <span class="id" title="keyword">as</span> [[<span class="id" title="var">F</span> <span class="id" title="var">Fisnat</span>] <span class="id" title="var">Feq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> <span class="id" title="var">peq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">pr1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelfpr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ?.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">eqset</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">peq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hfiber</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_const</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">Fisnat</span> <span class="id" title="var">e</span> <span class="id" title="var">e'</span> <span class="id" title="var">f</span>) <span class="id" title="var">p</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_mor</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_to_PreShv_ob</span> <span class="id" title="var">X</span> --&gt; <span class="id" title="var">slice_to_PreShv_ob</span> <span class="id" title="var">Y</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_to_PreShv_ob_nat</span> <span class="id" title="var">F</span> ,, <span class="id" title="var">slice_to_PreShv_ob_is_nat</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_to_PreShv_ob</span> ,, @<span class="id" title="var">slice_to_PreShv_mor</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv_is_funct</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">slice_to_PreShv_data</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>; [ <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> | <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">c</span> <span class="id" title="var">Pc</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> <span class="id" title="var">peq</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">pr1</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelfpr1</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ?;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">eqset</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hfiber</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hfibersgftog</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">hfiberpair</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">hfiber</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_const</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_to_PreShv</span> : <span class="id" title="var">functor</span> (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_to_PreShv_data</span> ,, <span class="id" title="var">slice_to_PreShv_is_funct</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1513"></a><h2 class="section">Construction of the natural isomorphism from (slice_to_PreShv ∙ PreShv_to_slice) to the identity functor</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_counit_fun</span> (<span class="id" title="var">X</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">slice_to_PreShv</span> ∙ <span class="id" title="var">PreShv_to_slice</span>) <span class="id" title="var">X</span> --&gt; (<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>) <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">X</span> <span class="id" title="var">Xmor</span>] <span class="id" title="var">Xisfunct</span>] [<span class="id" title="var">Xnat</span> <span class="id" title="var">Xisnat</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; <span class="id" title="tactic">simpl</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> [<span class="id" title="var">p</span> <span class="id" title="var">q</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> <span class="id" title="var">peq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">A</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> [<span class="id" title="var">q</span> <span class="id" title="var">e</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (!<span class="id" title="var">e</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_nat_trans_slice_counit</span> : <span class="id" title="var">is_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">slice_counit_fun</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_mor_slicecat</span> , (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">A</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> [<span class="id" title="var">q</span> <span class="id" title="var">e</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">X</span> <span class="id" title="var">Xmor</span>] <span class="id" title="var">Xisfunct</span>] [<span class="id" title="var">Xnat</span> <span class="id" title="var">Xisnat</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">Y</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">Y</span> <span class="id" title="var">Ymor</span>] <span class="id" title="var">Yisfunct</span>] [<span class="id" title="var">Ynat</span> <span class="id" title="var">Yisnat</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">f</span> <span class="id" title="keyword">as</span> [[<span class="id" title="var">f</span> <span class="id" title="var">fisnat</span>] <span class="id" title="var">feq</span>]. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">hfiber</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_const</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_counit</span> : <span class="id" title="var">slice_to_PreShv</span> ∙ <span class="id" title="var">PreShv_to_slice</span> ⟹ <span class="id" title="var">functor_identity</span> (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_counit_fun</span> ,, <span class="id" title="var">is_nat_trans_slice_counit</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_all_iso</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>, <span class="id" title="var">is_iso</span> (<span class="id" title="var">slice_counit</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [[[<span class="id" title="var">F</span> <span class="id" title="var">Fmor</span>] <span class="id" title="var">Fisfunct</span>] [<span class="id" title="var">Fnat</span> <span class="id" title="var">Fisnat</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_to_slice_precat_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_iso_if_pointwise_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="var">is_iso</span> ?<span class="id" title="var">t</span> =&gt; <span class="id" title="tactic">assert</span> (<span class="id" title="var">eq</span> : <span class="id" title="var">t</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">X0</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">X0</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>. <span class="id" title="tactic">intros</span> [<span class="id" title="var">p</span> <span class="id" title="var">q</span>]. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">λ</span> <span class="id" title="var">X0</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">X0</span>)) <span class="id" title="keyword">with</span> (<span class="id" title="var">fromcoconusf</span> (<span class="id" title="var">Fnat</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">hset_equiv_is_iso</span> (<span class="id" title="var">hSetpair</span> (<span class="id" title="var">coconusf</span> (<span class="id" title="var">Fnat</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">isaset_total2_hSet</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">y</span>, (<span class="id" title="var">hfiber_hSet</span> (<span class="id" title="var">Fnat</span> <span class="id" title="var">X</span>) <span class="id" title="var">y</span>)))) <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">weqfromcoconusf</span> (<span class="id" title="var">Fnat</span> <span class="id" title="var">X</span>))).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">slice_unit</span> : <span class="id" title="var">functor_identity</span> (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) ⟹ <span class="id" title="var">slice_to_PreShv</span> ∙ <span class="id" title="var">PreShv_to_slice</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat_trans_inv_from_pointwise_inv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">has_homsets_slice_precat</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span>)) <span class="id" title="var">P</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">slice_to_PreShv</span> ∙ <span class="id" title="var">PreShv_to_slice</span>) (<span class="id" title="var">functor_identity</span> (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_counit</span> <span class="id" title="var">slice_all_iso</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1514"></a><h2 class="section">Construction of the natural isomorphism from the identity functor to (PreShv_to_slice ∙ slice_to_PreShv)</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_unit_fun</span> (<span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>) <span class="id" title="var">F</span> --&gt; (<span class="id" title="var">PreShv_to_slice</span> ∙ <span class="id" title="var">slice_to_PreShv</span>) <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> <span class="id" title="var">p</span>] <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> ((<span class="id" title="var">p</span> ,, <span class="id" title="var">x</span>) ,, <span class="id" title="var">idpath</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> <span class="id" title="var">p</span>] [<span class="id" title="var">X'</span> <span class="id" title="var">p'</span>] [<span class="id" title="var">f</span> <span class="id" title="var">feq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">pr1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelfpr1</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ?;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">eqset</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (!<span class="id" title="var">feq</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">total2_paths2_f</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">idpath_transportf</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">set_eq</span> : <span class="id" title="var">idpath</span> <span class="id" title="var">_</span> = <span class="id" title="var">feq</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">P</span> <span class="id" title="var">X'</span>)). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">induction</span> <span class="id" title="var">set_eq</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_nat_trans_PreShv_unit</span> : <span class="id" title="var">is_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">PreShv_unit_fun</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [[<span class="id" title="var">F</span> <span class="id" title="var">Fmor</span>] <span class="id" title="var">Fisfunct</span>] [[<span class="id" title="var">G</span> <span class="id" title="var">Gmor</span>] <span class="id" title="var">Gisfunct</span>] [<span class="id" title="var">f</span> <span class="id" title="var">fisnat</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> <span class="id" title="var">p</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">pr1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelfpr1</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ?;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">eqset</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">hfiber</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_total2</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_const</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_unit</span> : <span class="id" title="var">functor_identity</span> (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) ⟹ <span class="id" title="var">PreShv_to_slice</span> ∙ <span class="id" title="var">slice_to_PreShv</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreShv_unit_fun</span> ,, <span class="id" title="var">is_nat_trans_PreShv_unit</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_all_iso</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">F</span> : <span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>, <span class="id" title="var">is_iso</span> (<span class="id" title="var">PreShv_unit</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [[<span class="id" title="var">F</span> <span class="id" title="var">Fmor</span>] <span class="id" title="var">Fisfunct</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_iso_if_pointwise_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> <span class="id" title="var">p</span>]; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : <span class="id" title="var">isweq</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> : <span class="id" title="var">pr1hSet</span> (<span class="id" title="var">F</span> (<span class="id" title="var">X</span>,, <span class="id" title="var">p</span>)) , (<span class="id" title="var">p</span>,, <span class="id" title="var">x</span>) ,, <span class="id" title="var">idpath</span> <span class="id" title="var">p</span> : <span class="id" title="var">pr1hSet</span> (<span class="id" title="var">slice_to_PreShv_ob_ob</span> (<span class="id" title="var">PreShv_to_slice_ob</span> ((<span class="id" title="var">F</span>,, <span class="id" title="var">Fmor</span>),, <span class="id" title="var">Fisfunct</span>)) (<span class="id" title="var">X</span>,, <span class="id" title="var">p</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">unfold</span> <span class="id" title="var">isweq</span>. <span class="id" title="tactic">intros</span> [[<span class="id" title="var">p'</span> <span class="id" title="var">x'</span>] <span class="id" title="var">e'</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *. <span class="id" title="tactic">induction</span> <span class="id" title="var">e'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> ((<span class="id" title="var">x'</span>,, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>),, <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">x''</span> <span class="id" title="var">t</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">pr1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelfpr1</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ?;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (@<span class="id" title="var">eqset</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">slice_to_PreShv_ob_ob</span> (<span class="id" title="var">PreShv_to_slice_ob</span> ((<span class="id" title="var">F</span>,, <span class="id" title="var">Fmor</span>),, <span class="id" title="var">Fisfunct</span>)) (<span class="id" title="var">X</span>,, <span class="id" title="var">p'</span>))) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">eq_id</span> : <span class="id" title="var">base_paths</span> (<span class="id" title="var">p'</span>,, <span class="id" title="var">x''</span>) (<span class="id" title="var">p'</span>,, <span class="id" title="var">x'</span>) (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> <span class="id" title="var">t</span>) = <span class="id" title="var">idpath</span> <span class="id" title="var">p'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">set</span> (<span class="id" title="var">c</span> := <span class="id" title="var">iscontraprop1</span> (<span class="id" title="var">pr2</span> (@<span class="id" title="var">eqset</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">P</span>) <span class="id" title="var">X</span>) <span class="id" title="var">p'</span> <span class="id" title="var">p'</span>)) (<span class="id" title="var">idpath</span> <span class="id" title="var">p'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> ((<span class="id" title="var">pr2</span> <span class="id" title="var">c</span>) <span class="id" title="var">_</span> @ !((<span class="id" title="var">pr2</span> <span class="id" title="var">c</span>) <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq</span> := <span class="id" title="var">fiber_paths</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> <span class="id" title="var">t</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">_</span> @ <span class="id" title="var">eq</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">transportf_paths</span> <span class="id" title="var">_</span> <span class="id" title="var">eq_id</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">idpath_transportf</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">hset_equiv_is_iso</span> (<span class="id" title="var">F</span> (<span class="id" title="var">X</span> ,, <span class="id" title="var">p</span>)) <span class="id" title="var">_</span> (<span class="id" title="var">_</span> ,, <span class="id" title="var">H</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_counit</span> : <span class="id" title="var">PreShv_to_slice</span> ∙ <span class="id" title="var">slice_to_PreShv</span> ⟹ <span class="id" title="var">functor_identity</span> (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat_trans_inv_from_pointwise_inv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>)) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">PreShv_unit</span> <span class="id" title="var">PreShv_all_iso</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1515"></a><h2 class="section">The equivalence of the categories PreShv ∫P and PreShv C / P</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_of_elems_slice_of_PreShv_equiv</span> : <span class="id" title="var">equivalence_of_precats</span> (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PreShv_to_slice</span> ,,  <span class="id" title="var">slice_to_PreShv</span> ,, <span class="id" title="var">PreShv_unit</span> ,, <span class="id" title="var">slice_counit</span>) ,, (<span class="id" title="var">PreShv_all_iso</span> ,, <span class="id" title="var">slice_all_iso</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreShv_of_elems_slice_of_PreShv_adj_equiv</span> : <span class="id" title="var">adj_equivalence_of_precats</span> <span class="id" title="var">PreShv_to_slice</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;@<span class="id" title="var">adjointificiation</span> (<span class="id" title="var">PreShv</span> ∫<span class="id" title="var">P</span>) (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span> / <span class="id" title="var">P</span> ,, <span class="id" title="var">has_homsets_slice_precat</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">PreShv</span> <span class="id" title="var">C</span>)) <span class="id" title="var">P</span>) <span class="id" title="var">PreShv_of_elems_slice_of_PreShv_equiv</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">elems_slice_equiv</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

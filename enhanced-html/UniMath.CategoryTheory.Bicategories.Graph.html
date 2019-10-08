@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Bicategories.Graph</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1728"></a><h1 class="section">Bicategory of graphs</h1>
+
+    Benedikt Ahrens, Marco Maggesi
+    May 2018
+ ********************************************************************************* 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>. <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Graph</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pregraph</span> : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">A</span> : <span class="id" title="var">UU</span>, <span class="id" title="var">A</span> → <span class="id" title="var">A</span> → <span class="id" title="var">UU</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">node</span> (<span class="id" title="var">G</span> : <span class="id" title="var">pregraph</span>) : <span class="id" title="var">UU</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">G</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">edge</span> (<span class="id" title="var">G</span> : <span class="id" title="var">pregraph</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">G</span>) : <span class="id" title="var">UU</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">G</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_mor</span> (<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> : <span class="id" title="var">pregraph</span>) : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= ∑ <span class="id" title="var">f0</span> : <span class="id" title="var">G1</span> → <span class="id" title="var">G2</span>, ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">G1</span>), <span class="id" title="var">edge</span> <span class="id" title="var">G1</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> → <span class="id" title="var">edge</span> <span class="id" title="var">G2</span> (<span class="id" title="var">f0</span> <span class="id" title="var">a</span>) (<span class="id" title="var">f0</span> <span class="id" title="var">b</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_graph_mor</span> (<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> : <span class="id" title="var">pregraph</span>) (<span class="id" title="var">f0</span> : <span class="id" title="var">G1</span> → <span class="id" title="var">G2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f1</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">G1</span>), <span class="id" title="var">edge</span> <span class="id" title="var">G1</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> → <span class="id" title="var">edge</span> <span class="id" title="var">G2</span> (<span class="id" title="var">f0</span> <span class="id" title="var">a</span>) (<span class="id" title="var">f0</span> <span class="id" title="var">b</span>))<br/>
+&nbsp;&nbsp;: <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">f0</span>,, <span class="id" title="var">f1</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_mor_node</span> {<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> : <span class="id" title="var">pregraph</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span>) (<span class="id" title="var">a</span> : <span class="id" title="var">G1</span>) : <span class="id" title="var">G2</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr1</span> <span class="id" title="var">f</span> <span class="id" title="var">a</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">graph_mor_node</span> : <span class="id" title="var">graph_mor</span> &gt;-&gt; <span class="id" title="var">Funclass</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graphmap</span> {<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> : <span class="id" title="var">pregraph</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span>) {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">G1</span>} (<span class="id" title="var">p</span> : <span class="id" title="var">edge</span> <span class="id" title="var">G1</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">edge</span> <span class="id" title="var">G2</span> (<span class="id" title="var">f</span> <span class="id" title="var">a</span>) (<span class="id" title="var">f</span> <span class="id" title="var">b</span>)<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr2</span> <span class="id" title="var">f</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">p</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_mor_id</span> (<span class="id" title="var">G</span> : <span class="id" title="var">pregraph</span>) : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G</span> <span class="id" title="var">G</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">mk_graph_mor</span> <span class="id" title="var">G</span> <span class="id" title="var">G</span> (<span class="id" title="var">idfun</span> <span class="id" title="var">G</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">G</span>, <span class="id" title="var">idfun</span> (<span class="id" title="var">edge</span> <span class="id" title="var">G</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_mor_comp</span> {<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> <span class="id" title="var">G3</span> : <span class="id" title="var">pregraph</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G2</span> <span class="id" title="var">G3</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G3</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">mk_graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G3</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>)%<span class="id" title="var">functions</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">G1</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">edge</span> <span class="id" title="var">G1</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>), <span class="id" title="var">graphmap</span> <span class="id" title="var">g</span> (<span class="id" title="var">graphmap</span> <span class="id" title="var">f</span> <span class="id" title="var">p</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_mor_eq</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span> (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">e0</span> : ∏ <span class="id" title="var">a</span>, <span class="id" title="var">f</span> <span class="id" title="var">a</span> = <span class="id" title="var">g</span> <span class="id" title="var">a</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">e1</span> : ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> (<span class="id" title="var">p</span> : <span class="id" title="var">edge</span> <span class="id" title="var">G1</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">double_transport</span> (<span class="id" title="var">e0</span> <span class="id" title="var">a</span>) (<span class="id" title="var">e0</span> <span class="id" title="var">b</span>) (<span class="id" title="var">graphmap</span> <span class="id" title="var">f</span> <span class="id" title="var">p</span>) = <span class="id" title="var">graphmap</span> <span class="id" title="var">g</span> <span class="id" title="var">p</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">f</span> = <span class="id" title="var">g</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">functor_data_eq</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">e0</span> <span class="id" title="var">e1</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">graph_mor_id_right</span> (<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> : <span class="id" title="var">pregraph</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">graph_mor_comp</span> (<span class="id" title="var">graph_mor_id</span> <span class="id" title="var">G1</span>) <span class="id" title="var">f</span> = <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">graph_mor_eq</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">graph_mor_id_left</span> (<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> : <span class="id" title="var">pregraph</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">graph_mor_comp</span> <span class="id" title="var">f</span> (<span class="id" title="var">graph_mor_id</span> <span class="id" title="var">G2</span>) = <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">graph_mor_eq</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">graph_mor_comp_assoc</span> (<span class="id" title="var">G1</span> <span class="id" title="var">G2</span> <span class="id" title="var">G3</span> <span class="id" title="var">G4</span> : <span class="id" title="var">pregraph</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G1</span> <span class="id" title="var">G2</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G2</span> <span class="id" title="var">G3</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">graph_mor</span> <span class="id" title="var">G3</span> <span class="id" title="var">G4</span>)<br/>
+&nbsp;&nbsp;:   <span class="id" title="var">graph_mor_comp</span> <span class="id" title="var">f</span> (<span class="id" title="var">graph_mor_comp</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;= <span class="id" title="var">graph_mor_comp</span> (<span class="id" title="var">graph_mor_comp</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">graph_mor_eq</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pregraph</span>,, <span class="id" title="var">graph_mor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_id_comp</span> : <span class="id" title="var">precategory_id_comp</span> <span class="id" title="var">graph_ob_mor</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">graph_mor_id</span>,, @<span class="id" title="var">graph_mor_comp</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_precategory_data</span> : <span class="id" title="var">precategory_data</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">graph_ob_mor</span>,, <span class="id" title="var">graph_id_comp</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_precategory_graph</span> : <span class="id" title="var">is_precategory</span> <span class="id" title="var">graph_precategory_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_precategory_one_assoc_to_two</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">graph_mor_id_right</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">graph_mor_id_left</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">graph_mor_comp_assoc</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">graph_precategory</span> : <span class="id" title="var">precategory</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">graph_precategory_data</span>,, <span class="id" title="var">is_precategory_graph</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Graph</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

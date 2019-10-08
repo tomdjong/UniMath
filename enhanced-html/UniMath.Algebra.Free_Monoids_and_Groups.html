@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Algebra.Free_Monoids_and_Groups</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Authors Floris van Doorn, December 2017 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.IteratedBinaryOperations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Subtypes</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Combinatorics.Lists</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab586"></a><h2 class="section">Contents</h2>
+
+<ul class="doclist">
+<li> Free monoid on a set
+
+</li>
+<li> Monoid presented by a set of generators and relations
+
+</li>
+<li> Free abelian monoid on a set
+
+</li>
+<li> Abelian monoid presented by a set of generators and relations
+
+</li>
+<li> Free group on a set
+
+</li>
+<li> Group presented by a set of generators and relations
+
+</li>
+<li> Free abelian group on set
+
+</li>
+<li> Abelian group presented by a set of generators and relations
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">multmonoid_scope</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "[]" := <span class="id" title="var">nil</span> (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">format</span> "[]").<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Infix</span> "::" := <span class="id" title="var">cons</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ismonoidop_concatenate</span> (<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>) : <span class="id" title="var">ismonoidop</span> (@<span class="id" title="var">concatenate</span> <span class="id" title="var">X</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_ismonoidop</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">assoc_concatenate</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">isunitalpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> [].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">isunitpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">nil_concatenate</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">concatenate_nil</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_monoid</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">monoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidpair</span> (<span class="id" title="var">setwithbinoppair</span> (<span class="id" title="var">hSetpair</span> (<span class="id" title="var">list</span> <span class="id" title="var">X</span>) (<span class="id" title="var">isofhlevellist</span> 0 (<span class="id" title="var">pr2</span> <span class="id" title="var">X</span>))) <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ismonoidop_concatenate</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_monoid_unit</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">x</span>::[].<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_monoid_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">monoidfunconstr</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">iterop_list_mon</span> (<span class="id" title="var">map</span> <span class="id" title="var">f</span> <span class="id" title="var">l</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">mk_ismonoidfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">l1</span> <span class="id" title="var">l2</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> (<span class="id" title="var">map_concatenate</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iterop_list_mon_concatenate</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_monoid_extend_homot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>} {<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">f</span> ~ <span class="id" title="var">f'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_monoid_extend</span> <span class="id" title="var">f</span> ~ <span class="id" title="var">free_monoid_extend</span> <span class="id" title="var">f'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">iterop_list_mon</span>). <span class="id" title="tactic">exact</span> (<span class="id" title="var">map_homot</span> <span class="id" title="var">h</span> <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_monoid_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_monoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_monoid_unit</span>) ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">list_ind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (! <span class="id" title="var">monoidfununel</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">xs</span> <span class="id" title="var">IH</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">map_cons</span>, <span class="id" title="var">iterop_list_mon_step</span>, <span class="id" title="var">IH</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (!<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">g</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_monoid_universal_property</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>) : (<span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) ≃ <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">free_monoid_extend</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_monoid_unit</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">free_monoid_extend_comp</span> <span class="id" title="var">g</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_monoidfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_monoid</span> <span class="id" title="var">Y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">monoidfunconstr</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">map</span> <span class="id" title="var">f</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">mk_ismonoidfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">l1</span> <span class="id" title="var">l2</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">map_concatenate</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_monoidfun_homot_extend</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_monoidfun</span> <span class="id" title="var">f</span> ~ <span class="id" title="var">free_monoid_extend</span> (<span class="id" title="var">free_monoid_unit</span> ∘ <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">exact</span> (<span class="id" title="var">foldr1_concatenate</span> <span class="id" title="var">f</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_monoid_extend_funcomp</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Z</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">Z</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_monoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>) ~ <span class="id" title="var">free_monoid_extend</span> <span class="id" title="var">g</span> ∘ <span class="id" title="var">free_monoidfun</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">list_ind</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">xs</span> <span class="id" title="var">IH</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span> <span class="id" title="tactic">in</span> *. <span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">map_cons</span>, !<span class="id" title="var">iterop_list_mon_step</span>, <span class="id" title="var">IH</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Functoriality of the <span class="inlinecode"><span class="id" title="var">free_monoidfun</span></span> 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_monoidfun_comp_homot</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> -&gt; <span class="id" title="var">Z</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">free_monoidfun</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>)) ~ <span class="id" title="var">free_monoidfun</span> <span class="id" title="var">g</span> ∘ <span class="id" title="var">free_monoidfun</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">map_compose</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">reverse_binopfun</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">binopfun</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) (<span class="id" title="var">setwithbinop_rev</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">binopfunpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">reverse</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">reverse_concatenate</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_monoid</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)) : <span class="id" title="var">monoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidquot</span> (<span class="id" title="var">generated_binopeqrel</span> <span class="id" title="var">R</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_monoid_pr</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) (<span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidquotpr</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_monoid_intro</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">X</span> → <span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_monoid_pr</span> <span class="id" title="var">R</span> ∘ <span class="id" title="var">free_monoid_unit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_monoid_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_monoid_extend</span> <span class="id" title="var">f</span>)) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">monoidquotuniv</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">free_monoid_extend</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">iscomprelfun_generated_binopeqrel</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscomprelfun_presented_monoidfun</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_monoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_monoid_intro</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_monoid_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_monoid_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">g</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">generated_binopeqrel_intro</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">presented_monoid_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_monoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_monoid_intro</span>))) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_monoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_monoid_intro</span>) <span class="id" title="var">H</span> ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">free_monoid_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_monoid_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>) <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_monoid_universal_property</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">Y</span> : <span class="id" title="var">monoid</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span> ≃ ∑(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>), <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_monoid_extend</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_monoid_intro</span>) (<span class="id" title="var">iscomprelfun_presented_monoidfun</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">presented_monoid_extend</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>, <span class="id" title="var">funextfun</span>, <span class="id" title="var">presented_monoid_extend_comp</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropiscomprelfun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_monoidfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">S</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">Y</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelrelfun</span> <span class="id" title="var">R</span> <span class="id" title="var">S</span> (<span class="id" title="var">free_monoidfun</span> <span class="id" title="var">f</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) (<span class="id" title="var">presented_monoid</span> <span class="id" title="var">Y</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">presented_monoid_extend</span> (<span class="id" title="var">presented_monoid_intro</span> ∘ <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">free_monoid_extend_funcomp</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_monoid_extend_comp</span> (<span class="id" title="var">presented_monoid_pr</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">generated_binopeqrel_intro</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoid_hrel</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>, ∃ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">x</span> * <span class="id" title="var">y</span> = <span class="id" title="var">g</span> × <span class="id" title="var">y</span> * <span class="id" title="var">x</span> = <span class="id" title="var">h</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abmonoid_hrel_intro</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l1</span> <span class="id" title="var">l2</span> : <span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abmonoid_hrel</span> <span class="id" title="var">X</span> (<span class="id" title="var">l1</span> * <span class="id" title="var">l2</span>) (<span class="id" title="var">l2</span> * <span class="id" title="var">l1</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">wittohexists</span> <span class="id" title="keyword">with</span> <span class="id" title="var">l1</span>. <span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> <span class="id" title="var">l2</span>. <span class="id" title="tactic">split</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abmonoid_hrel_univ</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">P</span> : <span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span> → <span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span> → <span class="id" title="var">UU</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HP</span> : ∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>), <span class="id" title="var">isaprop</span> (<span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hind</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">P</span> (<span class="id" title="var">x</span> * <span class="id" title="var">y</span>) (<span class="id" title="var">y</span> * <span class="id" title="var">x</span>)) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abmonoid_hrel</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">hinhuniv</span> <span class="id" title="var">_</span> (<span class="id" title="var">hProppair</span> (<span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="var">HP</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>))). <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">x'</span>,<span class="id" title="var">v</span>). <span class="id" title="tactic">induction</span> <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">y'</span>,<span class="id" title="var">v</span>). <span class="id" title="tactic">induction</span> <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">p1</span>,<span class="id" title="var">p2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p1</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">p2</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">Hind</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoid'</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">monoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_monoid</span> <span class="id" title="var">X</span> (<span class="id" title="var">free_abmonoid_hrel</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscomm_free_abmonoid</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">iscomm</span> (@<span class="id" title="var">op</span> (<span class="id" title="var">free_abmonoid'</span> <span class="id" title="var">X</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotuniv2prop'</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isasetmonoid</span> (<span class="id" title="var">free_abmonoid'</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">iscompsetquotpr</span> <span class="id" title="var">_</span> (<span class="id" title="var">x1</span> * <span class="id" title="var">x2</span>) (<span class="id" title="var">x2</span> * <span class="id" title="var">x1</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">generated_binopeqrel_intro</span>, <span class="id" title="var">free_abmonoid_hrel_intro</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoid</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">abmonoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoid_of_monoid</span> (<span class="id" title="var">free_abmonoid'</span> <span class="id" title="var">X</span>) (<span class="id" title="var">iscomm_free_abmonoid</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoid_pr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_monoid_pr</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoid_unit</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_monoid_intro</span> <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoid_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">presented_monoid_extend</span> <span class="id" title="var">f</span>). <span class="id" title="tactic">unfold</span> <span class="id" title="var">iscomprelfun</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">free_abmonoid_hrel_univ</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isasetmonoid</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">monoidfunmul</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">commax</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abmonoid_extend_homot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>} {<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">f</span> ~ <span class="id" title="var">f'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abmonoid_extend</span> <span class="id" title="var">f</span> ~ <span class="id" title="var">free_abmonoid_extend</span> <span class="id" title="var">f'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">free_monoid_extend_homot</span> <span class="id" title="var">h</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abmonoid_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abmonoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_abmonoid_unit</span>) ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">presented_monoid_extend_comp</span> <span class="id" title="var">g</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoid_universal_property</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>) : (<span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) ≃ <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">free_abmonoid_extend</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_abmonoid_unit</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>, <span class="id" title="var">funextfun</span>, <span class="id" title="var">free_abmonoid_extend_comp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abmonoidfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">Y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abmonoid_extend</span> (<span class="id" title="var">free_abmonoid_unit</span> ∘ <span class="id" title="var">f</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abmonoidfun_setquotpr</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">free_monoid</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abmonoidfun</span> <span class="id" title="var">f</span> (<span class="id" title="var">setquotpr</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>) = <span class="id" title="var">setquotpr</span> <span class="id" title="var">_</span> (<span class="id" title="var">free_monoidfun</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">free_monoid_extend_funcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">free_monoid_extend_comp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abmonoid_extend_funcomp</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Z</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">Z</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abmonoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>) ~ <span class="id" title="var">free_abmonoid_extend</span> <span class="id" title="var">g</span> ∘ <span class="id" title="var">free_abmonoidfun</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">free_monoid_extend_funcomp</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">free_abmonoidfun_setquotpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (!<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abmonoid</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)) : <span class="id" title="var">abmonoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoidquot</span> (<span class="id" title="var">generated_binopeqrel</span> <span class="id" title="var">R</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abmonoid_pr</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>) (<span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidquotpr</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abmonoid_intro</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">X</span> → <span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_abmonoid_pr</span> <span class="id" title="var">R</span> ∘ <span class="id" title="var">free_abmonoid_unit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abmonoid_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abmonoid_extend</span> <span class="id" title="var">f</span>)) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">monoidquotuniv</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">free_abmonoid_extend</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">iscomprelfun_generated_binopeqrel</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscomprelfun_presented_abmonoidfun</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abmonoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abmonoid_intro</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_abmonoid_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_abmonoid_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">g</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">generated_binopeqrel_intro</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">presented_abmonoid_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abmonoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abmonoid_intro</span>))) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_abmonoid_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abmonoid_intro</span>) <span class="id" title="var">H</span> ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">free_abmonoid_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_abmonoid_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>) <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abmonoid_universal_property</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">Y</span> : <span class="id" title="var">abmonoid</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span> ≃ ∑(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>), <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abmonoid_extend</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abmonoid_intro</span>) (<span class="id" title="var">iscomprelfun_presented_abmonoidfun</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">presented_abmonoid_extend</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>, <span class="id" title="var">funextfun</span>, <span class="id" title="var">presented_abmonoid_extend_comp</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropiscomprelfun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abmonoidfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">S</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abmonoid</span> <span class="id" title="var">Y</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelrelfun</span> <span class="id" title="var">R</span> <span class="id" title="var">S</span> (<span class="id" title="var">free_abmonoidfun</span> <span class="id" title="var">f</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) (<span class="id" title="var">presented_abmonoid</span> <span class="id" title="var">Y</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">presented_abmonoid_extend</span> (<span class="id" title="var">presented_abmonoid_intro</span> ∘ <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_abmonoid_extend_funcomp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>). <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_abmonoid_extend_comp</span> (<span class="id" title="var">presented_abmonoid_pr</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">generated_binopeqrel_intro</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_gr_hrel</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>, ∃ <span class="id" title="var">x</span>, <span class="id" title="var">x</span>::<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>::[] = <span class="id" title="var">g</span> × [] = <span class="id" title="var">h</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_gr_hrel_in</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">X</span> ⨿ <span class="id" title="var">X</span>) : <span class="id" title="var">free_gr_hrel</span> <span class="id" title="var">X</span> (<span class="id" title="var">x</span>::<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>::[]) [].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">wittohexists</span> <span class="id" title="keyword">with</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">split</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_gr_hrel_in_rev</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">X</span> ⨿ <span class="id" title="var">X</span>) : <span class="id" title="var">free_gr_hrel</span> <span class="id" title="var">X</span> (<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>::<span class="id" title="var">x</span>::[]) [].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">H</span> := <span class="id" title="var">free_gr_hrel_in</span> (<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">coprodcomm_coprodcomm</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_gr_hrel_univ</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">P</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) → <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) → <span class="id" title="var">UU</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HP</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">isaprop</span> (<span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hind</span> : ∏ <span class="id" title="var">x</span>, <span class="id" title="var">P</span> (<span class="id" title="var">x</span>::<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>::[]) [])<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) : <span class="id" title="var">free_gr_hrel</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">hinhuniv</span> <span class="id" title="var">_</span> (<span class="id" title="var">hProppair</span> (<span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="var">HP</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">x'</span>,<span class="id" title="var">v</span>), <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">p1</span>,<span class="id" title="var">p2</span>), <span class="id" title="var">p1</span>, <span class="id" title="var">p2</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">Hind</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">fginv</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">reverse</span> (<span class="id" title="var">map</span> (<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) <span class="id" title="var">l</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">fginv_binopfun</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">binopfun</span> (<span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">setwithbinop_rev</span> (<span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">binopfuncomp</span> (<span class="id" title="var">free_monoidfun</span> <span class="id" title="var">_</span>) (<span class="id" title="var">reverse_binopfun</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">exact</span> (<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">fginv_binopfun_homot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">fginv_binopfun</span> <span class="id" title="var">X</span> <span class="id" title="var">l</span> = <span class="id" title="var">fginv</span> <span class="id" title="var">l</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">fginv_fginv</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) : <span class="id" title="var">fginv</span> (<span class="id" title="var">fginv</span> <span class="id" title="var">l</span>) = <span class="id" title="var">l</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">fginv</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">map_reverse</span>, <span class="id" title="var">reverse_reverse</span>, &lt;- <span class="id" title="var">map_compose</span>, &lt;- <span class="id" title="var">map_idfun</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">map_homot</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">coprodcomm_coprodcomm</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">generated_free_gr_hrel_in</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">generated_binopeqrel</span> (<span class="id" title="var">free_gr_hrel</span> <span class="id" title="var">X</span>) (<span class="id" title="var">l</span> * <span class="id" title="var">fginv</span> <span class="id" title="var">l</span>) [].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">R</span> <span class="id" title="var">H</span>. <span class="id" title="var">revert</span> <span class="id" title="var">l</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">list_ind</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">eqrelrefl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">xs</span> <span class="id" title="var">IH</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">R</span> ((<span class="id" title="var">free_monoid_unit</span> <span class="id" title="var">x</span> * <span class="id" title="var">xs</span>) * (<span class="id" title="var">fginv</span> <span class="id" title="var">xs</span> * @<span class="id" title="var">free_monoid_unit</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">coprodcomm</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assocax</span>, &lt;- (<span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">free_monoid_unit</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">eqreltrans</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">R</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">binopeqrel_resp_left</span> <span class="id" title="var">R</span> <span class="id" title="var">_</span> (<span class="id" title="var">binopeqrel_resp_right</span> <span class="id" title="var">R</span> <span class="id" title="var">_</span> <span class="id" title="var">IH</span>)) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>, <span class="id" title="var">free_gr_hrel_in</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">generated_free_gr_hrel_in_rev</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">generated_binopeqrel</span> (<span class="id" title="var">free_gr_hrel</span> <span class="id" title="var">X</span>) (<span class="id" title="var">fginv</span> <span class="id" title="var">l</span> * <span class="id" title="var">l</span>) [].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">H</span> := <span class="id" title="var">generated_free_gr_hrel_in</span> (<span class="id" title="var">fginv</span> <span class="id" title="var">l</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">fginv_fginv</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">free_gr'</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">monoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_gr_hrel</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">invstruct_free_gr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">invstruct</span> (@<span class="id" title="var">op</span> (<span class="id" title="var">free_gr'</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">pr2</span> (<span class="id" title="var">free_gr'</span> <span class="id" title="var">X</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_invstruct</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">setquotfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">fginv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">refine</span> (<span class="id" title="var">iscomprelrelfun_generated_binopeqrel_rev</span> (<span class="id" title="var">fginv_binopfun</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>). <span class="id" title="tactic">unfold</span> <span class="id" title="var">iscomprelrelfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">free_gr_hrel_univ</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">pr2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">fginv_binopfun_homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">free_gr_hrel_in_rev</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">mk_isinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivprop'</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">x</span> * <span class="id" title="var">_</span>) (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iscompsetquotpr</span> <span class="id" title="var">_</span> (<span class="id" title="var">fginv</span> <span class="id" title="var">l</span> * <span class="id" title="var">l</span>) []).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">generated_free_gr_hrel_in_rev</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivprop'</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">_</span> * <span class="id" title="var">x</span>) (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iscompsetquotpr</span> <span class="id" title="var">_</span> (<span class="id" title="var">l</span> * <span class="id" title="var">fginv</span> <span class="id" title="var">l</span>) []).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">generated_free_gr_hrel_in</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_gr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">gr</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">gr_of_monoid</span> (<span class="id" title="var">free_gr'</span> <span class="id" title="var">X</span>) (<span class="id" title="var">invstruct_free_gr</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_gr_pr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidquotpr</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_gr_unit</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">apply</span> <span class="id" title="var">presented_monoid_intro</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">inl</span> <span class="id" title="var">x</span>). </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_gr_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">presented_monoid_extend</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">sumofmaps</span> <span class="id" title="var">f</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">Y</span> ∘ <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">iscomprelfun</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">free_gr_hrel_univ</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isasetmonoid</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">x</span>|<span class="id" title="var">x</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">grrinvax</span> <span class="id" title="var">Y</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">grlinvax</span> <span class="id" title="var">Y</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_gr_extend_homot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>} {<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">f</span> ~ <span class="id" title="var">f'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_gr_extend</span> <span class="id" title="var">f</span> ~ <span class="id" title="var">free_gr_extend</span> <span class="id" title="var">f'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">refine</span> (<span class="id" title="var">free_monoid_extend_homot</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps_homot</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">h</span> <span class="id" title="var">x</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_gr_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_gr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_gr_unit</span>) ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isasetmonoid</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> @ (<span class="id" title="var">free_monoid_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">free_gr_pr</span> <span class="id" title="var">X</span>) <span class="id" title="var">g</span>)) <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">iterop_list_mon</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">map_homot</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">x</span>|<span class="id" title="var">x</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">refine</span> (!<span class="id" title="var">monoidfuninvtoinv</span> <span class="id" title="var">g</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>). <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_gr_universal_property</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>) : (<span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) ≃ <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">free_gr_extend</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_gr_unit</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>, <span class="id" title="var">funextfun</span>, <span class="id" title="var">free_gr_extend_comp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_grfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_gr</span> <span class="id" title="var">Y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_gr_extend</span> (<span class="id" title="var">free_gr_unit</span> ∘ <span class="id" title="var">f</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">sumofmaps_free_gr_unit</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">sumofmaps</span> <span class="id" title="var">free_gr_unit</span> (<span class="id" title="var">grinv</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) ∘ <span class="id" title="var">free_gr_unit</span>) ~<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@<span class="id" title="var">presented_monoid_intro</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_gr_hrel</span> <span class="id" title="var">X</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">x</span>|<span class="id" title="var">x</span>]; <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_grfun_setquotpr</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">free_monoid</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_grfun</span> <span class="id" title="var">f</span> (<span class="id" title="var">setquotpr</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>) = <span class="id" title="var">setquotpr</span> <span class="id" title="var">_</span> (@<span class="id" title="var">free_monoidfun</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">setcoprod</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">coprodf</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span>) <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">free_monoid_extend_homot</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">sumofmaps_funcomp</span> <span class="id" title="var">f</span> <span class="id" title="var">free_gr_unit</span> <span class="id" title="var">f</span> (<span class="id" title="var">grinv</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">Y</span>) ∘ <span class="id" title="var">free_gr_unit</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (@<span class="id" title="var">free_monoid_extend_funcomp</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">setcoprod</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">free_monoid_extend_homot</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">sumofmaps_free_gr_unit</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">free_monoid_extend_comp</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_gr_extend_funcomp</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Z</span> : <span class="id" title="var">gr</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">Z</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_gr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>) ~ <span class="id" title="var">free_gr_extend</span> <span class="id" title="var">g</span> ∘ <span class="id" title="var">free_grfun</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">free_monoid_extend_homot</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">sumofmaps_funcomp</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">Z</span> ∘ <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (@<span class="id" title="var">free_monoid_extend_funcomp</span> (<span class="id" title="var">setcoprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">setcoprod</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">free_grfun_setquotpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (!<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_gr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)) : <span class="id" title="var">gr</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">grquot</span> (<span class="id" title="var">generated_binopeqrel</span> <span class="id" title="var">R</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_gr_pr</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) (<span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidquotpr</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_gr_intro</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">X</span> → <span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_gr_pr</span> <span class="id" title="var">R</span> ∘ <span class="id" title="var">free_gr_unit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_gr_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_gr_extend</span> <span class="id" title="var">f</span>)) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">monoidquotuniv</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">free_gr_extend</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">iscomprelfun_generated_binopeqrel</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscomprelfun_presented_grfun</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_gr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_gr_intro</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_gr_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_gr_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">g</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">generated_binopeqrel_intro</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">presented_gr_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_gr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_gr_intro</span>))) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_gr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_gr_intro</span>) <span class="id" title="var">H</span> ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">free_gr_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_gr_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>) <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_gr_universal_property</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">Y</span> : <span class="id" title="var">gr</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span> ≃ ∑(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>), <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_gr_extend</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_gr_intro</span>) (<span class="id" title="var">iscomprelfun_presented_grfun</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">presented_gr_extend</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>, <span class="id" title="var">funextfun</span>, <span class="id" title="var">presented_gr_extend_comp</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropiscomprelfun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_grfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">S</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">Y</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelrelfun</span> <span class="id" title="var">R</span> <span class="id" title="var">S</span> (<span class="id" title="var">free_grfun</span> <span class="id" title="var">f</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) (<span class="id" title="var">presented_gr</span> <span class="id" title="var">Y</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">presented_gr_extend</span> (<span class="id" title="var">presented_gr_intro</span> ∘ <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_gr_extend_funcomp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>). <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_gr_extend_comp</span> (<span class="id" title="var">presented_gr_pr</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">generated_binopeqrel_intro</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgr_hrel</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>, ∃ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">x</span> * <span class="id" title="var">y</span> = <span class="id" title="var">g</span> × <span class="id" title="var">y</span> * <span class="id" title="var">x</span> = <span class="id" title="var">h</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abgr_hrel_intro</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">l1</span> <span class="id" title="var">l2</span> : <span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abgr_hrel</span> <span class="id" title="var">X</span> (<span class="id" title="var">l1</span> * <span class="id" title="var">l2</span>) (<span class="id" title="var">l2</span> * <span class="id" title="var">l1</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">wittohexists</span> <span class="id" title="keyword">with</span> <span class="id" title="var">l1</span>. <span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> <span class="id" title="var">l2</span>. <span class="id" title="tactic">split</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abgr_hrel_univ</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">P</span> : <span class="id" title="var">free_gr</span> <span class="id" title="var">X</span> → <span class="id" title="var">free_gr</span> <span class="id" title="var">X</span> → <span class="id" title="var">UU</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HP</span> : ∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>), <span class="id" title="var">isaprop</span> (<span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hind</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">P</span> (<span class="id" title="var">x</span> * <span class="id" title="var">y</span>) (<span class="id" title="var">y</span> * <span class="id" title="var">x</span>)) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abgr_hrel</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">hinhuniv</span> <span class="id" title="var">_</span> (<span class="id" title="var">hProppair</span> (<span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) (<span class="id" title="var">HP</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>))). <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">x'</span>,<span class="id" title="var">v</span>). <span class="id" title="tactic">induction</span> <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">y'</span>,<span class="id" title="var">v</span>). <span class="id" title="tactic">induction</span> <span class="id" title="var">v</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">p1</span>,<span class="id" title="var">p2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p1</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">p2</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">Hind</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgr'</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">gr</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_gr</span> <span class="id" title="var">X</span> (<span class="id" title="var">free_abgr_hrel</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscomm_free_abgr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">iscomm</span> (@<span class="id" title="var">op</span> (<span class="id" title="var">free_abgr'</span> <span class="id" title="var">X</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotuniv2prop'</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isasetmonoid</span> (<span class="id" title="var">free_abgr'</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">iscompsetquotpr</span> <span class="id" title="var">_</span> (<span class="id" title="var">x1</span> * <span class="id" title="var">x2</span>) (<span class="id" title="var">x2</span> * <span class="id" title="var">x1</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">generated_binopeqrel_intro</span>, <span class="id" title="var">free_abgr_hrel_intro</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">abgr</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abgr_of_gr</span> (<span class="id" title="var">free_abgr'</span> <span class="id" title="var">X</span>) (<span class="id" title="var">iscomm_free_abgr</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgr_pr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidquotpr</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgr_unit</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">presented_gr_intro</span> <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgr_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">presented_gr_extend</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">iscomprelfun</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">free_abgr_hrel_univ</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isasetmonoid</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">monoidfunmul</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">commax</span> <span class="id" title="var">Y</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abgr_extend_homot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>} {<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">f</span> ~ <span class="id" title="var">f'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abgr_extend</span> <span class="id" title="var">f</span> ~ <span class="id" title="var">free_abgr_extend</span> <span class="id" title="var">f'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">free_gr_extend_homot</span> <span class="id" title="var">h</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abgr_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abgr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_abgr_unit</span>) ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">presented_gr_extend_comp</span> <span class="id" title="var">g</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgr_universal_property</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>) : (<span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) ≃ <span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">free_abgr_extend</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">free_abgr_unit</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>, <span class="id" title="var">funextfun</span>, <span class="id" title="var">free_abgr_extend_comp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">free_abgrfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>) (<span class="id" title="var">free_abgr</span> <span class="id" title="var">Y</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abgr_extend</span> (<span class="id" title="var">free_abgr_unit</span> ∘ <span class="id" title="var">f</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abgrfun_setquotpr</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">free_gr</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abgrfun</span> <span class="id" title="var">f</span> (<span class="id" title="var">setquotpr</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>) = <span class="id" title="var">setquotpr</span> <span class="id" title="var">_</span> (<span class="id" title="var">free_grfun</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">free_gr_extend_funcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">free_gr_extend_comp</span> <span class="id" title="var">_</span> (<span class="id" title="var">free_grfun</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">free_abgr_extend_funcomp</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">Z</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">Y</span> → <span class="id" title="var">Z</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">free_abgr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">f</span>) ~ <span class="id" title="var">free_abgr_extend</span> <span class="id" title="var">g</span> ∘ <span class="id" title="var">free_abgrfun</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">free_gr_extend_funcomp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">free_abgrfun_setquotpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (!<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abgr</span> (<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)) : <span class="id" title="var">abgr</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abgrquot</span> (<span class="id" title="var">generated_binopeqrel</span> <span class="id" title="var">R</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abgr_pr</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>) (<span class="id" title="var">presented_abgr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidquotpr</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abgr_intro</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">X</span> → <span class="id" title="var">presented_abgr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_abgr_pr</span> <span class="id" title="var">R</span> ∘ <span class="id" title="var">free_abgr_unit</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abgr_extend</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abgr_extend</span> <span class="id" title="var">f</span>)) : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abgr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">monoidquotuniv</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">free_abgr_extend</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">iscomprelfun_generated_binopeqrel</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscomprelfun_presented_abgrfun</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abgr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abgr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abgr_intro</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_abgr_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_abgr_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">g</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">generated_binopeqrel_intro</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">presented_abgr_extend_comp</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g</span> : <span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abgr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abgr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abgr_intro</span>))) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">presented_abgr_extend</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abgr_intro</span>) <span class="id" title="var">H</span> ~ <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">homot</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">setquotunivprop'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetmonoid</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivcomm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">free_abgr_extend_comp</span> (<span class="id" title="var">monoidfuncomp</span> (<span class="id" title="var">presented_abgr_pr</span> <span class="id" title="var">R</span>) <span class="id" title="var">g</span>) <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abgr_universal_property</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">Y</span> : <span class="id" title="var">abgr</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abgr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) <span class="id" title="var">Y</span> ≃ ∑(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>), <span class="id" title="var">iscomprelfun</span> <span class="id" title="var">R</span> (<span class="id" title="var">free_abgr_extend</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">g</span> ∘ <span class="id" title="var">presented_abgr_intro</span>) (<span class="id" title="var">iscomprelfun_presented_abgrfun</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">presented_abgr_extend</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">monoidfun_paths</span>, <span class="id" title="var">funextfun</span>, <span class="id" title="var">presented_abgr_extend_comp</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>. <span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropiscomprelfun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">presented_abgrfun</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">hSet</span>} {<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">X</span>)} {<span class="id" title="var">S</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">free_abgr</span> <span class="id" title="var">Y</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">iscomprelrelfun</span> <span class="id" title="var">R</span> <span class="id" title="var">S</span> (<span class="id" title="var">free_abgrfun</span> <span class="id" title="var">f</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monoidfun</span> (<span class="id" title="var">presented_abgr</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>) (<span class="id" title="var">presented_abgr</span> <span class="id" title="var">Y</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">presented_abgr_extend</span> (<span class="id" title="var">presented_abgr_intro</span> ∘ <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_abgr_extend_funcomp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>). <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">free_abgr_extend_comp</span> (<span class="id" title="var">presented_abgr_pr</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iscompsetquotpr</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">generated_binopeqrel_intro</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">r</span>).<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

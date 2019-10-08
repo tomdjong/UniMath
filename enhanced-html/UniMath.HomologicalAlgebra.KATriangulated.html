@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.HomologicalAlgebra.KATriangulated</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab2208"></a><h1 class="section">K(A) is a triangulated category</h1>
+ Contents
+<ul class="doclist">
+<li> K(A) triangulated
+<ul class="doclist">
+<li> Octahedral axiom
+
+</li>
+<li> K(A) triangulated
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.UnivalenceAxiom</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.NaturalNumbers</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.BinaryOperations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.NumberSystems.Integers</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.total2_paths</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.zero</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.equalizers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.coequalizers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.kernels</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.cokernels</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pushouts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pullbacks</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.BinDirectSums</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Epis</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Equivalences.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Abelian</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.ShortExactSequences</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.abgrs</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.CategoriesWithBinOps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoriesWithAbgrops</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PreAdditive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Additive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Morphisms</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.AdditiveFunctors</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.HomologicalAlgebra.Complexes</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.HomologicalAlgebra.Triangulated</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.HomologicalAlgebra.KA</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.HomologicalAlgebra.TranslationFunctors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.HomologicalAlgebra.MappingCone</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.HomologicalAlgebra.KAPreTriangulated</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Unset</span> <span class="id" title="var">Kernel</span> <span class="id" title="var">Term</span> <span class="id" title="var">Sharing</span>.<br/>
+<span class="id" title="keyword">Opaque</span> <span class="id" title="var">hz</span> <span class="id" title="var">isdecrelhzeq</span> <span class="id" title="var">hzplus</span> <span class="id" title="var">hzminus</span> <span class="id" title="var">hzone</span> <span class="id" title="var">hzzero</span> <span class="id" title="var">iscommringops</span> <span class="id" title="var">ZeroArrow</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2209"></a><h1 class="section">K(A) as a triangulated category</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">KATriangulated</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">A</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local Opaque</span> <span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">ComplexHomotSubset</span> <span class="id" title="var">Quotcategory</span> <span class="id" title="var">identity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">MappingConePr1</span> <span class="id" title="var">MappingConeIn2</span> <span class="id" title="var">RotMorphism</span> <span class="id" title="var">RotMorphismInv</span> <span class="id" title="var">InvRotMorphism</span> <span class="id" title="var">InvRotMorphismInv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">to_inv</span> <span class="id" title="var">compose</span> <span class="id" title="var">to_abgr</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="var">pathscomp0</span> <span class="id" title="var">ishinh</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">KATriangOcta_TriIso</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">ob</span> (@<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">A</span>)} {<span class="id" title="var">f1</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">y</span>} {<span class="id" title="var">g1</span> : <span class="id" title="var">y</span> --&gt; <span class="id" title="var">z</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f1'</span> : <span class="id" title="var">hfiber</span> # (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">f1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g1'</span> : <span class="id" title="var">hfiber</span> # (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">g1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f1''</span> := <span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f1'</span>) (<span class="id" title="var">g1''</span> := <span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g1'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">i'</span> := <span class="id" title="var">hfiberpair</span> # (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idpath</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)))) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">TriIso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<span class="id" title="var">mk_Tri</span> <span class="id" title="var">KAPreTriang</span> <span class="id" title="var">Trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor2</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">MappingConePr1</span> <span class="id" title="var">A</span> <span class="id" title="var">g1''</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· # (<span class="id" title="var">AddEquiv1</span> (@<span class="id" title="var">Trans</span> <span class="id" title="var">KAPreTriang</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">MappingConeIn2</span> <span class="id" title="var">A</span> <span class="id" title="var">f1''</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">MappingConeTri</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)) <span class="id" title="var">i'</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_TriIso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">mk_TriMor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="var">use</span> <span class="id" title="var">mk_MPMor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="var">use</span> <span class="id" title="var">mk_MPMorMors</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;** <span class="id" title="tactic">exact</span> (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;** <span class="id" title="tactic">exact</span> (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;** <span class="id" title="tactic">exact</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor3</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="var">use</span> <span class="id" title="var">mk_MPMorComms</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;** <span class="id" title="tactic">exact</span> (! (<span class="id" title="var">KAIdComm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;** <span class="id" title="tactic">exact</span> (<span class="id" title="var">KAOctaComm2'</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">exact</span> (<span class="id" title="var">KAOctaComm3'</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">mk_TriMor_is_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">exact</span> (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">exact</span> (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">exact</span> (<span class="id" title="var">KAOctaMor3Iso</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">KATriangOcta_KADTriData</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">ob</span> (@<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">A</span>)} {<span class="id" title="var">f1</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">y</span>} {<span class="id" title="var">g1</span> : <span class="id" title="var">y</span> --&gt; <span class="id" title="var">z</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f1'</span> : <span class="id" title="var">hfiber</span> # (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">f1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g1'</span> : <span class="id" title="var">hfiber</span> # (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">g1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f1''</span> := <span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f1'</span>) (<span class="id" title="var">g1''</span> := <span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g1'</span>)  :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">KADTriData</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<span class="id" title="var">mk_Tri</span> <span class="id" title="var">KAPreTriang</span> <span class="id" title="var">Trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor2</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">MappingConePr1</span> <span class="id" title="var">A</span> <span class="id" title="var">g1''</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· # (<span class="id" title="var">AddEquiv1</span> (@<span class="id" title="var">Trans</span> <span class="id" title="var">KAPreTriang</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">MappingConeIn2</span> <span class="id" title="var">A</span> <span class="id" title="var">f1''</span>)))).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_KADTriData</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">Morphisms.mk_Morphism</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">hfiberpair</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>)) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>) (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">KATriangOcta_TriIso</span> <span class="id" title="var">f1'</span> <span class="id" title="var">g1'</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">KATriangOcta_hfiber_comp_eq</span> {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">ob</span> (@<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">A</span>)} (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">y</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">y</span> --&gt; <span class="id" title="var">z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f'</span> : <span class="id" title="var">hfiber</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>)) <span class="id" title="var">f</span>) (<span class="id" title="var">g'</span> : <span class="id" title="var">hfiber</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>)) <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f''</span> := <span class="id" title="var">hfiberpr1</span> # (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">f</span> <span class="id" title="var">f'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">g''</span> := <span class="id" title="var">hfiberpr1</span> # (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">g</span> <span class="id" title="var">g'</span>):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">f''</span> ·  <span class="id" title="var">g''</span>) = <span class="id" title="var">f</span> · <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">f''</span>, <span class="id" title="var">g''</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hfiberpr2</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hfiberpr2</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">KATriangOcta</span> {<span class="id" title="var">x1</span> <span class="id" title="var">x2</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">z1</span> <span class="id" title="var">z2</span> : <span class="id" title="var">ob</span> (@<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">A</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f1</span> : <span class="id" title="var">x1</span> --&gt; <span class="id" title="var">y1</span>} {<span class="id" title="var">f2</span> : <span class="id" title="var">y1</span> --&gt; <span class="id" title="var">z2</span>} {<span class="id" title="var">f3</span> : <span class="id" title="var">z2</span> --&gt; (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">Trans</span> <span class="id" title="var">x1</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">g1</span> : <span class="id" title="var">y1</span> --&gt; <span class="id" title="var">z1</span>} {<span class="id" title="var">g2</span> : <span class="id" title="var">z1</span> --&gt; <span class="id" title="var">x2</span>} {<span class="id" title="var">g3</span> : <span class="id" title="var">x2</span> --&gt; (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">Trans</span> <span class="id" title="var">y1</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">h2</span> : <span class="id" title="var">z1</span> --&gt; <span class="id" title="var">y2</span>} {<span class="id" title="var">h3</span> : <span class="id" title="var">y2</span> --&gt; (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">Trans</span> <span class="id" title="var">x1</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H1</span> : <span class="id" title="var">isDTri</span> (<span class="id" title="var">mk_Tri</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">f3</span>)) (<span class="id" title="var">H2</span> : <span class="id" title="var">isDTri</span> (<span class="id" title="var">mk_Tri</span> <span class="id" title="var">g1</span> <span class="id" title="var">g2</span> <span class="id" title="var">g3</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H3</span> : <span class="id" title="var">isDTri</span> (<span class="id" title="var">mk_Tri</span> (<span class="id" title="var">f1</span> · <span class="id" title="var">g1</span>) <span class="id" title="var">h2</span> <span class="id" title="var">h3</span>)) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∥ <span class="id" title="var">Octa</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span> ∥.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">squash_to_prop</span> (<span class="id" title="var">ComplexHomotFunctor_issurj</span> <span class="id" title="var">A</span> <span class="id" title="var">f1</span>) (<span class="id" title="var">propproperty</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">intros</span> <span class="id" title="var">f1'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">squash_to_prop</span> (<span class="id" title="var">ComplexHomotFunctor_issurj</span> <span class="id" title="var">A</span> <span class="id" title="var">g1</span>) (<span class="id" title="var">propproperty</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">intros</span> <span class="id" title="var">g1'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">f1''</span> := <span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f1'</span>). <span class="id" title="tactic">set</span> (<span class="id" title="var">g1''</span> := <span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g1'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">fg1'</span> := <span class="id" title="var">hfiberpair</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>)) (<span class="id" title="var">f1''</span> · <span class="id" title="var">g1''</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">KATriangOcta_hfiber_comp_eq</span> <span class="id" title="var">f1</span> <span class="id" title="var">g1</span> <span class="id" title="var">f1'</span> <span class="id" title="var">g1'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H1'</span> := <span class="id" title="var">KAFiberisDTri</span> (<span class="id" title="var">Morphisms.mk_Morphism</span> <span class="id" title="var">f1</span>) <span class="id" title="var">f1'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H2'</span> := <span class="id" title="var">KAFiberisDTri</span> (<span class="id" title="var">Morphisms.mk_Morphism</span> <span class="id" title="var">g1</span>) <span class="id" title="var">g1'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H3'</span> := <span class="id" title="var">KAFiberisDTri</span> (<span class="id" title="var">Morphisms.mk_Morphism</span> (<span class="id" title="var">f1</span> · <span class="id" title="var">g1</span>)) <span class="id" title="var">fg1'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">squash_to_prop</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">DExt</span> <span class="id" title="var">KAPreTriang</span> (<span class="id" title="var">mk_DTri'</span> <span class="id" title="var">_</span> <span class="id" title="var">H1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">mk_DTri'</span> <span class="id" title="var">_</span> (<span class="id" title="var">KAFiberisDTri</span> (<span class="id" title="var">Morphisms.mk_Morphism</span> <span class="id" title="var">f1</span>) <span class="id" title="var">f1'</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) (! (<span class="id" title="var">KAIdComm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">propproperty</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">intros</span> <span class="id" title="var">Ext1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">I1'</span> := <span class="id" title="var">mk_TriIso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<span class="id" title="var">mk_TriMor_is_iso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">Trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext1</span>) (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">TriangulatedFiveLemma</span> (<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext1</span>) (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">squash_to_prop</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">DExt</span> <span class="id" title="var">KAPreTriang</span> (<span class="id" title="var">mk_DTri'</span> <span class="id" title="var">_</span> <span class="id" title="var">H2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">mk_DTri'</span> <span class="id" title="var">_</span> (<span class="id" title="var">KAFiberisDTri</span> (<span class="id" title="var">Morphisms.mk_Morphism</span> <span class="id" title="var">g1</span>) <span class="id" title="var">g1'</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) (! (<span class="id" title="var">KAIdComm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">propproperty</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">intros</span> <span class="id" title="var">Ext2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">I2'</span> := <span class="id" title="var">mk_TriIso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<span class="id" title="var">mk_TriMor_is_iso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">Trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>  (<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext2</span>) (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">TriangulatedFiveLemma</span> (<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext2</span>) (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">squash_to_prop</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">DExt</span> <span class="id" title="var">KAPreTriang</span> (<span class="id" title="var">mk_DTri'</span> <span class="id" title="var">_</span> <span class="id" title="var">H3</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">mk_DTri'</span> <span class="id" title="var">_</span> (<span class="id" title="var">KAFiberisDTri</span> (<span class="id" title="var">Morphisms.mk_Morphism</span> (<span class="id" title="var">f1</span> · <span class="id" title="var">g1</span>)) <span class="id" title="var">fg1'</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) (! (<span class="id" title="var">KAIdComm</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">propproperty</span> <span class="id" title="var">_</span>)). <span class="id" title="tactic">intros</span> <span class="id" title="var">Ext3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">I3'</span> := <span class="id" title="var">mk_TriIso</span> (<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext3</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@<span class="id" title="var">mk_TriMor_is_iso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">Trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext3</span>) (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">TriangulatedFiveLemma</span> (<span class="id" title="var">TExtMor</span> <span class="id" title="var">Ext3</span>) (<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_z_isomorphism_identity</span> <span class="id" title="var">_</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">OctaIso</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span> <span class="id" title="var">H1'</span> <span class="id" title="var">H2'</span> <span class="id" title="var">H3'</span> <span class="id" title="var">I1'</span> <span class="id" title="var">I2'</span> <span class="id" title="var">I3'</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>) (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">I3'</span> <span class="id" title="var">Ext3</span> <span class="id" title="var">I2'</span> <span class="id" title="var">Ext2</span> <span class="id" title="var">I1'</span> <span class="id" title="var">Ext1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_Octa</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor1</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (# (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KAOctaMor2</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">hinhpr</span> (<span class="id" title="var">KATriangOcta_KADTriData</span> <span class="id" title="var">f1'</span> <span class="id" title="var">g1'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (! (<span class="id" title="var">functor_comp</span> (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">KAOctaMor1Comm</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (! (<span class="id" title="var">functor_comp</span> (<span class="id" title="var">ComplexHomotFunctor</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">KAOctaMor2Comm</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">KAOctaComm5'</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">hfiberpr2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g1'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">KAOctaComm4'</span> <span class="id" title="var">f1''</span> <span class="id" title="var">g1''</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">hfiberpr2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f1'</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">KATriang</span> : <span class="id" title="var">Triang</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_Triang</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (@<span class="id" title="var">KAPreTriang</span> <span class="id" title="var">A</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">z1</span> <span class="id" title="var">z2</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">f3</span> <span class="id" title="var">g1</span> <span class="id" title="var">g2</span> <span class="id" title="var">g3</span> <span class="id" title="var">h2</span> <span class="id" title="var">h3</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span>(<span class="id" title="var">KATriangOcta</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> <span class="id" title="var">H3</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">KATriangulated</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

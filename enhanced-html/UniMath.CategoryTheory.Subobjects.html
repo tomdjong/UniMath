@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Subobjects</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+*************************************************************************
+
+<div class="paragraph"> </div>
+
+Definition and theory about subobjects of an object c
+
+<div class="paragraph"> </div>
+
+Contents:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Category of subobjects (monos) of c (<span class="inlinecode"><span class="id" title="var">Subobjectscategory</span></span>)
+
+</li>
+<li> Set of subobjects as equivalence classes of monos (<span class="inlinecode"><span class="id" title="var">SubObj</span></span>)
+
+</li>
+<li> Proof that the set of subobjects of an object is a poset (<span class="inlinecode"><span class="id" title="var">SubObjPoset</span></span>)
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Written by: Tomi Pannila and Anders Mörtberg, 2016-2017
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.slicecat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Subcategory.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pullbacks</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1250"></a><h1 class="section">Definition of the category of subobjects (monos) of c</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_subobjects</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Subobjectscategory</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">precategory</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">slice_precat</span> (<span class="id" title="var">subprecategory_of_monics</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">subprecategory_of_monics_ob</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">has_homsets_subprecategory_of_monics</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">has_homsets_Subobjectscategory</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">has_homsets</span> (<span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Construction of a subobject from a monic 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Subobjectscategory_ob</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c'</span>, <span class="id" title="var">c</span>⟧) (<span class="id" title="var">isM</span> : <span class="id" title="var">isMonic</span> <span class="id" title="var">h</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">c</span> := (<span class="id" title="var">subprecategory_of_monics_ob</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">c'</span>,,(<span class="id" title="var">h</span>,,<span class="id" title="var">isM</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Given any subobject S of c and a morphism h : c' -&gt; c, by taking then pullback of S by h we
+      obtain a subobject of c'. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PullbackSubobject</span> (<span class="id" title="var">PB</span> : <span class="id" title="var">Pullbacks</span> <span class="id" title="var">C</span>) {<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">S</span> : <span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">c</span>) {<span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c'</span>, <span class="id" title="var">c</span>⟧) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">c'</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">pb</span> := <span class="id" title="var">PB</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">S</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">Subobjectscategory_ob</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">pb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">pb</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">MonicPullbackisMonic'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_subobjects</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1251"></a><h1 class="section">Definition of subobjects as equivalence classes of monos</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">subobj</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Equivalence classes of subobjects defined by identifying monos into c
+    with isomorphic source 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">SubObj</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">HSET</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">hSetpair</span> (<span class="id" title="var">setquot</span> (<span class="id" title="var">iso_eqrel</span> (<span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">hsC</span> <span class="id" title="var">c</span>))) (<span class="id" title="var">isasetsetquot</span> <span class="id" title="var">_</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monorel</span> <span class="id" title="var">c</span> : <span class="id" title="var">hrel</span> (<span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">hsC</span> <span class="id" title="var">c</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>, ∃ <span class="id" title="var">h</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>) = <span class="id" title="var">h</span> · <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isrefl_monorel</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">isrefl</span> (<span class="id" title="var">monorel</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">identity</span> <span class="id" title="var">x</span>))).<br/>
+<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_monorel</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">istrans</span> (<span class="id" title="var">monorel</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">h1</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">h2</span>; <span class="id" title="tactic">generalize</span> <span class="id" title="var">h1</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">h1</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">h1</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h1</span> · <span class="id" title="var">pr1</span> <span class="id" title="var">h2</span>).<br/>
+<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, &lt;- (<span class="id" title="var">pr2</span> <span class="id" title="var">h2</span>), &lt;- (<span class="id" title="var">pr2</span> <span class="id" title="var">h1</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ispreorder_monorel</span> <span class="id" title="var">c</span> : <span class="id" title="var">ispreorder</span> (<span class="id" title="var">monorel</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">exact</span> (<span class="id" title="var">istrans_monorel</span> <span class="id" title="var">c</span>,,<span class="id" title="var">isrefl_monorel</span> <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">are_isomorphic_monorel</span> {<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">x1</span> <span class="id" title="var">y1</span> <span class="id" title="var">x2</span> <span class="id" title="var">y2</span> : <span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">hsC</span> <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">h1</span> : <span class="id" title="var">are_isomorphic</span> <span class="id" title="var">_</span> <span class="id" title="var">x1</span> <span class="id" title="var">y1</span>) (<span class="id" title="var">h2</span> : <span class="id" title="var">are_isomorphic</span> <span class="id" title="var">_</span> <span class="id" title="var">x2</span> <span class="id" title="var">y2</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">monorel</span> <span class="id" title="var">c</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span> → <span class="id" title="var">monorel</span> <span class="id" title="var">c</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>.<br/>
+<span class="id" title="tactic">change</span> (<span class="id" title="var">ishinh_UU</span> (<span class="id" title="var">iso</span> <span class="id" title="var">x1</span> <span class="id" title="var">y1</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">h1</span>.<br/>
+<span class="id" title="tactic">change</span> (<span class="id" title="var">ishinh_UU</span> (<span class="id" title="var">iso</span> <span class="id" title="var">x2</span> <span class="id" title="var">y2</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">h2</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">h1</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">h1</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">h1</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">h2</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">h2</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">h2</span>.<br/>
+<span class="id" title="tactic">intros</span> <span class="id" title="var">P</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">P</span> <span class="id" title="var">H</span>.<br/>
+<span class="id" title="tactic">set</span> (<span class="id" title="var">h1_inv</span> := <span class="id" title="var">inv_from_iso</span> <span class="id" title="var">h1</span>).<br/>
+<span class="id" title="tactic">set</span> (<span class="id" title="var">Hh1</span> := <span class="id" title="var">iso_after_iso_inv</span> <span class="id" title="var">h1</span>).<br/>
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h1_inv</span>) · <span class="id" title="var">pr1</span> <span class="id" title="var">f</span> · <span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h2</span>))).<br/>
+<span class="id" title="tactic">set</span> (<span class="id" title="var">Htemp</span> := <span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h2</span>))).<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+<span class="id" title="tactic">rewrite</span> &lt;-!<span class="id" title="var">assoc</span>, &lt;- <span class="id" title="var">Htemp</span>.<br/>
+<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h1_inv</span>) · <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x1</span>)).<br/>
+{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">pathsinv0</span>, (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>). }<br/>
+<span class="id" title="var">etrans</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h1</span>))) |]; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+<span class="id" title="var">etrans</span>; [ <span class="id" title="tactic">eapply</span> <span class="id" title="var">cancel_postcomposition</span>, (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> <span class="id" title="var">Hh1</span>)) |].<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Construct a quotient relation on the Subobjects from the relation on monos 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">SubObj_rel</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">hrel</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">SubObj</span> <span class="id" title="var">c</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">quotrel</span>.<br/>
+- <span class="id" title="tactic">apply</span> <span class="id" title="var">monorel</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">x1</span> <span class="id" title="var">y1</span> <span class="id" title="var">x2</span> <span class="id" title="var">y2</span> <span class="id" title="var">h1</span> <span class="id" title="var">h2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hPropUnivalence</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">are_isomorphic_monorel</span> <span class="id" title="var">h1</span> <span class="id" title="var">h2</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">are_isomorphic_monorel</span> (<span class="id" title="var">eqrelsymm</span> (<span class="id" title="var">iso_eqrel</span> <span class="id" title="var">_</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">eqrelsymm</span> (<span class="id" title="var">iso_eqrel</span> <span class="id" title="var">_</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h2</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_SubObj_rel</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">istrans</span> (<span class="id" title="var">SubObj_rel</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">istransquotrel</span>, <span class="id" title="var">istrans_monorel</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isrefl_SubObj_rel</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">isrefl</span> (<span class="id" title="var">SubObj_rel</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">isreflquotrel</span>, <span class="id" title="var">isrefl_monorel</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ispreorder_SubObj_rel</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">ispreorder</span> (<span class="id" title="var">SubObj_rel</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">exact</span> (<span class="id" title="var">istrans_SubObj_rel</span> <span class="id" title="var">c</span>,,<span class="id" title="var">isrefl_SubObj_rel</span> <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isantisymm_SubObj_rel</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">isantisymm</span> (<span class="id" title="var">SubObj_rel</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">isantisymm</span>; <span class="id" title="tactic">simpl</span>.<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">int</span> : ∏ <span class="id" title="var">x1</span> <span class="id" title="var">x2</span>, <span class="id" title="var">isaprop</span> (<span class="id" title="var">SubObj_rel</span> <span class="id" title="var">c</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span> → <span class="id" title="var">SubObj_rel</span> <span class="id" title="var">c</span> <span class="id" title="var">x2</span> <span class="id" title="var">x1</span> -&gt; <span class="id" title="var">x1</span> = <span class="id" title="var">x2</span>)).<br/>
+{ <span class="id" title="tactic">intros</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isasetsetquot</span> <span class="id" title="var">_</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span>).<br/>
+}<br/>
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">setquotuniv2prop</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span>, <span class="id" title="var">hProppair</span> <span class="id" title="var">_</span> (<span class="id" title="var">int</span> <span class="id" title="var">x1</span> <span class="id" title="var">x2</span>))).<br/>
+<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">h1</span> <span class="id" title="var">h2</span>.<br/>
+<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *. <span class="id" title="tactic">apply</span> (<span class="id" title="var">iscompsetquotpr</span> (<span class="id" title="var">iso_eqrel</span> (<span class="id" title="var">Subobjectscategory</span> <span class="id" title="var">hsC</span> <span class="id" title="var">c</span>))).<br/>
+<span class="id" title="tactic">generalize</span> <span class="id" title="var">h1</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">h1</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">h1</span> <span class="id" title="var">Hh1</span>].<br/>
+<span class="id" title="tactic">generalize</span> <span class="id" title="var">h2</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">h2</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">h2</span> <span class="id" title="var">Hh2</span>].<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>, (<span class="id" title="var">invmap</span> (<span class="id" title="var">weq_iso</span> <span class="id" title="var">_</span> (<span class="id" title="var">subprecategory_of_monics_ob</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">c</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+<span class="id" title="tactic">induction</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [[<span class="id" title="var">x</span> []] [<span class="id" title="var">fx</span> <span class="id" title="var">Hfx</span>]].<br/>
+<span class="id" title="tactic">induction</span> <span class="id" title="var">y</span> <span class="id" title="keyword">as</span> [[<span class="id" title="var">y</span> []] [<span class="id" title="var">fy</span> <span class="id" title="var">Hfy</span>]].<br/>
+<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">mon_h1</span> : <span class="id" title="var">isMonic</span> <span class="id" title="var">h1</span>).<br/>
+{ <span class="id" title="tactic">apply</span> (<span class="id" title="var">isMonic_postcomp</span> <span class="id" title="var">_</span> <span class="id" title="var">h1</span> <span class="id" title="var">fy</span>); <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">Hh1</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">Hfx</span>. }<br/>
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">mon_h2</span> : <span class="id" title="var">isMonic</span> <span class="id" title="var">h2</span>).<br/>
+{ <span class="id" title="tactic">apply</span> (<span class="id" title="var">isMonic_postcomp</span> <span class="id" title="var">_</span> <span class="id" title="var">h2</span> <span class="id" title="var">fx</span>); <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">Hh2</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">Hfy</span>. }<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+- <span class="id" title="tactic">exists</span> (<span class="id" title="var">h1</span>,,<span class="id" title="var">mon_h1</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">is_iso_from_is_z_iso</span> (<span class="id" title="var">subprecategory_of_monics</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">h2</span>,,<span class="id" title="var">mon_h2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">xx</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisMonic</span>, <span class="id" title="var">hsC</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">Hfx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, &lt;- <span class="id" title="var">Hh2</span>, &lt;- <span class="id" title="var">Hh1</span>, <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">Hfy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>, &lt;- <span class="id" title="var">Hh1</span>, &lt;- <span class="id" title="var">Hh2</span>, <span class="id" title="var">id_left</span>.<br/>
+- <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">Hh1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">intros</span> <span class="id" title="var">xx</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisMonic</span>, <span class="id" title="var">hsC</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">SubObjPoset</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">Poset</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">SubObj</span> <span class="id" title="var">c</span>,,<span class="id" title="var">SubObj_rel</span> <span class="id" title="var">c</span>,,<span class="id" title="var">ispreorder_SubObj_rel</span> <span class="id" title="var">c</span>,,<span class="id" title="var">isantisymm_SubObj_rel</span> <span class="id" title="var">c</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">subobj</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

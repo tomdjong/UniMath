@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Bicategories.PseudoFunctors.Display.Base</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+We construct the bicategory of pseudofunctors as a displayed bicategory.
+    This is the first layer and it just consists of plain functions mapping objects to objects.
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Bicat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">Bicat.Notations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Adjunctions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Invertible_2cells</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.AdjointUnique</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">BasePseudoFunctor</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> (<span class="id" title="var">C</span> <span class="id" title="var">D</span> : <span class="id" title="var">bicat</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">ps_base_data</span> : <span class="id" title="var">prebicat_data</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">build_prebicat_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span> → <span class="id" title="var">ob</span> <span class="id" title="var">D</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>, ∏ (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>), <span class="id" title="var">f</span> <span class="id" title="var">x</span> --&gt; <span class="id" title="var">g</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span>, ∏ (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>), <span class="id" title="var">α</span> <span class="id" title="var">x</span> ==&gt; <span class="id" title="var">β</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span>, <span class="id" title="var">id₁</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span> <span class="id" title="var">x</span>, <span class="id" title="var">α</span> <span class="id" title="var">x</span> · <span class="id" title="var">β</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">α</span> <span class="id" title="var">x</span>, <span class="id" title="var">id₂</span> (<span class="id" title="var">α</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span> <span class="id" title="var">γ</span> <span class="id" title="var">m₁</span> <span class="id" title="var">m₂</span> <span class="id" title="var">x</span>, <span class="id" title="var">m₁</span> <span class="id" title="var">x</span> • <span class="id" title="var">m₂</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span> <span class="id" title="var">γ</span> <span class="id" title="var">m</span> <span class="id" title="var">x</span>, <span class="id" title="var">α</span> <span class="id" title="var">x</span> ◃ <span class="id" title="var">m</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span> <span class="id" title="var">γ</span> <span class="id" title="var">m</span> <span class="id" title="var">x</span>, <span class="id" title="var">m</span> <span class="id" title="var">x</span> ▹ <span class="id" title="var">γ</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">α</span> <span class="id" title="var">x</span>, <span class="id" title="var">lunitor</span> (<span class="id" title="var">α</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">α</span> <span class="id" title="var">x</span>, <span class="id" title="var">linvunitor</span> (<span class="id" title="var">α</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">α</span> <span class="id" title="var">x</span>, <span class="id" title="var">runitor</span> (<span class="id" title="var">α</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">α</span> <span class="id" title="var">x</span>, <span class="id" title="var">rinvunitor</span> (<span class="id" title="var">α</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f₁</span> <span class="id" title="var">f₂</span> <span class="id" title="var">f₃</span> <span class="id" title="var">f₄</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span> <span class="id" title="var">γ</span> <span class="id" title="var">x</span>, <span class="id" title="var">lassociator</span> (<span class="id" title="var">α</span> <span class="id" title="var">x</span>) (<span class="id" title="var">β</span> <span class="id" title="var">x</span>) (<span class="id" title="var">γ</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f₁</span> <span class="id" title="var">f₂</span> <span class="id" title="var">f₃</span> <span class="id" title="var">f₄</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span> <span class="id" title="var">γ</span> <span class="id" title="var">x</span>, <span class="id" title="var">rassociator</span> (<span class="id" title="var">α</span> <span class="id" title="var">x</span>) (<span class="id" title="var">β</span> <span class="id" title="var">x</span>) (<span class="id" title="var">γ</span> <span class="id" title="var">x</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">ps_base_laws</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">prebicat_laws</span> <span class="id" title="var">ps_base_data</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span> ; <span class="id" title="tactic">intros</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">id2_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">id2_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">vassocr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">lwhisker_id2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">id2_rwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">lwhisker_vcomp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">rwhisker_vcomp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_lunitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_runitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">lwhisker_lwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">rwhisker_lwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">rwhisker_rwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_whisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">lunitor_linvunitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">runitor_rinvunitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">rinvunitor_runitor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">lassociator_rassociator</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">rassociator_lassociator</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">runitor_rwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">lassociator_lassociator</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">ps_base</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">bicat</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">build_bicategory</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">ps_base_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">ps_base_laws</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> ? ? ? ?.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">impred_isaset</span> ; <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">D</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">all_is_invertible_to_is_invertible_2cell</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">η</span> <span class="id" title="var">ε</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α</span> : <span class="id" title="var">η</span> ==&gt; <span class="id" title="var">ε</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">is_invertible_2cell</span> (<span class="id" title="var">α</span> <span class="id" title="var">X</span>)) → <span class="id" title="var">is_invertible_2cell</span> <span class="id" title="var">α</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hα</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span> ; <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, (<span class="id" title="var">Hα</span> <span class="id" title="var">x</span>)^-1).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">split</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_rinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">vcomp_lid</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_invertible_2cell_to_all_is_invertible</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">η</span> <span class="id" title="var">ε</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α</span> : <span class="id" title="var">η</span> ==&gt; <span class="id" title="var">ε</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">is_invertible_2cell</span> <span class="id" title="var">α</span> → (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">is_invertible_2cell</span> (<span class="id" title="var">α</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hα</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">Hα</span>^-1 <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">split</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> φ, φ <span class="id" title="var">X</span>) (<span class="id" title="var">vcomp_rinv</span> <span class="id" title="var">Hα</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> φ, φ <span class="id" title="var">X</span>) (<span class="id" title="var">vcomp_lid</span> <span class="id" title="var">Hα</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">all_is_invertible_is_is_invertible_2cell</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">η</span> <span class="id" title="var">ε</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α</span> : <span class="id" title="var">η</span> ==&gt; <span class="id" title="var">ε</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">is_invertible_2cell</span> (<span class="id" title="var">α</span> <span class="id" title="var">X</span>)) ≃ <span class="id" title="var">is_invertible_2cell</span> <span class="id" title="var">α</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqimplimpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">all_is_invertible_to_is_invertible_2cell</span> <span class="id" title="var">α</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">is_invertible_2cell_to_all_is_invertible</span> <span class="id" title="var">α</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span> ; <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">invertible_2cell_ps_base</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">η</span> <span class="id" title="var">ε</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">invertible_2cell</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">invertible_2cell</span> <span class="id" title="var">η</span> <span class="id" title="var">ε</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">α</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">α</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">all_is_invertible_is_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">α</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">invertible_2cell_ps_base_inv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">η</span> <span class="id" title="var">ε</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">invertible_2cell</span> <span class="id" title="var">η</span> <span class="id" title="var">ε</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">invertible_2cell</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">α</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">cell_from_invertible_2cell</span> <span class="id" title="var">α</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">is_invertible_2cell_to_all_is_invertible</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">α</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">invertible_2cell_ps_base_weq</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">η</span> <span class="id" title="var">ε</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">invertible_2cell</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;≃<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">invertible_2cell</span> <span class="id" title="var">η</span> <span class="id" title="var">ε</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">weqpair</span> (<span class="id" title="var">invertible_2cell_ps_base</span> <span class="id" title="var">η</span> <span class="id" title="var">ε</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">invertible_2cell_ps_base_inv</span> <span class="id" title="var">η</span> <span class="id" title="var">ε</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">α</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">α</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">ps_base_is_univalent_2_1</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HD_2_1</span> : <span class="id" title="var">is_univalent_2_1</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">is_univalent_2_1</span> <span class="id" title="var">ps_base</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> <span class="id" title="var">η</span> <span class="id" title="var">ε</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqhomot</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">invertible_2cell_ps_base_weq</span> <span class="id" title="var">η</span> <span class="id" title="var">ε</span> ∘ <span class="id" title="var">_</span>)%<span class="id" title="var">weq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> ∘ <span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">isweqtoforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))%<span class="id" title="var">weq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqonsecfibers</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">weqpair</span> (<span class="id" title="var">idtoiso_2_1</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">HD_2_1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">all_is_adjequiv_to_is_adjequiv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">η</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">left_adjoint_equivalence</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>)) → <span class="id" title="var">left_adjoint_equivalence</span> <span class="id" title="var">η</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hη</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr11</span> (<span class="id" title="var">Hη</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">split</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr121</span> (<span class="id" title="var">Hη</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr221</span> (<span class="id" title="var">Hη</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">split</span> ; <span class="id" title="tactic">split</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr112</span> (<span class="id" title="var">Hη</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr212</span> (<span class="id" title="var">Hη</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">all_is_invertible_is_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">X</span>, <span class="id" title="var">pr122</span> (<span class="id" title="var">Hη</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">all_is_invertible_is_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">X</span>, <span class="id" title="var">pr222</span> (<span class="id" title="var">Hη</span> <span class="id" title="var">X</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_adjequiv_to_all_is_adjequiv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">η</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">left_adjoint_equivalence</span> <span class="id" title="var">η</span> → (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">left_adjoint_equivalence</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hη</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr11</span> <span class="id" title="var">Hη</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">split</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr121</span> <span class="id" title="var">Hη</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr221</span> <span class="id" title="var">Hη</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">split</span> ; <span class="id" title="tactic">split</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> φ, φ <span class="id" title="var">X</span>) (<span class="id" title="var">pr112</span> <span class="id" title="var">Hη</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> φ, φ <span class="id" title="var">X</span>) (<span class="id" title="var">pr212</span> <span class="id" title="var">Hη</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">is_invertible_2cell_to_all_is_invertible</span> (<span class="id" title="var">pr121</span> <span class="id" title="var">Hη</span>) (<span class="id" title="var">pr122</span> <span class="id" title="var">Hη</span>) <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">is_invertible_2cell_to_all_is_invertible</span> (<span class="id" title="var">pr221</span> <span class="id" title="var">Hη</span>) (<span class="id" title="var">pr222</span> <span class="id" title="var">Hη</span>) <span class="id" title="var">X</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">all_is_adjequiv_is_is_adjequiv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">η</span> : <span class="id" title="var">F</span> --&gt; <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">left_adjoint_equivalence</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>)) ≃ <span class="id" title="var">left_adjoint_equivalence</span> <span class="id" title="var">η</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">weqpair</span> (<span class="id" title="var">all_is_adjequiv_to_is_adjequiv</span> <span class="id" title="var">η</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">is_adjequiv_to_all_is_adjequiv</span> <span class="id" title="var">η</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">Hη</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span> ; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">Hη</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span> ; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">ps_base</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">adjequiv_ps_base</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">adjoint_equivalence</span> (<span class="id" title="var">F</span> <span class="id" title="var">X</span>) (<span class="id" title="var">G</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">adjoint_equivalence</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">η</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">η</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">all_is_adjequiv_is_is_adjequiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">η</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">adjequiv_ps_base_inv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">adjoint_equivalence</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">adjoint_equivalence</span> (<span class="id" title="var">F</span> <span class="id" title="var">X</span>) (<span class="id" title="var">G</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">η</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">η</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">is_adjequiv_to_all_is_adjequiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">η</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">adjequiv_ps_base_weq</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F</span> <span class="id" title="var">G</span> : <span class="id" title="var">ps_base</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: (∏ (<span class="id" title="var">X</span> : <span class="id" title="var">C</span>), <span class="id" title="var">adjoint_equivalence</span> (<span class="id" title="var">F</span> <span class="id" title="var">X</span>) (<span class="id" title="var">G</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;≃<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">adjoint_equivalence</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">weqpair</span> (<span class="id" title="var">adjequiv_ps_base</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">adjequiv_ps_base_inv</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">η</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">cbn</span> ; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span> ; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">η</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">cbn</span> ; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span> ; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">ps_base</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_invertible_2cell</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">ps_base_is_univalent_2_0</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HD_2_0</span> : <span class="id" title="var">is_univalent_2_0</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">HD_2_1</span> : <span class="id" title="var">is_univalent_2_1</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">is_univalent_2_0</span> <span class="id" title="var">ps_base</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqhomot</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">adjequiv_ps_base_weq</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> ∘ <span class="id" title="var">_</span>)%<span class="id" title="var">weq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> ∘ <span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">isweqtoforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))%<span class="id" title="var">weq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">weqonsecfibers</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">weqpair</span> (<span class="id" title="var">idtoiso_2_0</span> (<span class="id" title="var">F</span> <span class="id" title="var">X</span>) (<span class="id" title="var">G</span> <span class="id" title="var">X</span>)) (<span class="id" title="var">HD_2_0</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_left_adjoint_equivalence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">ps_base_is_univalent_2_1</span> <span class="id" title="var">HD_2_1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">End</span> <span class="id" title="var">BasePseudoFunctor</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

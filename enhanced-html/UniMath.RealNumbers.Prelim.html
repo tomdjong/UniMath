@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.RealNumbers.Prelim</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1871"></a><h1 class="section">Additionals theorems and definitions</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Preamble</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Topology.Prelim</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1872"></a><h2 class="section">for RationalNumbers.v</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.NumberSystems.RationalNumbers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.Archimedean</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">hq_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;x &lt;= y" := (<span class="id" title="var">hqleh</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) : <span class="id" title="var">hq_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;x &gt;= y" := (<span class="id" title="var">hqgeh</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) : <span class="id" title="var">hq_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;x &lt; y" := (<span class="id" title="var">hqlth</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) : <span class="id" title="var">hq_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;x &gt; y" := (<span class="id" title="var">hqgth</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) : <span class="id" title="var">hq_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;/ x" := (<span class="id" title="var">hqmultinv</span> <span class="id" title="var">x</span>) : <span class="id" title="var">hq_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;x / y" := (<span class="id" title="var">hqdiv</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) : <span class="id" title="var">hq_scope</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;2" := (<span class="id" title="var">hztohq</span> (<span class="id" title="var">nattohz</span> 2)) : <span class="id" title="var">hq_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hzone_neg_hzzero</span> : <span class="id" title="var">neg</span> (1%<span class="id" title="var">hz</span> = 0%<span class="id" title="var">hz</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">confirm_not_equal</span> <span class="id" title="var">isdeceqhz</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">one_intdomnonzerosubmonoid</span> : <span class="id" title="var">intdomnonzerosubmonoid</span> <span class="id" title="var">hzintdom</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 1%<span class="id" title="var">hz</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hzone_neg_hzzero</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Opaque</span> <span class="id" title="var">hz</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hq2eq1plus1</span> : 2 = 1 + 1.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">confirm_equal</span> <span class="id" title="var">isdeceqhq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hq2_gt0</span> : 2 &gt; 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">confirm_yes</span> <span class="id" title="var">hqgthdec</span> 2 0.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hq1_gt0</span> : 1 &gt; 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">confirm_yes</span> <span class="id" title="var">hqgthdec</span> 1 0.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hq1ge0</span> : (0 &lt;= 1)%<span class="id" title="var">hq</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">confirm_yes</span> <span class="id" title="var">hqlehdec</span> 0 1.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hqgth_hqneq</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">x</span> &gt; <span class="id" title="var">y</span> -&gt; <span class="id" title="var">hqneq</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hlt</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Heq</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hlt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">isirreflhqgth</span> <span class="id" title="keyword">with</span> <span class="id" title="var">y</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hqldistr</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>, <span class="id" title="var">x</span> * (<span class="id" title="var">y</span> + <span class="id" title="var">z</span>) = <span class="id" title="var">x</span> * <span class="id" title="var">y</span> + <span class="id" title="var">x</span> * <span class="id" title="var">z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">ringldistr</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hqmult2r</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">x</span> * 2 = <span class="id" title="var">x</span> + <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hq2eq1plus1</span>, <span class="id" title="var">hqldistr</span>, (<span class="id" title="var">hqmultr1</span> <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hqplusdiv2</span> : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">x</span> = (<span class="id" title="var">x</span> + <span class="id" title="var">x</span>) / 2.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqmultrcan</span> <span class="id" title="keyword">with</span> 2.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>, <span class="id" title="var">hq2_gt0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqdiv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqmultassoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">hqislinvmultinv</span> 2).<br/>
+&nbsp;&nbsp;2: <span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>, <span class="id" title="var">hq2_gt0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">hqmultr1</span> (<span class="id" title="var">x</span> + <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqmult2r</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hqlth_between</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">x</span> &lt; <span class="id" title="var">y</span> -&gt; <span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, (<span class="id" title="var">x</span> &lt; <span class="id" title="var">z</span>) × (<span class="id" title="var">z</span> &lt; <span class="id" title="var">y</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H0</span> : / 2 &gt; 0).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">hqgthandmultlinv</span> <span class="id" title="keyword">with</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hq2_gt0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqisrinvmultinv</span>, <span class="id" title="var">hqmultx0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">hq1_gt0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>, <span class="id" title="var">hq2_gt0</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">Hlt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> ((<span class="id" title="var">x</span> + <span class="id" title="var">y</span>) / 2).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">pattern</span> <span class="id" title="var">x</span> <span class="id" title="tactic">at</span> 1.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">hqplusdiv2</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqdiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">hqlthandmultr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (/ 2)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">hqlthandplusl</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">Hlt</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">pattern</span> <span class="id" title="var">y</span> <span class="id" title="tactic">at</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">hqplusdiv2</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqdiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">hqlthandmultr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (/ 2)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">hqlthandplusr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span> <span class="id" title="var">Hlt</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hq0lehandplus</span>:<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">hq</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">n</span> -&gt; 0 &lt;= <span class="id" title="var">m</span> -&gt; 0 &lt;= (<span class="id" title="var">n</span> + <span class="id" title="var">m</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> <span class="id" title="var">Hn</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">istranshqleh</span>, <span class="id" title="var">hqlehandplusl</span>, <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqplusr0</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hq0lehandmult</span>:<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">hq</span>, 0 &lt;= <span class="id" title="var">n</span> -&gt; 0 &lt;= <span class="id" title="var">m</span> -&gt; 0 &lt;= <span class="id" title="var">n</span> * <span class="id" title="var">m</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hqmultgeh0geh0</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hq0leminus</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">r</span> <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">r</span> &lt;= <span class="id" title="var">q</span> -&gt; 0 &lt;= <span class="id" title="var">q</span> - <span class="id" title="var">r</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">q</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqlehandplusrinv</span> <span class="id" title="keyword">with</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqminus</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqplusassoc</span>, <span class="id" title="var">hqlminus</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqplusl0</span>, <span class="id" title="var">hqplusr0</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hqinv_gt0</span> (<span class="id" title="var">x</span> : <span class="id" title="var">hq</span>) : 0 &lt; <span class="id" title="var">x</span> → 0 &lt; / <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqlth</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgthandmultlinv</span> <span class="id" title="keyword">with</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqmultx0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqisrinvmultinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">hq1_gt0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hztohqandleh'</span>:<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">hz</span>, (<span class="id" title="var">hztohq</span> <span class="id" title="var">n</span> &lt;= <span class="id" title="var">hztohq</span> <span class="id" title="var">m</span>)%<span class="id" title="var">hq</span> → <span class="id" title="var">hzleh</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> <span class="id" title="var">Hle</span> <span class="id" title="var">Hlt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">Hle</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hztohqandgth</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hlt</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hztohqandlth'</span>:<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">hz</span>, (<span class="id" title="var">hztohq</span> <span class="id" title="var">n</span> &lt; <span class="id" title="var">hztohq</span> <span class="id" title="var">m</span>)%<span class="id" title="var">hq</span> -&gt; <span class="id" title="var">hzlth</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> <span class="id" title="var">Hlt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">neghzgehtolth</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Hle</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hztohqandgeh</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hle</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgehtoneghqlth</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hle</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hle</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hlt</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Close</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">hq_scope</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

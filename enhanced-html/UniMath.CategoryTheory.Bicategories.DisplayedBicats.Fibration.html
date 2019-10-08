@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Bicategories.DisplayedBicats.Fibration</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1710"></a><h1 class="section">Bicategories</h1>
+
+    Benedikt Ahrens, Marco Maggesi
+    February 2018
+ ********************************************************************************* 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.DisplayedCats.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.DisplayedCats.Constructions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Bicat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">Bicat.Notations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.Unitors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.DisplayedBicats.DispBicat</span>. <span class="id" title="keyword">Import</span> <span class="id" title="var">DispBicat.Notations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.DisplayedBicats.DispUnivalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.Bicategories.BicategoryLaws</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">mor_disp_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">LocalIsoFibration</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">bicat</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">local_iso_cleaving</span> (<span class="id" title="var">D</span> : <span class="id" title="var">disp_prebicat</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= ∏ (<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d</span> : <span class="id" title="var">D</span> <span class="id" title="var">c</span>) (<span class="id" title="var">d'</span> : <span class="id" title="var">D</span> <span class="id" title="var">c'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ff'</span> : <span class="id" title="var">d</span> --&gt;[<span class="id" title="var">f'</span>] <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α</span> : <span class="id" title="var">invertible_2cell</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">ff</span> : <span class="id" title="var">d</span> --&gt;[<span class="id" title="var">f</span>] <span class="id" title="var">d'</span>, <span class="id" title="var">disp_invertible_2cell</span> <span class="id" title="var">α</span> <span class="id" title="var">ff</span> <span class="id" title="var">ff'</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <span class="id" title="var">Projections</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">D</span> : <span class="id" title="var">disp_prebicat</span> <span class="id" title="var">C</span>} (<span class="id" title="var">lic</span> : <span class="id" title="var">local_iso_cleaving</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">c'</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">d</span> : <span class="id" title="var">D</span> <span class="id" title="var">c</span>} {<span class="id" title="var">d'</span> : <span class="id" title="var">D</span> <span class="id" title="var">c'</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ff'</span> : <span class="id" title="var">d</span> --&gt;[<span class="id" title="var">f'</span>] <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α</span> : <span class="id" title="var">invertible_2cell</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">local_iso_cleaving_1cell</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">d</span> --&gt;[<span class="id" title="var">f</span>] <span class="id" title="var">d'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">pr1</span> (<span class="id" title="var">lic</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">ff'</span> <span class="id" title="var">α</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">disp_invertible_2cell</span> <span class="id" title="var">α</span> <span class="id" title="var">local_iso_cleaving_1cell</span> <span class="id" title="var">ff'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">pr2</span> (<span class="id" title="var">lic</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">ff'</span> <span class="id" title="var">α</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <span class="id" title="var">Projections</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <span class="id" title="var">Discrete_Fiber</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> (<span class="id" title="var">D</span> : <span class="id" title="var">disp_prebicat</span> <span class="id" title="var">C</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">local_iso_cleaving</span> <span class="id" title="var">D</span>) (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">discrete_fiber_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">D</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">cbn</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> (<span class="id" title="var">d</span> : <span class="id" title="var">D</span> <span class="id" title="var">c</span>) (<span class="id" title="var">d'</span> : <span class="id" title="var">D</span> <span class="id" title="var">c</span>), <span class="id" title="var">d</span> --&gt;[<span class="id" title="var">identity</span> <span class="id" title="var">c</span>] <span class="id" title="var">d'</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">idempunitor</span> : <span class="id" title="var">invertible_2cell</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">c</span> · <span class="id" title="var">identity</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">linvunitor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_invertible_2cell_linvunitor</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">discrete_fiber_precategory_data</span> : <span class="id" title="var">precategory_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">discrete_fiber_ob_mor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">d</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">id_disp</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">ff</span> <span class="id" title="var">gg</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">local_iso_cleaving_1cell</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span> · <span class="id" title="var">identity</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">ff</span> ;; <span class="id" title="var">gg</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">idempunitor</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">discrete_fiber_1_id_comp_cells</span> : <span class="id" title="var">prebicat_1_id_comp_cells</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">discrete_fiber_precategory_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>. <span class="id" title="var">cbn</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">f</span> ==&gt;[<span class="id" title="var">id2</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)] <span class="id" title="var">f'</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">discrete_fiber_data</span> : <span class="id" title="var">prebicat_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">discrete_fiber_1_id_comp_cells</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_id2</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">ff</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">PP</span> := <span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">id_disp</span> <span class="id" title="var">d</span>;; <span class="id" title="var">ff</span>) <span class="id" title="var">idempunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">RR</span> := <span class="id" title="var">PP</span> •• <span class="id" title="var">disp_lunitor</span> <span class="id" title="var">ff</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Heq</span> : <span class="id" title="var">idempunitor</span> • <span class="id" title="var">lunitor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>) = <span class="id" title="var">id2</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">_</span> ==&gt;[<span class="id" title="var">x</span>] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> <span class="id" title="var">RR</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">ff</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Heq</span> : <span class="id" title="var">idempunitor</span> • <span class="id" title="var">runitor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>) = <span class="id" title="var">id2</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">abstract</span> (<span class="id" title="var">cbn</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">lunitor_runitor_identity</span>, <span class="id" title="var">linvunitor_lunitor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; <span class="id" title="tactic">reflexivity</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">PP</span> := <span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span>;; <span class="id" title="var">id_disp</span> <span class="id" title="var">d'</span>) <span class="id" title="var">idempunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">_</span> ==&gt;[<span class="id" title="var">x</span>] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> (<span class="id" title="var">PP</span> •• <span class="id" title="var">disp_runitor</span> <span class="id" title="var">ff</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">ff</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">PP</span> := <span class="id" title="var">disp_inv_cell</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">id_disp</span> <span class="id" title="var">d</span>;; <span class="id" title="var">ff</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Heq</span> : <span class="id" title="var">linvunitor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>) • <span class="id" title="var">idempunitor</span>^-1 = <span class="id" title="var">id2</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">_</span> ==&gt;[<span class="id" title="var">x</span>] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> (<span class="id" title="var">disp_linvunitor</span> <span class="id" title="var">ff</span> •• <span class="id" title="var">PP</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">cbn</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> <span class="id" title="var">ff</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">PP</span> := <span class="id" title="var">disp_inv_cell</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span>;; <span class="id" title="var">id_disp</span> <span class="id" title="var">d'</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Heq</span> : <span class="id" title="var">rinvunitor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>) • <span class="id" title="var">idempunitor</span>^-1 = <span class="id" title="var">id2</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">unfold</span> <span class="id" title="var">idempunitor</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">lunitor_runitor_identity</span>, <span class="id" title="var">rinvunitor_runitor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; <span class="id" title="tactic">reflexivity</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">_</span> ==&gt;[<span class="id" title="var">x</span>] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> (<span class="id" title="var">disp_rinvunitor</span> <span class="id" title="var">ff</span> •• <span class="id" title="var">PP</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">d0</span> <span class="id" title="var">d1</span> <span class="id" title="var">d2</span> <span class="id" title="var">d3</span> <span class="id" title="var">ff</span> <span class="id" title="var">gg</span> <span class="id" title="var">hh</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> ((<span class="id" title="var">idempunitor</span> • (<span class="id" title="var">idempunitor</span> ▹ <span class="id" title="var">identity</span> <span class="id" title="var">c</span>)) • <span class="id" title="var">rassociator</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> • ((<span class="id" title="var">identity</span> <span class="id" title="var">c</span> ◃ <span class="id" title="var">lunitor</span> <span class="id" title="var">_</span>) • <span class="id" title="var">lunitor</span> <span class="id" title="var">_</span>) = <span class="id" title="var">id2</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">cbn</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">lwhisker_hcomp</span>, !<span class="id" title="var">rwhisker_hcomp</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">lunitor_V_id_is_left_unit_V_id</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">vassocl</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> • (<span class="id" title="var">_</span> • <span class="id" title="var">z</span>)) (<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">triangle_l_inv</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">vassocl</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> • (<span class="id" title="var">_</span> • <span class="id" title="var">z</span>)) (<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">lassociator_rassociator</span>, <span class="id" title="var">id2_left</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> • <span class="id" title="var">z</span>) (<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">hcomp_vcomp</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id2_left</span>, <span class="id" title="var">linvunitor_lunitor</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hcomp_identity</span>, <span class="id" title="var">id2_left</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">lunitor_V_id_is_left_unit_V_id</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">linvunitor_lunitor</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">z</span> ] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> •• <span class="id" title="var">disp_rassociator</span> <span class="id" title="var">ff</span> <span class="id" title="var">gg</span> <span class="id" title="var">hh</span> •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">refine</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">local_iso_cleaving_1cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span>;; <span class="id" title="var">gg</span>) <span class="id" title="var">idempunitor</span>;; <span class="id" title="var">hh</span>) <span class="id" title="var">idempunitor</span> •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">disp_rwhisker</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span> ;; <span class="id" title="var">gg</span>) <span class="id" title="var">idempunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">refine</span> (<span class="id" title="var">disp_lwhisker</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_inv_cell</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">gg</span> ;; <span class="id" title="var">hh</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_inv_cell</span> ((<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span>;;<span class="id" title="var">local_iso_cleaving_1cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">gg</span>;; <span class="id" title="var">hh</span>) <span class="id" title="var">idempunitor</span>) <span class="id" title="var">idempunitor</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">d0</span> <span class="id" title="var">d1</span> <span class="id" title="var">d2</span> <span class="id" title="var">d3</span> <span class="id" title="var">ff</span> <span class="id" title="var">gg</span> <span class="id" title="var">hh</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> ((<span class="id" title="var">idempunitor</span> • (<span class="id" title="var">identity</span> <span class="id" title="var">c</span> ◃ <span class="id" title="var">idempunitor</span>)) • <span class="id" title="var">lassociator</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> • ((<span class="id" title="var">lunitor</span> <span class="id" title="var">_</span> ▹ <span class="id" title="var">identity</span> <span class="id" title="var">c</span>) • <span class="id" title="var">lunitor</span> <span class="id" title="var">_</span>) = <span class="id" title="var">id2</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">cbn</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">lwhisker_hcomp</span>, !<span class="id" title="var">rwhisker_hcomp</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">vassocl</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> • (<span class="id" title="var">_</span> • <span class="id" title="var">z</span>)) (<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">triangle_r_inv</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">vassocl</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> • (<span class="id" title="var">_</span> • <span class="id" title="var">z</span>)) (<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">rassociator_lassociator</span>, <span class="id" title="var">id2_left</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> • <span class="id" title="var">z</span>) (<span class="id" title="var">vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">hcomp_vcomp</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">lunitor_V_id_is_left_unit_V_id</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id2_left</span>, <span class="id" title="var">linvunitor_lunitor</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hcomp_identity</span>, <span class="id" title="var">id2_left</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">z</span> ] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> •• <span class="id" title="var">disp_lassociator</span> <span class="id" title="var">ff</span> <span class="id" title="var">gg</span> <span class="id" title="var">hh</span> •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span>;;<span class="id" title="var">local_iso_cleaving_1cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">gg</span>;; <span class="id" title="var">hh</span>) <span class="id" title="var">idempunitor</span>) <span class="id" title="var">idempunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">refine</span> (<span class="id" title="var">disp_lwhisker</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">gg</span> ;; <span class="id" title="var">hh</span>) <span class="id" title="var">idempunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">refine</span> (<span class="id" title="var">disp_rwhisker</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_inv_cell</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span> ;; <span class="id" title="var">gg</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_inv_cell</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">local_iso_cleaving_1cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">ff</span>;; <span class="id" title="var">gg</span>) <span class="id" title="var">idempunitor</span>;; <span class="id" title="var">hh</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">f3</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">z</span> ] <span class="id" title="var">_</span>) (<span class="id" title="var">id2_left</span> <span class="id" title="var">_</span>) (<span class="id" title="var">x</span> •• <span class="id" title="var">y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">a3</span> <span class="id" title="var">f</span> <span class="id" title="var">g1</span> <span class="id" title="var">g2</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">linvunitor</span> <span class="id" title="var">_</span> • (<span class="id" title="var">identity</span> <span class="id" title="var">c</span> ◃ <span class="id" title="var">id2</span> <span class="id" title="var">_</span>) • <span class="id" title="var">lunitor</span> <span class="id" title="var">_</span> = <span class="id" title="var">id2</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)) <span class="id" title="keyword">as</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">lwhisker_id2</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id2_right</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">z</span> ] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> •• (<span class="id" title="var">f</span> ◃◃ <span class="id" title="var">x</span>) •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">f</span> ;; <span class="id" title="var">g1</span>) <span class="id" title="var">idempunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_inv_cell</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">f</span> ;; <span class="id" title="var">g2</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">a3</span> <span class="id" title="var">f1</span> <span class="id" title="var">f2</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">linvunitor</span> <span class="id" title="var">_</span> • (<span class="id" title="var">id2</span> <span class="id" title="var">_</span> ▹ <span class="id" title="var">identity</span> <span class="id" title="var">_</span>) • <span class="id" title="var">lunitor</span> <span class="id" title="var">_</span> = <span class="id" title="var">id2</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>)) <span class="id" title="keyword">as</span> <span class="id" title="var">Heq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id2_rwhisker</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id2_right</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">linvunitor_lunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">z</span> ] <span class="id" title="var">_</span>) <span class="id" title="var">Heq</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> •• (<span class="id" title="var">x</span> ▹▹ <span class="id" title="var">g</span>) •• <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">f1</span> ;; <span class="id" title="var">g</span>) <span class="id" title="var">idempunitor</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">disp_inv_cell</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">f2</span> ;; <span class="id" title="var">g</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">transportf</span> {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="var">Arguments</span> <span class="id" title="var">transportb</span> {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} {<span class="id" title="var">_</span>} <span class="id" title="var">_</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">discrete_fiber_data_laws</span> : <span class="id" title="var">prebicat_laws</span> <span class="id" title="var">discrete_fiber_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_id2_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportfbinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_id2_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transportf_set</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">C</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f₁</span> <span class="id" title="var">f₂</span> <span class="id" title="var">f₃</span> <span class="id" title="var">f₄</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_vassocr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">transportf_paths</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">α</span> : <span class="id" title="var">id₁</span> <span class="id" title="var">c</span> ==&gt; <span class="id" title="var">id₁</span> <span class="id" title="var">c</span>, <span class="id" title="var">f₁</span> ==&gt;[ <span class="id" title="var">α</span>] <span class="id" title="var">f₄</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">C</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a₁</span> <span class="id" title="var">a₂</span> <span class="id" title="var">a₃</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_lwhisker_id2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_id2_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">transportf_transpose_alt</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">α</span> : <span class="id" title="var">id₁</span> <span class="id" title="var">c</span> ==&gt; <span class="id" title="var">id₁</span> <span class="id" title="var">c</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">α</span>] <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">disp_vcomp_rinv</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">f</span>;; <span class="id" title="var">g</span>) <span class="id" title="var">idempunitor</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">transportf_paths</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">α</span> : <span class="id" title="var">id₁</span> <span class="id" title="var">c</span> ==&gt; <span class="id" title="var">id₁</span> <span class="id" title="var">c</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">α</span>] <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">C</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a₁</span> <span class="id" title="var">a₂</span> <span class="id" title="var">a₃</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_id2_rwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_id2_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">transportf_transpose_alt</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">α</span> : <span class="id" title="var">id₁</span> <span class="id" title="var">c</span> ==&gt; <span class="id" title="var">id₁</span> <span class="id" title="var">c</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">α</span>] <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">disp_vcomp_rinv</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">f</span>;; <span class="id" title="var">g</span>) <span class="id" title="var">idempunitor</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">transportf_paths</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">α</span> : <span class="id" title="var">id₁</span> <span class="id" title="var">c</span> ==&gt; <span class="id" title="var">id₁</span> <span class="id" title="var">c</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">α</span>] <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">C</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a₁</span> <span class="id" title="var">a₂</span> <span class="id" title="var">a₃</span> <span class="id" title="var">f</span> <span class="id" title="var">g₁</span> <span class="id" title="var">g₂</span> <span class="id" title="var">g₃</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> ; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_vassocl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> •• <span class="id" title="var">z</span>) (<span class="id" title="var">disp_vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, (<span class="id" title="var">_</span> •• <span class="id" title="var">_</span>) •• (<span class="id" title="var">z</span> •• <span class="id" title="var">_</span>)) (<span class="id" title="var">disp_vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, (<span class="id" title="var">_</span> •• <span class="id" title="var">_</span>) •• ((<span class="id" title="var">z</span> •• <span class="id" title="var">_</span>) •• <span class="id" title="var">_</span>)) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">disp_vcomp_linv</span> (<span class="id" title="var">disp_local_iso_cleaving_invertible_2cell</span> <span class="id" title="var">h</span> (<span class="id" title="var">f</span>;; <span class="id" title="var">g₂</span>) <span class="id" title="var">idempunitor</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_id2_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_vassocl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">_</span> •• <span class="id" title="var">z</span>) (<span class="id" title="var">disp_vassocr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_lwhisker_vcomp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_rwhisker_transport_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_prewhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_mor_transportf_postwhisker</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">disp_vassocl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_f_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">transportf_paths</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">α</span> : <span class="id" title="var">id₁</span> <span class="id" title="var">c</span> ==&gt; <span class="id" title="var">id₁</span> <span class="id" title="var">c</span>, <span class="id" title="var">_</span> ==&gt;[ <span class="id" title="var">α</span>] <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">C</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">admit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">discrete_fiber</span> : <span class="id" title="var">prebicat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Abort</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <span class="id" title="var">Discrete_Fiber</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">LocalIsoFibration</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

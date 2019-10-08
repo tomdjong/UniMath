@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Core.Setcategories</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab731"></a><h1 class="section">Setcategories: Precategories whose objects and morphisms are sets</h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab732"></a><h2 class="section">Contents</h2>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Setcategories: objects and morphisms are sets <span class="inlinecode"><span class="id" title="var">setcategory</span></span>
+
+</li>
+</ul>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Preamble</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">object_hlevel</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) : <span class="id" title="var">hProp</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">hProppair</span> <span class="id" title="var">_</span> (<span class="id" title="var">isapropisofhlevel</span> <span class="id" title="var">n</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">homtype_hlevel</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) : <span class="id" title="var">hProp</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">hProppair</span> (∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>, <span class="id" title="var">isofhlevel</span> <span class="id" title="var">n</span> (<span class="id" title="var">C</span> ⟦ <span class="id" title="var">a</span>, <span class="id" title="var">b</span> ⟧))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">impred</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">impred</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">isapropisofhlevel</span> <span class="id" title="var">n</span> <span class="id" title="var">_</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">object_homtype_hlevel</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) : <span class="id" title="var">hProp</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">object_hlevel</span> <span class="id" title="var">n</span> <span class="id" title="var">C</span> ∧ <span class="id" title="var">homtype_hlevel</span> <span class="id" title="var">m</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_setcategory</span> : <span class="id" title="var">precategory</span> → <span class="id" title="var">UU</span> := <span class="id" title="var">object_homtype_hlevel</span> 2 2.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">setcategory</span> := <span class="id" title="var">total2</span> <span class="id" title="var">is_setcategory</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">category_from_setcategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">setcategory</span>) : <span class="id" title="var">category</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">pr1</span> <span class="id" title="var">C</span>,, (<span class="id" title="var">dirprod_pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>))).<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">category_from_setcategory</span> : <span class="id" title="var">setcategory</span> &gt;-&gt; <span class="id" title="var">category</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_is_setcategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) : <span class="id" title="var">isaprop</span> (<span class="id" title="var">is_setcategory</span> <span class="id" title="var">C</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisaset</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_has_homsets</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">setcategory_objects_set</span> (<span class="id" title="var">C</span> : <span class="id" title="var">setcategory</span>) : <span class="id" title="var">hSet</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">hSetpair</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isaset_ob</span> (<span class="id" title="var">C</span> : <span class="id" title="var">setcategory</span>) : <span class="id" title="var">isaset</span> <span class="id" title="var">C</span> := (<span class="id" title="var">dirprod_pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isaset_mor</span> (<span class="id" title="var">C</span> : <span class="id" title="var">setcategory</span>) : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span> := <span class="id" title="var">homset_property</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">setcategory_eq_morphism_pi</span> (<span class="id" title="var">C</span> : <span class="id" title="var">setcategory</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">e</span> <span class="id" title="var">e'</span>: <span class="id" title="var">a</span> = <span class="id" title="var">b</span>) : <span class="id" title="var">idtomor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">e</span> = <span class="id" title="var">idtomor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">e'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">h</span> : <span class="id" title="var">e</span> = <span class="id" title="var">e'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">uip</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">idtomor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ) <span class="id" title="var">h</span>).<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

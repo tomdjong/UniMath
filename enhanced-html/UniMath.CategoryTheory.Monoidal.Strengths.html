@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Monoidal.Strengths</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+  Definition of tensorial strengths between actions over monoidal categories.
+
+<div class="paragraph"> </div>
+
+  Based on the definitions in the paper "Second-Order and Dependently-Sorted Abstract Syntax" by Marcelo Fiore.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monoidal.MonoidalCategories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monoidal.Actions</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">Mon_V</span> := <span class="id" title="var">Actions.Mon_V</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">V</span> := <span class="id" title="var">monoidal_precat_precat</span> <span class="id" title="var">Mon_V</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">I</span> := <span class="id" title="var">monoidal_precat_unit</span> <span class="id" title="var">Mon_V</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">tensor</span> := <span class="id" title="var">monoidal_precat_tensor</span> <span class="id" title="var">Mon_V</span>.<br/>
+<span class="id" title="keyword">Notation</span> &quot;X ⊗ Y" := (<span class="id" title="var">tensor</span> (<span class="id" title="var">X</span> , <span class="id" title="var">Y</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Strengths_Definition</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> (<span class="id" title="var">actn</span> <span class="id" title="var">actn'</span> : <span class="id" title="var">action</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">A</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">actn</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">odot</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">actn</span>).<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">ϱ</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">actn</span>)).<br/>
+<span class="id" title="keyword">Let</span> χ := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">actn</span>))).<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">A'</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">actn'</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">odot'</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">actn'</span>).<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">ϱ'</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">actn'</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> χ' := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">actn'</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Strengths_Natural_Transformation</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> (<span class="id" title="var">F</span> : <span class="id" title="var">A</span> ⟶ <span class="id" title="var">A'</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;X ⊙ Y" := (<span class="id" title="var">odot</span> (<span class="id" title="var">X</span> , <span class="id" title="var">Y</span>)) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 31).<br/>
+<span class="id" title="keyword">Notation</span> &quot;f #⊙ g" := (#<span class="id" title="var">odot</span> (<span class="id" title="var">f</span> #, <span class="id" title="var">g</span>)) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 31).<br/>
+<span class="id" title="keyword">Notation</span> &quot;X ⊙' Y" := (<span class="id" title="var">odot'</span> (<span class="id" title="var">X</span> , <span class="id" title="var">Y</span>)) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 31).<br/>
+<span class="id" title="keyword">Notation</span> &quot;f #⊙' g" := (#<span class="id" title="var">odot'</span> (<span class="id" title="var">f</span> #, <span class="id" title="var">g</span>)) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 31).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_dom_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">precategory_binproduct</span> <span class="id" title="var">A</span> <span class="id" title="var">V</span>) <span class="id" title="var">A'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">λ</span> <span class="id" title="var">ax</span>, <span class="id" title="var">F</span> (<span class="id" title="var">ob1</span> <span class="id" title="var">ax</span>) ⊙' (<span class="id" title="var">ob2</span> <span class="id" title="var">ax</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ? ? <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> ((#<span class="id" title="var">F</span> (<span class="id" title="var">mor1</span> <span class="id" title="var">f</span>)) #⊙' (<span class="id" title="var">mor2</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_dom_is_functor</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">strength_dom_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">functor_id</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">functor_id</span> <span class="id" title="var">odot'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">binprod_id</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_compax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">functor_comp</span> <span class="id" title="var">odot'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">binprod_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">functor_comp</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_dom</span> : (<span class="id" title="var">precategory_binproduct</span> <span class="id" title="var">A</span> <span class="id" title="var">V</span>) ⟶ <span class="id" title="var">A'</span> := <span class="id" title="var">mk_functor</span> <span class="id" title="var">strength_dom_data</span> <span class="id" title="var">strength_dom_is_functor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_codom_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">A</span> ⊠ <span class="id" title="var">V</span>) <span class="id" title="var">A'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">λ</span> <span class="id" title="var">ax</span>, <span class="id" title="var">F</span> (<span class="id" title="var">ob1</span> <span class="id" title="var">ax</span> ⊙ <span class="id" title="var">ob2</span> <span class="id" title="var">ax</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ? ? <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (#<span class="id" title="var">F</span> (<span class="id" title="var">mor1</span> <span class="id" title="var">f</span> #⊙ <span class="id" title="var">mor2</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_codom_is_functor</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">strength_codom_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">functor_id</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">functor_id</span> <span class="id" title="var">odot</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">binprod_id</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_compax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">functor_comp</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">functor_comp</span> <span class="id" title="var">odot</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">binprod_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_codom</span> : <span class="id" title="var">A</span> ⊠ <span class="id" title="var">V</span> ⟶ <span class="id" title="var">A'</span> := <span class="id" title="var">mk_functor</span> <span class="id" title="var">strength_codom_data</span> <span class="id" title="var">strength_codom_is_functor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_nat</span> : <span class="id" title="var">UU</span> := <span class="id" title="var">nat_iso</span> <span class="id" title="var">strength_dom</span> <span class="id" title="var">strength_codom</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_triangle_eq</span> (<span class="id" title="var">ϛ</span> : <span class="id" title="var">strength_nat</span>) := ∏ (<span class="id" title="var">a</span> : <span class="id" title="var">A</span>),<br/>
+(<span class="id" title="var">pr1</span> <span class="id" title="var">ϛ</span> (<span class="id" title="var">a</span>, <span class="id" title="var">I</span>)) · (#<span class="id" title="var">F</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">ϱ</span> <span class="id" title="var">a</span>)) = <span class="id" title="var">pr1</span> <span class="id" title="var">ϱ'</span> (<span class="id" title="var">F</span> <span class="id" title="var">a</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength_pentagon_eq</span> (<span class="id" title="var">ϛ</span> : <span class="id" title="var">strength_nat</span>) := ∏ (<span class="id" title="var">a</span> : <span class="id" title="var">A</span>), ∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">V</span>),<br/>
+&nbsp;&nbsp;(<span class="id" title="var">pr1</span> χ' ((<span class="id" title="var">F</span> <span class="id" title="var">a</span>, <span class="id" title="var">x</span>), <span class="id" title="var">y</span>)) · <span class="id" title="var">pr1</span> <span class="id" title="var">ϛ</span> (<span class="id" title="var">a</span>, <span class="id" title="var">x</span> ⊗ <span class="id" title="var">y</span>) = (<span class="id" title="var">pr1</span> <span class="id" title="var">ϛ</span> (<span class="id" title="var">a</span>, <span class="id" title="var">x</span>)) #⊙' (<span class="id" title="var">id</span> <span class="id" title="var">y</span>) · (<span class="id" title="var">pr1</span> <span class="id" title="var">ϛ</span> (<span class="id" title="var">a</span> ⊙ <span class="id" title="var">x</span>, <span class="id" title="var">y</span>)) · (#<span class="id" title="var">F</span> (<span class="id" title="var">pr1</span> χ ((<span class="id" title="var">a</span>, <span class="id" title="var">x</span>), <span class="id" title="var">y</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Strengths_Natural_Transformation</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">strength</span> : <span class="id" title="var">UU</span> := ∏ <span class="id" title="var">F</span> : <span class="id" title="var">A</span> ⟶ <span class="id" title="var">A'</span>, ∑ (<span class="id" title="var">ϛ</span> : <span class="id" title="var">strength_nat</span> <span class="id" title="var">F</span>),<br/>
+(<span class="id" title="var">strength_triangle_eq</span> <span class="id" title="var">F</span> <span class="id" title="var">ϛ</span>) × (<span class="id" title="var">strength_pentagon_eq</span> <span class="id" title="var">F</span> <span class="id" title="var">ϛ</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Strengths_Definition</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">tensorial_strength</span> := <span class="id" title="var">strength</span> <span class="id" title="var">tensorial_action</span> <span class="id" title="var">tensorial_action</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Paradoxes.GirardsParadox</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+This file provides a direct formalizatoin of Girard's paradox, as explained in Martin-Lof's 1972
+"An intuitionistic theory of types". It can serve as a test as to whether the version of Coq being
+used is (in the most obvious way) inconsistent. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.All</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">girard</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">Flse</span> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="keyword">wf</span> (<span class="id" title="var">T</span> : <span class="id" title="keyword">Type</span>) : <span class="id" title="keyword">Type</span><br/>
+&nbsp;&nbsp;:= ∑ <span class="id" title="var">lt</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span> -&gt; <span class="id" title="keyword">Type</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>: <span class="id" title="var">T</span>, <span class="id" title="var">lt</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> -&gt; <span class="id" title="var">lt</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> -&gt; <span class="id" title="var">lt</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span>) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">h</span> : (<span class="id" title="var">nat</span> -&gt; <span class="id" title="var">T</span>), (∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">lt</span> (<span class="id" title="var">h</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">h</span> <span class="id" title="var">n</span>)) -&gt; <span class="id" title="var">Flse</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs</span> : <span class="id" title="keyword">Type</span> := <span class="id" title="var">total2</span> <span class="id" title="keyword">wf</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">uset</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : <span class="id" title="keyword">Type</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">w</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">uord</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : <span class="id" title="var">uset</span> <span class="id" title="var">w</span> -&gt; <span class="id" title="var">uset</span> <span class="id" title="var">w</span> -&gt; <span class="id" title="keyword">Type</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">trans</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) {<span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">uset</span> <span class="id" title="var">w</span>}<br/>
+&nbsp;&nbsp;: <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>) <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>) <span class="id" title="var">x</span> <span class="id" title="var">z</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>)) <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfp</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">w</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>) <span class="id" title="var">y</span> <span class="id" title="var">z</span> → <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>) <span class="id" title="var">x</span> <span class="id" title="var">z</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∏ <span class="id" title="var">h</span> : <span class="id" title="var">nat</span> → <span class="id" title="var">pr1</span> <span class="id" title="var">w</span>, (∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>) (<span class="id" title="var">h</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">h</span> <span class="id" title="var">n</span>)) → <span class="id" title="var">Flse</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>)))<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">w</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs_wf_uord</span> (<span class="id" title="var">v</span> : <span class="id" title="var">wfs</span>) (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : <span class="id" title="keyword">Type</span><br/>
+&nbsp;&nbsp;:= ∑ <span class="id" title="var">f</span> : <span class="id" title="var">uset</span> <span class="id" title="var">v</span> -&gt; <span class="id" title="var">uset</span> <span class="id" title="var">w</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">uset</span> <span class="id" title="var">v</span>, (<span class="id" title="var">uord</span> <span class="id" title="var">v</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> -&gt; (<span class="id" title="var">uord</span> <span class="id" title="var">w</span>) (<span class="id" title="var">f</span> <span class="id" title="var">x</span>) (<span class="id" title="var">f</span> <span class="id" title="var">y</span>)) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∑ <span class="id" title="var">y</span> : <span class="id" title="var">uset</span> <span class="id" title="var">w</span>, ∏ (<span class="id" title="var">x</span>: <span class="id" title="var">uset</span> <span class="id" title="var">v</span>), (<span class="id" title="var">uord</span> <span class="id" title="var">w</span>) (<span class="id" title="var">f</span> <span class="id" title="var">x</span>) <span class="id" title="var">y</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ufun</span> {<span class="id" title="var">v</span> : <span class="id" title="var">wfs</span>} {<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">v</span> <span class="id" title="var">w</span>) : <span class="id" title="var">uset</span> <span class="id" title="var">v</span> → <span class="id" title="var">uset</span> <span class="id" title="var">w</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">a</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">homo</span> {<span class="id" title="var">v</span> : <span class="id" title="var">wfs</span>} {<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">v</span> <span class="id" title="var">w</span>)<br/>
+&nbsp;&nbsp;: ∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">uset</span> <span class="id" title="var">v</span>), <span class="id" title="var">uord</span> <span class="id" title="var">v</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> → <span class="id" title="var">uord</span> <span class="id" title="var">w</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">a</span> <span class="id" title="var">x</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">a</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">domi</span> {<span class="id" title="var">v</span> : <span class="id" title="var">wfs</span>} {<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">v</span> <span class="id" title="var">w</span>) : <span class="id" title="var">uset</span> <span class="id" title="var">w</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">domicom</span> {<span class="id" title="var">v</span> : <span class="id" title="var">wfs</span>} {<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">v</span> <span class="id" title="var">w</span>)<br/>
+&nbsp;&nbsp;: (<span class="id" title="var">λ</span> <span class="id" title="var">y</span> : <span class="id" title="var">uset</span> <span class="id" title="var">w</span>, ∏ <span class="id" title="var">x</span> : <span class="id" title="var">uset</span> <span class="id" title="var">v</span>, <span class="id" title="var">uord</span> <span class="id" title="var">w</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">a</span> <span class="id" title="var">x</span>) <span class="id" title="var">y</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>)))<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs_wf_trans</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> : <span class="id" title="var">wfs</span>, <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> -&gt; <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> -&gt; <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> : <span class="id" title="var">uset</span> <span class="id" title="var">x</span> =&gt; (<span class="id" title="var">ufun</span> <span class="id" title="var">g</span>) ((<span class="id" title="var">ufun</span> <span class="id" title="var">f</span>) <span class="id" title="var">a</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span> <span class="id" title="var">y0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x0y0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">homo</span> <span class="id" title="var">g</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">homo</span> <span class="id" title="var">f</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">x0y0</span>)).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exists</span> (<span class="id" title="var">domi</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">y0</span> := <span class="id" title="var">ufun</span> <span class="id" title="var">f</span> <span class="id" title="var">x0</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ydom</span> := <span class="id" title="var">domi</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">co</span> := <span class="id" title="var">domicom</span> <span class="id" title="var">f</span> <span class="id" title="var">x0</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">trans</span> <span class="id" title="var">z</span> (<span class="id" title="var">homo</span> <span class="id" title="var">g</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">co</span>) (<span class="id" title="var">domicom</span> <span class="id" title="var">g</span> (<span class="id" title="var">domi</span> <span class="id" title="var">f</span>))).<br/>
+</div>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs_wf_wfp_shift</span> (<span class="id" title="var">f</span> : <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">wfs</span>) (<span class="id" title="var">b</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">wfs_wf_uord</span> (<span class="id" title="var">f</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">f</span> <span class="id" title="var">n</span>)) :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>), (<span class="id" title="var">uset</span> (<span class="id" title="var">f</span> <span class="id" title="var">n</span>) -&gt; <span class="id" title="var">uset</span> (<span class="id" title="var">f</span> 0)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">a</span>; <span class="id" title="tactic">exact</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">IHn</span> (<span class="id" title="var">ufun</span> (<span class="id" title="var">b</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs_wf_wfp_seq</span> (<span class="id" title="var">f</span> : <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">wfs</span>) (<span class="id" title="var">b</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">wfs_wf_uord</span> (<span class="id" title="var">f</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">f</span> <span class="id" title="var">n</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat</span> -&gt; <span class="id" title="var">uset</span> (<span class="id" title="var">f</span> 0).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">wfs_wf_wfp_shift</span> <span class="id" title="var">f</span> <span class="id" title="var">b</span> <span class="id" title="var">n</span> (<span class="id" title="var">domi</span> (<span class="id" title="var">b</span> <span class="id" title="var">n</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs_wf_wfp_compshift</span> (<span class="id" title="var">f</span> : <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">wfs</span>) (<span class="id" title="var">b</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">wfs_wf_uord</span> (<span class="id" title="var">f</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">f</span> <span class="id" title="var">n</span>)) :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) {<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">uset</span> (<span class="id" title="var">f</span> <span class="id" title="var">n</span>)},<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">uord</span> (<span class="id" title="var">f</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> -&gt; <span class="id" title="var">uord</span> (<span class="id" title="var">f</span> 0) (<span class="id" title="var">wfs_wf_wfp_shift</span> <span class="id" title="var">f</span> <span class="id" title="var">b</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span>) (<span class="id" title="var">wfs_wf_wfp_shift</span> <span class="id" title="var">f</span> <span class="id" title="var">b</span> <span class="id" title="var">n</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">IHn</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">homo</span> (<span class="id" title="var">b</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">p</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">wfs_wf_wfp_desc</span> (<span class="id" title="var">f</span> : <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">wfs</span>) (<span class="id" title="var">b</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">wfs_wf_uord</span> (<span class="id" title="var">f</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">f</span> <span class="id" title="var">n</span>)) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">uord</span> (<span class="id" title="var">f</span> 0) (<span class="id" title="var">wfs_wf_wfp_seq</span> <span class="id" title="var">f</span> <span class="id" title="var">b</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) (<span class="id" title="var">wfs_wf_wfp_seq</span> <span class="id" title="var">f</span> <span class="id" title="var">b</span> <span class="id" title="var">n</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">wfs_wf_wfp_compshift</span> <span class="id" title="var">f</span> <span class="id" title="var">b</span> <span class="id" title="var">n</span> (<span class="id" title="var">domicom</span> (<span class="id" title="var">b</span> <span class="id" title="var">n</span>) (<span class="id" title="var">domi</span> (<span class="id" title="var">b</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>))))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs_wf</span> : <span class="id" title="keyword">wf</span> <span class="id" title="var">wfs</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">wfs_wf_uord</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">wfs_wf_trans</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">wfp</span> <span class="id" title="var">_</span> (<span class="id" title="var">wfs_wf_wfp_seq</span> <span class="id" title="var">h</span> <span class="id" title="var">b</span>) (<span class="id" title="var">wfs_wf_wfp_desc</span>  <span class="id" title="var">h</span> <span class="id" title="var">b</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">wfs_wf_t</span> : <span class="id" title="var">wfs</span> := <span class="id" title="var">tpair</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">T</span> =&gt; <span class="id" title="keyword">wf</span> <span class="id" title="var">T</span>) <span class="id" title="var">wfs</span> (<span class="id" title="var">wfs_wf</span>).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">maxi_fun</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : <span class="id" title="var">uset</span> <span class="id" title="var">w</span> -&gt; <span class="id" title="var">wfs</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (∑ <span class="id" title="var">y</span> : <span class="id" title="var">uset</span> <span class="id" title="var">w</span>, <span class="id" title="var">uord</span> <span class="id" title="var">w</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> =&gt; <span class="id" title="var">uord</span> <span class="id" title="var">w</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">a</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">b</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">trans</span> <span class="id" title="var">w</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">wfp</span> <span class="id" title="var">w</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">n</span> =&gt; <span class="id" title="var">pr1</span> (<span class="id" title="var">h</span> <span class="id" title="var">n</span>)) <span class="id" title="var">b</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">maxi_homo</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : ∏ (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">uset</span> <span class="id" title="var">w</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">uord</span> <span class="id" title="var">w</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> -&gt; <span class="id" title="var">wfs_wf_uord</span> (<span class="id" title="var">maxi_fun</span> <span class="id" title="var">w</span> <span class="id" title="var">x</span>) (<span class="id" title="var">maxi_fun</span> <span class="id" title="var">w</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="keyword">fun</span> (<span class="id" title="var">z</span> : <span class="id" title="var">uset</span> (<span class="id" title="var">maxi_fun</span> <span class="id" title="var">w</span> <span class="id" title="var">x</span>)) =&gt; <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">z</span>) (<span class="id" title="var">trans</span> <span class="id" title="var">w</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">z</span>) <span class="id" title="var">p</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span> <span class="id" title="var">y0</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x0</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">maxidom</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : ∏ (<span class="id" title="var">x</span> : <span class="id" title="var">uset</span> <span class="id" title="var">w</span>), <span class="id" title="var">wfs_wf_uord</span> (<span class="id" title="var">maxi_fun</span> <span class="id" title="var">w</span> <span class="id" title="var">x</span>) <span class="id" title="var">w</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="keyword">fun</span> (<span class="id" title="var">z</span> : <span class="id" title="var">uset</span> (<span class="id" title="var">maxi_fun</span> <span class="id" title="var">w</span> <span class="id" title="var">x</span>)) =&gt; <span class="id" title="var">pr1</span> <span class="id" title="var">z</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x0</span> <span class="id" title="var">y</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x0</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">maxi</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : <span class="id" title="var">wfs_wf_uord</span> <span class="id" title="var">w</span> <span class="id" title="var">wfs_wf_t</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">maxi_fun</span> <span class="id" title="var">w</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">maxi_homo</span> <span class="id" title="var">w</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">maxidom</span> <span class="id" title="var">w</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Proposition</span> <span class="id" title="var">whoa</span> : <span class="id" title="var">uord</span> <span class="id" title="var">wfs_wf_t</span> <span class="id" title="var">wfs_wf_t</span> <span class="id" title="var">wfs_wf_t</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maxi</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Proposition</span> <span class="id" title="var">irref</span> (<span class="id" title="var">w</span> : <span class="id" title="var">wfs</span>) : ∏ (<span class="id" title="var">x</span> : <span class="id" title="var">uset</span> <span class="id" title="var">w</span>), (<span class="id" title="var">uord</span> <span class="id" title="var">w</span>) <span class="id" title="var">x</span> <span class="id" title="var">x</span> -&gt; <span class="id" title="var">Flse</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">wfp</span> <span class="id" title="var">w</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">n</span> =&gt; <span class="id" title="var">x</span>) (<span class="id" title="keyword">fun</span> <span class="id" title="var">n</span> =&gt; <span class="id" title="var">p</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Proposition</span> <span class="id" title="var">the_world_explodes</span> : <span class="id" title="var">Flse</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">irref</span> <span class="id" title="var">wfs_wf_t</span> <span class="id" title="var">wfs_wf_t</span> <span class="id" title="var">whoa</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">girard</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Proposition</span> <span class="id" title="var">but_seriously_the_world_explodes</span> : <span class="id" title="var">empty</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">the_world_explodes</span> <span class="id" title="var">empty</span>).<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

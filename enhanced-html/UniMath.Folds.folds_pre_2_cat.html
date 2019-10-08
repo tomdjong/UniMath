@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Folds.folds_pre_2_cat</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Univalent FOLDS
+
+<div class="paragraph"> </div>
+
+    Benedikt Ahrens, following notes by Michael Shulman
+
+<div class="paragraph"> </div>
+
+Contents of this file:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Definition: FOLDS pre-3-category
+<ul class="doclist">
+<li> objects <span class="inlinecode"><span class="id" title="var">ob</span></span> coerced, morphisms denoted by infix <span class="inlinecode">⇒</span>
+
+</li>
+<li> predicates for identity <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.Subtypes.html#I"><span class="id" title="variable">I</span></a></span>, composition <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#T"><span class="id" title="variable">T</span></a></span>, equality <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span>
+
+</li>
+<li> <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> is a congruence for <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#T"><span class="id" title="variable">T</span></a></span> and <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.Subtypes.html#I"><span class="id" title="variable">I</span></a></span>, and <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> is an equivalence relation
+
+</li>
+<li> usual categorical axioms
+
+<div class="paragraph"> </div>
+
+
+</li>
+</ul>
+
+</li>
+<li> Definition: FOLDS pre-2-categoy
+<ul class="doclist">
+<li> the fibers of <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.Subtypes.html#I"><span class="id" title="variable">I</span></a></span>, <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#T"><span class="id" title="variable">T</span></a></span> and <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> are hProps
+
+<div class="paragraph"> </div>
+
+
+</li>
+</ul>
+
+</li>
+<li> Isomorphism between morphisms in a FOLDS pre-2-category
+<ul class="doclist">
+<li> Definition: given by a family of equivalences
+
+</li>
+<li> Lemma: Type of isos <span class="inlinecode"><span class="id" title="var">folds_2_iso</span></span> <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Init.html#g"><span class="id" title="variable">g</span></a></span> is a proposition (because <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.Subtypes.html#I"><span class="id" title="variable">I</span></a></span>, <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#T"><span class="id" title="variable">T</span></a></span>, <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> are)
+
+</li>
+<li> Definition: Map <span class="inlinecode"><span class="id" title="var">idtoiso2</span></span> from paths to isos
+
+<div class="paragraph"> </div>
+
+
+</li>
+</ul>
+
+</li>
+<li> Lemma: In a FOLDS pre-2-category, <span class="inlinecode"><span class="id" title="var">folds_2_iso</span></span> <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Init.html#g"><span class="id" title="variable">g</span></a></span> is equivalent to <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Init.html#g"><span class="id" title="variable">g</span></a></span>
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">E_implies_folds_iso</span></span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">folds_iso_implies_E</span></span>
+
+<div class="paragraph"> </div>
+
+
+</li>
+</ul>
+
+</li>
+<li> Definition: univalent FOLDS pre-2-category as special FOLDS pre-2-category
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">idtoiso2</span></span> is an equivalence
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">is_univalent_folds_2_precat</span></span> is an hProp
+
+<div class="paragraph"> </div>
+
+
+</li>
+</ul>
+
+</li>
+<li> Definition: FOLDS precategory as special FOLDS pre-2-category
+<ul class="doclist">
+<li> predicate <span class="inlinecode"><span class="id" title="var">is_folds_precategory</span></span> defined as
+<ul class="doclist">
+<li> hom-types are sets
+
+</li>
+<li> axioms of category modul <span class="inlinecode">=</span> rather than <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span>
+
+<div class="paragraph"> </div>
+
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li> Lemma: Logical equivalence between being a FOLDS precategory and being univalent
+<ul class="doclist">
+<li> since both are hProps, this entails equivalence between the types of
+<ul class="doclist">
+<li> univalent FOLDS pre-2-cats
+
+</li>
+<li> FOLDS precats
+
+</li>
+</ul>
+
+</li>
+<li> Implications are called
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" title="var">is_univalent_implies_is_folds_precat</span></span> and
+
+</li>
+<li> <span class="inlinecode"><span class="id" title="var">is_folds_precat_implies_is_univalent</span></span>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Folds.UnicodeNotations</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.total2_paths</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "p ## a" := (<span class="id" title="var">transportf</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span> <span class="id" title="var">a</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 3, <span class="id" title="var">only</span> <span class="id" title="var">parsing</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2064"></a><h1 class="section">The definition of a FOLDS pre-3-category</h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab2065"></a><h2 class="section">Objects and a dependent type of morphisms</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_3_ob_mor</span> := ∑ <span class="id" title="var">a</span> : <span class="id" title="var">UU</span>, <span class="id" title="var">a</span> → <span class="id" title="var">a</span> → <span class="id" title="var">UU</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_3_ob_mor_pair</span> (<span class="id" title="var">ob</span> : <span class="id" title="var">UU</span>)(<span class="id" title="var">mor</span> : <span class="id" title="var">ob</span> → <span class="id" title="var">ob</span> → <span class="id" title="var">UU</span>) : <span class="id" title="var">folds_3_ob_mor</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">ob</span> <span class="id" title="var">mor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">ob</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_ob_mor</span>) : <span class="id" title="var">UU</span> := @<span class="id" title="var">pr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">ob</span> : <span class="id" title="var">folds_3_ob_mor</span> &gt;-&gt; <span class="id" title="var">UU</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_3_morphisms</span> {<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_ob_mor</span>} : <span class="id" title="var">C</span> → <span class="id" title="var">C</span> → <span class="id" title="var">UU</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "a ⇒ b" := (<span class="id" title="var">folds_3_morphisms</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_double_transport</span> {<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_ob_mor</span>} {<span class="id" title="var">a</span> <span class="id" title="var">a'</span> <span class="id" title="var">b</span> <span class="id" title="var">b'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">a'</span>) (<span class="id" title="var">q</span> : <span class="id" title="var">b</span> = <span class="id" title="var">b'</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) : <span class="id" title="var">a'</span> ⇒ <span class="id" title="var">b'</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">a'</span> ⇒ <span class="id" title="var">c</span>) <span class="id" title="var">q</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">c</span> ⇒ <span class="id" title="var">b</span>) <span class="id" title="var">p</span> <span class="id" title="var">f</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2066"></a><h2 class="section">Identity, composition, and equality, given through predicates</h2>
+ We do not assume those to be propositions.  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_3_id_comp_eq</span> := ∑ <span class="id" title="var">C</span> : <span class="id" title="var">folds_3_ob_mor</span>,<br/>
+&nbsp;( (∏ <span class="id" title="var">a</span> : <span class="id" title="var">C</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">a</span> → <span class="id" title="var">UU</span>)<br/>
+&nbsp;× (∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>), (<span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) → (<span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>) → (<span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) → <span class="id" title="var">UU</span>))<br/>
+&nbsp;× ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span> → <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span> → <span class="id" title="var">UU</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_ob_mor_from_folds_id_comp</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>) : <span class="id" title="var">folds_3_ob_mor</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">folds_ob_mor_from_folds_id_comp</span> : <span class="id" title="var">folds_3_id_comp_eq</span> &gt;-&gt; <span class="id" title="var">folds_3_ob_mor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">I</span> {<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>} : ∏ {<span class="id" title="var">a</span> : <span class="id" title="var">C</span>}, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">a</span> → <span class="id" title="var">UU</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">T</span> {<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∏ {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}, (<span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) → (<span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>) → (<span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) → <span class="id" title="var">UU</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">E</span> {<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∏ {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>}, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span> → <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span> → <span class="id" title="var">UU</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2067"></a><h2 class="section">E is an "equality", i.e. a congruence and equivalence</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">E_is_good_to_I_and_T</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;(((∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span>) <br/>
+&nbsp;×  (∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">E</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span>)) <br/>
+×   (∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">E</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> → <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">h</span>))<br/>
+×  ((∏ (<span class="id" title="var">a</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">a</span>), <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">I</span> <span class="id" title="var">f</span> → <span class="id" title="var">I</span> <span class="id" title="var">g</span>)<br/>
+×   (∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> <span class="id" title="var">g'</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> <span class="id" title="var">h'</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">f'</span> → <span class="id" title="var">E</span> <span class="id" title="var">g</span> <span class="id" title="var">g'</span> → <span class="id" title="var">E</span> <span class="id" title="var">h</span> <span class="id" title="var">h'</span> → <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> → <span class="id" title="var">T</span> <span class="id" title="var">f'</span> <span class="id" title="var">g'</span> <span class="id" title="var">h'</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2068"></a><h2 class="section">The axioms for identity</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_ax_id</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">a</span> : <span class="id" title="var">C</span>, ∥ ∑ <span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">a</span>, <span class="id" title="var">I</span> <span class="id" title="var">f</span> ∥ )  <br/>
+&nbsp;×  ((∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>)(<span class="id" title="var">i</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">I</span> <span class="id" title="var">i</span> → <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">i</span> <span class="id" title="var">f</span>) <br/>
+&nbsp;&nbsp;×  (∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>)(<span class="id" title="var">i</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">a</span>), <span class="id" title="var">I</span> <span class="id" title="var">i</span> → <span class="id" title="var">T</span> <span class="id" title="var">i</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span>)). 
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2069"></a><h2 class="section">The axioms for composition</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_ax_comp</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>), ∥ ∑ <span class="id" title="var">h</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>, <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> ∥ )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;× ( (∏ {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>} {<span class="id" title="var">h</span> <span class="id" title="var">k</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>}, <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> → <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">k</span> → <span class="id" title="var">E</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;×  (∏ {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> ⇒ <span class="id" title="var">d</span>) (<span class="id" title="var">fg</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">gh</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">d</span>) (<span class="id" title="var">fg_h</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">d</span>) (<span class="id" title="var">f_gh</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">d</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">fg</span> → <span class="id" title="var">T</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">gh</span> → <span class="id" title="var">T</span> <span class="id" title="var">fg</span> <span class="id" title="var">h</span> <span class="id" title="var">fg_h</span> → <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">gh</span> <span class="id" title="var">f_gh</span> → <span class="id" title="var">E</span> <span class="id" title="var">f_gh</span> <span class="id" title="var">fg_h</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2070"></a><h2 class="section">A FOLDS pre-3-category is a package of</h2>
+
+<ul class="doclist">
+<li> identity <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.Subtypes.html#I"><span class="id" title="variable">I</span></a></span>
+
+</li>
+<li> composition <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#T"><span class="id" title="variable">T</span></a></span>
+
+</li>
+<li> equality <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span>
+
+</li>
+</ul>
+  satisfying the categorical axioms modulo <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> and <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> is an "equality"
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_pre_3_cat</span> := ∑ <span class="id" title="var">C</span> : <span class="id" title="var">folds_3_id_comp_eq</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">folds_ax_id</span> <span class="id" title="var">C</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="var">folds_ax_comp</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="var">E_is_good_to_I_and_T</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_id_comp_from_folds_precat</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_3_cat</span>) : <span class="id" title="var">folds_3_id_comp_eq</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">folds_id_comp_from_folds_precat</span> : <span class="id" title="var">folds_pre_3_cat</span> &gt;-&gt; <span class="id" title="var">folds_3_id_comp_eq</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2071"></a><h1 class="section">FOLDS-2-precategories</h1>
+ they are 3-precategories such that T, I and E are hProps 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_folds_pre_2_cat</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_3_cat</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;( (∏ (<span class="id" title="var">a</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">i</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">a</span>), <span class="id" title="var">isaprop</span> (<span class="id" title="var">I</span> <span class="id" title="var">i</span>))<br/>
+&nbsp;&nbsp;×  (∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>), <span class="id" title="var">isaprop</span> (<span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)))<br/>
+&nbsp;×   (∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">isaprop</span> (<span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_pre_2_cat</span> : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">C</span>, <span class="id" title="var">is_folds_pre_2_cat</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">folds_pre_2_cat_props</span> <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">C</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_3_from_folds_2</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) : <span class="id" title="var">folds_pre_3_cat</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">folds_3_from_folds_2</span> : <span class="id" title="var">folds_pre_2_cat</span> &gt;-&gt; <span class="id" title="var">folds_pre_3_cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2072"></a><h1 class="section">FOLDS-2-isomorphisms</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_iso</span> {<span class="id" title="var">C</span>: <span class="id" title="var">folds_pre_3_cat</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) : <span class="id" title="var">UU</span> :=<br/>
+(((∏ (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">u</span> : <span class="id" title="var">x</span> ⇒ <span class="id" title="var">a</span>) (<span class="id" title="var">v</span> : <span class="id" title="var">x</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">T</span> <span class="id" title="var">u</span> <span class="id" title="var">f</span> <span class="id" title="var">v</span> ≃ <span class="id" title="var">T</span> <span class="id" title="var">u</span> <span class="id" title="var">g</span> <span class="id" title="var">v</span>)<br/>
+&nbsp;&nbsp;× (∏ (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">u</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">x</span>) (<span class="id" title="var">v</span> : <span class="id" title="var">x</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">T</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">f</span> ≃ <span class="id" title="var">T</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">g</span>))<br/>
+&nbsp;× (∏ (<span class="id" title="var">x</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">u</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">x</span>) (<span class="id" title="var">v</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">x</span>), <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> ≃ <span class="id" title="var">T</span> <span class="id" title="var">g</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span>))<br/>
+× ((((∏ (<span class="id" title="var">u</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">b</span> = <span class="id" title="var">a</span>), <span class="id" title="var">T</span> <span class="id" title="var">p</span> ## <span class="id" title="var">f</span> <span class="id" title="var">f</span> <span class="id" title="var">u</span> ≃ <span class="id" title="var">T</span> <span class="id" title="var">p</span> ## <span class="id" title="var">g</span> <span class="id" title="var">g</span> <span class="id" title="var">u</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× (∏ (<span class="id" title="var">u</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">a</span>), <span class="id" title="var">T</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) <span class="id" title="var">p</span> <span class="id" title="var">f</span>) <span class="id" title="var">u</span> <span class="id" title="var">f</span> ≃<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">T</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) <span class="id" title="var">p</span> <span class="id" title="var">g</span>) <span class="id" title="var">u</span> <span class="id" title="var">g</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× ((∏ (<span class="id" title="var">u</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">a</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">b</span> = <span class="id" title="var">b</span>), <span class="id" title="var">T</span> <span class="id" title="var">u</span> <span class="id" title="var">p</span> ## <span class="id" title="var">f</span> <span class="id" title="var">f</span> ≃ <span class="id" title="var">T</span> <span class="id" title="var">u</span> <span class="id" title="var">p</span> ## <span class="id" title="var">g</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× (∏ (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">a</span>) (<span class="id" title="var">q</span> : <span class="id" title="var">b</span> = <span class="id" title="var">a</span>) (<span class="id" title="var">r</span> : <span class="id" title="var">b</span> = <span class="id" title="var">b</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">T</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>) <span class="id" title="var">r</span> ## <span class="id" title="var">f</span> <span class="id" title="var">f</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;≃ <span class="id" title="var">T</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">g</span>) <span class="id" title="var">r</span> ## <span class="id" title="var">g</span> <span class="id" title="var">g</span>)))<br/>
+&nbsp;&nbsp;&nbsp;× (((∏ <span class="id" title="var">p</span> : <span class="id" title="var">b</span> = <span class="id" title="var">a</span>, <span class="id" title="var">I</span> <span class="id" title="var">p</span> ## <span class="id" title="var">f</span> ≃ <span class="id" title="var">I</span> <span class="id" title="var">p</span> ## <span class="id" title="var">g</span>) × (∏ <span class="id" title="var">u</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>, <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">u</span> ≃ <span class="id" title="var">E</span> <span class="id" title="var">g</span> <span class="id" title="var">u</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× ((∏ <span class="id" title="var">u</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>, <span class="id" title="var">E</span> <span class="id" title="var">u</span> <span class="id" title="var">f</span> ≃ <span class="id" title="var">E</span> <span class="id" title="var">u</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× (∏ (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">a</span>) (<span class="id" title="var">q</span> : <span class="id" title="var">b</span> = <span class="id" title="var">b</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">E</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>) <span class="id" title="var">f</span> ≃ <span class="id" title="var">E</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">g</span>) <span class="id" title="var">g</span>)))).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_folds_2_iso</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">folds_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveldirprod</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelsnweqtohlevelsn</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="var">folds_pre_2_cat_props</span> <span class="id" title="var">C</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">folds_2_iso_id</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_3_cat</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) : <span class="id" title="var">folds_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2073"></a><h1 class="section">In FOLDS-2-precats, <span class="inlinecode"><span class="id" title="var">folds_iso</span></span> <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Init.html#g"><span class="id" title="variable">g</span></a></span> <span class="inlinecode">&lt;-&gt;</span> <span class="inlinecode"><a class="idref" href="UniMath.MoreFoundations.AxiomOfChoice.html#E"><span class="id" title="variable">E</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Init.html#g"><span class="id" title="variable">g</span></a></span></h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">E_transport_source</span> : ∏ (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) (<span class="id" title="var">a</span> <span class="id" title="var">a'</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">a</span> = <span class="id" title="var">a'</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">E</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">c</span> ⇒ <span class="id" title="var">b</span>) <span class="id" title="var">p</span> <span class="id" title="var">f</span>) (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">c</span> ⇒ <span class="id" title="var">b</span>) <span class="id" title="var">p</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">E_transport_target</span> : ∏ (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">b'</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">b</span> = <span class="id" title="var">b'</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">E</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) <span class="id" title="var">p</span> <span class="id" title="var">f</span>) (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) <span class="id" title="var">p</span> <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">E_implies_folds_iso</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) : <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">folds_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H'</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">C</span>))). <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">H'</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">Erefl</span> <span class="id" title="var">Esym</span>] <span class="id" title="var">Etrans</span>] [<span class="id" title="var">EI</span> <span class="id" title="var">ET</span>]].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Efg</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">weqimplimpl</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="var">folds_pre_2_cat_props</span> <span class="id" title="var">C</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>  <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">v</span> <span class="id" title="var">v</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">v</span> <span class="id" title="var">v</span>) ; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">v</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">v</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">v</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">v</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">c</span> ⇒ <span class="id" title="var">b</span>) <span class="id" title="var">p</span> <span class="id" title="var">f</span>) (<span class="id" title="var">p</span> ## <span class="id" title="var">g</span>) <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_source</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">c</span> ⇒ <span class="id" title="var">b</span>) <span class="id" title="var">p</span> <span class="id" title="var">g</span>) (<span class="id" title="var">p</span> ## <span class="id" title="var">f</span>) <span class="id" title="var">u</span> <span class="id" title="var">u</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_source</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) <span class="id" title="var">p</span> <span class="id" title="var">f</span>) (<span class="id" title="var">p</span> ## <span class="id" title="var">g</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_target</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">u</span> <span class="id" title="var">u</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) <span class="id" title="var">p</span> <span class="id" title="var">g</span>) (<span class="id" title="var">p</span> ## <span class="id" title="var">f</span>) <span class="id" title="var">g</span> <span class="id" title="var">f</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_target</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>) (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) <span class="id" title="var">r</span> <span class="id" title="var">f</span>) (<span class="id" title="var">r</span> ## <span class="id" title="var">g</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_target</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_source</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ET</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">g</span>) (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">c</span>, <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) <span class="id" title="var">r</span> <span class="id" title="var">g</span>) (<span class="id" title="var">r</span> ## <span class="id" title="var">f</span>) <span class="id" title="var">g</span> <span class="id" title="var">f</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_target</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_source</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">EI</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> <span class="id" title="var">p</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">EI</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="var">u</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">Esym</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">u</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">u</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">u</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">Esym</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">g</span>) (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>) <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_target</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_source</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">Esym</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">f</span>) (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">g</span>) <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_target</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">E_transport_source</span>. <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">Etrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">folds_double_transport</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span> <span class="id" title="var">g</span>) <span class="id" title="var">g</span> <span class="id" title="var">f</span>); <span class="id" title="tactic">auto</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">folds_iso_implies_E</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) : <span class="id" title="var">folds_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Isofg</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">keytojoy</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Isofg</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">keytojoy</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H'</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">C</span>))). <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">H'</span> <span class="id" title="keyword">as</span> [[[<span class="id" title="var">Erefl</span> <span class="id" title="var">Esym</span>] <span class="id" title="var">Etrans</span>] [<span class="id" title="var">EI</span> <span class="id" title="var">ET</span>]].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Erefl</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2074"></a><h1 class="section">Univalent FOLDS-2-precategory</h1>
+ satisfies <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#isweq"><span class="id" title="definition">isweq</span></a></span> <span class="inlinecode">(<span class="id" title="var">idtoiso2</span></span> <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Init.html#g"><span class="id" title="variable">g</span></a>)</span> for any <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> and <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Init.html#g"><span class="id" title="variable">g</span></a></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">idtoiso2</span> {<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>} : <span class="id" title="var">f</span> = <span class="id" title="var">g</span> → <span class="id" title="var">folds_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">folds_2_iso_id</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_univalent_folds_pre_2_cat</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">isweq</span> (@<span class="id" title="var">idtoiso2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_is_univalent_folds_2_precat</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">is_univalent_folds_pre_2_cat</span> <span class="id" title="var">C</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">do</span> 4 (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isotoid2</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">is_univalent_folds_pre_2_cat</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) : <span class="id" title="var">folds_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">f</span> = <span class="id" title="var">g</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">invmap</span> (<span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">H</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2075"></a><h1 class="section">FOLDS precategories</h1>
+ We define them as special FOLDS pre-2-categories, namely such that
+<ul class="doclist">
+<li> hom-types are sets
+
+</li>
+<li> axioms of precategory modulo identity (rather than E)
+
+</li>
+</ul>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_folds_precategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>, <span class="id" title="var">isaset</span> (<span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>))<br/>
+&nbsp;×  ((∏ {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>} {<span class="id" title="var">h</span> <span class="id" title="var">k</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>},<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> → <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">k</span> → <span class="id" title="var">h</span> = <span class="id" title="var">k</span> )       <br/>
+&nbsp;&nbsp;×  (∏ {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">c</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">c</span> ⇒ <span class="id" title="var">d</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">fg</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">c</span>) (<span class="id" title="var">gh</span> : <span class="id" title="var">b</span> ⇒ <span class="id" title="var">d</span>) (<span class="id" title="var">fg_h</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">d</span>) (<span class="id" title="var">f_gh</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">d</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">fg</span> → <span class="id" title="var">T</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">gh</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">T</span> <span class="id" title="var">fg</span> <span class="id" title="var">h</span> <span class="id" title="var">fg_h</span> → <span class="id" title="var">T</span> <span class="id" title="var">f</span> <span class="id" title="var">gh</span> <span class="id" title="var">f_gh</span> → <span class="id" title="var">f_gh</span> = <span class="id" title="var">fg_h</span>)). 
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_is_folds_precategory</span> (<span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>) : <span class="id" title="var">isaprop</span> (<span class="id" title="var">is_folds_precategory</span> <span class="id" title="var">C</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhlevelsn</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">isofhleveldirprod</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">do</span> 2 (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisaset</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">do</span> 9 (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">do</span> 15 (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2076"></a><h1 class="section">Univalent FOLDS pre-2-category is a FOLDS precategory</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">is_univalent_implies_folds_precat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">H</span> : <span class="id" title="var">is_univalent_folds_pre_2_cat</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_univalent_implies_is_folds_precat</span> : <span class="id" title="var">is_folds_precategory</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isofhlevelweqb</span> <span class="id" title="var">_</span> (<span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">H</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_folds_2_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isotoid2</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">E_implies_folds_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T_unique</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">C</span>)))))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">T_unique</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>); <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">isotoid2</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">E_implies_folds_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T_assoc</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">C</span>)))))). <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">T_assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">T_assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">fg</span> <span class="id" title="var">gh</span> <span class="id" title="var">fg_h</span> <span class="id" title="var">f_gh</span>); <span class="id" title="tactic">auto</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">is_univalent_implies_folds_precat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2077"></a><h1 class="section">FOLDS precategory implies univalence</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">folds_precat_implies_univalent</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">folds_pre_2_cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">H</span> : <span class="id" title="var">is_folds_precategory</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">standardness</span> : ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>), <span class="id" title="var">E</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">folds_2_iso_implies_identity</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> ⇒ <span class="id" title="var">b</span>) : <span class="id" title="var">folds_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> → <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Isofg</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">standardness</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">folds_iso_implies_E</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Isofg</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_folds_precat_implies_is_univalent</span> : <span class="id" title="var">is_univalent_folds_pre_2_cat</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isweqimplimpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">folds_2_iso_implies_identity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_folds_2_iso</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">folds_precat_implies_univalent</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.limits.graphs.kernels</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1004"></a><h1 class="section">Kernels defined in terms of limits</h1>
+<a name="lab1005"></a><h2 class="section">Contents</h2>
+
+<ul class="doclist">
+<li> Definition coincides with the direct definition
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.zero</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.equalizers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.kernels</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1006"></a><h1 class="section">Definition of kernels in terms of limits</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_kernels</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">hs</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">Z</span> : <span class="id" title="var">Zero</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Kernel</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧) := <span class="id" title="var">Equalizer</span> <span class="id" title="var">C</span> <span class="id" title="var">f</span> (<span class="id" title="var">ZeroArrow</span> <span class="id" title="var">Z</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1007"></a><h2 class="section">Maps between Kernels as limits and direct definition.</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">equiv_Kernel1_eq</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">K</span> : <span class="id" title="var">limits.kernels.Kernel</span> (<span class="id" title="var">equiv_Zero2</span> <span class="id" title="var">Z</span>) <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">KernelArrow</span> <span class="id" title="var">K</span> · <span class="id" title="var">f</span> = <span class="id" title="var">KernelArrow</span> <span class="id" title="var">K</span> · <span class="id" title="var">ZeroArrow</span> <span class="id" title="var">Z</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">precomp_with_ZeroArrow</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">equiv_ZeroArrow</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">KernelCompZero</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">equiv_Kernel1_isEqualizer</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">K</span> : <span class="id" title="var">limits.kernels.Kernel</span> (<span class="id" title="var">equiv_Zero2</span> <span class="id" title="var">Z</span>) <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isEqualizer</span> <span class="id" title="var">C</span> <span class="id" title="var">f</span> (<span class="id" title="var">ZeroArrow</span> <span class="id" title="var">Z</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) <span class="id" title="var">K</span> (<span class="id" title="var">KernelArrow</span> <span class="id" title="var">K</span>) (<span class="id" title="var">equiv_Kernel1_eq</span> <span class="id" title="var">f</span> <span class="id" title="var">K</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_isEqualizer</span> <span class="id" title="var">_</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">e</span> <span class="id" title="var">h'</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">KernelIn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">h'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">precomp_with_ZeroArrow</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (!(<span class="id" title="var">equiv_ZeroArrow</span> <span class="id" title="var">e</span> <span class="id" title="var">b</span> <span class="id" title="var">Z</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">cbn</span>. <span class="id" title="var">use</span> <span class="id" title="var">KernelCommutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">X</span>. <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">limits.kernels.KernelInsEq</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">KernelArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">X</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">limits.kernels.KernelCommutes</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">equiv_Kernel1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">K</span> : <span class="id" title="var">limits.kernels.Kernel</span> (<span class="id" title="var">equiv_Zero2</span> <span class="id" title="var">Z</span>) <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Kernel</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_Equalizer</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">K</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">KernelArrow</span> <span class="id" title="var">K</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">equiv_Kernel1_eq</span> <span class="id" title="var">f</span> <span class="id" title="var">K</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">equiv_Kernel1_isEqualizer</span> <span class="id" title="var">f</span> <span class="id" title="var">K</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">equiv_Kernel2_eq</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">K</span> : <span class="id" title="var">Kernel</span> <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">EqualizerArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">K</span> · <span class="id" title="var">f</span> = <span class="id" title="var">limits.zero.ZeroArrow</span> (<span class="id" title="var">equiv_Zero2</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">EqualizerObject</span> <span class="id" title="var">C</span> <span class="id" title="var">K</span>) <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">EqualizerArrowEq</span> <span class="id" title="var">C</span> <span class="id" title="var">K</span>). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">equiv_ZeroArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">precomp_with_ZeroArrow</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">equiv_Kernel2_isEqualizer</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">K</span> : <span class="id" title="var">Kernel</span> <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isKernel</span> (<span class="id" title="var">equiv_Zero2</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">EqualizerArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">K</span>) <span class="id" title="var">f</span> (<span class="id" title="var">equiv_Kernel2_eq</span> <span class="id" title="var">f</span> <span class="id" title="var">K</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_isKernel</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">EqualizerIn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">precomp_with_ZeroArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">equiv_ZeroArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">EqualizerArrowComm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">T</span>. <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">EqualizerInUnique</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">T</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">equiv_Kernel2</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">K</span> : <span class="id" title="var">Kernel</span> <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">limits.kernels.Kernel</span> (<span class="id" title="var">equiv_Zero2</span> <span class="id" title="var">Z</span>) <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_Kernel</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">EqualizerObject</span> <span class="id" title="var">C</span> <span class="id" title="var">K</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">EqualizerArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">K</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">equiv_Kernel2_eq</span> <span class="id" title="var">f</span> <span class="id" title="var">K</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">equiv_Kernel2_isEqualizer</span> <span class="id" title="var">f</span> <span class="id" title="var">K</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_kernels</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

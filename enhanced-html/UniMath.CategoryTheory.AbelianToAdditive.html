@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.AbelianToAdditive</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1180"></a><h1 class="section">AbelianPreCat is CategoryWithAdditiveStructure</h1>
+<a name="lab1181"></a><h2 class="section">Contents</h2>
+
+<ul class="doclist">
+<li> AbelianPreCat is CategoryWithAdditiveStructure
+<ul class="doclist">
+<li> Preliminaries
+
+</li>
+<li> AbelianPreCat is CategoryWithAdditiveStructure
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.total2_paths</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.zero</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.equalizers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.coequalizers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.kernels</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.cokernels</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pushouts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pullbacks</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.BinDirectSums</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Epis</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.CategoriesWithBinOps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoriesWithAbgrops</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PreAdditive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Additive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Abelian</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1182"></a><h1 class="section">AbelianPreCat is CategoryWithAdditiveStructure.</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">abelian_is_additive</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">A</span> : <span class="id" title="var">AbelianPreCat</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">A</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1183"></a><h2 class="section">Preliminaries</h2>
+
+<div class="paragraph"> </div>
+
+ Some maps we are going to use. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">DiagonalMap</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>)⟧ := <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">IdZeroMap</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>)⟧ := <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">ZeroIdMap</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>)⟧ := <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">identity</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Proofs that these maps are monics. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">DiagonalMap_isMonic</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isMonic</span> (<span class="id" title="var">DiagonalMap</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> : <span class="id" title="var">_</span>, <span class="id" title="var">f</span> · (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">DiagonalMap</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">IdZeroMap_isMonic</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isMonic</span> (<span class="id" title="var">IdZeroMap</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> : <span class="id" title="var">_</span>, <span class="id" title="var">f</span> · (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">IdZeroMap</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ZeroIdMap_isMonic</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isMonic</span> (<span class="id" title="var">ZeroIdMap</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">f</span> : <span class="id" title="var">_</span>, <span class="id" title="var">f</span> · (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">ZeroIdMap</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We show that Pr1 and Pr2 of BinProduct are epimorphisms. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">BinProductPr1_isEpi</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isEpi</span> (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isEpi_precomp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">IdZeroMap</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">IdZeroMap</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">identity_isEpi</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">BinProductPr2_isEpi</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isEpi</span> (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isEpi_precomp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">ZeroIdMap</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">ZeroIdMap</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">identity_isEpi</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We construct kernels of BinProduct Pr1 and Pr2. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">KernelOfPr1_Eq</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">ZeroIdMap</span> <span class="id" title="var">BinProd</span> · <span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">ZeroIdMap</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">KernelOfPr1_isKernel_comm</span> (<span class="id" title="var">X</span> : <span class="id" title="var">A</span>) (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">w</span> : <span class="id" title="var">A</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">A</span> ⟦ <span class="id" title="var">w</span>, <span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H'</span> : <span class="id" title="var">h</span> · <span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">h</span> · (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) = <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">KernelOfPr1_isKernel_unique</span> (<span class="id" title="var">X</span> : <span class="id" title="var">A</span>) (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">w</span> : <span class="id" title="var">A</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">A</span> ⟦ <span class="id" title="var">w</span>, <span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H'</span> : <span class="id" title="var">h</span> · <span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">y</span> : <span class="id" title="var">A</span> ⟦ <span class="id" title="var">w</span>, <span class="id" title="var">X</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">y</span> · <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) = <span class="id" title="var">h</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">y</span> = <span class="id" title="var">h</span> · <span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">KernelOfPr1_isKernel</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isKernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">ZeroIdMap</span> <span class="id" title="var">BinProd</span>) (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>) (<span class="id" title="var">KernelOfPr1_Eq</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_isKernel</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">ZeroIdMap</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">h</span> · (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">KernelOfPr1_isKernel_comm</span> <span class="id" title="var">X</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">KernelOfPr1_isKernel_unique</span> <span class="id" title="var">X</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">KernelOfPr1</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">kernels.Kernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">mk_Kernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">ZeroIdMap</span> <span class="id" title="var">BinProd</span>) <span class="id" title="var">_</span> (<span class="id" title="var">KernelOfPr1_Eq</span> <span class="id" title="var">BinProd</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">KernelOfPr1_isKernel</span> <span class="id" title="var">BinProd</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">KernelOfPr2_Eq</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">IdZeroMap</span> <span class="id" title="var">BinProd</span> · <span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">IdZeroMap</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">KernelOfPr2_isKernel_comm</span> (<span class="id" title="var">X</span> : <span class="id" title="var">A</span>) (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">w</span> : <span class="id" title="var">A</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">A</span> ⟦<span class="id" title="var">w</span>, <span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H'</span> : <span class="id" title="var">h</span> · <span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">h</span> · (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>) = <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">KernelOfPr2_isKernel_unique</span> (<span class="id" title="var">X</span> : <span class="id" title="var">A</span>) (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">w</span> : <span class="id" title="var">A</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">A</span> ⟦ <span class="id" title="var">w</span>, <span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H'</span> : <span class="id" title="var">h</span> · <span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">y</span> : <span class="id" title="var">A</span> ⟦ <span class="id" title="var">w</span>, <span class="id" title="var">X</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">y</span> · <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>) = <span class="id" title="var">h</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">y</span> = <span class="id" title="var">h</span> · <span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">KernelOfPr2_isKernel</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isKernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">IdZeroMap</span> <span class="id" title="var">BinProd</span>) (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>) (<span class="id" title="var">KernelOfPr2_Eq</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_isKernel</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">IdZeroMap</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">h</span> · (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">KernelOfPr2_isKernel_comm</span> <span class="id" title="var">X</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">KernelOfPr2_isKernel_unique</span> <span class="id" title="var">X</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">KernelOfPr2</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">kernels.Kernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">mk_Kernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">IdZeroMap</span> <span class="id" title="var">BinProd</span>) <span class="id" title="var">_</span> (<span class="id" title="var">KernelOfPr2_Eq</span> <span class="id" title="var">BinProd</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">KernelOfPr2_isKernel</span> <span class="id" title="var">BinProd</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+From properties of abelian categories, it follows that Pr1 and Pr2 are
+      cokernels of the above kernels since they are epimorphisms. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">CokernelOfKernelOfPr1</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cokernels.Cokernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KernelArrow</span> (<span class="id" title="var">KernelOfPr1</span> <span class="id" title="var">BinProd</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">EpiToCokernel'</span> <span class="id" title="var">A</span> <span class="id" title="var">hs</span> (<span class="id" title="var">mk_Epi</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinProductPr1_isEpi</span> <span class="id" title="var">BinProd</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">KernelOfPr1</span> <span class="id" title="var">BinProd</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">CokernelOfKernelOfPr2</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cokernels.Cokernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">KernelArrow</span> (<span class="id" title="var">KernelOfPr2</span> <span class="id" title="var">BinProd</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">EpiToCokernel'</span> <span class="id" title="var">A</span> <span class="id" title="var">hs</span> (<span class="id" title="var">mk_Epi</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinProductPr2_isEpi</span> <span class="id" title="var">BinProd</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">KernelOfPr2</span> <span class="id" title="var">BinProd</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We construct a cokernel of the DiagonalMap. The CokernelOb is the
+      object X.
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">CokernelOfDiagonal_is_iso</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_z_isomorphism</span> ((<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">Cokernel</span> (<span class="id" title="var">DiagonalMap</span> <span class="id" title="var">BinProd</span>)))).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">coker</span> := <span class="id" title="var">Cokernel</span> (<span class="id" title="var">DiagonalMap</span> <span class="id" title="var">BinProd</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">r</span> := (<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">BinProd</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">CokernelArrow</span> <span class="id" title="var">coker</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">M</span> := <span class="id" title="var">mk_Monic</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> (<span class="id" title="var">DiagonalMap_isMonic</span> <span class="id" title="var">BinProd</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ker</span> := <span class="id" title="var">MonicToKernel</span> <span class="id" title="var">M</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">monic_epi_is_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (@<span class="id" title="var">KernelZeroisMonic</span> <span class="id" title="var">A</span> <span class="id" title="var">hs</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">ZeroArrow_comp_left</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_isKernel</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">w</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">unfold</span> <span class="id" title="var">r</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">y</span> := <span class="id" title="var">KernelIn</span> <span class="id" title="var">_</span> <span class="id" title="var">ker</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H'</span>). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">com1</span> := <span class="id" title="var">KernelCommutes</span> <span class="id" title="var">_</span> <span class="id" title="var">ker</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H'</span>). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>. <span class="id" title="tactic">fold</span> <span class="id" title="var">y</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">DiagonalMap</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : <span class="id" title="var">y</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">w</span> <span class="id" title="var">ker</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">id_right</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">tmp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">com1</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_left</span>. <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">H</span>). <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">com1</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">BinProductPr1Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">ArrowsToZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (@<span class="id" title="var">CokernelZeroisEpi</span> <span class="id" title="var">A</span> <span class="id" title="var">hs</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> (<span class="id" title="var">ZeroArrow_comp_right</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_isCokernel</span> <span class="id" title="var">hs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span> <span class="id" title="var">h</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">w</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">set</span>(<span class="id" title="var">coker2</span> := <span class="id" title="var">CokernelOfKernelOfPr2</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span>(<span class="id" title="var">coker2ar</span> := <span class="id" title="var">CokernelArrow</span> <span class="id" title="var">coker2</span>). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">coker2ar</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">r</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">y</span> := <span class="id" title="var">CokernelOut</span> <span class="id" title="var">_</span> <span class="id" title="var">coker2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H'</span>). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">com1</span> := <span class="id" title="var">CokernelCommutes</span> <span class="id" title="var">_</span> <span class="id" title="var">coker2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H'</span>). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>. <span class="id" title="tactic">fold</span> <span class="id" title="var">y</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : <span class="id" title="var">y</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">w</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">id_left</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">BinProductPr2Commutes</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProd</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">tmp</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">com1</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">CokernelCompZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_right</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">ZeroArrow_comp_right</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">CokernelArrow</span> <span class="id" title="var">coker</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">CokernelArrowisEpi</span> <span class="id" title="tactic">in</span> <span class="id" title="var">com1</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">com1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">ArrowsFromZero</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">CokernelOfDiagonal</span> {<span class="id" title="var">X</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">BinProd</span> : <span class="id" title="var">BinProduct</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cokernels.Cokernel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">DiagonalMap</span> <span class="id" title="var">BinProd</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">X0</span> := <span class="id" title="var">z_iso_inv</span> (<span class="id" title="var">mk_z_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">CokernelOfDiagonal_is_iso</span> <span class="id" title="var">BinProd</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">Cokernel_up_to_iso</span> <span class="id" title="var">A</span> <span class="id" title="var">hs</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">Cokernel</span> (<span class="id" title="var">DiagonalMap</span> <span class="id" title="var">BinProd</span>)) · <span class="id" title="var">X0</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Cokernel</span> (<span class="id" title="var">DiagonalMap</span> <span class="id" title="var">BinProd</span>)) <span class="id" title="var">X0</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We define the op which makes the homsets of an abelian category to abelian
+    groups. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Abelian_minus_op</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) : <span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, <span class="id" title="var">Y</span>⟧ :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Abelian_op</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>) : <span class="id" title="var">binop</span> (<span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, <span class="id" title="var">Y</span>⟧) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">f</span> : <span class="id" title="var">_</span>, <span class="id" title="var">λ</span> <span class="id" title="var">g</span> : <span class="id" title="var">_</span>, <span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> (<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">g</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Construction of a precategory with binops from Abelian category. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AbelianToprecategoryWithBinops</span> : <span class="id" title="var">precategoryWithBinOps</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">mk_precategoryWithBinOps</span> <span class="id" title="var">A</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">precategoryWithBinOpsData</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">Abelian_op</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We need the following lemmas to prove that the homsets of an abelian
+      precategory are abelian groups. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Abelian_DiagonalMap_eq</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> · (<span class="id" title="var">DiagonalMap</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">DiagonalMap</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) · <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) · <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">DiagonalMap</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Abelian_op_eq_IdZero</span> (<span class="id" title="var">X</span> : <span class="id" title="var">A</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">IdZeroMap</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) · <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">identity</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ar</span> := (<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">Cokernel</span> (<span class="id" title="var">DiagonalMap</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>))))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">r</span> := <span class="id" title="var">mk_z_iso</span> <span class="id" title="var">ar</span> <span class="id" title="var">_</span> (<span class="id" title="var">CokernelOfDiagonal_is_iso</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>. <span class="id" title="tactic">fold</span> <span class="id" title="var">ar</span>. <span class="id" title="tactic">fold</span> <span class="id" title="var">r</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">is_inverse_in_precat1</span> <span class="id" title="var">r</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Abelian_op_eq</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">bp1</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">bp2</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bp1</span>) · <span class="id" title="var">f</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bp2</span> (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">_</span> <span class="id" title="var">bp1</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">_</span> <span class="id" title="var">bp1</span> · <span class="id" title="var">f</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bp2</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">bpX</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">bpY</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="keyword">beta</span>. <span class="id" title="var">cbn</span> <span class="id" title="keyword">zeta</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ar</span> := (<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpY</span> (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">_</span> <span class="id" title="var">bpX</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">_</span> <span class="id" title="var">bpX</span> · <span class="id" title="var">f</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpY</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span>: <span class="id" title="var">DiagonalMap</span> <span class="id" title="var">bpX</span> · <span class="id" title="var">ar</span> = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">ar</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">bpX</span>, <span class="id" title="var">bpY</span>. <span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">Abelian_DiagonalMap_eq</span> <span class="id" title="var">f</span>). <span class="id" title="tactic">fold</span> <span class="id" title="var">bpY</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">CokernelCompZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">g</span> := <span class="id" title="var">CokernelOut</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpX</span>) (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpY</span>) <span class="id" title="var">ar</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">com</span> := <span class="id" title="var">CokernelCommutes</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpX</span>) (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpY</span>) <span class="id" title="var">ar</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">com</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">e1</span> := <span class="id" title="var">Abelian_op_eq_IdZero</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">e2</span> := <span class="id" title="var">Abelian_op_eq_IdZero</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ar'</span> := <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpY</span> (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> <span class="id" title="var">bpX</span> · <span class="id" title="var">f</span>) (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> <span class="id" title="var">bpX</span> · <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e3</span> : <span class="id" title="var">IdZeroMap</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) · <span class="id" title="var">ar'</span> = <span class="id" title="var">f</span> · <span class="id" title="var">IdZeroMap</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">ar'</span>, <span class="id" title="var">IdZeroMap</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">id_right</span> <span class="id" title="var">f</span>). <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">e2</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">e3</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">ar'</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">fold</span> <span class="id" title="var">ar</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">id_left</span>. <span class="id" title="var">cbn</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">e1</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">com</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Construction of morphisms to BinProducts. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Abelian_mor_to_BinProd</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>))⟧ :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>) <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Abelian_mor_from_to_BinProd</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span>⟦<span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>), <span class="id" title="var">BinProductObject</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)⟧ :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) · <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>) · <span class="id" title="var">g</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A few equations Abelian_minus_op and Abelian_op. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_op_eq1</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">Abelian_mor_to_BinProd</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">Abelian_mor_to_BinProd</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_mor_to_BinProd</span> (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>) (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">b</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">com1</span> := <span class="id" title="var">Abelian_op_eq</span> (<span class="id" title="var">BinProductPr1</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">com2</span> := <span class="id" title="var">Abelian_op_eq</span> (<span class="id" title="var">BinProductPr2</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_to_BinProd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">com1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">com2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_op_eq2</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Abelian_mor_to_BinProd</span> (<span class="id" title="var">Abelian_mor_to_BinProd</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">Abelian_mor_to_BinProd</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">Abelian_mor_from_to_BinProd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)))) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_mor_to_BinProd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">Abelian_mor_to_BinProd</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) · <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">Abelian_mor_to_BinProd</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) · <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>))).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_to_BinProd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_from_to_BinProd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_op_eq3</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>) (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">b</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span> <span class="id" title="tactic">at</span> 1.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">AbelianPreCat_op_eq1</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span> <span class="id" title="var">b</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_to_BinProd</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">com</span> := <span class="id" title="var">Abelian_op_eq</span> (<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span> <span class="id" title="tactic">at</span> 1. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">com</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp1</span> := <span class="id" title="var">AbelianPreCat_op_eq2</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span> <span class="id" title="var">b</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_to_BinProd</span>, <span class="id" title="var">Abelian_mor_from_to_BinProd</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp1</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1184"></a><h2 class="section">AbelianPreCat is CategoryWithAdditiveStructure</h2>
+
+<div class="paragraph"> </div>
+
+ The zero element in a homset of A is given by the ZeroArrow. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AbelianPreCat_homset_zero</span> (<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>) : <span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, <span class="id" title="var">Y</span>⟧ := <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Some equations involving Abelian_minus_op and Abelian_op. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_zero</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">Abelian_op_eq_IdZero</span> <span class="id" title="var">Y</span>). <span class="id" title="tactic">unfold</span> <span class="id" title="var">IdZeroMap</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e</span> : <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>) <span class="id" title="var">f</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> · <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_zero_right</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_zero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span> <span class="id" title="tactic">at</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (<span class="id" title="var">AbelianPreCat_homset_zero_right'</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">bpY</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e</span> : (<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpY</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">X</span> <span class="id" title="var">Y</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpY</span>) = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (<span class="id" title="var">ZeroArrow_comp_left</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpY</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_left</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_left</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AbelianPreCat_homset_inv</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span>⟦<span class="id" title="var">X</span>, <span class="id" title="var">Y</span>⟧ := <span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">f</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_inv_left'</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span> = (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_zero</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">bpY</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">Y</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e</span> : <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpY</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> · <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpY</span> (<span class="id" title="var">identity</span> <span class="id" title="var">_</span> ) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span> )).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">CokernelCompZero</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_right</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_inv_left</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">AbelianPreCat_homset_inv</span> <span class="id" title="var">f</span>) <span class="id" title="var">f</span> = (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_inv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_zero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_inv_left'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_inv_left'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_zero_left</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) <span class="id" title="var">f</span> = <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">AbelianPreCat_homset_inv_left'</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">AbelianPreCat_homset_zero_right'</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">g</span> : <span class="id" title="var">_</span>, <span class="id" title="var">Abelian_op</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span>) <span class="id" title="var">g</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">tmp</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_inv_left'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Abeliain_precategory_homset_comm'</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) <span class="id" title="var">f</span>) <span class="id" title="var">g</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) <span class="id" title="var">g</span>) <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">AbelianPreCat_homset_zero_right'</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">AbelianPreCat_homset_zero_right'</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">AbelianPreCat_homset_zero_right'</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_comm</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = <span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp1</span> := <span class="id" title="var">AbelianPreCat_homset_zero_left</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span> : <span class="id" title="var">_</span>, <span class="id" title="var">Abelian_op</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">h</span> <span class="id" title="var">g</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">tmp1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp1</span>. <span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">tmp1</span>). <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp2</span> := <span class="id" title="var">AbelianPreCat_homset_zero_left</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span> : <span class="id" title="var">_</span>, <span class="id" title="var">Abelian_op</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">h</span> <span class="id" title="var">f</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">tmp2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> <span class="id" title="var">tmp2</span>). <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">AbelianPreCat_op_eq3</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">AbelianPreCat_op_eq3</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">Abeliain_precategory_homset_comm'</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_inv_minus</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> (<span class="id" title="var">AbelianPreCat_homset_inv</span> <span class="id" title="var">g</span>) = <span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_inv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">AbelianPreCat_homset_zero_left</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_inv_right</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> (<span class="id" title="var">AbelianPreCat_homset_inv</span> <span class="id" title="var">f</span>) = <span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_inv_minus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_inv_left'</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_assoc_eq1</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) <span class="id" title="var">f</span>) <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">AbelianPreCat_homset_inv_left'</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">AbelianPreCat_homset_inv_left'</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_assoc_eq2</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">Abelian_minus_op</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) <span class="id" title="var">f</span>) <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">AbelianPreCat_homset_inv_left'</span> (<span class="id" title="var">AbelianPreCat_homset_zero</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span> : <span class="id" title="var">_</span>, <span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">h</span> (<span class="id" title="var">Abelian_op</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">tmp</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp2</span> := <span class="id" title="var">AbelianPreCat_homset_zero_left</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp2</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_assoc_eq3</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span> = <span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">f</span> (<span class="id" title="var">Abelian_minus_op</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianPreCat_homset_assoc</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span> = <span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> (<span class="id" title="var">Abelian_op</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">AbelianPreCat_homset_zero_left</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">k</span> : <span class="id" title="var">_</span>, <span class="id" title="var">Abelian_op</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> (<span class="id" title="var">Abelian_op</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">k</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">tmp</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_op_eq3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AbelianPreCat_homset_zero_right'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AbelianTocategoryWithAbgropsData</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">categoryWithAbgropsData</span> <span class="id" title="var">AbelianToprecategoryWithBinops</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">categoryWithAbgropsData</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">isgroppair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">isunitalpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_zero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_zero_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_zero_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">AbelianPreCat_homset_inv</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_inv_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_inv_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">AbelianPreCat_homset_comm</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We prove that Abelian_precategories are PrecategoriesWithAbgrops. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AbelianTocategoryWithAbgrops</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">categoryWithAbgrops</span> := <span class="id" title="var">mk_categoryWithAbgrops</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">AbelianToprecategoryWithBinops</span>  <span class="id" title="var">hs</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">AbelianTocategoryWithAbgropsData</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Hide isPreAdditive behind Qed. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AbelianToisPreAdditive</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isPreAdditive</span> <span class="id" title="var">AbelianTocategoryWithAbgrops</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_isPreAdditive</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x'</span> <span class="id" title="var">x'0</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">to_premor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">x'</span>, <span class="id" title="var">x'0</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">bpz</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">z</span> <span class="id" title="var">z</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e</span> : <span class="id" title="var">BinProductArrow</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span> <span class="id" title="var">bpz</span> (<span class="id" title="var">f</span> · <span class="id" title="var">x'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpz</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">x</span> <span class="id" title="var">z</span>) (<span class="id" title="var">f</span> · <span class="id" title="var">x'0</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpz</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">BinProductArrow</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A</span> <span class="id" title="var">bpz</span> (<span class="id" title="var">f</span> · <span class="id" title="var">x'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpz</span> (<span class="id" title="var">f</span> · <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">y</span> <span class="id" title="var">z</span>) (<span class="id" title="var">f</span> · <span class="id" title="var">x'0</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpz</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">ZeroArrow_comp_right</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">h</span> : <span class="id" title="var">_</span>, <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpz</span> (<span class="id" title="var">f</span> · <span class="id" title="var">x'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpz</span> <span class="id" title="var">h</span> (<span class="id" title="var">f</span> · <span class="id" title="var">x'0</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">CokernelArrow</span> (<span class="id" title="var">CokernelOfDiagonal</span> <span class="id" title="var">bpz</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (!<span class="id" title="var">e</span>)). <span class="id" title="tactic">clear</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">precompWithBinProductArrow</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">precompWithBinProductArrow</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">unfold</span> <span class="id" title="var">to_premor</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_zero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x'</span> <span class="id" title="var">x'0</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">to_postmor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_op</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_minus_op</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">x'</span>, <span class="id" title="var">x'0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">bpz</span> := <span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">z</span> <span class="id" title="var">z</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e</span> : <span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">bpz</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">x</span> <span class="id" title="var">z</span>) (<span class="id" title="var">x'0</span> · <span class="id" title="var">f</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProductArrow</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">y</span> <span class="id" title="var">y</span>) (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">x'0</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">Abelian_mor_from_to_BinProd</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">BinProductArrowsEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_from_to_BinProd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr1Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ZeroArrow_comp_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_from_to_BinProd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductPr2Commutes</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">Abelian_mor_from_to_BinProd</span>. <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">Abelian_op_eq</span> <span class="id" title="var">f</span>). <span class="id" title="var">cbn</span> <span class="id" title="keyword">zeta</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">bpz</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">postcompWithBinProductArrow</span> <span class="id" title="var">A</span> <span class="id" title="var">_</span> (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span> <span class="id" title="var">y</span> <span class="id" title="var">y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">BinProductOfArrows</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">unfold</span> <span class="id" title="var">to_postmor</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">AbelianPreCat_homset_zero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrow_comp_left</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We prove that Abelian_precategories are PreAddtitive. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AbelianToPreAdditive</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreAdditive</span> := <span class="id" title="var">mk_PreAdditive</span> <span class="id" title="var">AbelianTocategoryWithAbgrops</span> <span class="id" title="var">AbelianToisPreAdditive</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Finally, we show that Abelian_precategories are CategoryWithAdditiveStructure. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AbelianToAdditive</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_Additive</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">AbelianToPreAdditive</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">mk_AdditiveStructure</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">BinDirectSums_from_BinProducts</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">AbelianToPreAdditive</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_BinProducts</span> <span class="id" title="var">A</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">abelian_is_additive</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

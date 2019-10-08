@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.categories.modules</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Authors:
+<ul class="doclist">
+<li> Anthony Bordg, March-April 2017
+
+</li>
+<li> Langston Barrett (@siddharthist), November-December 2017 
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.RigsAndRings</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Modules</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Modules.Examples</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.zero</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1413"></a><h1 class="section">Contents:</h1>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> The category of (left) R-modules (<span class="inlinecode"><span class="id" title="var">mod_category</span></span>)
+
+</li>
+<li> Mod is a univalent category (<span class="inlinecode"><span class="id" title="var">is_univalent_mod</span></span>)
+
+</li>
+<li> Abelian structure
+<ul class="doclist">
+<li> Zero object and zero arrow
+
+</li>
+<li> Preadditive structure
+
+</li>
+<li> Additive structure
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Mod</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">R</span> : <span class="id" title="tactic">ring</span>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1414"></a><h1 class="section">The category of (left) R-modules (<span class="inlinecode"><span class="id" title="var">mod_category</span></span>)</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mod_precategory_ob_mor</span> : <span class="id" title="var">precategory_ob_mor</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">precategory_ob_mor_pair</span> (<span class="id" title="var">module</span> <span class="id" title="var">R</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>, <span class="id" title="var">modulefun</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mod_precategory_data</span> : <span class="id" title="var">precategory_data</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">precategory_data_pair</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mod_precategory_ob_mor</span> (<span class="id" title="var">λ</span> (<span class="id" title="var">M</span> : <span class="id" title="var">module</span> <span class="id" title="var">R</span>), (<span class="id" title="var">idfun</span> <span class="id" title="var">M</span>,, <span class="id" title="var">id_modulefun</span> <span class="id" title="var">M</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> <span class="id" title="var">P</span> =&gt; @<span class="id" title="var">modulefun_comp</span> <span class="id" title="var">R</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> <span class="id" title="var">P</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_precategory_mod_precategory_data</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_precategory</span> (<span class="id" title="var">mod_precategory_data</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_precategory_one_assoc_to_two</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">funcomp_assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mod_precategory</span> : <span class="id" title="var">precategory</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">mk_precategory</span> (<span class="id" title="var">mod_precategory_data</span>) (<span class="id" title="var">is_precategory_mod_precategory_data</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">has_homsets_mod</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">mod_precategory</span> := <span class="id" title="var">isasetmodulefun</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mod_category</span> : <span class="id" title="var">category</span> := <span class="id" title="var">category_pair</span> <span class="id" title="var">mod_precategory</span> <span class="id" title="var">has_homsets_mod</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mor_to_modulefun</span> {<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">ob</span> <span class="id" title="var">mod_category</span>} : <span class="id" title="var">mod_category</span>⟦<span class="id" title="var">M</span>, <span class="id" title="var">N</span>⟧ -&gt; <span class="id" title="var">modulefun</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> := <span class="id" title="var">idfun</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Mod is a univalent category (<span class="inlinecode"><span class="id" title="var">Mod_is_univalent</span></span>) 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">modules_univalence_weq</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">mod_precategory</span>) : (<span class="id" title="var">M</span> ╝ <span class="id" title="var">N</span>) ≃ (<span class="id" title="var">moduleiso'</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqbandf</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">abgr_univalence</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">invweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">M</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">N</span>. <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqimplimpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths2_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths2_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">i</span> <span class="id" title="var">r</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismonoidfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisrigfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">i</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">idmonoidiso</span>. <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropislinear</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetrigfun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">modules_univalence_map</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">mod_precategory</span>) : (<span class="id" title="var">M</span> = <span class="id" title="var">N</span>) -&gt; (<span class="id" title="var">moduleiso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">idmoduleiso</span> <span class="id" title="var">M</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">modules_univalence_map_isweq</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">mod_precategory</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">modules_univalence_map</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweqhomot</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">total2_paths_equiv</span> <span class="id" title="var">_</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>) (<span class="id" title="var">modules_univalence_weq</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>)) (<span class="id" title="var">moduleiso'_to_moduleweq_iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>)).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">weqcomp_to_funcomp_app</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">weqproperty</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">modules_univalence</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">mod_precategory</span>) : (<span class="id" title="var">M</span> = <span class="id" title="var">N</span>) ≃ (<span class="id" title="var">moduleiso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">modules_univalence_map</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">modules_univalence_map_isweq</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Equivalence between isomorphisms and moduleiso in Mod R 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">moduleisweq_iso</span> {<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">ob</span> <span class="id" title="var">mod_precategory</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isweq</span> (<span class="id" title="var">pr1modulefun</span> (<span class="id" title="var">morphism_from_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">isweq_iso</span> (<span class="id" title="var">pr1modulefun</span> (<span class="id" title="var">morphism_from_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>))).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1modulefun</span> (<span class="id" title="var">inv_from_iso</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">set</span> (<span class="id" title="var">T</span>:= <span class="id" title="var">iso_inv_after_iso</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeInjectivity</span> <span class="id" title="tactic">in</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">T</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">set</span> (<span class="id" title="var">T</span>:= <span class="id" title="var">iso_after_iso_inv</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeInjectivity</span> <span class="id" title="tactic">in</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">T</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iso_moduleiso</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">ob</span> <span class="id" title="var">mod_precategory</span>) : <span class="id" title="var">iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> -&gt; <span class="id" title="var">moduleiso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_moduleiso</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">weqpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1modulefun</span> (<span class="id" title="var">morphism_from_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">moduleisweq_iso</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">modulefun_ismodulefun</span> (<span class="id" title="var">morphism_from_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">moduleiso_is_iso</span> {<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">ob</span> <span class="id" title="var">mod_precategory</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">moduleiso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>) :<br/>
+&nbsp;&nbsp;@<span class="id" title="var">is_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> (<span class="id" title="var">moduleiso_to_modulefun</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is_iso_qinv</span> (<span class="id" title="var">C</span>:= <span class="id" title="var">mod_precategory</span>) <span class="id" title="var">_</span> (<span class="id" title="var">modulefunpair</span> (<span class="id" title="var">invmoduleiso</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr2</span> (<span class="id" title="var">invmoduleiso</span> <span class="id" title="var">f</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>, <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homotinvweqweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>. <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homotweqinvweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">moduleiso_iso</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">ob</span> <span class="id" title="var">mod_precategory</span>) : <span class="id" title="var">moduleiso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span> -&gt; <span class="id" title="var">iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isopair</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">moduleiso_to_modulefun</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">moduleiso_is_iso</span> <span class="id" title="var">f</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">moduleiso_isweq_iso</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">ob</span> <span class="id" title="var">mod_precategory</span>) : <span class="id" title="var">isweq</span> (@<span class="id" title="var">moduleiso_iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> (<span class="id" title="var">iso_moduleiso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>)).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismodulefun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">unfold</span> <span class="id" title="var">moduleiso_iso</span>, <span class="id" title="var">iso_moduleiso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">iso_moduleiso</span>, <span class="id" title="var">moduleiso_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_iso</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">moduleiso_weq_iso</span> (<span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">mod_precategory</span>) : (<span class="id" title="var">moduleiso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>) ≃ (<span class="id" title="var">iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">weqpair</span> (<span class="id" title="var">moduleiso_iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>) (<span class="id" title="var">moduleiso_isweq_iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mod_precategory_idtoisweq_iso</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">M</span> <span class="id" title="var">N</span> : <span class="id" title="var">mod_precategory</span>, <span class="id" title="var">isweq</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">p</span> : <span class="id" title="var">M</span> = <span class="id" title="var">N</span> =&gt; <span class="id" title="var">idtoiso</span> <span class="id" title="var">p</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">isweqhomot</span> (<span class="id" title="var">weqcomp</span> (<span class="id" title="var">modules_univalence</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>) (<span class="id" title="var">moduleiso_weq_iso</span> <span class="id" title="var">M</span> <span class="id" title="var">N</span>)) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">weqcomp_to_funcomp_app</span>). <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_is_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">weqproperty</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_univalent_mod</span> : <span class="id" title="var">is_univalent</span> <span class="id" title="var">mod_precategory</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">mk_is_univalent</span> <span class="id" title="var">mod_precategory_idtoisweq_iso</span> <span class="id" title="var">has_homsets_mod</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">univalent_category_mod_precategory</span> : <span class="id" title="var">univalent_category</span> := <span class="id" title="var">mk_category</span> <span class="id" title="var">mod_precategory</span> <span class="id" title="var">is_univalent_mod</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1415"></a><h1 class="section">Abelian structure</h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab1416"></a><h2 class="section">Zero object and zero arrow</h2>
+
+<ul class="doclist">
+<li> The zero object (0) is the zero abelian group, considered as a module.
+
+</li>
+<li> The type (hSet) Hom(0, M) is contractible, the center is the zero map.
+
+</li>
+<li> The type (hSet) Hom(M, 0) is contractible, the center is the zero map.
+ 
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+<a name="lab1417"></a><h2 class="section">Zero in abelian category</h2>
+
+<div class="paragraph"> </div>
+
+ The set of maps 0 -&gt; M is contractible, it only contains the zero morphism. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscontrfromzero_module</span> (<span class="id" title="var">M</span> : <span class="id" title="var">mod_category</span>) : <span class="id" title="var">iscontr</span> (<span class="id" title="var">mod_category</span>⟦<span class="id" title="var">zero_module</span> <span class="id" title="var">R</span>, <span class="id" title="var">M</span>⟧).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">unelmodulefun</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>,, <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">modulefun_paths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">unelmodulefun</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (!<span class="id" title="var">maponpaths</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">z</span> =&gt; (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) <span class="id" title="var">z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">isProofIrrelevantUnit</span> (@<span class="id" title="var">unel</span> (<span class="id" title="var">zero_module</span> <span class="id" title="var">R</span>)) <span class="id" title="var">_</span> ) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">monoidfununel</span> (<span class="id" title="var">modulefun_to_monoidfun</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The set of maps M -&gt; 0 is contractible, it only contains the zero morphism. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">iscontrtozero_module</span> (<span class="id" title="var">M</span> : <span class="id" title="var">mod_category</span>) : <span class="id" title="var">iscontr</span> (<span class="id" title="var">mod_category</span>⟦<span class="id" title="var">M</span>, <span class="id" title="var">zero_module</span> <span class="id" title="var">R</span>⟧).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">unelmodulefun</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>,, <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">modulefun_paths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> =&gt; <span class="id" title="var">isProofIrrelevantUnit</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isZero_zero_module</span> : <span class="id" title="var">isZero</span> <span class="id" title="var">mod_category</span> (<span class="id" title="var">zero_module</span> <span class="id" title="var">R</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (@<span class="id" title="var">mk_isZero</span> <span class="id" title="var">mod_category</span> (<span class="id" title="var">zero_module</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iscontrfromzero_module</span> <span class="id" title="var">iscontrtozero_module</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mod_category_Zero</span> : <span class="id" title="var">Zero</span> <span class="id" title="var">mod_category</span> :=<br/>
+&nbsp;&nbsp;@<span class="id" title="var">mk_Zero</span> <span class="id" title="var">mod_category</span> (<span class="id" title="var">zero_module</span> <span class="id" title="var">_</span>) <span class="id" title="var">isZero_zero_module</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1418"></a><h2 class="section">Preadditive structure</h2>
+
+<div class="paragraph"> </div>
+
+<a name="lab1419"></a><h2 class="section">Additive structure</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Mod</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

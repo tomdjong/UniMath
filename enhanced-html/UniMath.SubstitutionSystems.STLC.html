@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.SubstitutionSystems.STLC</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+Syntax of the simply typed lambda calculus as a multisorted signature.
+
+<div class="paragraph"> </div>
+
+Written by: Anders Mörtberg, 2017
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Combinatorics.Lists</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Colimits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Slice</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Chains.Chains</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Chains.OmegaCocontFunctors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.initial</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.products</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.coproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.terminal</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorAlgebras</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.exponentials</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monads.Monads</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.slicecat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.Signatures</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.SumOfSignatures</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.BinProductOfSignatures</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.SubstitutionSystems</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.LiftingInitial_alt</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.MonadsFromSubstitutionSystems</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.Notation</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">subsys</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.SignatureExamples</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.BindingSigToMonad</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.MonadsMultiSorted</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.MultiSorted</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2043"></a><h1 class="section">The simply typed lambda calculus from a multisorted binding signature</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Lam</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> (<span class="id" title="var">sort</span> : <span class="id" title="var">hSet</span>) (<span class="id" title="var">arr</span> : <span class="id" title="var">sort</span> → <span class="id" title="var">sort</span> → <span class="id" title="var">sort</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A lot of notations, upstream? 
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Infix</span> "::" := (@<span class="id" title="var">cons</span> <span class="id" title="var">_</span>).<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "[]" := (@<span class="id" title="var">nil</span> <span class="id" title="var">_</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">format</span> "[]").<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C / X" := (<span class="id" title="var">slice_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">X</span> (<span class="id" title="var">homset_property</span> <span class="id" title="var">C</span>)).<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "a + b" := (<span class="id" title="var">setcoprod</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>) : <span class="id" title="tactic">set</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">SET_over_sort</span> : <span class="id" title="var">category</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">SET</span> / <span class="id" title="var">sort</span>).<br/>
+<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_slice_precat</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> (<span class="id" title="var">SET</span> / <span class="id" title="var">sort</span>) := <span class="id" title="var">homset_property</span> <span class="id" title="var">SET_over_sort</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">SET_over_sort2</span> := [<span class="id" title="var">SET</span>/<span class="id" title="var">sort</span>,<span class="id" title="var">SET_over_sort</span>].<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">hs2</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">SET_over_sort2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_category_has_homsets</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">BinProducts_SET_over_sort2</span> : <span class="id" title="var">BinProducts</span> <span class="id" title="var">SET_over_sort2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProducts_functor_precat</span>, <span class="id" title="var">BinProducts_slice_precat</span>, <span class="id" title="var">PullbacksHSET</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">Coproducts_SET_over_sort2</span> : <span class="id" title="var">Coproducts</span> ((<span class="id" title="var">sort</span> × <span class="id" title="var">sort</span>) + (<span class="id" title="var">sort</span> × <span class="id" title="var">sort</span>))%<span class="id" title="tactic">set</span> <span class="id" title="var">SET_over_sort2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">Coproducts_functor_precat</span>, <span class="id" title="var">Coproducts_slice_precat</span>, <span class="id" title="var">CoproductsHSET</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The signature of the simply typed lambda calculus 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">STLC_Sig</span> : <span class="id" title="var">MultiSortedSig</span> <span class="id" title="var">sort</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">mkMultiSortedSig</span>.<br/>
+- <span class="id" title="tactic">apply</span> ((<span class="id" title="var">sort</span> × <span class="id" title="var">sort</span>) + (<span class="id" title="var">sort</span> × <span class="id" title="var">sort</span>))%<span class="id" title="tactic">set</span>. - <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">induction</span> <span class="id" title="var">H</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">st</span>|<span class="id" title="var">st</span>]; <span class="id" title="tactic">induction</span> <span class="id" title="var">st</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">s</span> <span class="id" title="var">t</span>].<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> ((([],,<span class="id" title="var">arr</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>) :: ([],,<span class="id" title="var">s</span>) :: <span class="id" title="var">nil</span>),,<span class="id" title="var">t</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (((<span class="id" title="var">cons</span> <span class="id" title="var">s</span> [],,<span class="id" title="var">t</span>) :: []),,<span class="id" title="var">arr</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The signature with strength for the simply typed lambda calculus 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">STLC_Signature</span> : <span class="id" title="var">Signature</span> (<span class="id" title="var">SET</span> / <span class="id" title="var">sort</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">MultiSortedSigToSignature</span> <span class="id" title="var">sort</span> <span class="id" title="var">STLC_Sig</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">Id_H</span> := <span class="id" title="var">Id_H</span> <span class="id" title="var">_</span> <span class="id" title="var">hs</span> (<span class="id" title="var">BinCoproducts_HSET_slice</span> <span class="id" title="var">sort</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">STLC_Functor</span> : <span class="id" title="var">functor</span> <span class="id" title="var">SET_over_sort2</span> <span class="id" title="var">SET_over_sort2</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">Id_H</span> <span class="id" title="var">STLC_Signature</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">STLC_Functor_Initial</span> : <span class="id" title="var">Initial</span> (<span class="id" title="var">FunctorAlg</span> <span class="id" title="var">STLC_Functor</span> <span class="id" title="var">hs2</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">SignatureInitialAlgebraSetSort</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">is_omega_cocont_MultiSortedSigToSignature</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">slice_precat_colims_of_shape</span>, <span class="id" title="var">ColimsHSET_of_shape</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">STLC_Monad</span> : <span class="id" title="var">Monad</span> (<span class="id" title="var">SET</span> / <span class="id" title="var">sort</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">MultiSortedSigToMonad</span> <span class="id" title="var">sort</span> <span class="id" title="var">STLC_Sig</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Extract the constructors of the stlc from the initial algebra 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">STLC</span> : <span class="id" title="var">SET_over_sort2</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">alg_carrier</span> <span class="id" title="var">_</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">STLC_Functor_Initial</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">STLC_mor</span> : <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">STLC_Functor</span> <span class="id" title="var">STLC</span>,<span class="id" title="var">STLC</span>⟧ :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">alg_map</span> <span class="id" title="var">_</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">STLC_Functor_Initial</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">STLC_alg</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">STLC_Functor</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">InitialObject</span> <span class="id" title="var">STLC_Functor_Initial</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">BP</span> : <span class="id" title="var">BinProducts</span> [<span class="id" title="var">SET_over_sort</span>,<span class="id" title="var">SET</span>].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProducts_functor_precat</span>, <span class="id" title="var">BinProductsHSET</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "'1'" := (<span class="id" title="var">functor_identity</span> <span class="id" title="var">SET_over_sort</span>).<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "x ⊗ y" := (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">BP</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The variables 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">var_map</span> : <span class="id" title="var">SET_over_sort2</span>⟦1,<span class="id" title="var">STLC</span>⟧ :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproducts_functor_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) · <span class="id" title="var">STLC_mor</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The source of the application constructor 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">app_source</span> (<span class="id" title="var">s</span> <span class="id" title="var">t</span> : <span class="id" title="var">sort</span>) (<span class="id" title="var">X</span> : <span class="id" title="var">SET_over_sort2</span>) : <span class="id" title="var">SET_over_sort2</span> :=<br/>
+&nbsp;&nbsp;((<span class="id" title="var">X</span> ∙ <span class="id" title="var">proj_functor</span> <span class="id" title="var">sort</span> (<span class="id" title="var">arr</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>)) ⊗ (<span class="id" title="var">X</span> ∙ <span class="id" title="var">proj_functor</span> <span class="id" title="var">sort</span> <span class="id" title="var">s</span>)) ∙ <span class="id" title="var">hat_functor</span> <span class="id" title="var">sort</span> <span class="id" title="var">t</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The application constructor 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">app_map</span> (<span class="id" title="var">s</span> <span class="id" title="var">t</span> : <span class="id" title="var">sort</span>) : <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">app_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">STLC</span>,<span class="id" title="var">STLC</span>⟧ :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">CoproductIn</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Coproducts_functor_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) (<span class="id" title="var">ii1</span> (<span class="id" title="var">s</span>,, <span class="id" title="var">t</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproducts_functor_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">STLC_mor</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The source of the lambda constructor 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lam_source</span> (<span class="id" title="var">s</span> <span class="id" title="var">t</span> : <span class="id" title="var">sort</span>) (<span class="id" title="var">X</span> : <span class="id" title="var">SET_over_sort2</span>) : <span class="id" title="var">SET_over_sort2</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">sorted_option_functor</span> <span class="id" title="var">sort</span> <span class="id" title="var">s</span> ∙ <span class="id" title="var">X</span> ∙ <span class="id" title="var">proj_functor</span> <span class="id" title="var">sort</span> <span class="id" title="var">t</span>) ∙ <span class="id" title="var">hat_functor</span> <span class="id" title="var">sort</span> (<span class="id" title="var">arr</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lam_map</span> (<span class="id" title="var">s</span> <span class="id" title="var">t</span> : <span class="id" title="var">sort</span>) : <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">lam_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">STLC</span>,<span class="id" title="var">STLC</span>⟧ :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">CoproductIn</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">Coproducts_functor_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) (<span class="id" title="var">ii2</span> (<span class="id" title="var">s</span>,,<span class="id" title="var">t</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproducts_functor_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">STLC_mor</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_STLC_Algebra</span> <span class="id" title="var">X</span> (<span class="id" title="var">fvar</span> : <span class="id" title="var">SET_over_sort2</span>⟦1,<span class="id" title="var">X</span>⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">fapp</span> : ∏ <span class="id" title="var">s</span> <span class="id" title="var">t</span>, <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">app_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">X</span>,<span class="id" title="var">X</span>⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">flam</span> : ∏ <span class="id" title="var">s</span> <span class="id" title="var">t</span>, <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">lam_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">X</span>,<span class="id" title="var">X</span>⟧) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">algebra_ob</span> <span class="id" title="var">STLC_Functor</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">X</span>).<br/>
+<span class="id" title="var">use</span> (<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">fvar</span>).<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">CoproductArrow</span>.<br/>
+<span class="id" title="tactic">intro</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">induction</span> <span class="id" title="var">b</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">st</span>|<span class="id" title="var">st</span>]; <span class="id" title="tactic">induction</span> <span class="id" title="var">st</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">s</span> <span class="id" title="var">t</span>].<br/>
+- <span class="id" title="tactic">apply</span> (<span class="id" title="var">fapp</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>).<br/>
+- <span class="id" title="tactic">apply</span> (<span class="id" title="var">flam</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The recursor for the stlc 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">foldr_map</span> <span class="id" title="var">X</span> (<span class="id" title="var">fvar</span> : <span class="id" title="var">SET_over_sort2</span>⟦1,<span class="id" title="var">X</span>⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">fapp</span> : ∏ <span class="id" title="var">s</span> <span class="id" title="var">t</span>, <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">app_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">X</span>,<span class="id" title="var">X</span>⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">flam</span> : ∏ <span class="id" title="var">s</span> <span class="id" title="var">t</span>, <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">lam_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">X</span>,<span class="id" title="var">X</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">algebra_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">STLC_alg</span> (<span class="id" title="var">mk_STLC_Algebra</span> <span class="id" title="var">X</span> <span class="id" title="var">fvar</span> <span class="id" title="var">fapp</span> <span class="id" title="var">flam</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">apply</span> (<span class="id" title="var">InitialArrow</span> <span class="id" title="var">STLC_Functor_Initial</span> (<span class="id" title="var">mk_STLC_Algebra</span> <span class="id" title="var">X</span> <span class="id" title="var">fvar</span> <span class="id" title="var">fapp</span> <span class="id" title="var">flam</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The equation for variables 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">foldr_var</span> <span class="id" title="var">X</span> (<span class="id" title="var">fvar</span> : <span class="id" title="var">SET_over_sort2</span>⟦1,<span class="id" title="var">X</span>⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">fapp</span> : ∏ <span class="id" title="var">s</span> <span class="id" title="var">t</span>, <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">app_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">X</span>,<span class="id" title="var">X</span>⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">flam</span> : ∏ <span class="id" title="var">s</span> <span class="id" title="var">t</span>, <span class="id" title="var">SET_over_sort2</span>⟦<span class="id" title="var">lam_source</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">X</span>,<span class="id" title="var">X</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">var_map</span> · <span class="id" title="var">foldr_map</span> <span class="id" title="var">X</span> <span class="id" title="var">fvar</span> <span class="id" title="var">fapp</span> <span class="id" title="var">flam</span> = <span class="id" title="var">fvar</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">assert</span> (<span class="id" title="var">F</span> := <span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproducts_functor_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) · <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">algebra_mor_commutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">foldr_map</span> <span class="id" title="var">X</span> <span class="id" title="var">fvar</span> <span class="id" title="var">fapp</span> <span class="id" title="var">flam</span>))).<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span> <span class="id" title="tactic">in</span> <span class="id" title="var">F</span>.<br/>
+<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">F</span>|].<br/>
+<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">eapply</span> <span class="id" title="var">cancel_postcomposition</span>, <span class="id" title="var">BinCoproductOfArrowsIn1</span>|].<br/>
+<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">eapply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">BinCoproductIn1Commutes</span>|].<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Lam</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

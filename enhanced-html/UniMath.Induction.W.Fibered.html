@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Induction.W.Fibered</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab2242"></a><h2 class="section">Fibered algebras</h2>
+
+
+<div class="paragraph"> </div>
+
+  Described in "Homotopy-initial algebras in type theory" by Steve Awodey,
+  Nicola Gambino, Kristina Sojakova (arXiv:1504.05531v1).
+
+<div class="paragraph"> </div>
+
+  Ideas and proofs adapted from original code at
+  https://github.com/kristinas/hinitiality by Langston Barrett (@siddharthist).
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartA</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.UnivalenceAxiom</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorAlgebras</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Induction.PolynomialFunctors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Induction.W.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Fibered</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">A</span> : <span class="id" title="var">UU</span>} {<span class="id" title="var">B</span> : <span class="id" title="var">A</span> -&gt; <span class="id" title="var">UU</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "X ⇒ Y" := (<span class="id" title="var">algebra_mor</span> (<span class="id" title="var">polynomial_functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">X</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> <span class="id" title="var">F</span> := (<span class="id" title="var">polynomial_functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A fibered P-algebra.
+
+<div class="paragraph"> </div>
+
+      (Definition 4.5 in Awodey, Gambino, and Sojakova)
+  
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fibered_alg</span> (<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∑ (<span class="id" title="var">E</span> : (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">_</span> <span class="id" title="var">X</span>) -&gt; <span class="id" title="var">UU</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> : <span class="id" title="var">F</span> (<span class="id" title="var">alg_carrier</span> <span class="id" title="var">_</span> <span class="id" title="var">X</span>)), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">b</span> : <span class="id" title="var">B</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>)), <span class="id" title="var">E</span> ((<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) <span class="id" title="var">b</span>)) -&gt; <span class="id" title="var">E</span> ((<span class="id" title="var">pr2</span> <span class="id" title="var">X</span>) <span class="id" title="var">x</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Any P-algebra can be made into a fibered P-algebra. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">alg2fibered_alg</span> {<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span> -&gt; <span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Alg</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <span class="id" title="var">pr1</span> <span class="id" title="var">Alg</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">g</span> =&gt; (<span class="id" title="var">pr2</span> <span class="id" title="var">Alg</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>,, <span class="id" title="var">g</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Any fibered P-algebra can be made into a 'total' P-algebra. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fibered_alg2alg</span> {<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span> -&gt; <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">E</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supx</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supe</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">E</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> (∑ <span class="id" title="var">x</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">X</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">E</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">z</span>; <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">z</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">polynomial_functor_obj</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">z'</span> := ((<span class="id" title="var">pr1</span> <span class="id" title="var">z</span>),, <span class="id" title="var">pr1</span> ∘ (<span class="id" title="var">pr2</span> <span class="id" title="var">z</span>)) : (∑ <span class="id" title="var">a</span> : <span class="id" title="var">A</span>, <span class="id" title="var">B</span> <span class="id" title="var">a</span> → <span class="id" title="var">pr1</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">supx</span> <span class="id" title="var">z'</span>,, <span class="id" title="var">supe</span> <span class="id" title="var">z'</span> (<span class="id" title="var">λ</span> <span class="id" title="var">b</span>, (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">z</span> <span class="id" title="var">b</span>)))).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+A P-algebra section.
+
+<div class="paragraph"> </div>
+
+      (Definition 4.6 in Awodey, Gambino, and Sojakova)
+    
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">algebra_section</span> {<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>} : ∏ (<span class="id" title="var">Y</span> : <span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span>), <span class="id" title="var">UU</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">E</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supx</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supe</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">E</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> ((∑ (<span class="id" title="var">f</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">x</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">X</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">E</span> <span class="id" title="var">x</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> <span class="id" title="var">a</span>, <span class="id" title="var">f</span> (<span class="id" title="var">supx</span> <span class="id" title="var">a</span>) = <span class="id" title="var">supe</span> <span class="id" title="var">a</span> (<span class="id" title="var">f</span> ∘ (<span class="id" title="var">pr2</span> <span class="id" title="var">a</span>)))).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+A P-algebra section homotopy.
+
+<div class="paragraph"> </div>
+
+      (Definition 4.7 in Awodey, Gambino, and Sojakova)
+  
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">algebra_sec_homot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> {<span class="id" title="var">Y</span> : <span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span>} (<span class="id" title="var">i</span> <span class="id" title="var">j</span> : <span class="id" title="var">algebra_section</span> <span class="id" title="var">Y</span>), <span class="id" title="var">UU</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">E</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supx</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supe</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">E</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (∑ (<span class="id" title="var">n</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">f</span> ~ <span class="id" title="var">pr1</span> <span class="id" title="var">g</span>), ∏ <span class="id" title="var">x</span>, <span class="id" title="var">pr2</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span> @ <span class="id" title="var">maponpaths</span> (<span class="id" title="var">supe</span> <span class="id" title="var">x</span>) <span class="id" title="var">_</span> = <span class="id" title="var">n</span> (<span class="id" title="var">supx</span> <span class="id" title="var">x</span>) @ <span class="id" title="var">pr2</span> <span class="id" title="var">g</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">funextsec</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (@<span class="id" title="var">funhomotsec</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">g</span>) <span class="id" title="var">n</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">algebra_mor_to_algsec</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">X</span> ⇒ <span class="id" title="var">Y</span>) : @<span class="id" title="var">algebra_section</span> <span class="id" title="var">X</span> (<span class="id" title="var">alg2fibered_alg</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">algebra_section</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>,, <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">eqtohomot</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+A P-algebra homotopy.
+
+<div class="paragraph"> </div>
+
+      (Definition 4.7 in Awodey, Gambino, and Sojakova)
+   
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">algebra_mor_homot</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>} (<span class="id" title="var">i</span> <span class="id" title="var">j</span> : <span class="id" title="var">X</span> ⇒ <span class="id" title="var">Y</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">algebra_sec_homot</span> (<span class="id" title="var">algebra_mor_to_algsec</span> <span class="id" title="var">i</span>) (<span class="id" title="var">algebra_mor_to_algsec</span> <span class="id" title="var">j</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+TODO: this should live somewhere else 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">funextsec_toforallpaths</span> : ∏ (<span class="id" title="var">T</span> : <span class="id" title="var">UU</span>) (<span class="id" title="var">P</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">UU</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : ∏ <span class="id" title="var">t</span> : <span class="id" title="var">T</span>, <span class="id" title="var">P</span> <span class="id" title="var">t</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">h</span> : <span class="id" title="var">f</span> = <span class="id" title="var">g</span>), <span class="id" title="var">funextsec</span> <span class="id" title="var">_</span>  <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span>) = <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ? ? ? ? <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (!<span class="id" title="var">homotinvweqweq0</span> (<span class="id" title="var">weqtoforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">h</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The identity homotopy on a P-algebra section. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">algebra_sec_homot_id</span> {<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f</span> : <span class="id" title="var">algebra_section</span> <span class="id" title="var">Y</span>} : <span class="id" title="var">algebra_sec_homot</span> <span class="id" title="var">f</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supx</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">supy</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">Y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">transitivity</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">f</span> <span class="id" title="var">x</span> @ <span class="id" title="var">maponpaths</span> (<span class="id" title="var">supy</span> <span class="id" title="var">x</span>) (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">do</span> 2 (<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funhomotsec</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : (<span class="id" title="var">λ</span> <span class="id" title="var">x0</span> : <span class="id" title="var">B</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>), <span class="id" title="var">idpath</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span> <span class="id" title="var">x0</span>))) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span> ∘ <span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span> ∘ <span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> ((<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec_toforallpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">cbn</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">pathscomp0rid</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The canonical function from the path space between two P-algebra sections
+      to the type of P-algebra section homotopies. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">algebra_section_path_to_homot</span> {<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">_</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">i</span> <span class="id" title="var">j</span> : <span class="id" title="var">algebra_section</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">i</span> = <span class="id" title="var">j</span>) : <span class="id" title="var">algebra_sec_homot</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">algebra_sec_homot_id</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The identity homotopy on a P-algebra morphism. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">algebra_mor_homot_id</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">i</span> : <span class="id" title="var">algebra_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>} : <span class="id" title="var">algebra_mor_homot</span> <span class="id" title="var">i</span> <span class="id" title="var">i</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= @<span class="id" title="var">algebra_sec_homot_id</span> <span class="id" title="var">_</span> (<span class="id" title="var">alg2fibered_alg</span> <span class="id" title="var">Y</span>) (<span class="id" title="var">algebra_mor_to_algsec</span> <span class="id" title="var">i</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A "(homotopy) uniqueness principle" for a P-algebra X: there exists auto
+      homotopy (and hence a path) between any two P-algebra morphisms into any
+      other P-algebra Y.
+
+<div class="paragraph"> </div>
+
+      This is a little different than in Awodey, Gambino, and Sojakova.
+      The main difference is that here we relate arbitrary two morphisms i,j
+      whereas the rules in 5.8 relate an arbitrary morphism i to the canonical
+      morphism given by the first two rules in 5.8. Our formulation has the
+      advantage that it does not require the canonical morphism to exist, i.e.,
+      the type X does not have to satisfy the recursion princple for the
+      uniqueness principle to make sense.
+
+<div class="paragraph"> </div>
+
+      (Loosely corresponds to the last two rules in Proposition 5.8
+       in Awodey, Gambino, and Sojakova)
+   
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">homotopy_uniqueness_principle</span> (<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">forall</span> (<span class="id" title="var">Y</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>) (<span class="id" title="var">i</span> <span class="id" title="var">j</span> : <span class="id" title="var">algebra_mor</span> <span class="id" title="var">F</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>), <span class="id" title="var">algebra_mor_homot</span>  <span class="id" title="var">i</span> <span class="id" title="var">j</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The "induction principle" for a P-algebra X: any fibered P-algebra Y has a
+      section.
+
+<div class="paragraph"> </div>
+
+      (Definition 5.1 in Awodey, Gambino, and Sojakova)
+   
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_preinitial_sec</span> (<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">Y</span> : <span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span>), <span class="id" title="var">algebra_section</span> <span class="id" title="var">Y</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A "fibered uniqueness principle": there exists a homotopy (and hence a
+      path) between any two P-algebra sections of any fibered algebra.
+
+<div class="paragraph"> </div>
+
+      (Loosely corresponds to the rules in Proposition 5.3 in Awodey, Gambino,
+       and Sojakova)
+   
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">fibered_uniqueness</span> (<span class="id" title="var">X</span> : <span class="id" title="var">algebra_ob</span> <span class="id" title="var">F</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">Y</span> : <span class="id" title="var">fibered_alg</span> <span class="id" title="var">X</span>) (<span class="id" title="var">i</span> <span class="id" title="var">j</span> : <span class="id" title="var">algebra_section</span> <span class="id" title="var">Y</span>), <span class="id" title="var">algebra_sec_homot</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>.<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Fibered</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

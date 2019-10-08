@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.RealNumbers.DedekindCuts</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1950"></a><h1 class="section">Usual constructive Dedekind cuts</h1>
+ Catherine LELAY. July 2017  This file formalizes the usual definitions of constructive Dedekind cuts.
+<ul class="doclist">
+<li> The two-sided definition come from the HoTT-book
+
+</li>
+<li> The one-sided definition come from Robert S Lubarsky and Michael Rathjen. On the constructive
+
+</li>
+</ul>
+Dedekind reals. Logic and Analysis.
+
+<div class="paragraph"> </div>
+
+I first prove the equivalence between these two definitions, then I prove the equivalence between
+the non-negative numbers of the one-sided definition and the set Dcuts 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.NumberSystems.RationalNumbers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.RealNumbers.Prelim</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.RealNumbers.NonnegativeRationals</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.RealNumbers.NonnegativeReals</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Unset</span> <span class="id" title="var">Kernel</span> <span class="id" title="var">Term</span> <span class="id" title="var">Sharing</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1951"></a><h2 class="section">Usual definitions</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">hq_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isTwoSided</span> (<span class="id" title="var">L</span> <span class="id" title="var">U</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;((∏ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">L</span> <span class="id" title="var">q</span> &lt;-&gt; ∃ <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">L</span> <span class="id" title="var">r</span> ∧ <span class="id" title="var">hqlth</span> <span class="id" title="var">q</span> <span class="id" title="var">r</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">U</span> <span class="id" title="var">q</span> &lt;-&gt; ∃ <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">U</span> <span class="id" title="var">r</span> ∧ <span class="id" title="var">hqlth</span> <span class="id" title="var">r</span> <span class="id" title="var">q</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× ((∃ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">L</span> <span class="id" title="var">q</span>) × (∃ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">U</span> <span class="id" title="var">q</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, ¬ (<span class="id" title="var">U</span> <span class="id" title="var">q</span> ∧ <span class="id" title="var">L</span> <span class="id" title="var">q</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">q</span> <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">hqlth</span> <span class="id" title="var">q</span> <span class="id" title="var">r</span> → <span class="id" title="var">L</span> <span class="id" title="var">q</span> ∨ <span class="id" title="var">U</span> <span class="id" title="var">r</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isOneSided</span> (<span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;((∃ <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">S</span> <span class="id" title="var">r</span>) ∧ (∃ <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, ¬ <span class="id" title="var">S</span> <span class="id" title="var">r</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">S</span> <span class="id" title="var">r</span> → ∃ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">S</span> <span class="id" title="var">q</span> ∧ <span class="id" title="var">hqlth</span> <span class="id" title="var">r</span> <span class="id" title="var">q</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">r</span> <span class="id" title="var">s</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">hqlth</span> <span class="id" title="var">r</span> <span class="id" title="var">s</span> → <span class="id" title="var">S</span> <span class="id" title="var">r</span> ∨ ¬ <span class="id" title="var">S</span> <span class="id" title="var">s</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1952"></a><h2 class="section">Equivalence between these two definitions</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isTwoSided_OneSided</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">L</span> <span class="id" title="var">U</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>), <span class="id" title="var">isTwoSided</span> <span class="id" title="var">L</span> <span class="id" title="var">U</span> → <span class="id" title="var">isOneSided</span> <span class="id" title="var">L</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">L</span> <span class="id" title="var">U</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>))).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>))) (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>))) ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Lq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">H0</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">Lq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">Lr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>)) ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">H0</span> <span class="id" title="var">r</span>) <span class="id" title="var">Lr</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">s</span> <span class="id" title="var">Hrs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>))) (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>))) ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">H1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hrs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>, <span class="id" title="var">sumofmaps</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">ii1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">Us</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ii2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Ls</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">H0</span> <span class="id" title="var">s</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Us</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Ls</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isOneSided_TwoSided</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span> → <span class="id" title="var">isTwoSided</span> <span class="id" title="var">S</span> (<span class="id" title="var">λ</span> <span class="id" title="var">s</span> : <span class="id" title="var">hq</span>, ∃ <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">hqlth</span> <span class="id" title="var">r</span> <span class="id" title="var">s</span> × ¬ <span class="id" title="var">S</span> <span class="id" title="var">r</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">S</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; <span class="id" title="tactic">split</span> ; [ | | <span class="id" title="tactic">split</span> | <span class="id" title="tactic">split</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span> ; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>, <span class="id" title="var">sumofmaps</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Sq</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">Sq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Sr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Sr</span>, (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span> ; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">s</span> := <span class="id" title="var">Prelim.hqlth_between</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">s</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">s</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">s</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">s</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">s</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">istranshqlth</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">s</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">s</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>+1).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">hqlthnsn</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hq</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">hinhuniv</span> (<span class="id" title="var">P</span> := <span class="id" title="var">hProppair</span> <span class="id" title="var">_</span> <span class="id" title="var">isapropempty</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>, <span class="id" title="var">sumofmaps</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">Sq</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">Sq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hq</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span> <span class="id" title="var">r</span> <span class="id" title="var">Hqr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">s</span> := <span class="id" title="var">Prelim.hqlth_between</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hqr</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">s</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>, <span class="id" title="var">sumofmaps</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">ii1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">Sr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ii2</span>, <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">s</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">s</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> <span class="id" title="var">Sr</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">weqTwoSidedOneSided</span> :<br/>
+&nbsp;&nbsp;(∑ <span class="id" title="var">L</span> <span class="id" title="var">U</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isTwoSided</span> <span class="id" title="var">L</span> <span class="id" title="var">U</span>) ≃ (∑ <span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">f</span> := (<span class="id" title="var">λ</span> (<span class="id" title="var">LU</span> : ∑ <span class="id" title="var">L</span> <span class="id" title="var">U</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isTwoSided</span> <span class="id" title="var">L</span> <span class="id" title="var">U</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr1</span> <span class="id" title="var">LU</span>,, <span class="id" title="var">isTwoSided_OneSided</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">LU</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">LU</span>)) (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">LU</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: (∑ <span class="id" title="var">L</span> <span class="id" title="var">U</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isTwoSided</span> <span class="id" title="var">L</span> <span class="id" title="var">U</span>) → ∑ <span class="id" title="var">S</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">g</span> := (<span class="id" title="var">λ</span> <span class="id" title="var">S</span> : (∑ <span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr1</span> <span class="id" title="var">S</span> ,, (<span class="id" title="var">λ</span> <span class="id" title="var">s</span> : <span class="id" title="var">hq</span>, ∃ <span class="id" title="var">r</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">r</span> &lt; <span class="id" title="var">s</span> × ¬ <span class="id" title="var">pr1</span> <span class="id" title="var">S</span> <span class="id" title="var">r</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,, <span class="id" title="var">isOneSided_TwoSided</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">S</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">S</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: (∑ <span class="id" title="var">S</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span>) → ∑ <span class="id" title="var">L</span> <span class="id" title="var">U</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isTwoSided</span> <span class="id" title="var">L</span> <span class="id" title="var">U</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">weq_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">LU</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">g</span> (<span class="id" title="var">f</span> <span class="id" title="var">LU</span>)),, <span class="id" title="var">pr2</span> (<span class="id" title="var">g</span> (<span class="id" title="var">f</span> <span class="id" title="var">LU</span>)) = <span class="id" title="var">pr1</span> <span class="id" title="var">LU</span>,, <span class="id" title="var">pr2</span> <span class="id" title="var">LU</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pair_path_in2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeEquality_prop</span> (<span class="id" title="var">B</span> := <span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">hProppair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+  <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">q</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropneg</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hPropUnivalence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">LU</span>)))) <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>, <span class="id" title="var">sumofmaps</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Lr</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>, (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)), <span class="id" title="var">Lr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Uq</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">Uq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">Uq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">LU</span>))) <span class="id" title="var">_</span>) <span class="id" title="var">Uq</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Lr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">LU</span>)))) (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Lr</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">S</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeEquality_prop</span> (<span class="id" title="var">B</span> := <span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">hProppair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">s</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1953"></a><h2 class="section">Equivalence of Dcuts with usual definitions</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isOneSided_Dcuts_bot</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">D</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">D</span> → <span class="id" title="var">Dcuts_def_bot</span> (<span class="id" title="var">λ</span> <span class="id" title="var">r</span>, <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">D</span> <span class="id" title="var">H</span> <span class="id" title="var">r</span> <span class="id" title="var">Dr</span> <span class="id" title="var">q</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">le_eqorltNonnegativeRationals</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hq</span>) ; <span class="id" title="tactic">clear</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Dr</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">ltNonnegativeRationals_correct</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H0</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>, <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">Dq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">Dq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>, <span class="id" title="var">Dq</span>, <span class="id" title="var">Dr</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isOneSided_Dcuts_open</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">D</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">D</span> → <span class="id" title="var">Dcuts_def_open</span> (<span class="id" title="var">λ</span> <span class="id" title="var">r</span>, <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">D</span> <span class="id" title="var">H</span> <span class="id" title="var">r</span> <span class="id" title="var">Dr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> ((<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)) (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>) <span class="id" title="var">Dr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hq</span> : 0 &lt;= <span class="id" title="var">pr1</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">istranshqleh</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthtoleh</span>, (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)). }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>,,<span class="id" title="var">Hq</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">change</span> (<span class="id" title="var">D</span> (<span class="id" title="var">NonnegativeRationals_to_Rationals</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>,,<span class="id" title="var">Hq</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">ltNonnegativeRationals_correct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span> &lt; (<span class="id" title="var">NonnegativeRationals_to_Rationals</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>,,<span class="id" title="var">Hq</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isOneSided_translation</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">D</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>) (<span class="id" title="var">c</span> : <span class="id" title="var">hq</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">isOneSided</span> <span class="id" title="var">D</span> → <span class="id" title="var">isOneSided</span> (<span class="id" title="var">λ</span> <span class="id" title="var">q</span>, <span class="id" title="var">D</span> (<span class="id" title="var">q</span> + <span class="id" title="var">c</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">D</span> <span class="id" title="var">c</span> <span class="id" title="var">Hd</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hd</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span> - <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqminus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqplusassoc</span>, <span class="id" title="var">hqlminus</span>, <span class="id" title="var">hqplusr0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hd</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span> - <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqminus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqplusassoc</span>, <span class="id" title="var">hqlminus</span>, <span class="id" title="var">hqplusr0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">D'r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hd</span>) <span class="id" title="var">_</span> <span class="id" title="var">D'r</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span> - <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">unfold</span> <span class="id" title="var">hqminus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqplusassoc</span>, <span class="id" title="var">hqlminus</span>, <span class="id" title="var">hqplusr0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthandplusrinv</span> <span class="id" title="keyword">with</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqminus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqplusassoc</span>, <span class="id" title="var">hqlminus</span>, <span class="id" title="var">hqplusr0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">s</span> <span class="id" title="var">Hrs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hd</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthandplusr</span>, <span class="id" title="var">Hrs</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isOneSided_Dcuts_corr</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">D</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">D</span> → <span class="id" title="var">Dcuts_def_corr</span> (<span class="id" title="var">λ</span> <span class="id" title="var">r</span>, <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">D</span> <span class="id" title="var">H</span> <span class="id" title="var">c</span> <span class="id" title="var">Hc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ltNonnegativeRationals_correct</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hc</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">coprodcomm</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">H0</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>, <span class="id" title="var">ii1</span>, <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">enough</span> (<span class="id" title="var">Hq</span> : ∃ <span class="id" title="var">q</span> : <span class="id" title="var">NonnegativeRationals</span>, <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>) × ¬ <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">q</span> + <span class="id" title="var">c</span>)%<span class="id" title="var">NRat</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="var">revert</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>, <span class="id" title="var">ii2</span>. }<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchhq</span> (<span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>) (<span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2%<span class="id" title="var">hq</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hc'</span> : <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2 &gt; 0).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">hqmultgth0gth0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgthandmultlinv</span> <span class="id" title="keyword">with</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hq2_gt0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqmultx0</span>, <span class="id" title="var">hqisrinvmultinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hq1_gt0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>, <span class="id" title="var">hq2_gt0</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H1</span> : <span class="id" title="var">hqlth</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>) (<span class="id" title="var">nattoring</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>) * (<span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2))).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">unfold</span> <span class="id" title="var">hqlth</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgthandmultrinv</span> <span class="id" title="keyword">with</span> (/ (<span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">hqgthandmultlinv</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">Hc'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqmultx0</span>, <span class="id" title="var">hqisrinvmultinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hq1_gt0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>, <span class="id" title="var">Hc'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqmultassoc</span>, <span class="id" title="var">hqisrinvmultinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqmultr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqdiv</span> <span class="id" title="tactic">in</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>, <span class="id" title="var">Hc'</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hn</span> : ¬ <span class="id" title="var">D</span> (<span class="id" title="var">nattoring</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>) * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">hinhuniv</span> (<span class="id" title="var">P</span> := <span class="id" title="var">hneg</span> <span class="id" title="var">_</span>)), <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>, (<span class="id" title="var">pr2</span> <span class="id" title="var">r</span>), <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H2</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H2</span> : ∏ (<span class="id" title="var">m</span> : <span class="id" title="var">nat</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nattoring</span> <span class="id" title="var">m</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2 + <span class="id" title="var">pr1</span> <span class="id" title="var">c</span> = <span class="id" title="var">nattoring</span> (<span class="id" title="var">m</span> + 2) * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> 2!(@<span class="id" title="var">nattorig_natmult</span> <span class="id" title="var">hq</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">natmult_plus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqdiv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">hqmult2r</span>, <span class="id" title="var">hqmultassoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqislinvmultinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">hqmultr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgth_hqneq</span>, <span class="id" title="var">hq2_gt0</span>. }<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>) <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span> -<span class="id" title="var">H</span> <span class="id" title="var">H0</span> <span class="id" title="var">Hc</span> <span class="id" title="var">Hc'</span> <span class="id" title="var">H2</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hm</span> : <span class="id" title="var">D</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">O</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqmult0x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>, <span class="id" title="var">Hn</span>, <span class="id" title="var">Hm</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">natplusl0</span> <span class="id" title="var">n</span>), <span class="id" title="var">plus_n_Sm</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">Hm</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">m</span> := <span class="id" title="var">O</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">D</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">m</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2)<br/>
+&nbsp;&nbsp;→ ¬ <span class="id" title="var">D</span> (<span class="id" title="var">nattoring</span> (<span class="id" title="var">m</span> + <span class="id" title="var">S</span> <span class="id" title="var">n</span>) * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;→ ∃ <span class="id" title="var">q</span> : <span class="id" title="var">NonnegativeRationals</span>, <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>) × ¬ <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">q</span> + <span class="id" title="var">c</span>)%<span class="id" title="var">NRat</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> <span class="id" title="var">m</span> ; <span class="id" title="tactic">clear</span> <span class="id" title="var">m</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">D</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">n</span> <span class="id" title="var">IHn</span>] ; <span class="id" title="tactic">intros</span> <span class="id" title="var">D</span> <span class="id" title="var">H</span> <span class="id" title="var">m</span> <span class="id" title="var">Hm</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">m</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">hq0lehandmult</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">clear</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">m</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">isreflhqleh</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorigS</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hq0lehandplus</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">exact</span> <span class="id" title="var">hq1ge0</span> | <span class="id" title="tactic">exact</span> <span class="id" title="var">IHm</span> ]]<br/>
+              | <span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthtoleh</span>, <span class="id" title="var">Hc'</span> ]).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (¬ <span class="id" title="var">D</span> ((<span class="id" title="var">nattoring</span> <span class="id" title="var">m</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2) + (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hinhuniv'</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) (<span class="id" title="var">nattoring</span> (<span class="id" title="var">m</span> + 1) * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2) (<span class="id" title="var">nattoring</span> <span class="id" title="var">m</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2 + <span class="id" title="var">pr1</span> <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H1</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">H1</span>, <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthandmultr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hc'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">plus_n_Sm</span> <span class="id" title="var">m</span> 1%<span class="id" title="var">nat</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorigS</span>, <span class="id" title="var">hqpluscomm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthnsn</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">refine</span> (<span class="id" title="var">hinhuniv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>) (<span class="id" title="var">nattoring</span> (<span class="id" title="var">m</span> + 1) * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2) (<span class="id" title="var">nattoring</span> (<span class="id" title="var">m</span> + 2) * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">Hm'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">IHn</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">m</span> + 1)%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> <span class="id" title="var">Hm'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">rewrite</span> <span class="id" title="var">natplusassoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">m</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">hq0lehandmult</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">clear</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">m</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">isreflhqleh</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorigS</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hq0lehandplus</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">exact</span> <span class="id" title="var">hq1ge0</span> | <span class="id" title="tactic">exact</span> <span class="id" title="var">IHm</span> ]]<br/>
+                | <span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthtoleh</span>, <span class="id" title="var">Hc'</span> ]).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (¬ <span class="id" title="var">D</span> ((<span class="id" title="var">nattoring</span> <span class="id" title="var">m</span> * <span class="id" title="var">hqdiv</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>) 2) + (<span class="id" title="var">pr1</span> <span class="id" title="var">c</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthandmultr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hc'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">plus_n_Sm</span> <span class="id" title="var">m</span> 1%<span class="id" title="var">nat</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorigS</span>, <span class="id" title="var">hqpluscomm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqlthnsn</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isDcuts_OneSided</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">D</span> : <span class="id" title="var">NonnegativeRationals</span> → <span class="id" title="var">hProp</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">Dcuts_def_bot</span> <span class="id" title="var">D</span> → <span class="id" title="var">Dcuts_def_open</span> <span class="id" title="var">D</span> → <span class="id" title="var">Dcuts_def_corr</span> <span class="id" title="var">D</span><br/>
+&nbsp;&nbsp;→ <span class="id" title="var">isOneSided</span> (<span class="id" title="var">λ</span> <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">sumofmaps</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : 0 &gt; <span class="id" title="var">q</span>, <span class="id" title="var">htrue</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">Hq</span> : 0 &lt;= <span class="id" title="var">q</span>, <span class="id" title="var">D</span> (<span class="id" title="var">q</span>,, <span class="id" title="var">Hq</span>)) (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">D</span> <span class="id" title="var">Hbot</span> <span class="id" title="var">Hopen</span> <span class="id" title="var">Hcorr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (-(1)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 (- (1))) <span class="id" title="keyword">as</span> [<span class="id" title="var">H</span> | <span class="id" title="var">H</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqlehtoneghqgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hqgthandplusrinv</span> <span class="id" title="keyword">with</span> 1.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">hqlminus</span>, <span class="id" title="var">hqplusl0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hq1_gt0</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">Hcorr</span> <span class="id" title="var">_</span> <span class="id" title="var">ispositive_oneNonnegativeRationals</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>, <span class="id" title="var">sumofmaps</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exists</span> 1.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 1) <span class="id" title="keyword">as</span> [<span class="id" title="var">H0</span> | <span class="id" title="var">H0</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqgthtoneghqleh</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hq1ge0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">assert</span> (<span class="id" title="var">H1</span> : 1%<span class="id" title="var">NRat</span> = (1 ,, <span class="id" title="var">H0</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality_prop</span> ; <span class="id" title="tactic">reflexivity</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rename</span> <span class="id" title="var">H</span> <span class="id" title="var">into</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>) + 1).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>) + 1)) <span class="id" title="keyword">as</span> [<span class="id" title="var">H0</span> | <span class="id" title="var">H0</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqgthtoneghqleh</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hq0lehandplus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">hq1ge0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">assert</span> (<span class="id" title="var">Hq1</span> : (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span> + 1)%<span class="id" title="var">NRat</span> = (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>) + 1 ,, <span class="id" title="var">H0</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality_prop</span> ; <span class="id" title="tactic">reflexivity</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)) ; <span class="id" title="tactic">intro</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hq1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">Dr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">r</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hr</span> | <span class="id" title="var">Hr</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">set</span> (<span class="id" title="var">q</span> := <span class="id" title="var">hqlth_between</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hr</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>)) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq</span> | <span class="id" title="var">Hq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqlehtoneghqgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqlth</span> <span class="id" title="tactic">in</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">generalize</span> (<span class="id" title="var">Hopen</span> <span class="id" title="var">_</span> <span class="id" title="var">Dr</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>))) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq</span> | <span class="id" title="var">Hq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqgthtoneghqleh</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hq1</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">q</span> = (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>) ,, <span class="id" title="var">Hq</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality_prop</span> ; <span class="id" title="tactic">reflexivity</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)) ; <span class="id" title="tactic">intro</span> <span class="id" title="var">Hq'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hq1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hq'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>)) ; <span class="id" title="tactic">intro</span> <span class="id" title="var">Hq'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ltNonnegativeRationals_correct</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hq'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq'</span>.<br/>
+&nbsp;&nbsp;-<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span> <span class="id" title="var">q</span> <span class="id" title="var">Hrq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">r</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hr</span> | <span class="id" title="var">Hr</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>, <span class="id" title="var">ii1</span>, <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq</span> | <span class="id" title="var">Hq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqlehtoneghqgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">istranshqgth</span> <span class="id" title="keyword">with</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqlth</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hrq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hrq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">Dcuts_locatedness</span> (<span class="id" title="var">D</span>,,<span class="id" title="var">Hbot</span>,,<span class="id" title="var">Hopen</span>,,<span class="id" title="var">Hcorr</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ltNonnegativeRationals_correct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hrq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">weqOneSidedDcuts</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">weq</span> (∑ <span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span> × ∏ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">q</span> &lt; 0 → <span class="id" title="var">S</span> <span class="id" title="var">q</span>) <span class="id" title="var">Dcuts</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">f</span> := (<span class="id" title="var">λ</span> (<span class="id" title="var">D</span> : ∑ <span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span> × (∏ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">q</span> &lt; 0 → <span class="id" title="var">S</span> <span class="id" title="var">q</span>)),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mk_Dcuts</span> (<span class="id" title="var">λ</span> <span class="id" title="var">r</span> : <span class="id" title="var">NonnegativeRationals</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">r</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">isOneSided_Dcuts_bot</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">D</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">D</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">isOneSided_Dcuts_open</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">D</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">D</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">isOneSided_Dcuts_corr</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">D</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">D</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: (∑ <span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span> × (∏ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">q</span> &lt; 0 → <span class="id" title="var">S</span> <span class="id" title="var">q</span>)) → <span class="id" title="var">Dcuts</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hg</span> : ∏ (<span class="id" title="var">D</span> : <span class="id" title="var">Dcuts</span>) (<span class="id" title="var">q</span> : <span class="id" title="var">hq</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q</span> &lt; 0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span class="id" title="var">sumofmaps</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : 0 &gt; <span class="id" title="var">q</span>, <span class="id" title="var">htrue</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">Hq</span> : 0 &lt;= <span class="id" title="var">q</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> (<span class="id" title="var">q</span>,, <span class="id" title="var">Hq</span>)) (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">D</span> <span class="id" title="var">q</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq'</span> | <span class="id" title="var">Hq'</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqlehtoneghqgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hq'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">hqlth</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq</span>. }<br/>
+<span class="id" title="tactic">set</span> (<span class="id" title="var">g</span> := (<span class="id" title="var">λ</span> <span class="id" title="var">D</span> : <span class="id" title="var">Dcuts</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">sumofmaps</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : 0 &gt; <span class="id" title="var">q</span>, <span class="id" title="var">htrue</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">Hq</span> : 0 &lt;= <span class="id" title="var">q</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> (<span class="id" title="var">q</span>,, <span class="id" title="var">Hq</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>)),,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isDcuts_OneSided</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">D</span>) (<span class="id" title="var">is_Dcuts_bot</span> <span class="id" title="var">D</span>) (<span class="id" title="var">is_Dcuts_open</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_Dcuts_corr</span> <span class="id" title="var">D</span>),, <span class="id" title="var">Hg</span> <span class="id" title="var">D</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <span class="id" title="var">Dcuts</span> → ∑ <span class="id" title="var">S</span> : <span class="id" title="var">hq</span> → <span class="id" title="var">hProp</span>, <span class="id" title="var">isOneSided</span> <span class="id" title="var">S</span> × (∏ <span class="id" title="var">q</span> : <span class="id" title="var">hq</span>, <span class="id" title="var">q</span> &lt; 0 → <span class="id" title="var">S</span> <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">weq_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">D</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeEquality_prop</span> (<span class="id" title="var">B</span> := <span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">hProppair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">s</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span> ; <span class="id" title="tactic">intro</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hPropUnivalence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">change</span> (<span class="id" title="var">sumofmaps</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : 0 &gt; <span class="id" title="var">q</span>, <span class="id" title="var">htrue</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : ¬ (0 &gt; <span class="id" title="var">q</span>), <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> <span class="id" title="var">q</span>) (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>) → <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq</span> | <span class="id" title="var">Hq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">D</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">D</span> <span class="id" title="var">q</span> → <span class="id" title="var">sumofmaps</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : 0 &gt; <span class="id" title="var">q</span>, <span class="id" title="var">htrue</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : ¬ (0 &gt; <span class="id" title="var">q</span>), <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> <span class="id" title="var">q</span>) (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Dq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 <span class="id" title="var">q</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq</span> | <span class="id" title="var">Hq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Dq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">D</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality_prop</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hPropUnivalence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">change</span> (<span class="id" title="var">sumofmaps</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : 0 &gt; <span class="id" title="var">pr1</span> <span class="id" title="var">q</span>, <span class="id" title="var">htrue</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">Hq</span> : ¬ (0 &gt; <span class="id" title="var">pr1</span> <span class="id" title="var">q</span>), <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>,, <span class="id" title="var">Hq</span>)) (<span class="id" title="var">hqgthorleh</span> 0 (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>)) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq</span> | <span class="id" title="var">Hq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqlehtoneghqgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hq1</span> : <span class="id" title="var">q</span> = (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>,, <span class="id" title="var">Hq</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality_prop</span> ; <span class="id" title="tactic">reflexivity</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hq1</span> ; <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">D</span> <span class="id" title="var">q</span><br/>
+&nbsp;&nbsp;→ <span class="id" title="var">sumofmaps</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> : 0 &gt; <span class="id" title="var">pr1</span> <span class="id" title="var">q</span>, <span class="id" title="var">htrue</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">Hq</span> : ¬ (0 &gt; <span class="id" title="var">pr1</span> <span class="id" title="var">q</span>), <span class="id" title="var">pr1</span> <span class="id" title="var">D</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>,, <span class="id" title="var">Hq</span>)) (<span class="id" title="var">hqgthorleh</span> 0 (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Dq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">hqgthorleh</span> 0 (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>)) <span class="id" title="keyword">as</span> [<span class="id" title="var">Hq</span> | <span class="id" title="var">Hq</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hqlehtoneghqgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Hq1</span> : <span class="id" title="var">q</span> = (<span class="id" title="var">pr1</span> <span class="id" title="var">q</span>,, <span class="id" title="var">Hq</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality_prop</span> ; <span class="id" title="tactic">reflexivity</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hq1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Dq</span> ; <span class="id" title="tactic">exact</span> <span class="id" title="var">Dq</span>.<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

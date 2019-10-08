@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Bicategories.WkCatEnrichment.whiskering</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.StandardCategories</span>. <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.HorizontalComposition</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Equivalences.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.WkCatEnrichment.prebicategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Bicategories.WkCatEnrichment.Notations</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">whisker_left</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) {<span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;: (<span class="id" title="var">f</span> ;1; <span class="id" title="var">g</span>) -2-&gt; (<span class="id" title="var">f</span> ;1; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">identity</span> <span class="id" title="var">f</span> ;<span class="id" title="var">h</span>; <span class="id" title="var">alpha</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_left_id_1mor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">left_unitor</span> <span class="id" title="var">_</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">alpha</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">_</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_2mor_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_left_id_2mor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">identity</span> <span class="id" title="var">g</span>) = <span class="id" title="var">identity</span> (<span class="id" title="var">f</span> ;1; <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">functor_on_morphisms</span> (<span class="id" title="var">compose_functor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">identity</span> (<span class="id" title="var">precatbinprodpair</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">cancel_whisker_left</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) {<span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">alpha</span> <span class="id" title="var">alpha'</span>: <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">h</span>} (<span class="id" title="var">p</span> : <span class="id" title="var">alpha</span> = <span class="id" title="var">alpha'</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="var">alpha</span> = <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="var">alpha'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">whisker_left_iso</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) {<span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">iso</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">iso</span> (<span class="id" title="var">f</span> ;1; <span class="id" title="var">g</span>) (<span class="id" title="var">f</span> ;1; <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="var">alpha</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">functor_on_iso_is_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">precatbinprodiso</span> (<span class="id" title="var">identity_iso</span> <span class="id" title="var">f</span>) <span class="id" title="var">alpha</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_left_inv</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) {<span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">iso</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">iso_inv_from_iso</span> <span class="id" title="var">alpha</span>)<br/>
+&nbsp;&nbsp;= <span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">whisker_left_iso</span> <span class="id" title="var">f</span> <span class="id" title="var">alpha</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">identity_iso</span> <span class="id" title="var">f</span>);<span class="id" title="var">h</span>;<span class="id" title="var">inv_from_iso</span> <span class="id" title="var">alpha</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">W</span> := <span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">iso_inv_of_iso_id</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">W</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">W</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">inv_horizontal_comp</span> (<span class="id" title="var">identity_iso</span> <span class="id" title="var">f</span>) <span class="id" title="var">alpha</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_left_id_inj</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>} (<span class="id" title="var">alpha</span> <span class="id" title="var">alpha'</span> : <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha</span> = <span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; <span class="id" title="var">alpha</span> = <span class="id" title="var">alpha'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">iso_inv_from_iso</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">left_unitor</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_to_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_on_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_left_id_1mor</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">iso_inv_from_iso</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">left_unitor</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_to_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_on_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_left_id_1mor</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_left_on_comp</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) {<span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">i</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">alpha</span> : <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">h</span>) (<span class="id" title="var">alpha'</span> : <span class="id" title="var">h</span> -2-&gt; <span class="id" title="var">i</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">alpha</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">alpha'</span>)<br/>
+&nbsp;&nbsp;= <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="var">alpha</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="var">alpha'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> ((<span class="id" title="var">identity</span> <span class="id" title="var">f</span>;<span class="id" title="var">v</span>; <span class="id" title="var">identity</span> <span class="id" title="var">f</span>);<span class="id" title="var">h</span>;(<span class="id" title="var">alpha</span>;<span class="id" title="var">v</span>;<span class="id" title="var">alpha'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">interchange</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">whisker_right</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: (<span class="id" title="var">f</span> ;1; <span class="id" title="var">h</span>) -2-&gt; (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;:= <span class="id" title="var">alpha</span> ;<span class="id" title="var">h</span>; <span class="id" title="var">identity</span> <span class="id" title="var">h</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_right_id_1mor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">right_unitor</span> <span class="id" title="var">_</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">alpha</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">_</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_2mor_right</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_right_id_2mor</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">g</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_right</span> (<span class="id" title="var">identity</span> <span class="id" title="var">f</span>) <span class="id" title="var">g</span> = <span class="id" title="var">identity</span> (<span class="id" title="var">f</span> ;1; <span class="id" title="var">g</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">functor_on_morphisms</span> (<span class="id" title="var">compose_functor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">identity</span> (<span class="id" title="var">precatbinprodpair</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">cancel_whisker_right</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} {<span class="id" title="var">alpha</span> <span class="id" title="var">alpha'</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>} (<span class="id" title="var">p</span> : <span class="id" title="var">alpha</span> = <span class="id" title="var">alpha'</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha</span> <span class="id" title="var">h</span> = <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha'</span> <span class="id" title="var">h</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">whisker_right_iso</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">iso</span> (<span class="id" title="var">f</span> ;1; <span class="id" title="var">h</span>) (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">functor_on_iso_is_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">precatbinprodiso</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">identity_iso</span> <span class="id" title="var">h</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_right_inv</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">iso</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_right</span> (<span class="id" title="var">iso_inv_from_iso</span> <span class="id" title="var">alpha</span>) <span class="id" title="var">h</span><br/>
+&nbsp;&nbsp;= <span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">whisker_right_iso</span> <span class="id" title="var">alpha</span> <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">inv_from_iso</span> <span class="id" title="var">alpha</span> ;<span class="id" title="var">h</span>; <span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">identity_iso</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">W</span> := <span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">iso_inv_of_iso_id</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">W</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">W</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">inv_horizontal_comp</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">identity_iso</span> <span class="id" title="var">h</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_right_id_inj</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} (<span class="id" title="var">alpha</span> <span class="id" title="var">alpha'</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) = <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha'</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; <span class="id" title="var">alpha</span> = <span class="id" title="var">alpha'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">w</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">iso_inv_from_iso</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">right_unitor</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_to_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_on_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_right_id_1mor</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">iso_inv_from_iso</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha'</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">right_unitor</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_to_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iso_inv_on_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_right_id_1mor</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">whisker_right_on_comp</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>) (<span class="id" title="var">alpha'</span> : <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">h</span>) (<span class="id" title="var">i</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_right</span> (<span class="id" title="var">alpha</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">alpha'</span>) <span class="id" title="var">i</span><br/>
+&nbsp;&nbsp;= <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha</span> <span class="id" title="var">i</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha'</span> <span class="id" title="var">i</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> ((<span class="id" title="var">alpha</span>;<span class="id" title="var">v</span>;<span class="id" title="var">alpha'</span>);<span class="id" title="var">h</span>;(<span class="id" title="var">identity</span> <span class="id" title="var">i</span>;<span class="id" title="var">v</span>; <span class="id" title="var">identity</span> <span class="id" title="var">i</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">interchange</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">left_unitor_naturality</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">alpha</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span><br/>
+&nbsp;&nbsp;= <span class="id" title="var">left_unitor</span> <span class="id" title="var">f</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">alpha</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> ((<span class="id" title="var">functor_on_morphisms</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">bindelta_pair_functor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span> (<span class="id" title="var">functor_to_unit</span> <span class="id" title="var">_</span>) (<span class="id" title="var">constant_functor</span> <span class="id" title="var">unit_category</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">compose_functor</span> <span class="id" title="var">a</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">alpha</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>;(<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">f</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">functor_on_morphisms</span> (<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">left_unitor_trans</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">right_unitor_naturality</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>) (<span class="id" title="var">alpha</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_right</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) ;<span class="id" title="var">v</span>; <span class="id" title="var">right_unitor</span> <span class="id" title="var">g</span><br/>
+&nbsp;&nbsp;= <span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">alpha</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> ((<span class="id" title="var">functor_on_morphisms</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">bindelta_pair_functor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span> (<span class="id" title="var">functor_to_unit</span> <span class="id" title="var">_</span>) (<span class="id" title="var">constant_functor</span> <span class="id" title="var">unit_category</span> <span class="id" title="var">_</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">b</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">compose_functor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">b</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">alpha</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>;(<span class="id" title="var">right_unitor</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">functor_on_morphisms</span> (<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>) <span class="id" title="var">alpha</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">right_unitor_trans</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">associator_naturality</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} { <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span> }<br/>
+&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">f'</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>} (<span class="id" title="var">alpha</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">f'</span>)<br/>
+&nbsp;&nbsp;{<span class="id" title="var">g</span> <span class="id" title="var">g'</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>} (<span class="id" title="keyword">beta</span>  : <span class="id" title="var">g</span> -2-&gt; <span class="id" title="var">g'</span>)<br/>
+&nbsp;&nbsp;{<span class="id" title="var">h</span> <span class="id" title="var">h'</span> : <span class="id" title="var">c</span> -1-&gt; <span class="id" title="var">d</span>} (<span class="id" title="var">gamma</span> : <span class="id" title="var">h</span> -2-&gt; <span class="id" title="var">h'</span>)<br/>
+&nbsp;&nbsp;: (<span class="id" title="var">alpha</span> ;<span class="id" title="var">h</span>; (<span class="id" title="keyword">beta</span> ;<span class="id" title="var">h</span>; <span class="id" title="var">gamma</span>)) ;<span class="id" title="var">v</span>; <span class="id" title="var">associator</span> <span class="id" title="var">f'</span> <span class="id" title="var">g'</span> <span class="id" title="var">h'</span><br/>
+&nbsp;&nbsp;= <span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> ;<span class="id" title="var">v</span>; ((<span class="id" title="var">alpha</span> ;<span class="id" title="var">h</span>; <span class="id" title="keyword">beta</span>) ;<span class="id" title="var">h</span>; <span class="id" title="var">gamma</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> ((<span class="id" title="var">functor_on_morphisms</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pair_functor</span> (<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>) (<span class="id" title="var">compose_functor</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">compose_functor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">d</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">precatbinprodmor</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">precatbinprodmor</span> <span class="id" title="keyword">beta</span> <span class="id" title="var">gamma</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">associator</span> <span class="id" title="var">f'</span> <span class="id" title="var">g'</span> <span class="id" title="var">h'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> ;<span class="id" title="var">v</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_on_morphisms</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">precategory_binproduct_assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pair_functor</span> (<span class="id" title="var">compose_functor</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span>) (<span class="id" title="var">functor_identity</span> <span class="id" title="var">_</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">compose_functor</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">precatbinprodmor</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">precatbinprodmor</span> <span class="id" title="keyword">beta</span> <span class="id" title="var">gamma</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">associator_trans</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">precatbinprodmor</span> <span class="id" title="var">alpha</span> (<span class="id" title="var">precatbinprodmor</span> <span class="id" title="keyword">beta</span> <span class="id" title="var">gamma</span>))).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">twomor_naturality</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>}  {<span class="id" title="var">h</span> <span class="id" title="var">k</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">gamma</span> : <span class="id" title="var">f</span> -2-&gt; <span class="id" title="var">g</span>) (<span class="id" title="keyword">delta</span>  : <span class="id" title="var">h</span> -2-&gt; <span class="id" title="var">k</span>)<br/>
+&nbsp;&nbsp;: (<span class="id" title="var">whisker_right</span> <span class="id" title="var">gamma</span> <span class="id" title="var">h</span>) ;<span class="id" title="var">v</span>; (<span class="id" title="var">whisker_left</span> <span class="id" title="var">g</span> <span class="id" title="keyword">delta</span>)<br/>
+&nbsp;&nbsp;= (<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> <span class="id" title="keyword">delta</span>) ;<span class="id" title="var">v</span>; (<span class="id" title="var">whisker_right</span> <span class="id" title="var">gamma</span> <span class="id" title="var">k</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span>, <span class="id" title="var">whisker_right</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> ((<span class="id" title="var">gamma</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">identity</span> <span class="id" title="var">g</span>);<span class="id" title="var">h</span>;(<span class="id" title="var">identity</span> <span class="id" title="var">h</span> ;<span class="id" title="var">v</span>; <span class="id" title="keyword">delta</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">interchange</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> ((<span class="id" title="var">identity</span> <span class="id" title="var">f</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">gamma</span>);<span class="id" title="var">h</span>;(<span class="id" title="keyword">delta</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">identity</span> <span class="id" title="var">k</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">id_left</span>, !<span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">interchange</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">kelly_left_pieces</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>.<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">f</span> : <span class="id" title="var">a</span> -1-&gt; <span class="id" title="var">b</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">g</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">h</span> : <span class="id" title="var">c</span> -1-&gt; <span class="id" title="var">d</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">kelly_left_region_1235</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">associator</span> <span class="id" title="var">f</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">associator</span> (<span class="id" title="var">f</span> ;1; (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>)) <span class="id" title="var">g</span> <span class="id" title="var">h</span><br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> (<span class="id" title="var">whisker_right</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span>) <span class="id" title="var">g</span>) <span class="id" title="var">h</span><br/>
+&nbsp;&nbsp;=   <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">associator</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">b</span>) <span class="id" title="var">g</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">associator</span> <span class="id" title="var">f</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span> ;1; <span class="id" title="var">g</span>) <span class="id" title="var">h</span><br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> (<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>)) <span class="id" title="var">h</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span> <span class="id" title="tactic">at</span> 2.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">cancel_whisker_right</span> (<span class="id" title="var">triangle_axiom</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">whisker_right_on_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pentagon_axiom</span> <span class="id" title="var">f</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">b</span>) <span class="id" title="var">g</span> <span class="id" title="var">h</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">kelly_left_region_123</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">associator</span> <span class="id" title="var">f</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">associator</span> (<span class="id" title="var">f</span> ;1; (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>)) <span class="id" title="var">g</span> <span class="id" title="var">h</span><br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> (<span class="id" title="var">whisker_right</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span>) <span class="id" title="var">g</span>) <span class="id" title="var">h</span><br/>
+&nbsp;&nbsp;=   <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">associator</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">b</span>) <span class="id" title="var">g</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">whisker_right</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span> <span class="id" title="tactic">at</span> 2.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_right</span> <span class="id" title="tactic">at</span> 3.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">associator_naturality</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">fold</span> (<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">fold</span> (<span class="id" title="var">whisker_right</span> (<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>)) <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">kelly_left_region_1235</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">kelly_left_region_12</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">associator</span> <span class="id" title="var">f</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">_</span>) (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right</span> (<span class="id" title="var">right_unitor</span> <span class="id" title="var">f</span>) (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;=   <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">associator</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">b</span>) <span class="id" title="var">g</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">whisker_right</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">post_comp_with_iso_is_inj</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>) (<span class="id" title="var">pr2</span> (<span class="id" title="var">associator</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_right</span> <span class="id" title="tactic">at</span> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">horizontal_comp_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">associator_naturality</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">kelly_left_region_123</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">kelly_left_region_1</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">left_unitor_2mor</span> (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>))<br/>
+&nbsp;&nbsp;=   <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">associator</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">b</span>) <span class="id" title="var">g</span> <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_left</span> <span class="id" title="var">f</span> (<span class="id" title="var">whisker_right</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">whisker_left</span> <span class="id" title="tactic">at</span> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">triangle_axiom</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">kelly_left_region_12</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">kelly_left_pieces</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">kelly_left</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;{<span class="id" title="var">g</span> : <span class="id" title="var">b</span> -1-&gt; <span class="id" title="var">c</span>} {<span class="id" title="var">h</span> : <span class="id" title="var">c</span> -1-&gt; <span class="id" title="var">d</span>}<br/>
+&nbsp;&nbsp;: <span class="id" title="var">left_unitor_2mor</span> (<span class="id" title="var">g</span> ;1; <span class="id" title="var">h</span>)<br/>
+&nbsp;&nbsp;= <span class="id" title="var">associator</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">b</span>) <span class="id" title="var">g</span> <span class="id" title="var">h</span> ;<span class="id" title="var">v</span>; <span class="id" title="var">whisker_right_iso</span> (<span class="id" title="var">left_unitor</span> <span class="id" title="var">g</span>) <span class="id" title="var">h</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_left_id_inj</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">whisker_left_on_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">kelly_left_region_1</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">left_unitor_on_id</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;: <span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>) (<span class="id" title="var">left_unitor</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>))<br/>
+&nbsp;&nbsp;= <span class="id" title="var">left_unitor</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span> ;1; <span class="id" title="var">identity1</span> <span class="id" title="var">a</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">post_comp_with_iso_is_inj</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">left_unitor</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">left_unitor</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">left_unitor_naturality</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">left_unitor_id_is_right_unitor_id</span> {<span class="id" title="var">C</span> : <span class="id" title="var">prebicategory</span>} {<span class="id" title="var">a</span> : <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;: <span class="id" title="var">left_unitor_2mor</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>)<br/>
+&nbsp;&nbsp;= <span class="id" title="var">right_unitor_2mor</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">whisker_right_id_inj</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pre_comp_with_iso_is_inj</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">associator</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) (<span class="id" title="var">pr2</span> (<span class="id" title="var">associator</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">left_unitor_2mor</span> ((<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>) ;1; (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">kelly_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">whisker_left</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>) (<span class="id" title="var">left_unitor</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">left_unitor_on_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">triangle_axiom</span> (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>) (<span class="id" title="var">identity1</span> <span class="id" title="var">a</span>)).<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

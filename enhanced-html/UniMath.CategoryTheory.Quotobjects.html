@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Quotobjects</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1252"></a><h1 class="section">Quotobjects</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.UnderCategories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Epis</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Subcategory.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pushouts</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1253"></a><h1 class="section">Definition of quotient objects</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_quotobjects</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Quotobjectscategory</span> (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Undercategory</span> (<span class="id" title="var">subprecategory_of_epis</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">has_homsets_subprecategory_of_epis</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">subprecategory_of_epis_ob</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span> <span class="id" title="var">c</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Construction of a quotient object from an epi 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">Quotobjectscategory_ob</span> {<span class="id" title="var">c</span> <span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">c'</span>⟧) (<span class="id" title="var">isE</span> : <span class="id" title="var">isEpi</span> <span class="id" title="var">h</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Quotobjectscategory</span> <span class="id" title="var">c</span> := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">subprecategory_of_epis_ob</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span> <span class="id" title="var">c'</span>) (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span> <span class="id" title="var">isE</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">hpo</span> : @<span class="id" title="var">Pushouts</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Given any quotient object Q of c and a morphism h : c -&gt; c', by taking then pushout of Q by h
+      we obtain a quotient object of c'. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PushoutQuotobject</span> {<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">Q</span> : <span class="id" title="var">Quotobjectscategory</span> <span class="id" title="var">c</span>) {<span class="id" title="var">c'</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">c'</span>⟧) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Quotobjectscategory</span> <span class="id" title="var">c'</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">po</span> := <span class="id" title="var">hpo</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Q</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">Quotobjectscategory_ob</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">po</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">limits.pushouts.PushoutIn1</span> <span class="id" title="var">po</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">EpiPushoutisEpi'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_quotobjects</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

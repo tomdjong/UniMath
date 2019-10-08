@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.categories.HSET.MonoEpiIso</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab864"></a><h1 class="section">Characterizations of monos, epis, and isos in <span class="inlinecode"><span class="id" title="var">HSET</span></span></h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab865"></a><h2 class="section">Contents</h2>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Points as global elements
+
+</li>
+<li> Monomorphisms are exactly injective functions <span class="inlinecode"><span class="id" title="var">MonosAreInjective_HSET</span></span>
+
+</li>
+<li> Epimorphisms are exactly surjective functions <span class="inlinecode"><span class="id" title="var">EpisAreSurjective_HSET</span></span>
+
+</li>
+<li> Equivalence between isomorphisms and weak equivalences
+
+</li>
+</ul>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Epis</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab866"></a><h2 class="section">Points as global elements</h2>
+
+<div class="paragraph"> </div>
+
+ See https://ncatlab.org/nlab/show/global+element 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">global_element_HSET</span> {<span class="id" title="var">A</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">A</span>) : <span class="id" title="var">HSET</span>⟦<span class="id" title="var">unitset</span>, <span class="id" title="var">A</span>⟧ :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">invweq</span> (<span class="id" title="var">weqfunfromunit</span> <span class="id" title="var">A</span>) <span class="id" title="var">a</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+TODO: I think there is a name in UniMath for the constant function at <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#a"><span class="id" title="variable">a</span></a></span>,
+    what is it? 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">global_element_HSET_paths_weq</span> {<span class="id" title="var">A</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">A</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">x</span> = <span class="id" title="var">y</span>) ≃ (<span class="id" title="var">global_element_HSET</span> <span class="id" title="var">x</span> = <span class="id" title="var">global_element_HSET</span> <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqonpaths</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">global_element_HSET_comp</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">HSET</span>⟦<span class="id" title="var">A</span>, <span class="id" title="var">B</span>⟧) (<span class="id" title="var">x</span> : <span class="id" title="var">A</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">global_element_HSET</span> <span class="id" title="var">x</span> · <span class="id" title="var">f</span> = <span class="id" title="var">global_element_HSET</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">z</span>; <span class="id" title="tactic">induction</span> <span class="id" title="var">z</span>; <span class="id" title="tactic">reflexivity</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">global_element_HSET_fun_weq</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">HSET</span>⟦<span class="id" title="var">A</span>, <span class="id" title="var">B</span>⟧) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">A</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">f</span> <span class="id" title="var">x</span> = <span class="id" title="var">f</span> <span class="id" title="var">y</span>) ≃ (<span class="id" title="var">global_element_HSET</span> <span class="id" title="var">x</span> · <span class="id" title="var">f</span> = <span class="id" title="var">global_element_HSET</span> <span class="id" title="var">y</span> · <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">rewrite</span> <span class="id" title="var">global_element_HSET_comp</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">global_element_HSET_paths_weq</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab867"></a><h2 class="section">Monomorphisms are exactly injective functions <span class="inlinecode"><span class="id" title="var">MonosAreInjective_HSET</span></span></h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">MonosAreInjective_HSET</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">HSET</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">A</span>, <span class="id" title="var">B</span> ⟧) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isMonic</span> <span class="id" title="var">f</span> ≃ <span class="id" title="var">isInjective</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqimplimpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">isM</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">incl_injectivity</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invproofirrelevance</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>; [<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">global_element_HSET_paths_weq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isM</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">induction</span> <span class="id" title="var">t</span>; <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">a1</span> @ ! <span class="id" title="var">pr2</span> <span class="id" title="var">a2</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">isI</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">isMonic</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ? ? ? <span class="id" title="var">eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invweq</span> (<span class="id" title="var">Injectivity</span> <span class="id" title="var">_</span> <span class="id" title="var">isI</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span> <span class="id" title="tactic">in</span> <span class="id" title="var">eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisMonic</span>, <span class="id" title="var">has_homsets_HSET</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_isInjective</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab868"></a><h2 class="section">Epimorphisms are exactly surjective functions <span class="inlinecode"><span class="id" title="var">EpisAreSurjective_HSET</span></span></h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">EpisAreSurjective_HSET</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">HSET</span>} (<span class="id" title="var">f</span>: <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">A</span>, <span class="id" title="var">B</span> ⟧) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isEpi</span> <span class="id" title="var">f</span> ≃ <span class="id" title="var">issurjective</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqimplimpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">epif</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">epiissurjectiontosets</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ? ? ? ?.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">epif</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">is_surj_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">g</span> <span class="id" title="var">h</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Get the point <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#x'"><span class="id" title="variable">x'</span></a></span> in the fiber above <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#x"><span class="id" title="variable">x</span></a></span> 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">is_surj_f</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">squash_to_prop</span> <span class="id" title="var">is_surj_f</span>); [<span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x'</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Replace <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#x"><span class="id" title="variable">x</span></a></span> with <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#x'"><span class="id" title="variable">x'</span></a></span> 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (!<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> (<span class="id" title="var">hfiberpr2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">x'</span>) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> @ <span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> (<span class="id" title="var">hfiberpr2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">x'</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisEpi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_HSET</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropissurjective</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab869"></a><h2 class="section">Equivalence between isomorphisms and weak equivalences of two <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Sets.html#hSet"><span class="id" title="definition">hSet</span></a></span>s.</h2>
+
+<div class="paragraph"> </div>
+
+ Given an iso, we construct a weak equivalence.
+   This is basically unpacking and packing again. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hset_iso_is_equiv</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">HSET</span>)<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> (<span class="id" title="var">inv_from_iso</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T</span>:=<span class="id" title="var">iso_inv_after_iso</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T'</span>:=<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">T</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">T'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">iso_after_iso_inv</span> <span class="id" title="var">f</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hset_iso_equiv</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">HSET</span>) : <span class="id" title="var">iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> -&gt; (<span class="id" title="var">pr1</span> <span class="id" title="var">A</span>) ≃ (<span class="id" title="var">pr1</span> <span class="id" title="var">B</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hset_iso_is_equiv</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Given a weak equivalence, we construct an iso.
+    Again mostly unwrapping and packing.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hset_equiv_is_iso</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">hSet</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : (<span class="id" title="var">pr1</span> <span class="id" title="var">A</span>) ≃ (<span class="id" title="var">pr1</span> <span class="id" title="var">B</span>)) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_iso</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">HSET</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is_iso_qinv</span> (<span class="id" title="var">C</span>:=<span class="id" title="var">HSET</span>) <span class="id" title="var">_</span> (<span class="id" title="var">invmap</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span>, <span class="id" title="var">identity</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homotinvweqweq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span>, <span class="id" title="var">identity</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homotweqinvweq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hset_equiv_iso</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">HSET</span>) : (<span class="id" title="var">pr1</span> <span class="id" title="var">A</span>) ≃ (<span class="id" title="var">pr1</span> <span class="id" title="var">B</span>) -&gt; <span class="id" title="var">iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hset_equiv_is_iso</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Both maps defined above are weak equivalences. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hset_iso_equiv_is_equiv</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">HSET</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">hset_iso_equiv</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> (<span class="id" title="var">hset_equiv_iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_iso</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">hset_iso_equiv_weq</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">HSET</span>) : (<span class="id" title="var">iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) ≃ ((<span class="id" title="var">pr1</span> <span class="id" title="var">A</span>) ≃ (<span class="id" title="var">pr1</span> <span class="id" title="var">B</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">hset_iso_equiv</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hset_iso_equiv_is_equiv</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hset_equiv_iso_is_equiv</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">HSET</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">hset_equiv_iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> (<span class="id" title="var">hset_iso_equiv</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropisweq</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_iso</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">hset_equiv_weq_iso</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">ob</span> <span class="id" title="var">HSET</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">pr1</span> <span class="id" title="var">A</span> ≃ <span class="id" title="var">pr1</span> <span class="id" title="var">B</span>) ≃ <span class="id" title="var">iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">hset_equiv_iso</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hset_equiv_iso_is_equiv</span>.<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.limits.graphs.pullbacks</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Pullbacks defined in terms of limits 
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Combinatorics.StandardFiniteSets</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Univalence</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+<span class="id" title="keyword">Require</span>        <span class="id" title="var">UniMath.CategoryTheory.limits.pullbacks</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_pb</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">hs</span>: <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">stn</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">One</span> : <span class="id" title="var">three</span> := ● 0.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Two</span> : <span class="id" title="var">three</span> := ● 1.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Three</span> : <span class="id" title="var">three</span> := ● 2.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pullback_graph</span> : <span class="id" title="var">graph</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">three</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">three_rec</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">three_rec</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">empty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">unit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">empty</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">empty</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">three_rec</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">empty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">unit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">empty</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">pullback_diagram</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">b</span>,<span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">a</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">diagram</span> <span class="id" title="var">pullback_graph</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">three_rec</span> <span class="id" title="var">b</span> <span class="id" title="var">a</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PullbCone</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">b</span>,<span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>,<span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f'</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">d</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">g'</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">d</span>,<span class="id" title="var">c</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">f'</span> · <span class="id" title="var">f</span> = <span class="id" title="var">g'</span>· <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">cone</span> (<span class="id" title="var">pullback_diagram</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">d</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_cone</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">f'</span> · <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>; <span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">empty_rect</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">empty_rect</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">empty_rect</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">empty_rect</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">empty_rect</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">empty_rect</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> (!<span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">empty_rect</span> <span class="id" title="var">_</span> ).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isPullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p1</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">b</span>⟧) (<span class="id" title="var">p2</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">c</span>⟧) (<span class="id" title="var">H</span> : <span class="id" title="var">p1</span> · <span class="id" title="var">f</span> = <span class="id" title="var">p2</span>· <span class="id" title="var">g</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isLimCone</span> (<span class="id" title="var">pullback_diagram</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">d</span> (<span class="id" title="var">PullbCone</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">d</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_isPullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p1</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">b</span>⟧) (<span class="id" title="var">p2</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">c</span>⟧) (<span class="id" title="var">H</span> : <span class="id" title="var">p1</span> · <span class="id" title="var">f</span> = <span class="id" title="var">p2</span>· <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;(∏ <span class="id" title="var">e</span> (<span class="id" title="var">h</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">e</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>,<span class="id" title="var">c</span>⟧)(<span class="id" title="var">Hk</span> : <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">k</span> · <span class="id" title="var">g</span> ),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iscontr</span> (<span class="id" title="var">total2</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">hk</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>,<span class="id" title="var">d</span>⟧ =&gt; <span class="id" title="var">dirprod</span> (<span class="id" title="var">hk</span> · <span class="id" title="var">p1</span> = <span class="id" title="var">h</span>)(<span class="id" title="var">hk</span> · <span class="id" title="var">p2</span> = <span class="id" title="var">k</span>))))<br/>
+&nbsp;&nbsp;→<br/>
+&nbsp;&nbsp;<span class="id" title="var">isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H'</span> <span class="id" title="var">x</span> <span class="id" title="var">cx</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H1</span> := <span class="id" title="var">H'</span> <span class="id" title="var">x</span> (<span class="id" title="var">coneOut</span> <span class="id" title="var">cx</span> <span class="id" title="var">One</span>) (<span class="id" title="var">coneOut</span> <span class="id" title="var">cx</span> <span class="id" title="var">Three</span>) ).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="keyword">let</span> <span class="id" title="var">p</span> : <span class="id" title="var">coneOut</span> <span class="id" title="var">cx</span> <span class="id" title="var">One</span> · <span class="id" title="var">f</span> = <span class="id" title="var">coneOut</span> <span class="id" title="var">cx</span> <span class="id" title="var">Three</span> · <span class="id" title="var">g</span> := <span class="id" title="var">_</span> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span> ).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> (<span class="id" title="var">coneOutCommutes</span> <span class="id" title="var">cx</span> <span class="id" title="var">One</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>)|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, (<span class="id" title="var">coneOutCommutes</span> <span class="id" title="var">cx</span> <span class="id" title="var">Three</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>). }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">H2</span> := <span class="id" title="var">H1</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H2</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H2</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">three_rec_dep</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">_</span>⟧) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">with</span> (<span class="id" title="var">p1</span> · <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">cancel_postcomposition</span>, (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H2</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">coneOutCommutes</span> <span class="id" title="var">cx</span> <span class="id" title="var">One</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H2</span>))).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="tactic">destruct</span> <span class="id" title="var">t</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">t</span> <span class="id" title="var">p0</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">path_to_ctr</span>; <span class="id" title="tactic">split</span>; [ <span class="id" title="tactic">apply</span> (<span class="id" title="var">p0</span> <span class="id" title="var">One</span>) | <span class="id" title="tactic">apply</span> (<span class="id" title="var">p0</span> <span class="id" title="var">Three</span>) ]]).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Pullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧)(<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">LimCone</span> (<span class="id" title="var">pullback_diagram</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_Pullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧)(<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">p1</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">b</span>⟧) (<span class="id" title="var">p2</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">d</span>,<span class="id" title="var">c</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">p1</span> · <span class="id" title="var">f</span> = <span class="id" title="var">p2</span> · <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ispb</span> : <span class="id" title="var">isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">d</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">PullbCone</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">ispb</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Pullbacks</span> := ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>)(<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧)(<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">hasPullbacks</span> := ∏ (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">ishinh</span> (<span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PullbackObject</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}:<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> -&gt; <span class="id" title="var">C</span> := <span class="id" title="var">λ</span> <span class="id" title="var">H</span>, <span class="id" title="var">lim</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PullbackPr1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) : <span class="id" title="var">C</span>⟦<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>, <span class="id" title="var">b</span>⟧ := <span class="id" title="var">limOut</span> <span class="id" title="var">Pb</span> <span class="id" title="var">One</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PullbackPr2</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) : <span class="id" title="var">C</span>⟦<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>, <span class="id" title="var">c</span>⟧ := <span class="id" title="var">limOut</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Three</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PullbackSqrCommutes</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">Pb</span> · <span class="id" title="var">f</span> = <span class="id" title="var">PullbackPr2</span> <span class="id" title="var">Pb</span> · <span class="id" title="var">g</span> .<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> (<span class="id" title="var">limOutCommutes</span> <span class="id" title="var">Pb</span> <span class="id" title="var">One</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>) |].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (!<span class="id" title="var">limOutCommutes</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Three</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>) .<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">PullbackArrow</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">e</span> (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">c</span>⟧)(<span class="id" title="var">H</span> : <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">k</span> · <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>⟧.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">use</span> <span class="id" title="var">limArrow</span>; <span class="id" title="var">use</span> <span class="id" title="var">PullbCone</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">PullbackArrow_PullbackPr1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">e</span> (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">c</span>⟧)(<span class="id" title="var">H</span> : <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">k</span> · <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">Pb</span> <span class="id" title="var">e</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> <span class="id" title="var">H</span> · <span class="id" title="var">PullbackPr1</span> <span class="id" title="var">Pb</span> = <span class="id" title="var">h</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">limArrowCommutes</span> <span class="id" title="var">Pb</span> <span class="id" title="var">e</span> <span class="id" title="var">_</span> <span class="id" title="var">One</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">PullbackArrow_PullbackPr2</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) <span class="id" title="var">e</span> (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">c</span>⟧)(<span class="id" title="var">H</span> : <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">k</span> · <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">Pb</span> <span class="id" title="var">e</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> <span class="id" title="var">H</span> · <span class="id" title="var">PullbackPr2</span> <span class="id" title="var">Pb</span> = <span class="id" title="var">k</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">limArrowCommutes</span> <span class="id" title="var">Pb</span> <span class="id" title="var">e</span> <span class="id" title="var">_</span> <span class="id" title="var">Three</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">PullbackArrowUnique</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">e</span> (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">c</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hcomm</span> : <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">k</span> · <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">w</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">PullbackObject</span> <span class="id" title="var">Pb</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H1</span> : <span class="id" title="var">w</span> · <span class="id" title="var">PullbackPr1</span> <span class="id" title="var">Pb</span>  = <span class="id" title="var">h</span>) (<span class="id" title="var">H2</span> : <span class="id" title="var">w</span> · <span class="id" title="var">PullbackPr2</span> <span class="id" title="var">Pb</span> = <span class="id" title="var">k</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">w</span> = <span class="id" title="var">PullbackArrow</span> <span class="id" title="var">Pb</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> <span class="id" title="var">Hcomm</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">path_to_ctr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">X</span>:= <span class="id" title="var">limOutCommutes</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Three</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>, <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (!<span class="id" title="var">Hcomm</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isPullback_Pullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧}{<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="var">P</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> (<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">P</span>) (<span class="id" title="var">PullbackPr2</span> <span class="id" title="var">P</span>) (<span class="id" title="var">PullbackSqrCommutes</span> <span class="id" title="var">P</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">mk_isPullback</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">e</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> <span class="id" title="var">HK</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">P</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> <span class="id" title="var">HK</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackArrow_PullbackPr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackArrow_PullbackPr2</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">destruct</span> <span class="id" title="var">t</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">t</span> <span class="id" title="var">p</span>]. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">PullbackArrowUnique</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">P</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">p</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab939"></a><h2 class="section">Maps between pullbacks as special limits and</h2>
+
+       direct formulation of pullbacks
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">equiv_isPullback_1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p1</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">b</span>⟧) (<span class="id" title="var">p2</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">c</span>⟧) (<span class="id" title="var">H</span> : <span class="id" title="var">p1</span> · <span class="id" title="var">f</span> = <span class="id" title="var">p2</span>· <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">limits.pullbacks.isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span> -&gt; <span class="id" title="var">isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">R</span> <span class="id" title="var">cc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">XR</span> := <span class="id" title="var">limits.pullbacks.mk_Pullback</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> (<span class="id" title="var">pullbacks.PullbackArrow</span> <span class="id" title="var">XR</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">coneOut</span> <span class="id" title="var">cc</span> <span class="id" title="var">One</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">coneOut</span> <span class="id" title="var">cc</span> <span class="id" title="var">Three</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">XRT</span> := <span class="id" title="var">coneOutCommutes</span> <span class="id" title="var">cc</span> <span class="id" title="var">Three</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">XRT</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [| <span class="id" title="tactic">apply</span> (!<span class="id" title="var">XRT</span>)]; <span class="id" title="tactic">clear</span> <span class="id" title="var">XRT</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">XRT</span> := <span class="id" title="var">coneOutCommutes</span> <span class="id" title="var">cc</span> <span class="id" title="var">One</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">XRT</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [| <span class="id" title="tactic">apply</span> (<span class="id" title="var">XRT</span>)]; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> (<span class="id" title="var">pullbacks.PullbackArrow_PullbackPr1</span> <span class="id" title="var">XR</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">three_rec_dep</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">_</span>⟧) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">with</span> (<span class="id" title="var">p1</span> · <span class="id" title="var">f</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span>  (<span class="id" title="var">limits.pullbacks.PullbackArrow_PullbackPr1</span> <span class="id" title="var">XR</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">XRT</span> := <span class="id" title="var">coneOutCommutes</span> <span class="id" title="var">cc</span> <span class="id" title="var">One</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">XRT</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [| <span class="id" title="tactic">apply</span> (<span class="id" title="var">XRT</span>)]; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> (<span class="id" title="var">limits.pullbacks.PullbackArrow_PullbackPr2</span> <span class="id" title="var">XR</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span> |];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">t</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">t</span> <span class="id" title="var">HH</span>];  <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">limits.pullbacks.PullbackArrowUnique</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">apply</span> (<span class="id" title="var">HH</span> <span class="id" title="var">One</span>) | <span class="id" title="tactic">apply</span> (<span class="id" title="var">HH</span> <span class="id" title="var">Three</span>)] ).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">equiv_Pullback_1</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">limits.pullbacks.Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> -&gt; <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">mk_Pullback</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> <span class="id" title="var">g</span> (<span class="id" title="var">limits.pullbacks.PullbackObject</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">limits.pullbacks.PullbackPr1</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">limits.pullbacks.PullbackPr2</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">limits.pullbacks.PullbackSqrCommutes</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">equiv_isPullback_1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">limits.pullbacks.isPullback_Pullback</span> <span class="id" title="var">X</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">equiv_Pullbacks_1</span>: @<span class="id" title="var">limits.pullbacks.Pullbacks</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">Pullbacks</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X'</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X'</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">mk_Pullback</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> <span class="id" title="var">g</span> (<span class="id" title="var">limits.pullbacks.PullbackObject</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">limits.pullbacks.PullbackPr1</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">limits.pullbacks.PullbackPr2</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">limits.pullbacks.PullbackSqrCommutes</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">equiv_isPullback_1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">limits.pullbacks.isPullback_Pullback</span> <span class="id" title="var">X</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">equiv_isPullback_2</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span> ⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p1</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">b</span>⟧) (<span class="id" title="var">p2</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">c</span>⟧) (<span class="id" title="var">H</span> : <span class="id" title="var">p1</span> · <span class="id" title="var">f</span> = <span class="id" title="var">p2</span>· <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">limits.pullbacks.isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span> &lt;- <span class="id" title="var">isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">XR</span> := <span class="id" title="var">mk_Pullback</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>  <span class="id" title="var">_</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">R</span> <span class="id" title="var">k</span> <span class="id" title="var">h</span> <span class="id" title="var">HH</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">XR</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackArrow_PullbackPr1</span> <span class="id" title="var">XR</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackArrow_PullbackPr2</span> <span class="id" title="var">XR</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span> |] ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">t</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">x</span> <span class="id" title="var">Hx</span>]; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> * ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">PullbackArrowUnique</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">XR</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">R</span> | <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hx</span>) | <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hx</span>) ]<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">equiv_Pullback_2</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">limits.pullbacks.Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> &lt;- <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">limits.pullbacks.mk_Pullback</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> <span class="id" title="var">g</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackObject</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackPr2</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackSqrCommutes</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">equiv_isPullback_2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">isPullback_Pullback</span> <span class="id" title="var">X</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">equiv_Pullbacks_2</span> : @<span class="id" title="var">limits.pullbacks.Pullbacks</span> <span class="id" title="var">C</span> &lt;- <span class="id" title="var">Pullbacks</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X'</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X'</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">limits.pullbacks.mk_Pullback</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> <span class="id" title="var">g</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackObject</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackPr2</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackSqrCommutes</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">equiv_isPullback_2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">isPullback_Pullback</span> <span class="id" title="var">X</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">identity_is_Pullback_input</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}{<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧} (<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) :<br/>
+&nbsp;<span class="id" title="var">total2</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">hk</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>, <span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>⟧ =&gt;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">dirprod</span> (<span class="id" title="var">hk</span> · <span class="id" title="var">PullbackPr1</span> <span class="id" title="var">Pb</span> = <span class="id" title="var">PullbackPr1</span> <span class="id" title="var">Pb</span>)(<span class="id" title="var">hk</span> · <span class="id" title="var">PullbackPr2</span> <span class="id" title="var">Pb</span> = <span class="id" title="var">PullbackPr2</span> <span class="id" title="var">Pb</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">identity</span> (<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">PullbackArrowUnique'</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p1</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">p2</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>, <span class="id" title="var">c</span>⟧) (<span class="id" title="var">H</span> : <span class="id" title="var">p1</span> · <span class="id" title="var">f</span> = <span class="id" title="var">p2</span> · <span class="id" title="var">g</span>) (<span class="id" title="var">P</span> : <span class="id" title="var">isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">H</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">e</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">c</span>⟧) (<span class="id" title="var">Hcomm</span> : <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">k</span> · <span class="id" title="var">g</span>) (<span class="id" title="var">w</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">d</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H1</span> : <span class="id" title="var">w</span> · <span class="id" title="var">p1</span> = <span class="id" title="var">h</span>) (<span class="id" title="var">H2</span> : <span class="id" title="var">w</span> · <span class="id" title="var">p2</span> = <span class="id" title="var">k</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">w</span> =  (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">P</span> <span class="id" title="var">e</span> (<span class="id" title="var">PullbCone</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> <span class="id" title="var">Hcomm</span>)))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">path_to_ctr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">three_rec_dep</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>,<span class="id" title="var">_</span>⟧) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">with</span> (<span class="id" title="var">p1</span> · <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">three_rec_dep</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>,<span class="id" title="var">_</span>⟧) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">with</span> (<span class="id" title="var">h</span> · <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H1</span>, <span class="id" title="var">assoc</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">PullbackEndo_is_identity</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>}{<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧} (<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>, <span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>⟧) (<span class="id" title="var">kH1</span> : <span class="id" title="var">k</span> · <span class="id" title="var">PullbackPr1</span> <span class="id" title="var">Pb</span> = <span class="id" title="var">PullbackPr1</span> <span class="id" title="var">Pb</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">kH2</span> : <span class="id" title="var">k</span> · <span class="id" title="var">PullbackPr2</span> <span class="id" title="var">Pb</span> = <span class="id" title="var">PullbackPr2</span> <span class="id" title="var">Pb</span>) : <span class="id" title="var">identity</span> (<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>) = <span class="id" title="var">k</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">lim_endo_is_identity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">three_rec_dep</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">kH1</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <span class="id" title="var">limOut</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">T</span>:= <span class="id" title="var">coneOutCommutes</span> (<span class="id" title="var">limCone</span> <span class="id" title="var">Pb</span>) <span class="id" title="var">Three</span> <span class="id" title="var">Two</span> <span class="id" title="var">tt</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>. <span class="id" title="tactic">apply</span> (!<span class="id" title="var">T</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">kH2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;- <span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">from_Pullback_to_Pullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>: <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) : <span class="id" title="var">C</span>⟦<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>, <span class="id" title="var">lim</span> <span class="id" title="var">Pb'</span>⟧.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">Pb'</span> (<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>) (<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">_</span> ) (<span class="id" title="var">PullbackPr2</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">PullbackSqrCommutes</span> <span class="id" title="var">_</span> ).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">are_inverses_from_Pullback_to_Pullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>: <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_inverse_in_precat</span> (<span class="id" title="var">from_Pullback_to_Pullback</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>) (<span class="id" title="var">from_Pullback_to_Pullback</span> <span class="id" title="var">Pb'</span> <span class="id" title="var">Pb</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">PullbackEndo_is_identity</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">from_Pullback_to_Pullback</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr1</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">PullbackArrow_PullbackPr2</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">auto</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isiso_from_Pullback_to_Pullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>: <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) : <span class="id" title="var">is_iso</span> (<span class="id" title="var">from_Pullback_to_Pullback</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">is_iso_qinv</span> <span class="id" title="var">_</span> (<span class="id" title="var">from_Pullback_to_Pullback</span> <span class="id" title="var">Pb'</span> <span class="id" title="var">Pb</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">are_inverses_from_Pullback_to_Pullback</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">iso_from_Pullback_to_Pullback</span> {<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>: <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) : <span class="id" title="var">iso</span> (<span class="id" title="var">lim</span> <span class="id" title="var">Pb</span>) (<span class="id" title="var">lim</span> <span class="id" title="var">Pb'</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">isiso_from_Pullback_to_Pullback</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+pullback lemma 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">pullback_lemma</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">e</span> <span class="id" title="var">x</span> : <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Variables</span> (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">h</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">k</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">e</span>, <span class="id" title="var">c</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">i</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">d</span>, <span class="id" title="var">b</span>⟧) (<span class="id" title="var">j</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">x</span>, <span class="id" title="var">e</span>⟧) (<span class="id" title="var">m</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">x</span>, <span class="id" title="var">d</span>⟧).<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">H1</span> : <span class="id" title="var">h</span> · <span class="id" title="var">f</span> = <span class="id" title="var">k</span> · <span class="id" title="var">g</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">H2</span> : <span class="id" title="var">m</span> · <span class="id" title="var">i</span> = <span class="id" title="var">j</span> · <span class="id" title="var">h</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">P1</span> : <span class="id" title="var">isPullback</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H1</span>.<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">P2</span> : <span class="id" title="var">isPullback</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">glueSquares</span> : <span class="id" title="var">m</span> · (<span class="id" title="var">i</span> · <span class="id" title="var">f</span>) = (<span class="id" title="var">j</span> · <span class="id" title="var">k</span>) · <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">pullback_lemma</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Universal_Unique</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">H</span> : <span class="id" title="var">is_univalent</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">inv_from_iso_iso_from_Pullback</span> (<span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>, <span class="id" title="var">a</span>⟧) (<span class="id" title="var">g</span> : <span class="id" title="var">C</span>⟦<span class="id" title="var">c</span>, <span class="id" title="var">a</span>⟧)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">Pb</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) (<span class="id" title="var">Pb'</span> : <span class="id" title="var">Pullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inv_from_iso</span> (<span class="id" title="var">iso_from_Pullback_to_Pullback</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>) = <span class="id" title="var">from_Pullback_to_Pullback</span> <span class="id" title="var">Pb'</span> <span class="id" title="var">Pb</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">inv_iso_unique'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T</span>:= <span class="id" title="var">are_inverses_from_Pullback_to_Pullback</span> <span class="id" title="var">Pb</span> <span class="id" title="var">Pb'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">T</span>).<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Universal_Unique</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_pb</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Pullbacks_from_Lims</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Lims</span> <span class="id" title="var">C</span> -&gt; <span class="id" title="var">Pullbacks</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

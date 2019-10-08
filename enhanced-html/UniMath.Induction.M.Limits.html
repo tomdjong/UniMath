@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Induction.M.Limits</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab2240"></a><h1 class="section">Limits in the precategory of types</h1>
+
+
+<div class="paragraph"> </div>
+
+  This is a partial reconstruction of the results of "Homotopy limits in type
+  theory" by Jeremy Avigad, Chris Kapulkin, and Peter LeFanu Lumsdaine
+  (arXiv:1304.0680v3).
+
+<div class="paragraph"> </div>
+
+  Eventually, this should probably be moved into CategoryTheory, but there is
+  no proof of the universal property (<span class="inlinecode"><span class="id" title="var">isLimCone</span></span>) as phrased in
+  <span class="inlinecode"><span class="id" title="var">CategoryTheory.limits.graphs.limits</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.Types</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">StandardLimits</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} (<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">type_precat</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">standard_limit</span> : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∑ (<span class="id" title="var">x</span> : ∏ (<span class="id" title="var">v</span> : <span class="id" title="var">vertex</span> <span class="id" title="var">g</span>), <span class="id" title="var">dob</span> <span class="id" title="var">d</span> <span class="id" title="var">v</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">vertex</span> <span class="id" title="var">g</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">edge</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span>), <span class="id" title="var">dmor</span> <span class="id" title="var">d</span> <span class="id" title="var">e</span> (<span class="id" title="var">x</span> <span class="id" title="var">u</span>) = <span class="id" title="var">x</span> <span class="id" title="var">v</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The condition that <span class="inlinecode"><span class="id" title="var">standard_limit</span></span> is a cone is basically a rephrasing of
+      its definition. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">type_cone</span> : <span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">standard_limit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_cone</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> <span class="id" title="var">l</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">l</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">l</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">StandardLimits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">StandardLimitHomot</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">type_precat</span>} (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">standard_limit</span> <span class="id" title="var">d</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A homotopy of cones 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">standard_limit_homot</span> : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">h</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> ~ <span class="id" title="var">pr1</span> <span class="id" title="var">y</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">vertex</span> <span class="id" title="var">g</span>) (<span class="id" title="var">ed</span> : <span class="id" title="var">edge</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">dmor</span> <span class="id" title="var">d</span> <span class="id" title="var">ed</span>) (<span class="id" title="var">h</span> <span class="id" title="var">u</span>) @ (<span class="id" title="var">pr2</span> <span class="id" title="var">y</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">ed</span> = <span class="id" title="var">pr2</span> <span class="id" title="var">x</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">ed</span> @ (<span class="id" title="var">h</span> <span class="id" title="var">v</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Such homotopies can be made into paths 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">type_cone_homot_to_path</span> (<span class="id" title="var">h</span> : <span class="id" title="var">standard_limit_homot</span>) : <span class="id" title="var">x</span> = <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">total2_paths_f</span> (<span class="id" title="var">funextsec</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h</span>))).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+transport_lemma in peterlefanulumsdaine/hott-limits/Limits1.v. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">transport_lemma</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∏ <span class="id" title="var">p</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> = <span class="id" title="var">pr1</span> <span class="id" title="var">y</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">transportf</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) = <span class="id" title="var">λ</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> (<span class="id" title="var">ed</span> : <span class="id" title="var">edge</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">maponpaths</span> (<span class="id" title="var">dmor</span> <span class="id" title="var">d</span> <span class="id" title="var">ed</span>) (!(<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span> <span class="id" title="var">u</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ <span class="id" title="var">pr2</span> <span class="id" title="var">x</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">ed</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ <span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">p</span> <span class="id" title="var">v</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">p</span>; <span class="id" title="tactic">induction</span> <span class="id" title="var">p</span>; <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 3 (<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (!(<span class="id" title="var">pathscomp0rid</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">transport_lemma</span> <span class="id" title="var">_</span> @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">u</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">toforallpaths_funextsec</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">replace</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">y</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">ed</span>) <span class="id" title="keyword">with</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span> @ (<span class="id" title="var">pr2</span> <span class="id" title="var">y</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">ed</span>)) <span class="id" title="tactic">by</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> @ <span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">p</span>, <span class="id" title="var">p</span> @ <span class="id" title="var">_</span>) (<span class="id" title="var">pathsinv0l</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h</span> <span class="id" title="var">u</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> @ (<span class="id" title="var">path_assoc</span> (! <span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) (<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">maponpathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">h</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">ed</span>).<br/>
+</div>
+<span class="id" title="keyword">End</span> <span class="id" title="var">StandardLimitHomot</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The canonical cone given by an arrow X → Y where Y has a cone 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">into_cone_to_cone</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">UU</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">_</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">coneY</span> : <span class="id" title="var">cone</span> <span class="id" title="var">d</span> (<span class="id" title="var">Y</span> : <span class="id" title="var">ob</span> <span class="id" title="var">type_precat</span>)) (<span class="id" title="var">f</span> : <span class="id" title="var">X</span> → <span class="id" title="var">Y</span>) : <span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_cone</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">ver</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">coneY</span> <span class="id" title="var">ver</span> ∘ (<span class="id" title="var">f</span> : <span class="id" title="var">type_precat</span> ⟦ <span class="id" title="var">X</span>, <span class="id" title="var">Y</span> ⟧)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span> <span class="id" title="var">ed</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">coneY</span> <span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span> <span class="id" title="var">ed</span>)).<br/>
+<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">StandardLimitUP</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">type_precat</span>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A rephrasing of the universal property: the canonical map that makes a
+      cone out of a map X → L is an equivalence. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">is_limit_cone</span> {<span class="id" title="var">L</span>} (<span class="id" title="var">C</span> : <span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">L</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>), <span class="id" title="var">isweq</span> (@<span class="id" title="var">into_cone_to_cone</span> <span class="id" title="var">X</span> <span class="id" title="var">L</span> <span class="id" title="var">g</span> <span class="id" title="var">d</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_isLimCone</span> {<span class="id" title="var">L</span>} (<span class="id" title="var">C</span> : <span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">L</span>) : <span class="id" title="var">isaprop</span> (<span class="id" title="var">is_limit_cone</span> <span class="id" title="var">C</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">impred</span>; <span class="id" title="tactic">intro</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropiscontr</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+A weak equivalence expressing the above universal property. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">limit_up_weq</span> {<span class="id" title="var">X</span> <span class="id" title="var">L</span>} {<span class="id" title="var">C</span> : <span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">L</span>} {<span class="id" title="keyword">is</span> : <span class="id" title="var">is_limit_cone</span> <span class="id" title="var">C</span>} :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">X</span> → <span class="id" title="var">L</span>) ≃ <span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">X</span> := <span class="id" title="var">weqpair</span> (<span class="id" title="var">into_cone_to_cone</span> <span class="id" title="var">C</span>) (<span class="id" title="keyword">is</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The universal property of a limit.
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Proposition 4.2.8 (limit_universal) in Avigad, Kapulkin, and Lumsdaine
+
+</li>
+<li> Generalizes Lemma 10 in Ahrens, Capriotti, and Spadotti
+
+</li>
+<li> Generalizes univ-iso in HoTT/M-types
+
+</li>
+</ul>
+  
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">limit_universal</span> : <span class="id" title="var">is_limit_cone</span> (<span class="id" title="var">type_cone</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isweq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">xcone</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">standard_limit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">ver</span>, <span class="id" title="var">pr1</span> <span class="id" title="var">xcone</span> <span class="id" title="var">ver</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span> <span class="id" title="var">ed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">xcone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">xcone</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>; <span class="id" title="var">cbn</span>; [<span class="id" title="tactic">reflexivity</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ver1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ver2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">toforallpaths_funextsec</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">conex</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">into_cone_to_cone</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ver1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ver2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>; <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">toforallpaths_funextsec</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">funextsec_toforallpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The above weak equivalence specialized to the case of <span class="inlinecode"><span class="id" title="var">standard_limit</span></span>s 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">standard_limit_up_weq</span> {<span class="id" title="var">X</span>} : (<span class="id" title="var">X</span> → <span class="id" title="var">standard_limit</span> <span class="id" title="var">d</span>) ≃ <span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">weqpair</span> (<span class="id" title="var">into_cone_to_cone</span> (<span class="id" title="var">type_cone</span> <span class="id" title="var">d</span>)) (<span class="id" title="var">limit_universal</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">StandardLimitUP</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

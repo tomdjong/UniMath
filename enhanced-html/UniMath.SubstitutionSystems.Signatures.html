@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.SubstitutionSystems.Signatures</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+**********************************************************
+
+<div class="paragraph"> </div>
+
+Benedikt Ahrens, Ralph Matthes
+
+<div class="paragraph"> </div>
+
+SubstitutionSystems
+
+<div class="paragraph"> </div>
+
+2015
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+ **********************************************************
+
+<div class="paragraph"> </div>
+
+Contents :
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li>    Definition of signatures
+
+</li>
+<li>    Proof that two forms of strength laws are equivalent
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PointedFunctors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.HorizontalComposition</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.EndofunctorsMonoidal</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.Notation</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">subsys</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Goal: define signatures as pairs of a rank-2 functor and a "strength" 
+<div class="paragraph"> </div>
+
+<a name="lab1980"></a><h1 class="section">Definition of signatures</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">fix_a_category</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+in the original definition, this second category was the same as the first one 
+</div>
+<div class="code">
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">hsD</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">about_signatures</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><a class="idref" href="UniMath.Foundations.UnivalenceAxiom.html#H"><span class="id" title="variable">H</span></a></span> is a rank-2 functor: a functor between functor categories 
+</div>
+<div class="code">
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">H</span> : <span class="id" title="var">functor</span> [<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hs</span>] [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The forgetful functor from pointed endofunctors to endofunctors 
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "'U'" := (<span class="id" title="var">functor_ptd_forget</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span>).<br/>
+</div>
+
+<div class="doc">
+The precategory of pointed endofunctors on <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#C"><span class="id" title="variable">C</span></a></span> 
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "'Ptd'" := (<span class="id" title="var">precategory_Ptd</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span>).<br/>
+</div>
+
+<div class="doc">
+The category of endofunctors on <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#C"><span class="id" title="variable">C</span></a></span> 
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "'EndC'":= ([<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hs</span>]) .<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1981"></a><h2 class="section">Source and target of the natural transformation <span class="inlinecode"><span class="id" title="var">θ</span></span></h2>
+
+<div class="paragraph"> </div>
+
+ Source is given by <span class="inlinecode">(<a class="idref" href="UniMath.Foundations.PartA.html#X"><span class="id" title="variable">X</span></a>,<a class="idref" href="UniMath.Foundations.PartA.html#Z"><span class="id" title="variable">Z</span></a>)</span> <span class="inlinecode">=&gt;</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.UnivalenceAxiom.html#H"><span class="id" title="variable">H</span></a>(<a class="idref" href="UniMath.Foundations.PartA.html#X"><span class="id" title="variable">X</span></a>)∙<a class="idref" href="UniMath.MoreFoundations.Subtypes.html#U"><span class="id" title="variable">U</span></a>(<a class="idref" href="UniMath.Foundations.PartA.html#Z"><span class="id" title="variable">Z</span></a>)</span> 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_source_ob</span> (<span class="id" title="var">FX</span> : <span class="id" title="var">EndC</span> <span class="id" title="var">XX</span> <span class="id" title="var">Ptd</span>) : [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>] := <span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">FX</span>) • <span class="id" title="var">U</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">FX</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_source_mor</span> {<span class="id" title="var">FX</span> <span class="id" title="var">FX'</span> : <span class="id" title="var">EndC</span> <span class="id" title="var">XX</span> <span class="id" title="var">Ptd</span>} (<span class="id" title="var">αβ</span> : <span class="id" title="var">FX</span> --&gt; <span class="id" title="var">FX'</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">θ_source_ob</span> <span class="id" title="var">FX</span> --&gt; <span class="id" title="var">θ_source_ob</span> <span class="id" title="var">FX'</span> := <span class="id" title="var">horcomp</span> (#<span class="id" title="var">U</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">αβ</span>)) (#<span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">αβ</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_source_functor_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">EndC</span> <span class="id" title="var">XX</span> <span class="id" title="var">Ptd</span>) [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">θ_source_ob</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (@<span class="id" title="var">θ_source_mor</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_functor_θ_source</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">θ_source_functor_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">FX</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hsD</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">HH</span>:=<span class="id" title="var">functor_id</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">HH</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">FX</span> <span class="id" title="var">FX'</span> <span class="id" title="var">FX''</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hsD</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">destruct</span> <span class="id" title="var">FX</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">F</span> <span class="id" title="var">X</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">FX'</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">F'</span> <span class="id" title="var">X'</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">FX''</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">F''</span> <span class="id" title="var">X''</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span> ; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">α</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">α</span> <span class="id" title="var">a</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">β</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">β</span> <span class="id" title="var">b</span>]. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">functor_comp</span> <span class="id" title="var">H</span>); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">nat_trans_ax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">a</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">a</span> <span class="id" title="var">aax</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">b</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">b</span> <span class="id" title="var">bax</span>]. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">X</span> <span class="id" title="var">eta</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">X'</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">X'</span> <span class="id" title="var">eta'</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">X''</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">X''</span> <span class="id" title="var">eta''</span>]; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">aax</span> <span class="id" title="var">eta</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">bax</span> <span class="id" title="var">eta'</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">eta''</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">HHH</span>:=<span class="id" title="var">nat_trans_ax</span> (#<span class="id" title="var">H</span> <span class="id" title="var">β</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">HHH</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_source</span> : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">is_functor_θ_source</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Target is given by <span class="inlinecode">(<a class="idref" href="UniMath.Foundations.PartA.html#X"><span class="id" title="variable">X</span></a>,<a class="idref" href="UniMath.Foundations.PartA.html#Z"><span class="id" title="variable">Z</span></a>)</span> <span class="inlinecode">=&gt;</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.UnivalenceAxiom.html#H"><span class="id" title="variable">H</span></a>(<a class="idref" href="UniMath.Foundations.PartA.html#X"><span class="id" title="variable">X</span></a>∙<a class="idref" href="UniMath.MoreFoundations.Subtypes.html#U"><span class="id" title="variable">U</span></a>(<a class="idref" href="UniMath.Foundations.PartA.html#Z"><span class="id" title="variable">Z</span></a>))</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_target_ob</span> (<span class="id" title="var">FX</span> : <span class="id" title="var">EndC</span> <span class="id" title="var">XX</span> <span class="id" title="var">Ptd</span>) : [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>] := <span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">FX</span> • <span class="id" title="var">U</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">FX</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_target_mor</span> (<span class="id" title="var">FX</span> <span class="id" title="var">FX'</span> : <span class="id" title="var">EndC</span> <span class="id" title="var">XX</span> <span class="id" title="var">Ptd</span>) (<span class="id" title="var">αβ</span> : <span class="id" title="var">FX</span> --&gt; <span class="id" title="var">FX'</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">θ_target_ob</span> <span class="id" title="var">FX</span> --&gt; <span class="id" title="var">θ_target_ob</span> <span class="id" title="var">FX'</span><br/>
+&nbsp;&nbsp;:= #<span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">αβ</span> ∙∙ #<span class="id" title="var">U</span>(<span class="id" title="var">pr2</span> <span class="id" title="var">αβ</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_target_functor_data</span> : <span class="id" title="var">functor_data</span> (<span class="id" title="var">EndC</span> <span class="id" title="var">XX</span> <span class="id" title="var">Ptd</span>) [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>].<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">θ_target_ob</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">θ_target_mor</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_functor_θ_target_functor_data</span> : <span class="id" title="var">is_functor</span> <span class="id" title="var">θ_target_functor_data</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">FX</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_target_mor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T</span>:= <span class="id" title="var">functor_id_id</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">T</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">FX</span> <span class="id" title="var">FX'</span> <span class="id" title="var">FX''</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">α</span> <span class="id" title="var">β</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_target_functor_data</span>. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_target_mor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T</span>:=<span class="id" title="var">functor_comp</span> <span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">α</span> ∙∙ # <span class="id" title="var">U</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">α</span>)) (<span class="id" title="var">pr1</span> <span class="id" title="var">β</span> ∙∙ # <span class="id" title="var">U</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">β</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">α</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">α</span> <span class="id" title="var">a</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">β</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">β</span> <span class="id" title="var">b</span>]; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">horcomp</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">FX</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">F</span> <span class="id" title="var">X</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">FX'</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">F'</span> <span class="id" title="var">X'</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">FX''</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">F''</span> <span class="id" title="var">X''</span>]; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">β</span> ((<span class="id" title="var">pr1</span> <span class="id" title="var">X'</span>) <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nat_trans_ax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_target</span> : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">is_functor_θ_target_functor_data</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1982"></a><h1 class="section">Two alternative versions of the strength laws</h1>
+
+<div class="paragraph"> </div>
+
+ We assume a suitable (bi)natural transformation <span class="inlinecode"><span class="id" title="var">θ</span></span> 
+</div>
+<div class="code">
+<span class="id" title="keyword">Hypothesis</span> <span class="id" title="var">θ</span> : <span class="id" title="var">θ_source</span> ⟹ <span class="id" title="var">θ_target</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">θ</span></span> is supposed to satisfy two strength laws 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_Strength1</span> : <span class="id" title="var">UU</span> := ∏ <span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>,<br/>
+&nbsp;&nbsp;(<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ (<span class="id" title="var">id_Ptd</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span>))) · # <span class="id" title="var">H</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span> : <span class="id" title="var">functor_composite</span> (<span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span>) <span class="id" title="var">X</span> ⟹ <span class="id" title="var">pr1</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <span class="id" title="var">nat_trans_id</span> <span class="id" title="var">_</span> .<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Strength_law_1_intensional</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+needs the heterogeneous formulation of the monoidal operation to type-check 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_Strength1_int</span> : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= ∏ <span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ (<span class="id" title="var">id_Ptd</span> <span class="id" title="var">C</span> <span class="id" title="var">hs</span>)) · # <span class="id" title="var">H</span> (<span class="id" title="var">λ_functor</span> <span class="id" title="var">_</span>) = <span class="id" title="var">λ_functor</span> <span class="id" title="var">_</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_Strength1_int_implies_θ_Strength1</span> : <span class="id" title="var">θ_Strength1_int</span> → <span class="id" title="var">θ_Strength1</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_Strength1_int</span>, <span class="id" title="var">θ_Strength1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">TX</span>:= <span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">T2</span> := <span class="id" title="var">nat_trans_eq_pointwise</span> <span class="id" title="var">TX</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X0</span> : <span class="id" title="var">λ_functor</span> <span class="id" title="var">X</span> = <span class="id" title="var">identity</span> (<span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">X0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">T2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">T2</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_Strength1_implies_θ_Strength1_int</span> : <span class="id" title="var">θ_Strength1</span> → <span class="id" title="var">θ_Strength1_int</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_Strength1_int</span>, <span class="id" title="var">θ_Strength1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">TX</span>:= <span class="id" title="var">T</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">T2</span> := <span class="id" title="var">nat_trans_eq_pointwise</span> <span class="id" title="var">TX</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X0</span> : <span class="id" title="var">λ_functor</span> <span class="id" title="var">X</span> = <span class="id" title="var">identity</span> (<span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>)).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">X0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">T2</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Strength_law_1_intensional</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_Strength2</span> : <span class="id" title="var">UU</span> := ∏ (<span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>) (<span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> : <span class="id" title="var">Ptd</span>) (<span class="id" title="var">Y</span> : <span class="id" title="var">EndC</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α</span> : <span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hs</span> (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>)) <span class="id" title="var">X</span> --&gt; <span class="id" title="var">Y</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ (<span class="id" title="var">Z</span> <span class="id" title="var">p</span>• <span class="id" title="var">Z'</span> : <span class="id" title="var">Ptd</span>)) · # <span class="id" title="var">H</span> <span class="id" title="var">α</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z'</span>) •• (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) · <span class="id" title="var">θ</span> ((<span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hs</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span>) ⊗ <span class="id" title="var">Z</span>) ·<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# <span class="id" title="var">H</span> (<span class="id" title="var">α</span> : <span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hs</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">X</span> • (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>)) --&gt; <span class="id" title="var">Y</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Strength_law_2_intensional</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_Strength2_int</span> : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:= ∏ (<span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>) (<span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> : <span class="id" title="var">Ptd</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ (<span class="id" title="var">Z</span> <span class="id" title="var">p</span>• <span class="id" title="var">Z'</span>))  · #<span class="id" title="var">H</span> (<span class="id" title="var">α_functor</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span> )  =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">α_functor</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>) (<span class="id" title="var">H</span> <span class="id" title="var">X</span>) : [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>] ⟦ <span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hsD</span> (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>)) (<span class="id" title="var">H</span> <span class="id" title="var">X</span>), <span class="id" title="var">functor_composite</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>) (<span class="id" title="var">H</span> <span class="id" title="var">X</span>)) ⟧<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;) ·<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z'</span>) •• (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) · <span class="id" title="var">θ</span> ((<span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hs</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span>) ⊗ <span class="id" title="var">Z</span>) .<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_Strength2_int_implies_θ_Strength2</span> : <span class="id" title="var">θ_Strength2_int</span> → <span class="id" title="var">θ_Strength2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_Strength2_int</span>, <span class="id" title="var">θ_Strength2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> <span class="id" title="var">Y</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">TXZZ'</span> := <span class="id" title="var">T</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">TXZZ'c</span> := <span class="id" title="var">nat_trans_eq_pointwise</span> <span class="id" title="var">TXZZ'</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">TXZZ'c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">T</span> <span class="id" title="var">TXZZ'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span> <span class="id" title="tactic">in</span> <span class="id" title="var">TXZZ'c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">TXZZ'c</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">TXZZ'c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">functor_comp_H</span> := <span class="id" title="var">functor_comp</span> <span class="id" title="var">H</span> (<span class="id" title="var">α_functor</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">a</span> : <span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hs</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span>) --&gt; <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">functor_comp_H_c</span> := <span class="id" title="var">nat_trans_eq_pointwise</span> <span class="id" title="var">functor_comp_H</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">functor_comp_H_c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp_H_c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">functor_comp_H</span> <span class="id" title="var">functor_comp_H_c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq_pointwise</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_Strength2_implies_θ_Strength2_int</span> : <span class="id" title="var">θ_Strength2</span> → <span class="id" title="var">θ_Strength2_int</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_Strength2_int</span>, <span class="id" title="var">θ_Strength2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">T</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">TXZZ'_inst</span> := <span class="id" title="var">T</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> (<span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hs</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span>)) (<span class="id" title="var">α_functor</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">TXZZ'_inst</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">T</span> <span class="id" title="var">TXZZ'_inst</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [| <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">functor_id_H</span> := <span class="id" title="var">functor_id</span> <span class="id" title="var">H</span> (<span class="id" title="var">functor_compose</span> <span class="id" title="var">hs</span> <span class="id" title="var">hs</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">X</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">functor_id_H_c</span> := <span class="id" title="var">nat_trans_eq_pointwise</span> <span class="id" title="var">functor_id_H</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [| <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id_H_c</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">functor_id_H</span> <span class="id" title="var">functor_id_H_c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq_pointwise</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_eq</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Strength_law_2_intensional</span>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Not having a general theory of binatural transformations, we isolate
+    naturality in each component here 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_nat_1</span> (<span class="id" title="var">X</span> <span class="id" title="var">X'</span> : <span class="id" title="var">EndC</span>) (<span class="id" title="var">α</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">X'</span>) (<span class="id" title="var">Z</span> : <span class="id" title="var">Ptd</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">compose</span>(<span class="id" title="var">C</span>:=[<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>]) (# <span class="id" title="var">H</span> <span class="id" title="var">α</span> ∙∙ <span class="id" title="var">nat_trans_id</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>))) (<span class="id" title="var">θ</span> (<span class="id" title="var">X'</span> ⊗ <span class="id" title="var">Z</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>)· # <span class="id" title="var">H</span> (<span class="id" title="var">α</span> ∙∙ <span class="id" title="var">nat_trans_id</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">U</span> <span class="id" title="var">Z</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t</span>:=<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">θ</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t'</span>:=<span class="id" title="var">t</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>) (<span class="id" title="var">X'</span> ⊗ <span class="id" title="var">Z</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t''</span>:= <span class="id" title="var">t'</span> (<span class="id" title="var">precatbinprodmor</span> <span class="id" title="var">α</span> (<span class="id" title="var">identity</span> <span class="id" title="var">_</span> ))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t''</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">t''</span>.<br/>
+</div>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_nat_1_pointwise</span> (<span class="id" title="var">X</span> <span class="id" title="var">X'</span> : <span class="id" title="var">EndC</span>) (<span class="id" title="var">α</span> : <span class="id" title="var">X</span> --&gt; <span class="id" title="var">X'</span>) (<span class="id" title="var">Z</span> : <span class="id" title="var">Ptd</span>) (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;:  <span class="id" title="var">pr1</span> (# <span class="id" title="var">H</span> <span class="id" title="var">α</span>) ((<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>) <span class="id" title="var">c</span>)· <span class="id" title="var">pr1</span> (<span class="id" title="var">θ</span> (<span class="id" title="var">X'</span> ⊗ <span class="id" title="var">Z</span>)) <span class="id" title="var">c</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>)) <span class="id" title="var">c</span>· <span class="id" title="var">pr1</span> (# <span class="id" title="var">H</span> (<span class="id" title="var">α</span> ∙∙ <span class="id" title="var">nat_trans_id</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>))) <span class="id" title="var">c</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t</span> := <span class="id" title="var">θ_nat_1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">α</span> <span class="id" title="var">Z</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t'</span> := <span class="id" title="var">nat_trans_eq_weq</span> <span class="id" title="var">hsD</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">t</span> <span class="id" title="var">c</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="var">clearbody</span> <span class="id" title="var">t'</span>;  <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H'</span>:= <span class="id" title="var">functor_id</span> (<span class="id" title="var">H</span> <span class="id" title="var">X'</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>) <span class="id" title="var">c</span>));<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> |[<span class="id" title="var">H1</span> : ?<span class="id" title="var">f</span> · <span class="id" title="var">_</span> · ?<span class="id" title="var">g</span> = <span class="id" title="var">_</span> , <span class="id" title="var">H2</span> : ?<span class="id" title="var">x</span> = <span class="id" title="var">_</span> |- <span class="id" title="var">_</span> ] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">intermediate_path</span> (<span class="id" title="var">f</span> · <span class="id" title="var">x</span> · <span class="id" title="var">g</span>) <span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">t'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_nat_2</span> (<span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>) (<span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> : <span class="id" title="var">Ptd</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">Z</span> --&gt; <span class="id" title="var">Z'</span>)<br/>
+&nbsp;&nbsp;: <span class="id" title="var">compose</span> (<span class="id" title="var">C</span>:=[<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>]) (<span class="id" title="var">identity</span> (<span class="id" title="var">H</span> <span class="id" title="var">X</span>) ∙∙ <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) (<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z'</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>)· # <span class="id" title="var">H</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span> ∙∙ <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">θ</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t'</span> := <span class="id" title="var">t</span> (<span class="id" title="var">precatbinprodpair</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span>) (<span class="id" title="var">precatbinprodpair</span> <span class="id" title="var">X</span> <span class="id" title="var">Z'</span>) (<span class="id" title="var">precatbinprodmor</span> (<span class="id" title="var">identity</span> <span class="id" title="var">_</span> ) <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_source_mor</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">θ_target_mor</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">T</span> := <span class="id" title="var">functor_id</span> <span class="id" title="var">H</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">T</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">T</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">t'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">θ_nat_2_pointwise</span> (<span class="id" title="var">X</span> : <span class="id" title="var">EndC</span>) (<span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> : <span class="id" title="var">Ptd</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">Z</span> --&gt; <span class="id" title="var">Z'</span>) (<span class="id" title="var">c</span> : <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;:  # (<span class="id" title="var">pr1</span> (<span class="id" title="var">H</span> <span class="id" title="var">X</span>)) ((<span class="id" title="var">pr1</span> <span class="id" title="var">f</span>) <span class="id" title="var">c</span>)· <span class="id" title="var">pr1</span> (<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z'</span>)) <span class="id" title="var">c</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr1</span> (<span class="id" title="var">θ</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>)) <span class="id" title="var">c</span>· <span class="id" title="var">pr1</span> (# <span class="id" title="var">H</span> (<span class="id" title="var">identity</span> <span class="id" title="var">X</span> ∙∙ <span class="id" title="var">pr1</span> <span class="id" title="var">f</span>)) <span class="id" title="var">c</span> .<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t</span>:=<span class="id" title="var">θ_nat_2</span> <span class="id" title="var">X</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">t'</span>:=<span class="id" title="var">nat_trans_eq_weq</span> <span class="id" title="var">hsD</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">t</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">clearbody</span> <span class="id" title="var">t'</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span> <span class="id" title="tactic">in</span> <span class="id" title="var">t'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">t'</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">about_signatures</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Strength_laws</span>.<br/>
+</div>
+
+<div class="doc">
+define strength laws 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Strength_laws</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Signature</span>  : <span class="id" title="var">UU</span><br/>
+&nbsp;&nbsp;:=<br/>
+&nbsp;&nbsp;∑ <span class="id" title="var">H</span> : <span class="id" title="var">functor</span> [<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hs</span>] [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hsD</span>] ,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">θ</span> : <span class="id" title="var">nat_trans</span> (<span class="id" title="var">θ_source</span> <span class="id" title="var">H</span>) (<span class="id" title="var">θ_target</span> <span class="id" title="var">H</span>) , <span class="id" title="var">θ_Strength1_int</span> <span class="id" title="var">H</span> <span class="id" title="var">θ</span> × <span class="id" title="var">θ_Strength2_int</span> <span class="id" title="var">H</span> <span class="id" title="var">θ</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Coercion</span> <span class="id" title="var">Signature_Functor</span> (<span class="id" title="var">S</span> : <span class="id" title="var">Signature</span>) : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">S</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">theta</span> (<span class="id" title="var">H</span> : <span class="id" title="var">Signature</span>) : <span class="id" title="var">nat_trans</span> (<span class="id" title="var">θ_source</span> <span class="id" title="var">H</span>) (<span class="id" title="var">θ_target</span> <span class="id" title="var">H</span>) := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Sig_strength_law1</span> (<span class="id" title="var">H</span> : <span class="id" title="var">Signature</span>) : <span class="id" title="var">θ_Strength1_int</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">Sig_strength_law2</span> (<span class="id" title="var">H</span> : <span class="id" title="var">Signature</span>) : <span class="id" title="var">θ_Strength2_int</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">fix_a_category</span>.<br/>
+
+<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">theta</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">θ_source</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> } <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">θ_target</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> } <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">θ_Strength1</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> } <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">θ_Strength2</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> } <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">θ_Strength1_int</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">θ_Strength2_int</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> .<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

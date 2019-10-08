@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.MoreFoundations.PropExt</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+Tom de Jong
+
+<div class="paragraph"> </div>
+
+January 2019
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<a name="lab317"></a><h1 class="section">Propositional extensionality</h1>
+<a name="lab318"></a><h2 class="section">Contents</h2>
+
+<ul class="doclist">
+<li> A proof using just propositional extensionality of the fact that:
+  if P and Q are propositions, then so is P = Q.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="UniMath.Foundations.All.html#"><span class="id" title="library">UniMath.Foundations.All</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="UniMath.MoreFoundations.WeaklyConstant.html#"><span class="id" title="library">UniMath.MoreFoundations.WeaklyConstant</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="propext"><span class="id" title="definition">propext</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a>} : <a class="idref" href="UniMath.Foundations.PartB.html#isaprop"><span class="id" title="definition">isaprop</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.8.2/stdlib//Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="UniMath.Foundations.PartB.html#isaprop"><span class="id" title="definition">isaprop</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.8.2/stdlib//Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.8.2/stdlib//Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">(</span></a><a class="idref" href="UniMath.MoreFoundations.PropExt.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="UniMath.Foundations.PartA.html#df1ced36fc33ce188051218bca314374"><span class="id" title="notation">&lt;-&gt;</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#Y"><span class="id" title="variable">Y</span></a><a class="idref" href="http://coq.inria.fr/distrib/V8.8.2/stdlib//Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.8.2/stdlib//Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="UniMath.Foundations.Preamble.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#Y"><span class="id" title="variable">Y</span></a>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span> <span class="id" title="var">iff</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<a class="idref" href="UniMath.Foundations.PartA.html#invmap"><span class="id" title="definition">invmap</span></a> (<a class="idref" href="UniMath.Foundations.UnivalenceAxiom.html#univalence"><span class="id" title="definition">univalence</span></a> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.Foundations.PartB.html#weqiff"><span class="id" title="definition">weqiff</span></a>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">iff</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">j</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="weaklyconstant_propext"><span class="id" title="definition">weaklyconstant_propext</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a>} (<span class="id" title="var">i</span> : <a class="idref" href="UniMath.Foundations.PartB.html#isaprop"><span class="id" title="definition">isaprop</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#X"><span class="id" title="variable">X</span></a>) (<span class="id" title="var">j</span> : <a class="idref" href="UniMath.Foundations.PartB.html#isaprop"><span class="id" title="definition">isaprop</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#Y"><span class="id" title="variable">Y</span></a>) :<br/>
+&nbsp;&nbsp;<a class="idref" href="UniMath.MoreFoundations.WeaklyConstant.html#weaklyconstant"><span class="id" title="definition">weaklyconstant</span></a> (<a class="idref" href="UniMath.MoreFoundations.PropExt.html#propext"><span class="id" title="definition">propext</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#j"><span class="id" title="variable">j</span></a>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.Foundations.PartA.html#maponpaths"><span class="id" title="definition">maponpaths</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.Foundations.PartB.html#proofirrelevance"><span class="id" title="lemma">proofirrelevance</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.Foundations.PartB.html#isapropdirprod"><span class="id" title="definition">isapropdirprod</span></a>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.Foundations.PartD.html#impred_isaprop"><span class="id" title="lemma">impred_isaprop</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">λ</span></a> <span class="id" title="var">_</span><a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">,</span></a> <span class="id" title="var">j</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.Foundations.PartD.html#impred_isaprop"><span class="id" title="lemma">impred_isaprop</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">λ</span></a> <span class="id" title="var">_</span><a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">,</span></a> <span class="id" title="var">i</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="isaprop_pathsprop"><span class="id" title="definition">isaprop_pathsprop</span></a> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a>} : <a class="idref" href="UniMath.Foundations.PartB.html#isaprop"><span class="id" title="definition">isaprop</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.8.2/stdlib//Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="UniMath.Foundations.PartB.html#isaprop"><span class="id" title="definition">isaprop</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#Y"><span class="id" title="variable">Y</span></a> <a class="idref" href="http://coq.inria.fr/distrib/V8.8.2/stdlib//Coq.Init.Logic.html#d43e996736952df71ebeeae74d10a287"><span class="id" title="notation">-&gt;</span></a> <a class="idref" href="UniMath.Foundations.PartB.html#isaprop"><span class="id" title="definition">isaprop</span></a> (<a class="idref" href="UniMath.MoreFoundations.PropExt.html#X"><span class="id" title="variable">X</span></a> <a class="idref" href="UniMath.Foundations.Preamble.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#Y"><span class="id" title="variable">Y</span></a>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">j</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.MoreFoundations.WeaklyConstant.html#wconst_endomap_prop_path_prop"><span class="id" title="definition">wconst_endomap_prop_path_prop</span></a>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">i</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">Z</span> <span class="id" title="var">k</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">f</span> := <a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">λ</span></a> <span class="id" title="var">p</span> : <span class="id" title="var">X</span> <a class="idref" href="UniMath.Foundations.Preamble.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="var">Z</span><a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">,</span></a> <a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">(</span></a><a class="idref" href="UniMath.MoreFoundations.PropExt.html#propext"><span class="id" title="definition">propext</span></a> <span class="id" title="var">i</span> <span class="id" title="var">k</span> (<a class="idref" href="UniMath.Foundations.PartB.html#weq_to_iff"><span class="id" title="definition">weq_to_iff</span></a> (<a class="idref" href="UniMath.Foundations.UnivalenceAxiom.html#eqweqmap"><span class="id" title="definition">eqweqmap</span></a> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#p"><span class="id" title="variable">p</span></a>))<a class="idref" href="UniMath.Foundations.Init.html#e347aba07034a66189f14f85f0430e87"><span class="id" title="notation">)</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="UniMath.MoreFoundations.PropExt.html#weaklyconstant_propext"><span class="id" title="definition">weaklyconstant_propext</span></a>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">j</span>.<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

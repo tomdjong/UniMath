@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.AdditiveFunctors</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1220"></a><h1 class="section">Additive functors</h1>
+<a name="lab1221"></a><h2 class="section">Contents</h2>
+
+<ul class="doclist">
+<li> Definition of additive functors
+
+</li>
+<li> Additive functor preserves BinDirectSums
+<ul class="doclist">
+<li> Definition of PreservesBinDirectSums
+<ul class="doclist">
+<li> Additive funtor preserves zero.
+
+</li>
+</ul>
+
+</li>
+<li> Preserves IdIn1, IdIn2, Unit1, Unit2, and Id of BinDirectSum
+
+</li>
+<li> Preserves BinDirectCoproducts
+
+</li>
+<li> Preserves BinDirectProducts
+
+</li>
+<li> Preserves BinDirectSums
+
+</li>
+</ul>
+
+</li>
+<li> If a functor preserves BinDirectSums, then it is additive
+<ul class="doclist">
+<li> Preserves unel
+
+</li>
+<li> Commutes with BinOp
+
+</li>
+<li> isAdditiveFunctor
+
+</li>
+</ul>
+
+</li>
+<li> The natural additive functor to quotient
+
+</li>
+<li> Additive equivalences
+ 
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.BinaryOperations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.CategoriesWithBinOps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoriesWithAbgrops</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PreAdditive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Additive</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Equivalences.Core</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.zero</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.BinDirectSums</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1222"></a><h1 class="section">Definition of additive functor</h1>
+
+   Functor is additive if for any two objects a1 a2 of an additive category A, the map on morphisms
+   A⟦a1, a2⟧ -&gt; B⟦F a1, F a2⟧ is a morphism of abelian groups. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_additivefunctor</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1223"></a><h2 class="section">isAdditiveFunctor</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">isAdditiveFunctor</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>), @<span class="id" title="var">ismonoidfun</span> (<span class="id" title="var">to_abgr</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) (<span class="id" title="var">to_abgr</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>)) (# <span class="id" title="var">F</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_isAdditiveFunctor</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : ∏ (<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@<span class="id" title="var">ismonoidfun</span> (<span class="id" title="var">to_abgr</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) (<span class="id" title="var">to_abgr</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>)) (# <span class="id" title="var">F</span>)) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isAdditiveFunctor</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">H</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_isAdditiveFunctor'</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H1</span> : ∏ (<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>), (# <span class="id" title="var">F</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H2</span> : ∏ (<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>) (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">A</span>⟦<span class="id" title="var">a1</span>, <span class="id" title="var">a2</span>⟧), # <span class="id" title="var">F</span> (<span class="id" title="var">to_binop</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">to_binop</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (# <span class="id" title="var">F</span> <span class="id" title="var">f</span>) (# <span class="id" title="var">F</span> <span class="id" title="var">g</span>)) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isAdditiveFunctor</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_isAdditiveFunctor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">H2</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">PreAdditive_unel_zero</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">to_unel</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">PreAdditive_unel_zero</span> <span class="id" title="var">B</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">to_unel</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">H1</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_isAdditiveFunctor</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isaprop</span> (<span class="id" title="var">isAdditiveFunctor</span> <span class="id" title="var">F</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">t0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropismonoidfun</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1224"></a><h2 class="section">Additive functor</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AdditiveFunctor</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>) : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">F</span> : (<span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>), <span class="id" title="var">isAdditiveFunctor</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_AdditiveFunctor</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">isAdditiveFunctor</span> <span class="id" title="var">F</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> := <span class="id" title="var">tpair</span> <span class="id" title="var">_</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Accessor functions 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AdditiveFunctor_Functor</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <span class="id" title="var">AdditiveFunctor_Functor</span> : <span class="id" title="var">AdditiveFunctor</span> &gt;-&gt; <span class="id" title="var">functor</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AdditiveFunctor_isAdditiveFunctor</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isAdditiveFunctor</span> (<span class="id" title="var">AdditiveFunctor_Functor</span> <span class="id" title="var">F</span>) := <span class="id" title="var">pr2</span> <span class="id" title="var">F</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1225"></a><h2 class="section">Basics of additive functors</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorUnel</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>) : # <span class="id" title="var">F</span> (<span class="id" title="var">to_unel</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) = <span class="id" title="var">to_unel</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">to_unel</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">F</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorZeroArrow</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>) : # <span class="id" title="var">F</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">PreAdditive_unel_zero</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">PreAdditive_unel_zero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">AdditiveFunctorUnel</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorLinear</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">a1</span> --&gt; <span class="id" title="var">a2</span>) : # <span class="id" title="var">F</span> (<span class="id" title="var">to_binop</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) = <span class="id" title="var">to_binop</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (# <span class="id" title="var">F</span> <span class="id" title="var">f</span>) (# <span class="id" title="var">F</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">F</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>)).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorInv</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">a1</span> --&gt; <span class="id" title="var">a2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# <span class="id" title="var">F</span> (<span class="id" title="var">to_inv</span> <span class="id" title="var">f</span>) = <span class="id" title="var">to_inv</span> (# <span class="id" title="var">F</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">to_lcan</span> <span class="id" title="var">_</span> (# <span class="id" title="var">F</span> <span class="id" title="var">f</span>)). <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">AdditiveFunctorLinear</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">rinvax</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">AdditiveFunctorUnel</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">rinvax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">CompositionIsAdditive</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> <span class="id" title="var">A3</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F1</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F2</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A2</span> <span class="id" title="var">A3</span>) : <span class="id" title="var">isAdditiveFunctor</span> (<span class="id" title="var">functor_composite</span> <span class="id" title="var">F1</span> <span class="id" title="var">F2</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_isAdditiveFunctor'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>. <span class="id" title="var">cbn</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">AdditiveFunctorZeroArrow</span>. <span class="id" title="var">use</span> <span class="id" title="var">AdditiveFunctorZeroArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>. <span class="id" title="var">cbn</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">AdditiveFunctorLinear</span>. <span class="id" title="var">use</span> <span class="id" title="var">AdditiveFunctorLinear</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AdditiveComposite</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> <span class="id" title="var">A3</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>}(<span class="id" title="var">F1</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F2</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A2</span> <span class="id" title="var">A3</span>) : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A1</span> <span class="id" title="var">A3</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mk_AdditiveFunctor</span> (<span class="id" title="var">functor_composite</span> <span class="id" title="var">F1</span> <span class="id" title="var">F2</span>) (<span class="id" title="var">CompositionIsAdditive</span> <span class="id" title="var">F1</span> <span class="id" title="var">F2</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_additivefunctor</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1226"></a><h1 class="section">Additive functor preserves BinDirectSums</h1>
+
+   We say that a functor F between additive categories A and B preserves BinDirectSums if for any
+   BinDirectSum (a1 ⊕ a2, in1, in2, pr1, pr2) in A, the data (F(a1 ⊕ a2), F(in1), F(in2), F(pr1),
+   F(pr2)) is a BinDirectSum in B. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">additivefunctor_preserves_bindirectsums</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">PreservesBinDirectSums</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) : <span class="id" title="var">hProp</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∀ (<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>) (<span class="id" title="var">DS</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isBinDirectSum</span> <span class="id" title="var">B</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>) (<span class="id" title="var">F</span> <span class="id" title="var">DS</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">F</span> (<span class="id" title="var">to_In1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) (# <span class="id" title="var">F</span> (<span class="id" title="var">to_In2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Additive functor preserves zeros. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_zero</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isZero</span> <span class="id" title="var">B</span> (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">isadd0</span> := <span class="id" title="var">AdditiveFunctor_isAdditiveFunctor</span> <span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">unel</span> := <span class="id" title="var">to_unel</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := (<span class="id" title="var">pr2</span> <span class="id" title="var">isadd0</span>)). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp1</span> := <span class="id" title="var">PreAdditive_unel_zero</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">to_unel</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp1</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">tmp2</span> : <span class="id" title="var">identity</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) = <span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="tactic">by</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">ArrowsToZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">tmp2</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X</span> : # <span class="id" title="var">F</span> (<span class="id" title="var">identity</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)) = <span class="id" title="var">identity</span> (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>))) <span class="id" title="tactic">by</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp2</span> := <span class="id" title="var">PreAdditive_unel_zero</span> <span class="id" title="var">B</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)) (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">to_unel</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp2</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp2</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X0</span> : <span class="id" title="var">iso</span> (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">isopair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">ZeroArrowTo</span> (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">is_iso_qinv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">ZeroArrowFrom</span> (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">X</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">ZeroArrowEq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">ArrowsToZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">IsoToisZero</span> <span class="id" title="var">B</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) <span class="id" title="var">X0</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1227"></a><h2 class="section">F preserves IdIn1, IdIn2, IdUnit1, IdUnit2, and Id of BinDirectSum</h2>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_idin1</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">DS</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">F</span> (<span class="id" title="var">to_In1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) · (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) = <span class="id" title="var">identity</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_idin2</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">DS</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">F</span> (<span class="id" title="var">to_In2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) · (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) = <span class="id" title="var">identity</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_unit1</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">DS</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">F</span> (<span class="id" title="var">to_In1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) · (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) = <span class="id" title="var">to_unel</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">AdditiveFunctorUnel</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_unit2</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">DS</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">F</span> (<span class="id" title="var">to_In2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) · (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) = <span class="id" title="var">to_unel</span> (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">AdditiveFunctorUnel</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_id</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">DS</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">to_binop</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) · (# <span class="id" title="var">F</span> (<span class="id" title="var">to_In1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) · (# <span class="id" title="var">F</span> (<span class="id" title="var">to_In2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>))) = <span class="id" title="var">identity</span> <span class="id" title="var">_</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">AdditiveFunctorLinear</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_BinOpId</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+An additive functor preserves BinDirectSums 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AdditiveFunctorPreservesBinDirectSums</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">DS</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_isBinDirectSum</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_idin1</span> <span class="id" title="var">F</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_idin2</span> <span class="id" title="var">F</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_unit1</span> <span class="id" title="var">F</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_unit2</span> <span class="id" title="var">F</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">AdditiveFunctorPreservesBinDirectSums_id</span> <span class="id" title="var">F</span> <span class="id" title="var">DS</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">additivefunctor_preserves_bindirectsums</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1228"></a><h1 class="section">Additive criteria</h1>
+
+   In this section we show that a functor between additive categories which preserves BinDirectSums
+   is additive. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">additivefunctor_criteria</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1229"></a><h2 class="section">Preserves unel</h2>
+
+<div class="paragraph"> </div>
+
+ A functor which preserves binary direct sums preserves zero objects. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isAdditiveCriteria_isZero</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>) : <span class="id" title="var">isZero</span> <span class="id" title="var">B</span> (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">DS</span> := <span class="id" title="var">to_BinDirectSums</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">isBDS</span> := <span class="id" title="var">H</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e1</span> : (# <span class="id" title="var">F</span> (<span class="id" title="var">to_In1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) = (# <span class="id" title="var">F</span> (<span class="id" title="var">to_In2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ArrowsFromZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e2</span> : (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) = (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">ArrowsToZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">isBDS</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">e1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">isBDS</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">e2</span> <span class="id" title="tactic">in</span> <span class="id" title="var">isBDS</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">e1</span> <span class="id" title="var">e2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">BDS</span> := <span class="id" title="var">mk_BinDirectSum</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">isBDS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_isZero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">b</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">cbn</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (!(<span class="id" title="var">BinDirectSumIn1Commutes</span> <span class="id" title="var">B</span> <span class="id" title="var">BDS</span> <span class="id" title="var">_</span> <span class="id" title="var">t</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinDirectSumIn2Commutes</span> <span class="id" title="var">B</span> <span class="id" title="var">BDS</span> <span class="id" title="var">_</span> <span class="id" title="var">t</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">cbn</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (!(<span class="id" title="var">BinDirectSumPr1Commutes</span> <span class="id" title="var">B</span> <span class="id" title="var">BDS</span> <span class="id" title="var">_</span> <span class="id" title="var">t</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinDirectSumPr2Commutes</span> <span class="id" title="var">B</span> <span class="id" title="var">BDS</span> <span class="id" title="var">_</span> <span class="id" title="var">t</span> (<span class="id" title="var">ZeroArrow</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">B</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+F preserves unel 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Corollary</span> <span class="id" title="var">isAdditiveCriteria_preservesUnel</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>) (<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">F</span> (<span class="id" title="var">to_unel</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>)) = (<span class="id" title="var">to_unel</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">Z</span> := <span class="id" title="var">mk_Zero</span> (<span class="id" title="var">F</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>)) (<span class="id" title="var">isAdditiveCriteria_isZero</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">PreAdditive_unel_zero</span> <span class="id" title="var">A</span> (<span class="id" title="var">to_Zero</span> <span class="id" title="var">A</span>) <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">PreAdditive_unel_zero</span> <span class="id" title="var">B</span> <span class="id" title="var">Z</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">ZeroArrow</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e1</span> : # <span class="id" title="var">F</span> (<span class="id" title="var">ZeroArrowTo</span> <span class="id" title="var">a1</span>) = @<span class="id" title="var">ZeroArrowTo</span> <span class="id" title="var">B</span> <span class="id" title="var">Z</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">ArrowsToZero</span> <span class="id" title="var">B</span> <span class="id" title="var">Z</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">e2</span> : # <span class="id" title="var">F</span> (<span class="id" title="var">ZeroArrowFrom</span> <span class="id" title="var">a2</span>) = @<span class="id" title="var">ZeroArrowFrom</span> <span class="id" title="var">B</span> <span class="id" title="var">Z</span> (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">ArrowsFromZero</span> <span class="id" title="var">B</span> <span class="id" title="var">Z</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">e1</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">e2</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1230"></a><h2 class="section">Commutes with binop</h2>
+
+<div class="paragraph"> </div>
+
+ F commutes with addition of projections from a1 ⊕ a1 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">isAdditiveCriteria_isBinopFun_Pr</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">DS</span> : <span class="id" title="var">BinDirectSum</span> <span class="id" title="var">A</span> <span class="id" title="var">a1</span> <span class="id" title="var">a1</span>):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# <span class="id" title="var">F</span> (<span class="id" title="var">to_binop</span> <span class="id" title="var">DS</span> <span class="id" title="var">a1</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>) (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">to_binop</span> (<span class="id" title="var">F</span> <span class="id" title="var">DS</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) (# <span class="id" title="var">F</span> (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">isBDS</span> := <span class="id" title="var">H</span> <span class="id" title="var">a1</span> <span class="id" title="var">a1</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">BDS</span> := <span class="id" title="var">mk_BinDirectSum</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">isBDS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">FromBinDirectSumsEq</span> <span class="id" title="var">B</span> <span class="id" title="var">BDS</span>); <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_runax'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">isAdditiveCriteria_preservesUnel</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_runax'</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_lunax'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">isAdditiveCriteria_preservesUnel</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span>). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_lunax'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">isAdditiveCriteria_BinOp_eq</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">A</span>⟦<span class="id" title="var">a1</span>, <span class="id" title="var">a2</span>⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">DS</span> := <span class="id" title="var">to_BinDirectSums</span> <span class="id" title="var">A</span> <span class="id" title="var">a2</span> <span class="id" title="var">a2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">to_binop</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> = (<span class="id" title="var">to_binop</span> <span class="id" title="var">a1</span> <span class="id" title="var">DS</span> (<span class="id" title="var">f</span> · (<span class="id" title="var">to_In1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)) (<span class="id" title="var">g</span> · (<span class="id" title="var">to_In2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">to_binop</span> <span class="id" title="var">DS</span> <span class="id" title="var">a2</span> (<span class="id" title="var">to_Pr1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>) (<span class="id" title="var">to_Pr2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">isBDS</span> := <span class="id" title="var">H</span> <span class="id" title="var">a2</span> <span class="id" title="var">a2</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">BDS</span> := <span class="id" title="var">mk_BinDirectSum</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">isBDS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_linear'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_postmor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_unel'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_runax'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_postmor_linear'</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_unel'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_lunax'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+F commutes with addition of morphisms 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">isAdditiveCriteria_BinOp</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>) {<span class="id" title="var">a1</span> <span class="id" title="var">a2</span> : <span class="id" title="var">A</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">A</span>⟦<span class="id" title="var">a1</span>, <span class="id" title="var">a2</span>⟧) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# <span class="id" title="var">F</span> (<span class="id" title="var">to_binop</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>) = <span class="id" title="var">to_binop</span> (<span class="id" title="var">F</span> <span class="id" title="var">a1</span>) (<span class="id" title="var">F</span> <span class="id" title="var">a2</span>) (# <span class="id" title="var">F</span> <span class="id" title="var">f</span>) (# <span class="id" title="var">F</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">DS</span> := <span class="id" title="var">to_BinDirectSums</span> <span class="id" title="var">A</span> <span class="id" title="var">a2</span> <span class="id" title="var">a2</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">isBDS</span> := <span class="id" title="var">H</span> <span class="id" title="var">a2</span> <span class="id" title="var">a2</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">BDS</span> := <span class="id" title="var">mk_BinDirectSum</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">isBDS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">isAdditiveCriteria_BinOp_eq</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (@<span class="id" title="var">isAdditiveCriteria_isBinopFun_Pr</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">a2</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_postmor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">fold</span> <span class="id" title="var">DS</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_unel'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_runax'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_postmor_linear'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_IdIn2</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">to_Unel1</span> <span class="id" title="var">A</span> <span class="id" title="var">DS</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_premor_unel'</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">to_lunax'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isAdditiveCriteria</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isAdditiveFunctor</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_isAdditiveFunctor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isAdditiveCriteria_BinOp</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">isAdditiveCriteria_preservesUnel</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span> <span class="id" title="var">a1</span> <span class="id" title="var">a2</span>). <span class="id" title="tactic">unfold</span> <span class="id" title="var">to_unel</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">tmp</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AdditiveFunctorCriteria</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">PreservesBinDirectSums</span> <span class="id" title="var">F</span>) : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_AdditiveFunctor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">F</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">isAdditiveCriteria</span> <span class="id" title="var">F</span> <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">additivefunctor_criteria</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1231"></a><h1 class="section">The functor <span class="inlinecode"><span class="id" title="var">QuotcategoryFunctor</span></span> is additive</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_additive_quot_functor</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">A</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">PAS</span> : <span class="id" title="var">PreAdditiveSubabgrs</span> <span class="id" title="var">A</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">PAC</span> : <span class="id" title="var">PreAdditiveComps</span> <span class="id" title="var">A</span> <span class="id" title="var">PAS</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">QuotcategoryAdditiveFunctor_isAdditiveFunctor</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;@<span class="id" title="var">isAdditiveFunctor</span> <span class="id" title="var">A</span> (<span class="id" title="var">Quotcategory_Additive</span> <span class="id" title="var">A</span> <span class="id" title="var">PAS</span> <span class="id" title="var">PAC</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">QuotcategoryFunctor</span> (<span class="id" title="var">Additive_PreAdditive</span> <span class="id" title="var">A</span>) <span class="id" title="var">PAS</span> <span class="id" title="var">PAC</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_isAdditiveFunctor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">QuotcategoryAdditiveFunctor</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A</span> (<span class="id" title="var">Quotcategory_Additive</span> <span class="id" title="var">A</span> <span class="id" title="var">PAS</span> <span class="id" title="var">PAC</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_AdditiveFunctor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">QuotcategoryFunctor</span> <span class="id" title="var">A</span> <span class="id" title="var">PAS</span> <span class="id" title="var">PAC</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">QuotcategoryAdditiveFunctor_isAdditiveFunctor</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_additive_quot_functor</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1232"></a><h1 class="section">Equivalences of additive categories</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">def_additive_equivalence</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquiv</span> (<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>) : <span class="id" title="var">UU</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">D</span> : (∑ <span class="id" title="var">F</span> : (<span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span> × <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A2</span> <span class="id" title="var">A1</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">are_adjoints</span> (<span class="id" title="var">dirprod_pr1</span> <span class="id" title="var">F</span>) (<span class="id" title="var">dirprod_pr2</span> <span class="id" title="var">F</span>)),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">a</span> : <span class="id" title="var">A1</span>, <span class="id" title="var">is_z_isomorphism</span> (<span class="id" title="var">unit_from_left_adjoint</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">D</span>) <span class="id" title="var">a</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">b</span> : <span class="id" title="var">A2</span>, <span class="id" title="var">is_z_isomorphism</span> (<span class="id" title="var">counit_from_left_adjoint</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">D</span>) <span class="id" title="var">b</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">mk_AddEquiv</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">G</span> : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A2</span> <span class="id" title="var">A1</span>) (<span class="id" title="var">H</span> : <span class="id" title="var">are_adjoints</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H1</span> : ∏ <span class="id" title="var">a</span> : <span class="id" title="var">A1</span>, <span class="id" title="var">is_z_isomorphism</span> (<span class="id" title="var">unit_from_left_adjoint</span> <span class="id" title="var">H</span> <span class="id" title="var">a</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H2</span> : ∏ <span class="id" title="var">b</span> : <span class="id" title="var">A2</span>, <span class="id" title="var">is_z_isomorphism</span> (<span class="id" title="var">counit_from_left_adjoint</span> <span class="id" title="var">H</span> <span class="id" title="var">b</span>)) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span> := (((<span class="id" title="var">F</span>,,<span class="id" title="var">G</span>),,<span class="id" title="var">H</span>),,(<span class="id" title="var">H1</span>,,<span class="id" title="var">H2</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Accessor functions 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquiv1</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">dirprod_pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">AE</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquiv2</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) : <span class="id" title="var">AdditiveFunctor</span> <span class="id" title="var">A2</span> <span class="id" title="var">A1</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">dirprod_pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">AE</span>)).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquiv_are_adjoints</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">are_adjoints</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">AE</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Coercion</span> <span class="id" title="var">AddEquiv_are_adjoints</span> : <span class="id" title="var">AddEquiv</span> &gt;-&gt; <span class="id" title="var">are_adjoints</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivUnit</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat_trans</span> (<span class="id" title="var">functor_identity</span> <span class="id" title="var">A1</span>) (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>)) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">unit_from_left_adjoint</span> <span class="id" title="var">AE</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivCounit</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat_trans</span> (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>)) (<span class="id" title="var">functor_identity</span> <span class="id" title="var">A2</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">counit_from_left_adjoint</span> <span class="id" title="var">AE</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivUnitInvMor</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">X</span> : <span class="id" title="var">A1</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A1</span>⟦(<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>)), <span class="id" title="var">X</span>⟧ := <span class="id" title="var">pr1</span> ((<span class="id" title="var">dirprod_pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivUnitInvMor_is_iso_with_inv_data</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">X</span> : <span class="id" title="var">A1</span>) : <span class="id" title="var">is_z_isomorphism</span> (<span class="id" title="var">unit_from_left_adjoint</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">dirprod_pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivUnitInvMor_is_inverse_in_precat</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">X</span> : <span class="id" title="var">A1</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_inverse_in_precat</span> (<span class="id" title="var">unit_from_left_adjoint</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>) (<span class="id" title="var">AddEquivUnitInvMor</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr2</span> ((<span class="id" title="var">dirprod_pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivCounitInvMor</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">X</span> : <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">A2</span>⟦<span class="id" title="var">X</span>, (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>))⟧ := <span class="id" title="var">pr1</span> ((<span class="id" title="var">dirprod_pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivCounitInvMor_is_iso_with_inv_data</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">X</span> : <span class="id" title="var">A2</span>) : <span class="id" title="var">is_z_isomorphism</span> (<span class="id" title="var">counit_from_left_adjoint</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">dirprod_pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivCounitInvMor_is_inverse_in_precat</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">X</span> : <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_inverse_in_precat</span> (<span class="id" title="var">counit_from_left_adjoint</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>) (<span class="id" title="var">AddEquivCounitInvMor</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr2</span> ((<span class="id" title="var">dirprod_pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">X</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivUnitIso</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">X</span> : <span class="id" title="var">A1</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">z_iso</span> <span class="id" title="var">X</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_z_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivUnit</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivUnitInvMor</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivUnitInvMor_is_inverse_in_precat</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivCounitIso</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">X</span> : <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">z_iso</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>)) <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_z_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivCounit</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivCounitInvMor</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivCounitInvMor_is_inverse_in_precat</span> <span class="id" title="var">AE</span> <span class="id" title="var">X</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivLeftTriangle</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">a</span> : <span class="id" title="var">ob</span> <span class="id" title="var">A1</span>), # (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">a</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">a</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">identity</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">a</span>) := <span class="id" title="var">triangle_id_left_ad</span> <span class="id" title="var">AE</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivRightTriangle</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">b</span> : <span class="id" title="var">ob</span> <span class="id" title="var">A2</span>), (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">b</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· # (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">b</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">identity</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">b</span>) := <span class="id" title="var">triangle_id_right_ad</span> <span class="id" title="var">AE</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivUnitComm</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">x'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">A1</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">x'</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> · (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>) · # (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">f</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">AddEquivUnit</span> <span class="id" title="var">AE</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivCounitComm</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∏ (<span class="id" title="var">x</span> <span class="id" title="var">x'</span> : <span class="id" title="var">A2</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">x'</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">f</span> · (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>) · <span class="id" title="var">f</span> := <span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">AddEquivCounit</span> <span class="id" title="var">AE</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquivUnitMorComm</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) {<span class="id" title="var">x</span> <span class="id" title="var">x'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">A1</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">x'</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> = (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (# (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">post_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">AddEquivUnitComm</span> <span class="id" title="var">AE</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">is_inverse_in_precat2</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>)). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">tmp</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquivCounitMorComm</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) {<span class="id" title="var">x</span> <span class="id" title="var">x'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">A2</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">x'</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> = (<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (# (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pre_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (! <span class="id" title="var">AddEquivCounitComm</span> <span class="id" title="var">AE</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">is_inverse_in_precat1</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivUnitInv</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) {<span class="id" title="var">x</span> <span class="id" title="var">x'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">A1</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">x'</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>) · <span class="id" title="var">f</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">f</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· <span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pre_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat1</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">post_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AddEquivUnitComm</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">is_inverse_in_precat2</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>)). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="var">cbn</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">AddEquivCounitInv</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) {<span class="id" title="var">x</span> <span class="id" title="var">x'</span> : <span class="id" title="var">ob</span> <span class="id" title="var">A2</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">f</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">x'</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;· # (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>)) <span class="id" title="var">f</span> =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">f</span> · <span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pre_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat1</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)). <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">post_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">AddEquivCounitComm</span> <span class="id" title="var">AE</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)). <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>. <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tmp</span> := <span class="id" title="var">is_inverse_in_precat2</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x'</span>)). <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">tmp</span>. <span class="id" title="var">cbn</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">tmp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquivCounitUnit</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">A1</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">post_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat2</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> ((<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivLeftTriangle</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquivCounitUnit'</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">A1</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)) : <span class="id" title="var">A2</span>⟦<span class="id" title="var">_</span>, <span class="id" title="var">_</span>⟧) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">post_comp_with_z_iso_inv_is_inj</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat1</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> ((<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AddEquivCounitUnit</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat2</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquivUnitCounit</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pre_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat1</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> ((<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">AddEquivRightTriangle</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquivUnitCounit'</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">A2</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)) : <span class="id" title="var">A1</span>⟦<span class="id" title="var">_</span>, <span class="id" title="var">_</span>⟧) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) (<span class="id" title="var">z_iso_inv_mor</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pre_comp_with_z_iso_inv_is_inj</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>. <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat2</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> ((<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">AddEquivUnitCounit</span>. <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">is_inverse_in_precat1</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)). <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquiv1Inj</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) {<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">A1</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : # (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) <span class="id" title="var">f</span> = # (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>) <span class="id" title="var">g</span>) : <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (# (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">post_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivUnitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">y</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">AddEquivUnitComm</span> <span class="id" title="var">AE</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (! (<span class="id" title="var">AddEquivUnitComm</span> <span class="id" title="var">AE</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">gg</span> : <span class="id" title="var">_</span>, (<span class="id" title="var">AddEquivUnit</span> <span class="id" title="var">AE</span>) <span class="id" title="var">x</span> · <span class="id" title="var">gg</span>) <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">AddEquiv2Inj</span> {<span class="id" title="var">A1</span> <span class="id" title="var">A2</span> : <span class="id" title="var">CategoryWithAdditiveStructure</span>} (<span class="id" title="var">AE</span> : <span class="id" title="var">AddEquiv</span> <span class="id" title="var">A1</span> <span class="id" title="var">A2</span>) {<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">A2</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">x</span> --&gt; <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : # (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) <span class="id" title="var">f</span> = # (<span class="id" title="var">AddEquiv2</span> <span class="id" title="var">AE</span>) <span class="id" title="var">g</span>) : <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> (# (<span class="id" title="var">AddEquiv1</span> <span class="id" title="var">AE</span>))) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pre_comp_with_z_iso_is_inj</span> (<span class="id" title="var">AddEquivCounitIso</span> <span class="id" title="var">AE</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> (! <span class="id" title="var">AddEquivCounitComm</span> <span class="id" title="var">AE</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">pathscomp0</span> <span class="id" title="var">_</span> (<span class="id" title="var">AddEquivCounitComm</span> <span class="id" title="var">AE</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">g</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">gg</span> : <span class="id" title="var">_</span>, <span class="id" title="var">gg</span> · (<span class="id" title="var">AddEquivCounit</span> <span class="id" title="var">AE</span>) <span class="id" title="var">y</span>) <span class="id" title="var">H</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">def_additive_equivalence</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

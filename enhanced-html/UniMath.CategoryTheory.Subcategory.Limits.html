@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Subcategory.Limits</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1038"></a><h2 class="section">(Co)limits in full subprecategories</h2>
+
+
+<div class="paragraph"> </div>
+
+If
+
+<div class="paragraph"> </div>
+
+<a name="lab1039"></a><h1 class="section">C has (co)limits of shape F,</h1>
+
+<a name="lab1040"></a><h1 class="section">C' : ob C → UU is a proposition on the objects of C, and</h1>
+
+<a name="lab1041"></a><h1 class="section">C' is closed under the formation of (co)limits of shape F,</h1>
+
+
+<div class="paragraph"> </div>
+
+then the full subcategory on C'-objects has (co)limits of shape F.
+
+<div class="paragraph"> </div>
+
+Such proofs are mostly just a lot of insertions of
+
+<div class="paragraph"> </div>
+
+<a name="lab1042"></a><h1 class="section"><span class="inlinecode"><span class="id" title="var">precategory_object_from_sub_precategory_object</span></span></h1>
+
+<a name="lab1043"></a><h1 class="section"><span class="inlinecode"><span class="id" title="var">precategory_morphism_from_sub_precategory_morphism</span></span></h1>
+
+
+<div class="paragraph"> </div>
+
+and their "inverses"
+
+<div class="paragraph"> </div>
+
+<a name="lab1044"></a><h1 class="section"><span class="inlinecode"><span class="id" title="var">precategory_morphisms_in_subcat</span></span></h1>
+
+<a name="lab1045"></a><h1 class="section"><span class="inlinecode"><span class="id" title="var">precategory_object_in_subcat</span></span>.</h1>
+
+
+<div class="paragraph"> </div>
+
+Author: Langston Barrett (@siddharthist) (March 2018)
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<a name="lab1046"></a><h2 class="section">Contents</h2>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Limits
+<ul class="doclist">
+<li> Binary products
+
+</li>
+</ul>
+
+</li>
+<li> Colimits
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartA</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Subcategory.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Subcategory.Full</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.terminal</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.initial</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1047"></a><h2 class="section">The subcategory inclusion reflects limits</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Corollary</span> <span class="id" title="var">reflects_all_limits_sub_precategory_inclusion</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">reflects_all_limits</span> (<span class="id" title="var">sub_precategory_inclusion</span> <span class="id" title="var">C</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fully_faithful_reflects_all_limits</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">fully_faithful_sub_precategory_inclusion</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">Limits</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1048"></a><h2 class="section">Limits</h2>
+
+<div class="paragraph"> </div>
+
+<a name="lab1049"></a><h3 class="section">Terminal objects</h3>
+
+<div class="paragraph"> </div>
+
+ As long as the predicate holds for the terminal object, it's terminal in the full subcategory. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">terminal_in_full_subcategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">TC</span> : <span class="id" title="var">Terminal</span> <span class="id" title="var">C</span>) (<span class="id" title="var">TC'</span> : <span class="id" title="var">C'</span> (<span class="id" title="var">TerminalObject</span> <span class="id" title="var">TC</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Terminal</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">precategory_object_in_subcat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">TerminalObject</span> <span class="id" title="var">TC</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">iscontrpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">morphism_in_full_subcat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">TerminalArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_in_sub_precategory</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">TerminalArrowUnique</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1050"></a><h3 class="section">Binary products</h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">bin_products_in_full_subcategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} (<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BPC</span> : <span class="id" title="var">BinProducts</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">all</span> : ∏ <span class="id" title="var">c1</span> <span class="id" title="var">c2</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>, <span class="id" title="var">C'</span> <span class="id" title="var">c1</span> -&gt; <span class="id" title="var">C'</span> <span class="id" title="var">c2</span> -&gt; <span class="id" title="var">C'</span> (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">BPC</span> <span class="id" title="var">c1</span> <span class="id" title="var">c2</span>))) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinProducts</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c1'</span> <span class="id" title="var">c2'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">c1'_in_C</span> := (<span class="id" title="var">precategory_object_from_sub_precategory_object</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">c1'</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">c2'_in_C</span> := (<span class="id" title="var">precategory_object_from_sub_precategory_object</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">c2'</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; [<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>|]; [|<span class="id" title="var">use</span> <span class="id" title="var">dirprodpair</span>|].<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">precategory_object_in_subcat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">BPC</span> <span class="id" title="var">c1'_in_C</span> <span class="id" title="var">c2'_in_C</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">all</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c1'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c2'</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">morphism_in_full_subcat</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductPr1</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">morphism_in_full_subcat</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductPr2</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">isBinProduct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">bp'</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">precategory_morphisms_in_subcat</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductArrow</span>|<span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">precategory_morphism_from_sub_precategory_morphism</span> <span class="id" title="var">_</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">dirprodpair</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_in_sub_precategory</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductPr1Commutes</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductPr2Commutes</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">otherarrow</span>.<br/>
+</div>
+
+<div class="doc">
+This is where we use the condition that C has homsets. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_in_sub_precategory</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductArrowUnique</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">dirprod_pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">otherarrow</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">dirprod_pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">otherarrow</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_set_sub_precategory_morphisms</span>, <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1051"></a><h3 class="section">General limits</h3>
+
+<div class="paragraph"> </div>
+
+ Lift a diagram from a full subcategory into the parent category 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">lift_diagram_full_subcategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>)} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">precategory_object_from_sub_precategory_object</span> <span class="id" title="var">_</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">dob</span> <span class="id" title="var">d</span> <span class="id" title="var">v</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">precategory_morphism_from_sub_precategory_morphism</span> <span class="id" title="var">_</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">dmor</span> <span class="id" title="var">d</span> <span class="id" title="var">e</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Equivalence between cones in the parent category and those in the subcategory 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">cone_in_full_subcategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} (<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">c</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">tip</span> : <span class="id" title="var">C'</span> <span class="id" title="var">c</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">cone</span> (<span class="id" title="var">lift_diagram_full_subcategory</span> <span class="id" title="var">d</span>) <span class="id" title="var">c</span> ≃ <span class="id" title="var">cone</span> <span class="id" title="var">d</span> (<span class="id" title="var">c</span>,, <span class="id" title="var">tip</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">cone</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqbandf</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">weqonsecfibers</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="keyword">beta</span>.<br/>
+</div>
+
+<div class="doc">
+The following line works because of the computational behavior of
+        <span class="inlinecode"><span class="id" title="var">lift_diagram_full_subcategory</span></span>, namely:
+        <tt>
+        (∏ v : vertex g, C' (dob (lift_diagram_full_subcategory d) v))
+        → C' c
+        → ∏ v : vertex g,
+            pr1 (dob d v) = dob (lift_diagram_full_subcategory d) v
+        </tt>
+<div class="paragraph"> </div>
+
+      
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">weq_hom_in_subcat_from_hom_in_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span> (<span class="id" title="var">c</span>,, <span class="id" title="var">tip</span>) (<span class="id" title="var">dob</span> <span class="id" title="var">d</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">legs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="keyword">beta</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqonsecfibers</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">u</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqonsecfibers</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">v</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqonsecfibers</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">subtypeInjectivity</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+A full subcategory has a limit of a given shape if the proposition holds
+    for the tip of the lifted limit diagram in the parent category. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">lim_cone_in_full_subcategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>)}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">LC</span> : <span class="id" title="var">Lims_of_shape</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">C'</span> (<span class="id" title="var">lim</span> (<span class="id" title="var">LC</span> (<span class="id" title="var">lift_diagram_full_subcategory</span> <span class="id" title="var">d</span>))) -&gt; <span class="id" title="var">LimCone</span> <span class="id" title="var">d</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">Z</span> := <span class="id" title="var">LC</span> (<span class="id" title="var">lift_diagram_full_subcategory</span> <span class="id" title="var">d</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">LimCone</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">precategory_object_in_subcat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">eapply</span> <span class="id" title="var">lim</span>; <span class="id" title="var">eassumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">cone_in_full_subcategory</span>, <span class="id" title="var">limCone</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">reflects_all_limits_sub_precategory_inclusion</span> <span class="id" title="var">C'</span> <span class="id" title="var">g</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Z</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1052"></a><h2 class="section">Colimits</h2>
+
+<div class="paragraph"> </div>
+
+<a name="lab1053"></a><h3 class="section">Initial objects</h3>
+
+<div class="paragraph"> </div>
+
+ As long as the predicate holds for the initial object, it's initial in the full subcategory. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">initial_in_full_subcategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">IC</span> : <span class="id" title="var">Initial</span> <span class="id" title="var">C</span>) (<span class="id" title="var">IC'</span> : <span class="id" title="var">C'</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">IC</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Initial</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">precategory_object_in_subcat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">IC</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">iscontrpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">morphism_in_full_subcat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">InitialArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_in_sub_precategory</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">InitialArrowUnique</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1054"></a><h3 class="section">Binary coproducts</h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">bin_coproducts_in_full_subcategory</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} (<span class="id" title="var">C'</span> : <span class="id" title="var">hsubtype</span> (<span class="id" title="var">ob</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BPC</span> : <span class="id" title="var">BinCoproducts</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">all</span> : ∏ <span class="id" title="var">c1</span> <span class="id" title="var">c2</span> : <span class="id" title="var">ob</span> <span class="id" title="var">C</span>, <span class="id" title="var">C'</span> <span class="id" title="var">c1</span> -&gt; <span class="id" title="var">C'</span> <span class="id" title="var">c2</span> -&gt; <span class="id" title="var">C'</span> (<span class="id" title="var">BinCoproductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">BPC</span> <span class="id" title="var">c1</span> <span class="id" title="var">c2</span>))) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproducts</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c1'</span> <span class="id" title="var">c2'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">c1'_in_C</span> := (<span class="id" title="var">precategory_object_from_sub_precategory_object</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">c1'</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">c2'_in_C</span> := (<span class="id" title="var">precategory_object_from_sub_precategory_object</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">c2'</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>; [<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>|]; [|<span class="id" title="var">use</span> <span class="id" title="var">dirprodpair</span>|].<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">precategory_object_in_subcat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (<span class="id" title="var">BinCoproductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">BPC</span> <span class="id" title="var">c1'_in_C</span> <span class="id" title="var">c2'_in_C</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">all</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c1'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">c2'</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">morphism_in_full_subcat</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn1</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">morphism_in_full_subcat</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn2</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">isBinCoproduct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">bp'</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">precategory_morphisms_in_subcat</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductArrow</span>|<span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">precategory_morphism_from_sub_precategory_morphism</span> <span class="id" title="var">_</span> (<span class="id" title="var">full_sub_precategory</span> <span class="id" title="var">C'</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">dirprodpair</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_in_sub_precategory</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn1Commutes</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductIn2Commutes</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">otherarrow</span>.<br/>
+</div>
+
+<div class="doc">
+This is where we use the condition that C has homsets. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_in_sub_precategory</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinCoproductArrowUnique</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">dirprod_pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">otherarrow</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">dirprod_pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">otherarrow</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_set_sub_precategory_morphisms</span>, <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">Limits</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

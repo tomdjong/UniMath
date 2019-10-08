@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.categories.HSET.Structures</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1482"></a><h1 class="section">Other structures in <span class="inlinecode"><span class="id" title="var">HSET</span></span></h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab1483"></a><h2 class="section">Contents</h2>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Natural numbers object (<span class="inlinecode"><span class="id" title="var">NNO_HSET</span></span>)
+
+</li>
+<li> Exponentials (<span class="inlinecode"><span class="id" title="var">Exponentials_HSET</span></span>)
+
+</li>
+<li> Construction of exponentials for functors into HSET
+    (<span class="inlinecode"><span class="id" title="var">Exponentials_functor_HSET</span></span>)
+
+</li>
+<li> Kernel pairs (<span class="inlinecode"><span class="id" title="var">kernel_pair_HSET</span></span>)
+
+</li>
+<li> Effective epis (<span class="inlinecode"><span class="id" title="var">EffectiveEpis_HSET</span></span>)
+
+</li>
+<li> Split epis with axiom of choice (<span class="inlinecode"><span class="id" title="var">SplitEpis_HSET</span></span>)
+
+</li>
+<li> Forgetful <span class="inlinecode"><span class="id" title="var">functor</span></span> to <span class="inlinecode"><span class="id" title="var">type_precat</span></span>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Written by: Benedikt Ahrens, Anders Mörtberg
+
+<div class="paragraph"> </div>
+
+October 2015 - January 2016
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.PartA</span>. <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Sets</span>. <span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.AxiomOfChoice</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.exponentials</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.slicecat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.NNO</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.SubobjectClassifier</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.Types</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.coequalizers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.pullbacks</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.terminal</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.covyoneda</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.EpiFacts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.MonoEpiIso</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1484"></a><h2 class="section">Natural numbers object (<span class="inlinecode"><span class="id" title="var">NNO_HSET</span></span>)</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isNNO_nat</span> : <span class="id" title="var">isNNO</span> <span class="id" title="var">TerminalHSET</span> <span class="id" title="var">natHSET</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, 0) <span class="id" title="var">S</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">z</span> <span class="id" title="var">s</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">unique_exists</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">_</span> <span class="id" title="var">n</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">z</span> <span class="id" title="var">tt</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">s</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">now</span> <span class="id" title="tactic">split</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intros</span> [].<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">now</span> <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">q</span> [<span class="id" title="var">hq1</span> <span class="id" title="var">hq2</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IH</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">hq1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> *; <span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">hq2</span> <span class="id" title="var">n</span>), <span class="id" title="var">IH</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">NNO_HSET</span> : <span class="id" title="var">NNO</span> <span class="id" title="var">TerminalHSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_NNO</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">natHSET</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, 0).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">S</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">isNNO_nat</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1485"></a><h2 class="section">Exponentials (<span class="inlinecode"><span class="id" title="var">Exponentials_HSET</span></span>)</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">exponentials</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Define the functor: A -&gt; _^A 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">exponential_functor</span> (<span class="id" title="var">A</span> : <span class="id" title="var">HSET</span>) : <span class="id" title="var">functor</span> <span class="id" title="var">HSET</span> <span class="id" title="var">HSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
++ <span class="id" title="tactic">exists</span> (<span class="id" title="var">hset_fun_space</span> <span class="id" title="var">A</span>); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">f</span> (<span class="id" title="var">g</span> <span class="id" title="var">x</span>)).<br/>
++ <span class="id" title="tactic">abstract</span> (<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>;<br/>
+&nbsp;&nbsp;[ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="var">now</span> (<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span>)<br/>
+&nbsp;&nbsp;| <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>; <span class="id" title="var">now</span> (<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span>)]).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+This checks that if we use constprod_functor2 the flip is not necessary 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">are_adjoints_constprod_functor2</span> <span class="id" title="var">A</span> :<br/>
+&nbsp;&nbsp;<span class="id" title="var">are_adjoints</span> (<span class="id" title="var">constprod_functor2</span> <span class="id" title="var">BinProductsHSET</span> <span class="id" title="var">A</span>) (<span class="id" title="var">exponential_functor</span> <span class="id" title="var">A</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprodpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">fx</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">fx</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">fx</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+- <span class="id" title="tactic">abstract</span> (<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>;<br/>
+&nbsp;&nbsp;[ <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ax</span>; <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;| <span class="id" title="tactic">intro</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Exponentials_HSET</span> : <span class="id" title="var">Exponentials</span> <span class="id" title="var">BinProductsHSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intro</span> <span class="id" title="var">a</span>.<br/>
+<span class="id" title="tactic">exists</span> (<span class="id" title="var">exponential_functor</span> <span class="id" title="var">a</span>).<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">flip</span>, <span class="id" title="var">dirprodpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">xf</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *; <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">xf</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">xf</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+- <span class="id" title="tactic">abstract</span> (<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>;<br/>
+&nbsp;&nbsp;[ <span class="id" title="var">now</span> <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ax</span>; <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">now</span> <span class="id" title="tactic">intro</span> <span class="id" title="var">b</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">exponentials</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1486"></a><h2 class="section">Construction of exponentials for functors into HSET</h2>
+
+<div class="paragraph"> </div>
+
+ This section defines exponential in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#C"><span class="id" title="variable">C</span></a>,<span class="id" title="var">HSET</span></span> following a slight
+variation of Moerdijk-MacLane (p. 46, Prop. 1).
+
+<div class="paragraph"> </div>
+
+The formula for <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#C"><span class="id" title="variable">C</span></a>,<span class="id" title="keyword">Set</span></span> is G^F(f)=Hom(Hom(f,−)×id(F),G) taken from:
+
+<div class="paragraph"> </div>
+
+http://mathoverflow.net/questions/104152/exponentials-in-functor-categories
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">exponentials_functor_cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> (<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>) (<span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">CP</span> := <span class="id" title="var">BinProducts_functor_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProductsHSET</span> <span class="id" title="var">has_homsets_HSET</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">cy</span> := <span class="id" title="var">covyoneda</span> <span class="id" title="var">_</span> <span class="id" title="var">hsC</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">exponential_functor_cat</span> (<span class="id" title="var">P</span> <span class="id" title="var">Q</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">HSET</span>) : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">HSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+- <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">hSetpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans</span> (<span class="id" title="var">BinProduct_of_functors</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> <span class="id" title="var">BinProductsHSET</span> (<span class="id" title="var">cy</span> <span class="id" title="var">c</span>) <span class="id" title="var">P</span>) <span class="id" title="var">Q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> (<span class="id" title="var">isaset_nat_trans</span> <span class="id" title="var">has_homsets_HSET</span>)).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">alpha</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">BinProductOfArrows</span> <span class="id" title="var">_</span> (<span class="id" title="var">CP</span> (<span class="id" title="var">cy</span> <span class="id" title="var">a</span>) <span class="id" title="var">P</span>) (<span class="id" title="var">CP</span> (<span class="id" title="var">cy</span> <span class="id" title="var">b</span>) <span class="id" title="var">P</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# <span class="id" title="var">cy</span> <span class="id" title="var">f</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>) · <span class="id" title="var">alpha</span>).<br/>
+- <span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="tactic">intros</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">a</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>); <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">prodtofuntoprod</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">f</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">cx</span> <span class="id" title="var">Px</span>]; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">covyoneda_morphisms_data</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">c</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">alpha</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>); <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">prodtofuntoprod</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">h</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">cx</span> <span class="id" title="var">pcx</span>]; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">covyoneda_morphisms_data</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span> ]).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="tactic">eval</span> (<span class="id" title="var">P</span> <span class="id" title="var">Q</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">HSET</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans</span> (<span class="id" title="var">BinProductObject</span> <span class="id" title="var">_</span> (<span class="id" title="var">CP</span> <span class="id" title="var">P</span> (<span class="id" title="var">exponential_functor_cat</span> <span class="id" title="var">P</span> <span class="id" title="var">Q</span>)) : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) <span class="id" title="var">Q</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">ytheta</span>; <span class="id" title="tactic">set</span> (<span class="id" title="var">y</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">ytheta</span>); <span class="id" title="tactic">set</span> (<span class="id" title="var">theta</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">ytheta</span>);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">theta</span> <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>,,<span class="id" title="var">y</span>).<br/>
+- <span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">ytheta</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">ytheta</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">y</span> <span class="id" title="var">theta</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">prodtofuntoprod</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">covyoneda_morphisms_data</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">theta</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Y</span> := <span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">X</span> <span class="id" title="var">c</span> <span class="id" title="var">c'</span> <span class="id" title="var">f</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">c</span>,, <span class="id" title="var">y</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [|<span class="id" title="tactic">apply</span> <span class="id" title="var">Y</span>]; <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">prodtofuntoprod</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>, <span class="id" title="var">id_left</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">Exponentials_functor_HSET</span> : <span class="id" title="var">Exponentials</span> <span class="id" title="var">CP</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">intro</span> <span class="id" title="var">P</span>.<br/>
+<span class="id" title="var">use</span> <span class="id" title="var">left_adjoint_from_partial</span>.<br/>
+- <span class="id" title="tactic">apply</span> (<span class="id" title="var">exponential_functor_cat</span> <span class="id" title="var">P</span>).<br/>
+- <span class="id" title="tactic">intro</span> <span class="id" title="var">Q</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="tactic">eval</span>.<br/>
+- <span class="id" title="tactic">intros</span> <span class="id" title="var">Q</span> <span class="id" title="var">R</span> φ; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* { <span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">c</span> <span class="id" title="var">u</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_nat_trans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">d</span> <span class="id" title="var">fx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (φ <span class="id" title="var">d</span> (<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">fx</span>) (# <span class="id" title="var">R</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">fx</span>) <span class="id" title="var">u</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">prodtofuntoprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[|<span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">nat_trans_ax</span> φ <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) (# <span class="id" title="var">R</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>) <span class="id" title="var">u</span>)))]; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : # <span class="id" title="var">R</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span> · <span class="id" title="var">f</span>) = # <span class="id" title="var">R</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>) · #<span class="id" title="var">R</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">prodtofuntoprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">_</span>); <span class="id" title="tactic">simpl</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">eqtohomot</span> <span class="id" title="var">H</span> <span class="id" title="var">u</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">intros</span> <span class="id" title="var">xx</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">isaprop_is_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">has_homsets_HSET</span>)|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">y</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">z</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>;  <span class="id" title="tactic">unfold</span> <span class="id" title="var">covyoneda_morphisms_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : # <span class="id" title="var">R</span> (<span class="id" title="var">f</span> · <span class="id" title="var">pr1</span> <span class="id" title="var">z</span>) = # <span class="id" title="var">R</span> <span class="id" title="var">f</span> · # <span class="id" title="var">R</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">z</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_comp</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">etrans</span>; [<span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span>)|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>); <span class="id" title="var">cbn</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : # <span class="id" title="var">R</span> (<span class="id" title="var">identity</span> <span class="id" title="var">x</span>) = <span class="id" title="var">identity</span> (<span class="id" title="var">R</span> <span class="id" title="var">x</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">apply</span> <span class="id" title="var">functor_id</span>|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">p</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">t</span> <span class="id" title="var">p</span>]; <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>; <span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">p</span>)|]).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">t</span> <span class="id" title="var">p</span>]; <span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">isaset_nat_trans</span> <span class="id" title="var">has_homsets_HSET</span>)|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">has_homsets_HSET</span>); <span class="id" title="tactic">intros</span> <span class="id" title="var">c</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">rc</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> (<span class="id" title="var">isaprop_is_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">has_homsets_HSET</span>)|]; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">p</span>; <span class="id" title="var">cbn</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">p</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">d</span>; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">t0</span> <span class="id" title="var">pd</span>]; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">HH</span> := <span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">t</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span> <span class="id" title="var">t0</span>) <span class="id" title="var">rc</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">HH</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">HH</span>; <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">covyoneda_morphisms_data</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">prodtofuntoprod</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">exponentials_functor_cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1487"></a><h2 class="section">Kernel pairs (<span class="inlinecode"><span class="id" title="var">kernel_pair_HSET</span></span>)</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">pullback_HSET_univprop_elements</span> {<span class="id" title="var">P</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">C</span> : <span class="id" title="var">HSET</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">p1</span> : <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">P</span>, <span class="id" title="var">A</span> ⟧} {<span class="id" title="var">p2</span> : <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">P</span>, <span class="id" title="var">B</span> ⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">f</span> : <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">A</span>, <span class="id" title="var">C</span> ⟧} {<span class="id" title="var">g</span> : <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">B</span>, <span class="id" title="var">C</span> ⟧}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ep</span> : <span class="id" title="var">p1</span> · <span class="id" title="var">f</span> = <span class="id" title="var">p2</span> · <span class="id" title="var">g</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pb</span> : <span class="id" title="var">isPullback</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span> <span class="id" title="var">ep</span>)<br/>
+&nbsp;&nbsp;: (∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> (<span class="id" title="var">e</span> : <span class="id" title="var">f</span> <span class="id" title="var">a</span> = <span class="id" title="var">g</span> <span class="id" title="var">b</span>), ∃! <span class="id" title="var">ab</span>, <span class="id" title="var">p1</span> <span class="id" title="var">ab</span> = <span class="id" title="var">a</span> × <span class="id" title="var">p2</span> <span class="id" title="var">ab</span> = <span class="id" title="var">b</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">Pb</span> := (<span class="id" title="var">mk_Pullback</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">pb</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">iscontraprop1</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">invproofirrelevance</span>; <span class="id" title="tactic">intros</span> [<span class="id" title="var">ab</span> [<span class="id" title="var">ea</span> <span class="id" title="var">eb</span>]] [<span class="id" title="var">ab'</span> [<span class="id" title="var">ea'</span> <span class="id" title="var">eb'</span>]].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (@<span class="id" title="var">toforallpaths</span> <span class="id" title="var">unitset</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">ab</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">ab'</span>) <span class="id" title="var">_</span> <span class="id" title="var">tt</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">MorphismsIntoPullbackEqual</span> <span class="id" title="var">pb</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> []; <span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">eapply</span> @<span class="id" title="var">pathscomp0</span>; [ <span class="id" title="var">eassumption</span> | <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>; <span class="id" title="var">eassumption</span>]).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> (<span class="id" title="var">_</span>,,<span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">_</span> <span class="id" title="var">tt</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">PullbackArrow</span> <span class="id" title="var">Pb</span> (<span class="id" title="var">unitset</span> : <span class="id" title="var">HSET</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">a</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">b</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">exact</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">generalize</span> <span class="id" title="var">tt</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackArrow_PullbackPr1</span> <span class="id" title="var">Pb</span> <span class="id" title="var">unitset</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">generalize</span> <span class="id" title="var">tt</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">PullbackArrow_PullbackPr2</span> <span class="id" title="var">Pb</span> <span class="id" title="var">unitset</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">kernel_pair_Set</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span>  {<span class="id" title="var">A</span> <span class="id" title="var">B</span>:<span class="id" title="var">HSET</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> (<span class="id" title="var">f</span>: <span class="id" title="var">HSET</span> ⟦<span class="id" title="var">A</span>,<span class="id" title="var">B</span>⟧).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">kernel_pair_HSET</span> : <span class="id" title="var">kernel_pair</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">PullbacksHSET</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> <span class="id" title="var">g</span> := <span class="id" title="var">kernel_pair_HSET</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Formulation in the categorical language of the universal property
+      enjoyed by surjections (univ_surj) 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isCoeqKernelPairSet</span> (<span class="id" title="var">hf</span>:<span class="id" title="var">issurjective</span> <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isCoequalizer</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">PullbackSqrCommutes</span> <span class="id" title="var">g</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">C</span> <span class="id" title="var">u</span> <span class="id" title="var">equ</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">hcompat</span> :   ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">pr1</span> <span class="id" title="var">A</span>, <span class="id" title="var">f</span> <span class="id" title="var">x</span> = <span class="id" title="var">f</span> <span class="id" title="var">y</span> → <span class="id" title="var">u</span> <span class="id" title="var">x</span> = <span class="id" title="var">u</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">eqfxy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">hpb</span>:=<span class="id" title="var">pullback_HSET_univprop_elements</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">PullbackSqrCommutes</span> <span class="id" title="var">g</span>) (<span class="id" title="var">isPullback_Pullback</span> <span class="id" title="var">g</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">eqfxy</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span>( <span class="id" title="var">hpb'</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">hpb</span>)); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">hpb'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">hpb'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span> <span class="id" title="tactic">in</span> <span class="id" title="var">equ</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">equ</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">hpb'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">unique_exists</span> (<span class="id" title="var">univ_surj</span> (<span class="id" title="var">setproperty</span> <span class="id" title="var">C</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">hf</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">u</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">hcompat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ?.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">univ_surj_ax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> ?. <span class="id" title="tactic">apply</span> <span class="id" title="var">has_homsets_HSET</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> ??; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">univ_surj_unique</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">X</span>.<br/>
+</div>
+<span class="id" title="keyword">End</span> <span class="id" title="var">kernel_pair_Set</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1488"></a><h2 class="section">Effective epis (<span class="inlinecode"><span class="id" title="var">EffectiveEpis_HSET</span></span>)</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">EffectiveEpis_HSET</span> : <span class="id" title="var">EpisAreEffective</span> <span class="id" title="var">HSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span> <span class="id" title="var">epif</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">kernel_pair_HSET</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isCoeqKernelPairSet</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">EpisAreSurjective_HSET</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1489"></a><h2 class="section">Split epis with axiom of choice (<span class="inlinecode"><span class="id" title="var">SplitEpis_HSET</span></span>)</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">SplitEpis_HSET</span> : <span class="id" title="var">AxiomOfChoice_surj</span> -&gt; <span class="id" title="var">EpisAreSplit</span> <span class="id" title="var">HSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">axC</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">f</span> <span class="id" title="var">epif</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">EpisAreSurjective_HSET</span>,<span class="id" title="var">axC</span> <span class="id" title="tactic">in</span> <span class="id" title="var">epif</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">unshelve</span> <span class="id" title="tactic">eapply</span> (<span class="id" title="var">hinhfun</span> <span class="id" title="var">_</span> <span class="id" title="var">epif</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">h</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1490"></a><h2 class="section">Forgetful <span class="inlinecode"><span class="id" title="var">functor</span></span> to <span class="inlinecode"><span class="id" title="var">type_precat</span></span></h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">forgetful_HSET</span> : <span class="id" title="var">functor</span> <span class="id" title="var">HSET</span> <span class="id" title="var">type_precat</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_functor</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">mk_functor_data</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> <span class="id" title="var">pr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>, <span class="id" title="var">idfun</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> ? ? ? ? ?; <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+This functor is conservative; it reflects isomorphisms. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">conservative_forgetful_HSET</span> : <span class="id" title="var">conservative</span> <span class="id" title="var">forgetful_HSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">conservative</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> <span class="id" title="var">f</span> <span class="id" title="var">is_iso_forget_f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">hset_equiv_is_iso</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> (<span class="id" title="var">weqpair</span> <span class="id" title="var">f</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">type_iso_is_equiv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">isopair</span> <span class="id" title="var">_</span> <span class="id" title="var">is_iso_forget_f</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1491"></a><h2 class="section">Subobject classifier</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isaprop_hfiber_monic</span> {<span class="id" title="var">A</span> <span class="id" title="var">B</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">HSET</span>⟦<span class="id" title="var">A</span>, <span class="id" title="var">B</span>⟧) (<span class="id" title="var">isM</span> : <span class="id" title="var">isMonic</span> <span class="id" title="var">f</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isPredicate</span> (<span class="id" title="var">hfiber</span> <span class="id" title="var">f</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">incl_injectivity</span>, <span class="id" title="var">MonosAreInjective_HSET</span>; <span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">const_htrue</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} : <span class="id" title="var">HSET</span>⟦<span class="id" title="var">X</span>, <span class="id" title="var">hProp_set</span>⟧ :=<br/>
+&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> =&gt; <span class="id" title="var">htrue</span> : <span class="id" title="var">hProp_set</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">hProp_eq_unit</span> (<span class="id" title="var">p</span> : <span class="id" title="var">hProp</span>) : <span class="id" title="var">p</span> -&gt; <span class="id" title="var">p</span> = <span class="id" title="var">htrue</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">pp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqtopathshProp</span>, <span class="id" title="var">weqimplimpl</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Existence of the pullback square
+    <tt>
+      X -------&gt; TerminalHSET
+      V              V
+    m |              | true
+      V     ∃!       V
+      Y - - - - -&gt; hProp
+    </tt>
+<div class="paragraph"> </div>
+
+    Uniqueness proven below.
+  
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">subobject_classifier_HSET_pullback</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">HSET</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">m</span> : <span class="id" title="var">Monic</span> <span class="id" title="var">HSET</span> <span class="id" title="var">X</span> <span class="id" title="var">Y</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∑ (<span class="id" title="var">chi</span> : <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">Y</span>, <span class="id" title="var">hProp_set</span> ⟧)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H</span> : <span class="id" title="var">m</span> · <span class="id" title="var">chi</span> = <span class="id" title="var">TerminalArrow</span> <span class="id" title="var">TerminalHSET</span> <span class="id" title="var">X</span> · <span class="id" title="var">const_htrue</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isPullback</span> <span class="id" title="var">chi</span> <span class="id" title="var">const_htrue</span> <span class="id" title="var">m</span> (<span class="id" title="var">TerminalArrow</span> <span class="id" title="var">TerminalHSET</span> <span class="id" title="var">X</span>) <span class="id" title="var">H</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">z</span> =&gt; (<span class="id" title="var">hfiber</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span>) <span class="id" title="var">z</span>,, <span class="id" title="var">isaprop_hfiber_monic</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">m</span>) <span class="id" title="var">z</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hProp_eq_unit</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">hfiberpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;+ </div>
+
+<div class="doc">
+The aforementioned square is a pullback 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="keyword">beta</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">isPullback</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Z</span> <span class="id" title="var">f</span> <span class="id" title="var">g</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">iscontrpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- </div>
+
+<div class="doc">
+The hypothesis H states that that each <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#x"><span class="id" title="variable">x</span></a></span> is in the image of <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a></span>,
+              and since <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a></span> is monic (injective), this assignment extends to a map
+              <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#Z"><span class="id" title="variable">Z</span></a></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#X"><span class="id" title="variable">X</span></a></span> defined by <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#z"><span class="id" title="variable">z</span></a></span> <span class="inlinecode">↦</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a>^-1</span> <span class="inlinecode">(<a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#z"><span class="id" title="variable">z</span></a>)</span>. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">z</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">hfiberpr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">eqweqmap</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">z</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ </div>
+
+<div class="doc">
+The first triangle commutes by definition of the above map:
+                <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a></span> sends the preimage <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a>^-1</span> <span class="inlinecode">(<a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#z"><span class="id" title="variable">z</span></a>)</span> to <span class="inlinecode"><a class="idref" href="UniMath.Algebra.DCPO.html#leastupperbound.f"><span class="id" title="variable">f</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#z"><span class="id" title="variable">z</span></a></span>. 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">z</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hfiberpr2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ </div>
+
+<div class="doc">
+All maps to the terminal object are equal 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">proofirrelevance</span>, <span class="id" title="var">impred</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropunit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">apply</span> (<span class="id" title="var">setproperty</span> (<span class="id" title="var">hset_fun_space</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">apply</span> (<span class="id" title="var">setproperty</span> (<span class="id" title="var">hset_fun_space</span> <span class="id" title="var">_</span> <span class="id" title="var">unitset</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="var">cbn</span>.<br/>
+</div>
+
+<div class="doc">
+Precompose with <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a></span> and use the commutative square 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invweq</span> (<span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">MonosAreInjective_HSET</span> <span class="id" title="var">m</span> (<span class="id" title="var">MonicisMonic</span> <span class="id" title="var">_</span> <span class="id" title="var">m</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">apply</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">t</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hfiberpr2</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+For any subset <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#s"><span class="id" title="variable">s</span></a></span> <span class="inlinecode">:</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#Y"><span class="id" title="variable">Y</span></a></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Propositions.html#hProp"><span class="id" title="definition">hProp</span></a></span>, the carrier <span class="inlinecode">∑</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#y"><span class="id" title="variable">y</span></a></span> <span class="inlinecode">:</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#Y"><span class="id" title="variable">Y</span></a>,</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#s"><span class="id" title="variable">s</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#y"><span class="id" title="variable">y</span></a></span> is a pullback
+    of <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#s"><span class="id" title="variable">s</span></a></span> with the constantly-true arrow. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">carrier_Pullback</span> {<span class="id" title="var">Y</span> : <span class="id" title="var">HSET</span>} (<span class="id" title="var">chi</span> : <span class="id" title="var">HSET</span> ⟦ <span class="id" title="var">Y</span>, <span class="id" title="var">hProp_set</span> ⟧) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Pullback</span> <span class="id" title="var">chi</span> (@<span class="id" title="var">const_htrue</span> <span class="id" title="var">unitHSET</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_Pullback</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">carrier_subset</span> <span class="id" title="var">chi</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1carrier</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">TerminalArrow</span> <span class="id" title="var">TerminalHSET</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">yy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hProp_eq_unit</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">yy</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">pb'</span> <span class="id" title="var">h</span> <span class="id" title="var">k</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">iscontrpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">p</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">exact</span> (<span class="id" title="var">h</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">H</span> <span class="id" title="var">p</span>); <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">exact</span> <span class="id" title="var">tt</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">split</span>; [<span class="id" title="tactic">reflexivity</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">proofirrelevance</span>, <span class="id" title="var">hlevelntosn</span>, <span class="id" title="var">iscontrfuntounit</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>; [|<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">setproperty</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality'</span>; [|<span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">_</span> @ <span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">t</span>)) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">hfiber_in_hfiber</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">Z</span> <span class="id" title="var">W</span> (<span class="id" title="var">g</span> : <span class="id" title="var">Z</span> -&gt; <span class="id" title="var">W</span>) (<span class="id" title="var">w</span> : <span class="id" title="var">W</span>) (<span class="id" title="var">z</span> : <span class="id" title="var">hfiber</span> <span class="id" title="var">g</span> <span class="id" title="var">w</span>), <span class="id" title="var">hfiber</span> <span class="id" title="var">g</span> (<span class="id" title="var">g</span> (<span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">z</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">hfiberpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">z</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">subobject_classifier_HSET</span> : <span class="id" title="var">subobject_classifier</span> <span class="id" title="var">TerminalHSET</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">hProp_set</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">const_htrue</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> ? ? <span class="id" title="var">m</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">iscontrpair</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;- </div>
+
+<div class="doc">
+The image of m 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subobject_classifier_HSET_pullback</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">O'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Propositions.isaproptotal2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isaprop_isPullback</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">proofirrelevance</span>, <span class="id" title="var">setproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ </div>
+
+<div class="doc">
+If the following is a pullback square,
+          <tt>
+            X ------- ! ---&gt; unit
+            |                 |
+            |                 |
+            V                 V
+            Y -- pr1 O' --&gt; hProp
+          </tt>
+<div class="paragraph"> </div>
+
+          then <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#pr1"><span class="id" title="projection">pr1</span></a></span> <span class="inlinecode"><span class="id" title="var">O'</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#hfiber"><span class="id" title="definition">hfiber</span></a></span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a></span>.
+       
+</div>
+<div class="code">
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">eq</span> : <span class="id" title="var">m</span> · <span class="id" title="var">pr1</span> <span class="id" title="var">O'</span> ~<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">m</span> · (<span class="id" title="keyword">fun</span> <span class="id" title="var">z</span> =&gt; (<span class="id" title="var">hfiber</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span>) <span class="id" title="var">z</span>,, <span class="id" title="var">isaprop_hfiber_monic</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">m</span>) <span class="id" title="var">z</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pr1hSet</span> <span class="id" title="var">hProp_set</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">toforallpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">O'</span>) @ <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (!<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">subobject_classifier_HSET_pullback</span> <span class="id" title="var">m</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqtopathshProp</span>, <span class="id" title="var">weqimplimpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intro</span> <span class="id" title="var">isO</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We know that <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Sets.html#carrier"><span class="id" title="definition">carrier</span></a></span> <span class="inlinecode">(<a class="idref" href="UniMath.Foundations.Preamble.html#pr1"><span class="id" title="projection">pr1</span></a></span> <span class="inlinecode"><span class="id" title="var">O'</span>)</span> is a pullback of <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#pr1"><span class="id" title="projection">pr1</span></a></span> <span class="inlinecode"><span class="id" title="var">O'</span></span> and <span class="inlinecode"><span class="id" title="var">const_htrue</span></span>.
+            By hypothesis, X is as well. Thus, we have a canonical isomorphism
+            <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Sets.html#carrier"><span class="id" title="definition">carrier</span></a></span> <span class="inlinecode">(<a class="idref" href="UniMath.Foundations.Preamble.html#pr1"><span class="id" title="projection">pr1</span></a></span> <span class="inlinecode"><span class="id" title="var">O'</span>)</span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><a class="idref" href="UniMath.Foundations.PartA.html#X"><span class="id" title="variable">X</span></a></span>, which commutes with the pullback projections.
+            In particular, the following triangle commutes (where <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#m"><span class="id" title="variable">m</span></a></span> is, by hypothesis,
+            the first pullback projection of X):
+            <tt>
+                                ∃!
+              carrier (pr1 O') ---&gt; X
+                            \       |
+                   pr1carrier \     | m
+                                \   V
+                                    Y
+            </tt>
+<div class="paragraph"> </div>
+
+         
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">PBO'</span> := <span class="id" title="var">mk_Pullback</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">O'</span>) (@<span class="id" title="var">const_htrue</span> <span class="id" title="var">unitHSET</span>) <span class="id" title="var">X</span> <span class="id" title="var">m</span> (<span class="id" title="var">TerminalArrow</span> <span class="id" title="var">TerminalHSET</span> <span class="id" title="var">X</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">O'</span>)) (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">O'</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">PBC</span> := <span class="id" title="var">carrier_Pullback</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">O'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">pbiso</span> := <span class="id" title="var">pullbackiso</span> <span class="id" title="var">PBC</span> <span class="id" title="var">PBO'</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">hfiberpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">exact</span> (<span class="id" title="var">morphism_from_z_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">pbiso</span>) (<span class="id" title="var">y</span>,, <span class="id" title="var">isO</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span> (<span class="id" title="var">morphism_from_z_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">pbiso</span>) (<span class="id" title="var">y</span>,, <span class="id" title="var">isO</span>))) <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(((<span class="id" title="var">pr1</span> <span class="id" title="var">pbiso</span>) · <span class="id" title="var">pr1</span> <span class="id" title="var">m</span>) (<span class="id" title="var">y</span>,, <span class="id" title="var">isO</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span>) <span class="id" title="keyword">with</span> (<span class="id" title="var">PullbackPr1</span> <span class="id" title="var">PBO'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">pbiso</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> <span class="id" title="var">fib</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">eqweqmap</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">maponpaths</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">O'</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">fib</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">eqweqmap</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">eq</span> (<span class="id" title="var">hfiberpr1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">fib</span>)))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hfiber_in_hfiber</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">propproperty</span>.<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

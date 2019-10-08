@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.RealNumbers.Fields</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab1873"></a><h1 class="section">Additional theorems about fields</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Algebra.Domains_and_Fields</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isapropmultinvpair</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>), <span class="id" title="var">isaprop</span> (<span class="id" title="var">multinvpair</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropinvpair</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1874"></a><h2 class="section">Projections for <span class="inlinecode"><span class="id" title="var">fld</span></span></h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">fld_proj</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>}.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">zero_fld</span> : <span class="id" title="var">X</span> := 0%<span class="id" title="tactic">ring</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">one_fld</span> : <span class="id" title="var">X</span> := 1%<span class="id" title="tactic">ring</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">plus_fld</span> (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> := (<span class="id" title="var">x</span> + <span class="id" title="var">y</span>)%<span class="id" title="tactic">ring</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">opp_fld</span> (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> := (- <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">minus_fld</span> (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> := (<span class="id" title="var">x</span> - <span class="id" title="var">y</span>)%<span class="id" title="tactic">ring</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">mult_fld</span> (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> := (<span class="id" title="var">x</span> * <span class="id" title="var">y</span>)%<span class="id" title="tactic">ring</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">inv_fld</span> (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">X</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">sumofmaps</span> <span class="id" title="keyword">with</span> (3 := <span class="id" title="var">fldchoice</span> <span class="id" title="var">x</span>) ; <span class="id" title="tactic">intro</span> <span class="id" title="var">x'</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x'</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">x</span>.<br/>
+</div>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">div_fld</span> (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> := <span class="id" title="var">mult_fld</span> <span class="id" title="var">x</span> (<span class="id" title="var">inv_fld</span> <span class="id" title="var">y</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">fld_proj</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1875"></a><h2 class="section"><span class="inlinecode"><span class="id" title="var">fld</span></span> and the other structures</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">fld_struct</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> (<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_to_gr1</span> : <span class="id" title="var">gr</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abgrtogr</span> (<span class="id" title="var">pr1fld</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_to_monoid1</span> : <span class="id" title="var">monoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">grtomonoid</span> <span class="id" title="var">fld_to_gr1</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">fld_to_monoid2</span> : <span class="id" title="var">monoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">ringmultmonoid</span> (<span class="id" title="var">pr1fld</span> <span class="id" title="var">X</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">fld_struct</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

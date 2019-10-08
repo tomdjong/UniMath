@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Induction.M.Chains</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab2245"></a><h1 class="section">Limits of chains and cochains in the precategory of types</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.NaturalNumbers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.PartA</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Univalence</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.WeakEquivalences</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.Types</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Chains.Chains</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Chains.Cochains</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Ktheory.Utilities</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Induction.PolynomialFunctors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Induction.M.Limits</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The shifted chain (X', π') from (X, π) is one where Xₙ' = Xₙ₊₁ and πₙ' = πₙ₊₁. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">shift_chain</span> (<span class="id" title="var">cha</span> : <span class="id" title="var">chain</span> <span class="id" title="var">type_precat</span>) : <span class="id" title="var">chain</span> <span class="id" title="var">type_precat</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">dob</span> <span class="id" title="var">cha</span> ∘ <span class="id" title="var">S</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">path</span>, <span class="id" title="var">dmor</span> <span class="id" title="var">cha</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">S</span> <span class="id" title="var">path</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The shifted cochain (X', π') from (X, π) is one where Xₙ' = Xₙ₊₁ and πₙ' = πₙ₊₁. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">shift_cochain</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">cochn</span> : <span class="id" title="var">cochain</span> <span class="id" title="var">C</span>) : <span class="id" title="var">cochain</span> <span class="id" title="var">C</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">cochain_weq</span>; <span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">dob</span> <span class="id" title="var">cochn</span> ∘ <span class="id" title="var">S</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">dmor</span> <span class="id" title="var">cochn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Interaction between transporting over (maponpaths S ed) and shifting the cochain 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">transport_shift_cochain</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">cochn</span> <span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span> (<span class="id" title="var">ed</span> : <span class="id" title="var">ver1</span> = <span class="id" title="var">ver2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">stdlim_shift</span> : <span class="id" title="var">standard_limit</span> (<span class="id" title="var">shift_cochain</span> <span class="id" title="var">cochn</span>)),<br/>
+&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="var">dob</span> <span class="id" title="var">cochn</span>) (<span class="id" title="var">maponpaths</span> <span class="id" title="var">S</span> <span class="id" title="var">ed</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">stdlim_shift</span> <span class="id" title="var">ver1</span>) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="var">dob</span> (<span class="id" title="var">shift_cochain</span> <span class="id" title="var">cochn</span>)) <span class="id" title="var">ed</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">stdlim_shift</span> <span class="id" title="var">ver1</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">cochn</span> <span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span> <span class="id" title="var">ed</span> <span class="id" title="var">stdlim_shift</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">ed</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Ways to prove that <span class="inlinecode"><span class="id" title="var">dmor</span></span>s are equal on cochains 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">cochain_dmor_paths</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span> : <span class="id" title="var">vertex</span> <span class="id" title="var">conat_graph</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">cochn</span> : <span class="id" title="var">cochain</span> <span class="id" title="var">C</span>) (<span class="id" title="var">p1</span> <span class="id" title="var">p2</span> : <span class="id" title="var">edge</span> <span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span>) : <span class="id" title="var">dmor</span> <span class="id" title="var">cochn</span> <span class="id" title="var">p1</span> = <span class="id" title="var">dmor</span> <span class="id" title="var">cochn</span> <span class="id" title="var">p2</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, <span class="id" title="var">proofirrelevance</span>, <span class="id" title="var">isasetnat</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+More ways to prove that <span class="inlinecode"><span class="id" title="var">dmor</span></span>s are equal on cochains 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">cochain_dmor_paths_type</span> {<span class="id" title="var">ver1</span> <span class="id" title="var">ver2</span> <span class="id" title="var">ver3</span> : <span class="id" title="var">vertex</span> <span class="id" title="var">conat_graph</span>}<br/>
+&nbsp;&nbsp;(<span class="id" title="var">cochn</span> : <span class="id" title="var">cochain</span> <span class="id" title="var">type_precat</span>) (<span class="id" title="var">p1</span> : <span class="id" title="var">edge</span> <span class="id" title="var">ver1</span> <span class="id" title="var">ver3</span>) (<span class="id" title="var">p2</span> : <span class="id" title="var">edge</span> <span class="id" title="var">ver2</span> <span class="id" title="var">ver3</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">q1</span> : <span class="id" title="var">ver1</span> = <span class="id" title="var">ver2</span>) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">v1</span> : <span class="id" title="var">dob</span> <span class="id" title="var">cochn</span> <span class="id" title="var">ver1</span>, <span class="id" title="var">dmor</span> <span class="id" title="var">cochn</span> <span class="id" title="var">p1</span> <span class="id" title="var">v1</span> = <span class="id" title="var">dmor</span> <span class="id" title="var">cochn</span> <span class="id" title="var">p2</span> (<span class="id" title="var">transportf</span> <span class="id" title="var">_</span> <span class="id" title="var">q1</span> <span class="id" title="var">v1</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v1</span>; <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">q1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">cochain_dmor_paths</span> <span class="id" title="var">cochn</span> <span class="id" title="var">p1</span> <span class="id" title="var">p2</span>) <span class="id" title="var">v1</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+We use the following tactic notations to mirror the "equational style" of
+    reasoning used in Ahrens, Capriotti, and Spadotti. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Tactic</span> <span class="id" title="keyword">Notation</span> "≃" <span class="id" title="keyword">constr</span>(<span class="id" title="var">H</span>) "by" <span class="id" title="var">tactic</span>(<span class="id" title="var">t</span>) := <span class="id" title="var">intermediate_weq</span> <span class="id" title="var">H</span>; [<span class="id" title="var">t</span>|].<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Tactic</span> <span class="id" title="keyword">Notation</span> "≃'" <span class="id" title="keyword">constr</span>(<span class="id" title="var">H</span>) "by" <span class="id" title="var">tactic</span>(<span class="id" title="var">t</span>) := <span class="id" title="var">intermediate_weq</span> <span class="id" title="var">H</span>; [|<span class="id" title="var">t</span>].<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Tactic</span> <span class="id" title="keyword">Notation</span> "≃" <span class="id" title="keyword">constr</span>(<span class="id" title="var">H</span>) := <span class="id" title="var">intermediate_weq</span> <span class="id" title="var">H</span>.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Tactic</span> <span class="id" title="keyword">Notation</span> "≃'" <span class="id" title="keyword">constr</span>(<span class="id" title="var">H</span>) := <span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>; <span class="id" title="var">intermediate_weq</span> <span class="id" title="var">H</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">combine_over_nat_basic</span> {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> <span class="id" title="var">Z</span> : <span class="id" title="var">nat</span> → <span class="id" title="var">UU</span>} :<br/>
+&nbsp;&nbsp;<span class="id" title="var">X</span> 0 ≃ <span class="id" title="var">Z</span> 0 → (∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">Y</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) ≃ <span class="id" title="var">Z</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) →<br/>
+&nbsp;&nbsp;(<span class="id" title="var">X</span> 0 × ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">Y</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) ≃ ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">Z</span> <span class="id" title="var">n</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x0z0</span> <span class="id" title="var">yszs</span>.<br/>
+&nbsp;&nbsp;≃ (<span class="id" title="var">Z</span> 0 × (∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">Z</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>))).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">weqdirprodf</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">x0z0</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqonsecfibers</span>, <span class="id" title="var">yszs</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">use</span> <span class="id" title="var">weq_iso</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">x0xs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>; <span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">dirprod_pr1</span> <span class="id" title="var">x0xs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">dirprod_pr2</span> <span class="id" title="var">x0xs</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">xs</span>; <span class="id" title="var">use</span> <span class="id" title="var">dirprodpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">xs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (<span class="id" title="var">xs</span> ∘ <span class="id" title="var">S</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">xs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">combine_over_nat</span> {<span class="id" title="var">X</span> : <span class="id" title="var">nat</span> → <span class="id" title="var">UU</span>} {<span class="id" title="var">P</span> : (<span class="id" title="var">X</span> 0 × (∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>))) → <span class="id" title="var">UU</span>} :<br/>
+&nbsp;&nbsp;(∑ <span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0, ∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>), <span class="id" title="var">P</span> (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">x0</span> <span class="id" title="var">xs</span>)) ≃<br/>
+&nbsp;&nbsp;(∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> <span class="id" title="var">n</span>, <span class="id" title="var">P</span> (<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">xs</span> 0) (<span class="id" title="var">xs</span> ∘ <span class="id" title="var">S</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;≃ (∑ <span class="id" title="var">pair</span> : (<span class="id" title="var">X</span> 0 × ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)), <span class="id" title="var">P</span> <span class="id" title="var">pair</span>) <span class="id" title="tactic">by</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">weqtotal2asstol</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">weqbandf</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (@<span class="id" title="var">combine_over_nat_basic</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>); <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x0xs</span>; <span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">combine_over_nat'</span> {<span class="id" title="var">X</span> : <span class="id" title="var">nat</span> → <span class="id" title="var">UU</span>} {<span class="id" title="var">P</span> : <span class="id" title="var">X</span> 0 → (∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) → <span class="id" title="var">UU</span>} :<br/>
+&nbsp;&nbsp;(∑ <span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0, ∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>), <span class="id" title="var">P</span> <span class="id" title="var">x0</span> <span class="id" title="var">xs</span>) ≃<br/>
+&nbsp;&nbsp;(∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> <span class="id" title="var">n</span>, <span class="id" title="var">P</span> (<span class="id" title="var">xs</span> 0) (<span class="id" title="var">xs</span> ∘ <span class="id" title="var">S</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;≃ (∑ (<span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0) (<span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)), (<span class="id" title="var">uncurry</span> (<span class="id" title="var">Z</span> := <span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">UU</span>) <span class="id" title="var">P</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span> <span class="id" title="var">x0</span> <span class="id" title="var">xs</span>)) <span class="id" title="tactic">by</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>.<br/>
+&nbsp;&nbsp;≃' (∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> <span class="id" title="var">n</span>, <span class="id" title="var">uncurry</span> <span class="id" title="var">P</span> (<span class="id" title="var">Z</span> := <span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">UU</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">xs</span> 0) (<span class="id" title="var">xs</span> ∘ <span class="id" title="var">S</span>))) <span class="id" title="tactic">by</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">combine_over_nat</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+If the base type is contractible, so is the type of sections over it. 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">weqsecovercontr_uncurried</span> {<span class="id" title="var">X</span> : <span class="id" title="var">UU</span>} {<span class="id" title="var">Y</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">UU</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">P</span> : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Y</span> <span class="id" title="var">x</span> -&gt; <span class="id" title="var">UU</span>) (<span class="id" title="var">isc</span> : <span class="id" title="var">iscontr</span> (∑ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Y</span> <span class="id" title="var">x</span>)) :<br/>
+&nbsp;&nbsp;(∏ (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) (<span class="id" title="var">y</span> : <span class="id" title="var">Y</span> <span class="id" title="var">x</span>), <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) ≃ (<span class="id" title="var">P</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">iscontrpr1</span> <span class="id" title="var">isc</span>)) (<span class="id" title="var">pr2</span> (<span class="id" title="var">iscontrpr1</span> <span class="id" title="var">isc</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;≃ (∏ <span class="id" title="var">pair</span> : (∑ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">Y</span> <span class="id" title="var">x</span>), <span class="id" title="var">uncurry</span> (<span class="id" title="var">Z</span> := <span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">UU</span>) <span class="id" title="var">P</span> <span class="id" title="var">pair</span>) <span class="id" title="tactic">by</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>, <span class="id" title="var">weqsecovertotal2</span>.<br/>
+&nbsp;&nbsp;≃' (<span class="id" title="var">uncurry</span> (<span class="id" title="var">Z</span> := <span class="id" title="var">λ</span> <span class="id" title="var">_</span>, <span class="id" title="var">UU</span>) <span class="id" title="var">P</span> (<span class="id" title="var">iscontrpr1</span> <span class="id" title="var">isc</span>)) <span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqsecovercontr</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Shifted cochains have equivalent limits.
+    (Lemma 12 in Ahrens, Capriotti, and Spadotti) 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">shifted_limit</span> (<span class="id" title="var">cocha</span> : <span class="id" title="var">cochain</span> <span class="id" title="var">type_precat</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">standard_limit</span> (<span class="id" title="var">shift_cochain</span> <span class="id" title="var">cocha</span>) ≃ <span class="id" title="var">standard_limit</span> <span class="id" title="var">cocha</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (<span class="id" title="var">X</span> := <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span>); <span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">pose</span> (π <span class="id" title="var">n</span> := (@<span class="id" title="var">dmor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) <span class="id" title="var">n</span> (<span class="id" title="var">idpath</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">standard_limit</span>, <span class="id" title="var">shift_cochain</span>, <span class="id" title="var">funcomp</span>, <span class="id" title="var">idfun</span>; <span class="id" title="var">cbn</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">isc</span> : ∏ <span class="id" title="var">x</span> : ∏ <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iscontr</span> (∑ <span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0, (π 0 (<span class="id" title="var">x</span> 0)) = <span class="id" title="var">x0</span>)).<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">iscontrpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (π 0 (<span class="id" title="var">x</span> 0),, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">other</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">exact</span> (!(<span class="id" title="var">pr2</span> <span class="id" title="var">other</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">induction</span> <span class="id" title="var">other</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">x0'</span> <span class="id" title="var">x0'eq</span>];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">x0'eq</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;}<br/>
+<br/>
+&nbsp;&nbsp;</div>
+
+<div class="doc">
+Step (2)  This is the direct product with the type proven contractible above 
+</div>
+<div class="code">
+&nbsp;&nbsp;≃ (∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="var">e</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idfun</span> (<span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))))) (<span class="id" title="var">xs</span> <span class="id" title="var">u</span>) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∑ <span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0, (π 0 (<span class="id" title="var">xs</span> 0)) = <span class="id" title="var">x0</span>)) <span class="id" title="tactic">by</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">dirprod_with_contr_r</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">isc</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now, we swap the components in the direct product. 
+</div>
+<div class="code">
+&nbsp;&nbsp;≃ (∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∑ <span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0, π 0 (<span class="id" title="var">xs</span> 0) = <span class="id" title="var">x0</span>) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="var">e</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idfun</span> (<span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))))) (<span class="id" title="var">xs</span> <span class="id" title="var">u</span>) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>)) <span class="id" title="tactic">by</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">weqdirprodcomm</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Using associativity of Σ-types, 
+</div>
+<div class="code">
+&nbsp;&nbsp;≃ (∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(π 0 (<span class="id" title="var">xs</span> 0) = <span class="id" title="var">x0</span>) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="var">e</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idfun</span> (<span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))))) (<span class="id" title="var">xs</span> <span class="id" title="var">u</span>) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>)) <span class="id" title="tactic">by</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>; <span class="id" title="tactic">intro</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">weqtotal2asstor</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And again by commutativity of ×, we swap the first components 
+</div>
+<div class="code">
+&nbsp;&nbsp;≃ (∑ <span class="id" title="var">x0</span> : <span class="id" title="var">X</span> 0,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(π 0 (<span class="id" title="var">xs</span> 0) = <span class="id" title="var">x0</span>) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="var">e</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idfun</span> (<span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))))) (<span class="id" title="var">xs</span> <span class="id" title="var">u</span>) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>)) <span class="id" title="tactic">by</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">weqtotal2comm</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Step 3: combine the first bits 
+</div>
+<div class="code">
+&nbsp;&nbsp;≃ (∑ <span class="id" title="var">xs</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> <span class="id" title="var">n</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(π 0 (<span class="id" title="var">xs</span> 1) = <span class="id" title="var">xs</span> 0) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="var">e</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idfun</span> (<span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))))) (<span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)) = <span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">combine_over_nat'</span> <span class="id" title="var">X</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">x0</span> <span class="id" title="var">xs</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;π 0 (<span class="id" title="var">xs</span> 0) = <span class="id" title="var">x0</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× (∏ (<span class="id" title="var">u</span> <span class="id" title="var">v</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">X</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="var">e</span> (<span class="id" title="var">idfun</span> (<span class="id" title="var">X</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">xs</span> <span class="id" title="var">u</span>) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>))).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now the first component is the same. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqfibtototal</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">xs</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;≃ (π 0 (<span class="id" title="var">xs</span> 1) = <span class="id" title="var">xs</span> 0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ (<span class="id" title="var">v</span> <span class="id" title="var">u</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="var">e</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idfun</span> (<span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))))) (<span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)) = <span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))) <span class="id" title="tactic">by</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">weqdirprodf</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">idweq</span>|<span class="id" title="tactic">apply</span> <span class="id" title="var">flipsec_weq</span>].<br/>
+
+<br/>
+&nbsp;&nbsp;≃' (∏ (<span class="id" title="var">v</span> <span class="id" title="var">u</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>), <span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> <span class="id" title="var">e</span> (<span class="id" title="var">xs</span> <span class="id" title="var">u</span>) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>) <span class="id" title="tactic">by</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">flipsec_weq</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Split into cases on n = 0 or n &gt; 0.  Coq is bad about coming up with these implicit arguments, so we have to be
+      very excplicit. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">combine_over_nat_basic</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, π <span class="id" title="var">n</span> (<span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) = <span class="id" title="var">xs</span> <span class="id" title="var">n</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">v</span>, ∏ (<span class="id" title="var">u</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">v</span> = <span class="id" title="var">u</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">_</span> (<span class="id" title="var">idfun</span> (<span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> <span class="id" title="var">v</span>)))) (<span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">v</span>, ∏ (<span class="id" title="var">u</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">e</span> : <span class="id" title="var">S</span> <span class="id" title="var">v</span> = <span class="id" title="var">u</span>), <span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> <span class="id" title="var">e</span> (<span class="id" title="var">xs</span> <span class="id" title="var">u</span>) = <span class="id" title="var">xs</span> <span class="id" title="var">v</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We use the following fact over and over to simplify the remaining types:
+      for any x : X, the type ∑ y : X, x = y is contractible. 
+</div>
+<div class="code">
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">weqsecovercontr_uncurried</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, 1 = <span class="id" title="var">n</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>, <span class="id" title="var">_</span> = <span class="id" title="var">xs</span> 0) (<span class="id" title="var">iscontr_paths_from</span> 1)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">u</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;≃ ((<span class="id" title="var">dmor</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∘ <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">o</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> <span class="id" title="var">o</span>) → <span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">idpath</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)) (<span class="id" title="var">idfun</span> (<span class="id" title="var">dob</span> <span class="id" title="var">cocha</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>))))) (<span class="id" title="var">xs</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>))) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> (@<span class="id" title="var">weqsecovercontr_uncurried</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, (<span class="id" title="var">S</span> <span class="id" title="var">u</span>) = <span class="id" title="var">n</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>, <span class="id" title="var">_</span> <span class="id" title="var">_</span> = <span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)) (<span class="id" title="var">iscontr_paths_from</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">cbn</span>; <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>, <span class="id" title="var">idfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invweq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">weqsecovercontr_uncurried</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">nat</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span>, (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)) = <span class="id" title="var">n</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>, <span class="id" title="var">_</span> = <span class="id" title="var">xs</span> (<span class="id" title="var">S</span> <span class="id" title="var">u</span>)) (<span class="id" title="var">iscontr_paths_from</span> <span class="id" title="var">_</span>)).<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

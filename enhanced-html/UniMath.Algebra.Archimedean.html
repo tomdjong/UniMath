@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Algebra.Archimedean</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab568"></a><h1 class="section">Archimedean property</h1>
+
+<div class="paragraph"> </div>
+
+<a name="lab569"></a><h2 class="section">Preamble</h2>
+
+<div class="paragraph"> </div>
+
+ Settings 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Unset</span> <span class="id" title="var">Kernel</span> <span class="id" title="var">Term</span> <span class="id" title="var">Sharing</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Imports 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.NaturalNumbers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.RigsAndRings</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.DivisionRig</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Domains_and_Fields</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.ConstructiveStructures</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+<span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids.AddNotation</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab570"></a><h2 class="section">The standard function from the natural numbers to a monoid</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Fixpoint</span> <span class="id" title="var">natmult</span> {<span class="id" title="var">X</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>) : <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">n</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">O</span> =&gt; 0%<span class="id" title="var">addmonoid</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">O</span> =&gt; <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">S</span> <span class="id" title="var">m</span> =&gt; (<span class="id" title="var">x</span> + <span class="id" title="var">natmult</span> <span class="id" title="var">m</span> <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">nattorig</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">n</span> 1%<span class="id" title="var">rig</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">nattoring</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">nattorig</span> (<span class="id" title="var">X</span> := <span class="id" title="var">ringtorig</span> <span class="id" title="var">X</span>) <span class="id" title="var">n</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natmultS</span> :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">X</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">natmult</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span> = (<span class="id" title="var">x</span> + <span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">nattorigS</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>), <span class="id" title="var">nattorig</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) = (1 + <span class="id" title="var">nattorig</span> <span class="id" title="var">n</span>)%<span class="id" title="var">rig</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">natmultS</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">nattorig_natmult</span> :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> * <span class="id" title="var">x</span>)%<span class="id" title="var">rig</span> = <span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">n</span> <span class="id" title="var">x</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">rigmult0x</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorigS</span>, <span class="id" title="var">natmultS</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">rigrdistr</span>, <span class="id" title="var">IHn</span>, <span class="id" title="var">riglunax2</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natmult_plus</span> :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">X</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">natmult</span> (<span class="id" title="var">n</span> + <span class="id" title="var">m</span>) <span class="id" title="var">x</span> = (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span> + <span class="id" title="var">natmult</span> <span class="id" title="var">m</span> <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>] ; <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">lunax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">change</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span> + <span class="id" title="var">m</span>)%<span class="id" title="var">nat</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">S</span> (<span class="id" title="var">n</span> + <span class="id" title="var">m</span>))%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmultS</span>, <span class="id" title="var">IHn</span>, <span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">nattorig_plus</span> :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">nattorig</span> (<span class="id" title="var">n</span> + <span class="id" title="var">m</span>) : <span class="id" title="var">X</span>) = (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> + <span class="id" title="var">nattorig</span> <span class="id" title="var">m</span>)%<span class="id" title="var">rig</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">natmult_plus</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natmult_mult</span> :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">X</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">natmult</span> (<span class="id" title="var">n</span> * <span class="id" title="var">m</span>) <span class="id" title="var">x</span> = (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">m</span> <span class="id" title="var">x</span>))%<span class="id" title="var">addmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>] ; <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span> (<span class="id" title="var">_</span> * <span class="id" title="var">_</span>)%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : <span class="id" title="var">S</span> <span class="id" title="var">n</span> = (<span class="id" title="var">n</span> + 1)%<span class="id" title="var">nat</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">plus_n_Sm</span>, <span class="id" title="var">natplusr0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span> ; <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmult_plus</span>, <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">nattorig_mult</span> :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">nattorig</span> (<span class="id" title="var">n</span> * <span class="id" title="var">m</span>) : <span class="id" title="var">X</span>) = (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> * <span class="id" title="var">nattorig</span> <span class="id" title="var">m</span>)%<span class="id" title="var">rig</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattorig</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natmult_mult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)), &lt;- <span class="id" title="var">nattorig_natmult</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natmult_op</span> {<span class="id" title="var">X</span> : <span class="id" title="var">monoid</span>} :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">x</span> + <span class="id" title="var">y</span> = <span class="id" title="var">y</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-&gt; <span class="id" title="var">natmult</span> <span class="id" title="var">n</span> (<span class="id" title="var">x</span> + <span class="id" title="var">y</span>)%<span class="id" title="var">addmonoid</span> = (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span> + <span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y</span>)%<span class="id" title="var">addmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">lunax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">natmultS</span>, <span class="id" title="var">assocax</span>, <span class="id" title="var">IHn</span>, &lt;- (<span class="id" title="var">assocax</span> <span class="id" title="var">_</span> <span class="id" title="var">y</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X1</span> : (<span class="id" title="var">y</span> + <span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span> = <span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span> + <span class="id" title="var">y</span>)%<span class="id" title="var">addmonoid</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">clear</span> <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">lunax</span>, <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmultS</span>, &lt;- <span class="id" title="var">assocax</span>, &lt;- <span class="id" title="var">X0</span>, !<span class="id" title="var">assocax</span>, <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">X1</span>, <span class="id" title="var">assocax</span>, &lt;- <span class="id" title="var">natmultS</span>, &lt;- <span class="id" title="var">assocax</span>, &lt;- <span class="id" title="var">natmultS</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natmult_binophrel</span> {<span class="id" title="var">X</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isbinophrel</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>), <span class="id" title="var">R</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> -&gt; <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span>) (<span class="id" title="var">natmult</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) <span class="id" title="var">y</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr</span> <span class="id" title="var">Hop</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">natmultS</span> (<span class="id" title="var">S</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hop</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab571"></a><h2 class="section">relation</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">setquot_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">monoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">c</span> : <span class="id" title="var">X</span>, <span class="id" title="var">R</span> (<span class="id" title="var">x</span> + <span class="id" title="var">c</span>)%<span class="id" title="var">addmonoid</span> (<span class="id" title="var">y</span> + <span class="id" title="var">c</span>)%<span class="id" title="var">addmonoid</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">istrans_setquot_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isbinophrel</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">istrans</span> (<span class="id" title="var">setquot_aux</span> <span class="id" title="var">R</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr</span> <span class="id" title="var">Hop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">c1</span>,<span class="id" title="var">Hc1</span>) (<span class="id" title="var">c2</span>,<span class="id" title="var">Hc2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">c1</span> + <span class="id" title="var">c2</span>)%<span class="id" title="var">addmonoid</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hc1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assocax</span>, (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">c1</span>), &lt;- !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hc2</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isbinophrel_setquot_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isbinophrel</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isbinophrel</span> (<span class="id" title="var">setquot_aux</span> <span class="id" title="var">R</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">c</span>,<span class="id" title="var">Hc</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hop</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hc</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">c</span>,<span class="id" title="var">Hc</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assocax</span>, (<span class="id" title="var">commax</span> <span class="id" title="var">_</span> <span class="id" title="var">z</span>), &lt;- !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hc</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isequiv_setquot_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isinvbinophrel</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">X</span>, (<span class="id" title="var">setquot_aux</span> <span class="id" title="var">R</span>) <span class="id" title="var">x</span> <span class="id" title="var">y</span> &lt;-&gt; <span class="id" title="var">R</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">c</span>,<span class="id" title="var">H'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> <span class="id" title="var">H'</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 0%<span class="id" title="var">addmonoid</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H1</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab572"></a><h2 class="section">Archimedean property in a monoid</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchmonoid</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">X</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">R</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y1</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y2</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× (∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y1</span>) (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y2</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchmonoid_1</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchmonoid</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">X</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">R</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y1</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y2</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>, (<span class="id" title="var">pr1</span> (<span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchmonoid_2</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchmonoid</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">X</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">R</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y1</span>) (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y2</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>, (<span class="id" title="var">pr2</span> (<span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab573"></a><h2 class="section">Archimedean property in a group</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchgr</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">X</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">R</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y1</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">addmonoid</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y2</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchgr_isarchmonoid_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isbinophrel</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">X</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y1</span> * <span class="id" title="var">grinv</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y2</span>) -&gt; <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y1</span>) (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> <span class="id" title="var">y2</span> * <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">isinvbinophrelgr</span> <span class="id" title="var">_</span> <span class="id" title="var">Hop</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assocax</span>, (<span class="id" title="var">grrinvax</span> <span class="id" title="var">X</span>), <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hy</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchgr_isarchmonoid</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isbinophrel</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchgr</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchmonoid</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrtoabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hop</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">H</span> (<span class="id" title="var">grinv</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hy</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchgr_isarchmonoid_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchmonoid_isarchgr</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abgr</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchmonoid</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrtoabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchgr</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchmonoid_1</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchabgrdiff_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hr</span> : <span class="id" title="var">isbinophrel</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hr'</span> : <span class="id" title="var">istrans</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">x</span> : <span class="id" title="var">abmonoiddirprod</span> <span class="id" title="var">X</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">n1</span> : <span class="id" title="var">nat</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hn1</span> : <span class="id" title="var">setquot_aux</span> <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y1</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y2</span>) * <span class="id" title="var">pr1</span> <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">natmult</span> <span class="id" title="var">n1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y2</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y1</span>)%<span class="id" title="var">multmonoid</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">n2</span> : <span class="id" title="var">nat</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hn2</span> : <span class="id" title="var">setquot_aux</span> <span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">n2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y1</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y2</span>)%<span class="id" title="var">multmonoid</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">natmult</span> <span class="id" title="var">n2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y2</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y1</span>) * <span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">abgrdiffrel</span> <span class="id" title="var">X</span> <span class="id" title="var">Hr</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrdiff</span> <span class="id" title="var">X</span>) (<span class="id" title="var">n1</span> + <span class="id" title="var">n2</span>) (<span class="id" title="var">setquotpr</span> (<span class="id" title="var">binopeqrelabgrdiff</span> <span class="id" title="var">X</span>) <span class="id" title="var">y1</span>) *<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">setquotpr</span> (<span class="id" title="var">binopeqrelabgrdiff</span> <span class="id" title="var">X</span>) <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrdiff</span> <span class="id" title="var">X</span>) (<span class="id" title="var">n1</span> + <span class="id" title="var">n2</span>) (<span class="id" title="var">setquotpr</span> (<span class="id" title="var">binopeqrelabgrdiff</span> <span class="id" title="var">X</span>) <span class="id" title="var">y2</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H0</span> : ∏ <span class="id" title="var">n</span> <span class="id" title="var">y</span>, <span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrdiff</span> <span class="id" title="var">X</span>) <span class="id" title="var">n</span> (<span class="id" title="var">setquotpr</span> (<span class="id" title="var">binopeqrelabgrdiff</span> <span class="id" title="var">X</span>) <span class="id" title="var">y</span>) = <span class="id" title="var">setquotpr</span> (<span class="id" title="var">binopeqrelabgrdiff</span> <span class="id" title="var">X</span>) (<span class="id" title="var">natmult</span> <span class="id" title="var">n</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y</span>) ,, <span class="id" title="var">natmult</span> <span class="id" title="var">n</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">y</span>))).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmultS</span>, <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">Hn1</span> <span class="id" title="var">Hn2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun2</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">c1</span>,<span class="id" title="var">Hc1</span>) (<span class="id" title="var">c2</span>,<span class="id" title="var">Hc2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">c1</span> * <span class="id" title="var">c2</span>)%<span class="id" title="var">multmonoid</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X0</span> : (<span class="id" title="var">natmult</span> (<span class="id" title="var">n1</span> + <span class="id" title="var">n2</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">y1</span>) * <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> * <span class="id" title="var">natmult</span> (<span class="id" title="var">n1</span> + <span class="id" title="var">n2</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">y2</span>) * (<span class="id" title="var">c1</span> * <span class="id" title="var">c2</span>) = (<span class="id" title="var">natmult</span> <span class="id" title="var">n1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y1</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y2</span>) * <span class="id" title="var">pr1</span> <span class="id" title="var">x</span> * <span class="id" title="var">c1</span>) * (<span class="id" title="var">natmult</span> <span class="id" title="var">n2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y1</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y2</span>) * <span class="id" title="var">c2</span>))%<span class="id" title="var">multmonoid</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmult_op</span>, !<span class="id" title="var">natmult_plus</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">commax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">commax</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X0</span> |- *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">X0</span> ; <span class="id" title="tactic">clear</span> <span class="id" title="var">X0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hc1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X0</span> : (<span class="id" title="var">natmult</span> (<span class="id" title="var">n1</span> + <span class="id" title="var">n2</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">y2</span>) * (<span class="id" title="var">natmult</span> (<span class="id" title="var">n1</span> + <span class="id" title="var">n2</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">y1</span>) * <span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) * (<span class="id" title="var">c1</span> * <span class="id" title="var">c2</span>) = (<span class="id" title="var">natmult</span> <span class="id" title="var">n1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y2</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y1</span>) * <span class="id" title="var">c1</span>) * (<span class="id" title="var">natmult</span> <span class="id" title="var">n2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y2</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y1</span>) * <span class="id" title="var">pr2</span> <span class="id" title="var">x</span> * <span class="id" title="var">c2</span>))%<span class="id" title="var">multmonoid</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmult_op</span>, !<span class="id" title="var">natmult_plus</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">commax</span>, !<span class="id" title="var">assocax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">commax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">commax</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">X0</span> |- *.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">X0</span> ; <span class="id" title="tactic">clear</span> <span class="id" title="var">X0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hc2</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchabgrdiff</span> {<span class="id" title="var">X</span> : <span class="id" title="var">abmonoid</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>)  (<span class="id" title="var">Hr</span> : <span class="id" title="var">isbinophrel</span> <span class="id" title="var">R</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchmonoid</span> (<span class="id" title="var">setquot_aux</span> <span class="id" title="var">R</span>) -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchgr</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrdiff</span> <span class="id" title="var">X</span>) (<span class="id" title="var">abgrdiffrel</span> <span class="id" title="var">X</span> (<span class="id" title="var">L</span> := <span class="id" title="var">R</span>) <span class="id" title="var">Hr</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr'</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotuniv3prop</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span>, (<span class="id" title="var">abgrdiffrel</span> <span class="id" title="var">X</span> <span class="id" title="var">Hr</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">abgrdiffrel</span> <span class="id" title="var">X</span> <span class="id" title="var">Hr</span> (<span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrdiff</span> <span class="id" title="var">X</span>) <span class="id" title="var">n</span> <span class="id" title="var">y1</span> * <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span> (<span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">abgrdiff</span> <span class="id" title="var">X</span>) <span class="id" title="var">n</span> <span class="id" title="var">y2</span>)) ,, <span class="id" title="var">_</span>) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">hinhfun2</span>.<br/>
+&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchmonoid_1</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">y1</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y2</span>)%<span class="id" title="var">multmonoid</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y2</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y1</span>)%<span class="id" title="var">multmonoid</span>), <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchmonoid_2</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">y1</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y2</span>)%<span class="id" title="var">multmonoid</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">y2</span> * <span class="id" title="var">pr2</span> <span class="id" title="var">y1</span>)%<span class="id" title="var">multmonoid</span>), <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n1</span> + <span class="id" title="var">pr1</span> <span class="id" title="var">n2</span>)%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchabgrdiff_aux</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n1</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n2</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab574"></a><h2 class="section">Archimedean property in a rig</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchrig</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;(∏ <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">X</span>, <span class="id" title="var">R</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> -&gt; ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> * <span class="id" title="var">y1</span>)%<span class="id" title="var">rig</span> (1 + <span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> * <span class="id" title="var">y2</span>)%<span class="id" title="var">rig</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">rig</span> 0%<span class="id" title="var">rig</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchrig_diff</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchrig</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">X</span>, <span class="id" title="var">R</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> -&gt; ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> * <span class="id" title="var">y1</span>)%<span class="id" title="var">rig</span> (1 + <span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> * <span class="id" title="var">y2</span>)%<span class="id" title="var">rig</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">pr1</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchrig_gt</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchrig</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">H</span>, (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchrig_pos</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchrig</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> + <span class="id" title="var">x</span>)%<span class="id" title="var">rig</span> 0%<span class="id" title="var">rig</span> :=<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">H</span>, (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchrig_setquot_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isinvbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span><br/>
+&nbsp;&nbsp;→ <span class="id" title="var">isarchrig</span> <span class="id" title="var">R</span><br/>
+&nbsp;&nbsp;→ <span class="id" title="var">isarchrig</span> (<span class="id" title="var">setquot_aux</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span> ; [ | <span class="id" title="tactic">split</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchrig_diff</span> <span class="id" title="var">R</span> <span class="id" title="var">H</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hy</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 0%<span class="id" title="var">rig</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">runax</span>, <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchrig_gt</span> <span class="id" title="var">R</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 0%<span class="id" title="var">rig</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">runax</span>, <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchrig_pos</span> <span class="id" title="var">R</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 0%<span class="id" title="var">rig</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">runax</span>, <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchrig_isarchmonoid_1_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hr1</span> : <span class="id" title="var">R</span> 1%<span class="id" title="var">rig</span> 0%<span class="id" title="var">rig</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hr</span> : <span class="id" title="var">istrans</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hop1</span> : <span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">m</span> : <span class="id" title="var">nat</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hm</span> : <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">m</span> * <span class="id" title="var">y1</span>)%<span class="id" title="tactic">ring</span> (1%<span class="id" title="var">rig</span> + <span class="id" title="var">nattorig</span> <span class="id" title="var">m</span> * <span class="id" title="var">y2</span>)%<span class="id" title="tactic">ring</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hn</span> : <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span> + <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span> 0%<span class="id" title="var">rig</span>) :<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> (<span class="id" title="var">max</span> 1 <span class="id" title="var">n</span> * <span class="id" title="var">m</span>) <span class="id" title="var">y1</span> * <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">natmult</span> (<span class="id" title="var">max</span> 1 <span class="id" title="var">n</span> * <span class="id" title="var">m</span>) <span class="id" title="var">y2</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">nattorig_natmult</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">riglunax1</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hop1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">runax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">lunax</span> <span class="id" title="var">_</span> (<span class="id" title="var">natmult</span> <span class="id" title="var">m</span> <span class="id" title="var">y2</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr1</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">natmult_mult</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="var">max</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">runax</span> <span class="id" title="var">_</span> (<span class="id" title="var">natmult</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span> * <span class="id" title="var">m</span>) <span class="id" title="var">y2</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">Hr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natmult_binophrel</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">rigcomm1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> <span class="id" title="var">BinaryOperations.op1</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">BinaryOperations.op</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">natmult_op</span>, <span class="id" title="var">assocax</span>, &lt;- <span class="id" title="var">natmult_mult</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hop1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">rigcomm1</span>.<br/>
+</div>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchrig_isarchmonoid_2_aux</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hr1</span> : <span class="id" title="var">R</span> 1%<span class="id" title="var">rig</span> 0%<span class="id" title="var">rig</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hr</span> : <span class="id" title="var">istrans</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hop1</span> : <span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> : <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">m</span> : <span class="id" title="var">nat</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hm</span> : <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">m</span> * <span class="id" title="var">y1</span>)%<span class="id" title="tactic">ring</span> (1%<span class="id" title="var">rig</span> + <span class="id" title="var">nattorig</span> <span class="id" title="var">m</span> * <span class="id" title="var">y2</span>)%<span class="id" title="tactic">ring</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hn</span> : <span class="id" title="var">R</span> (<span class="id" title="var">nattorig</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">R</span> (<span class="id" title="var">natmult</span> (<span class="id" title="var">max</span> 1 <span class="id" title="var">n</span> * <span class="id" title="var">m</span>) <span class="id" title="var">y1</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">natmult</span> (<span class="id" title="var">max</span> 1 <span class="id" title="var">n</span> * <span class="id" title="var">m</span>) <span class="id" title="var">y2</span> * <span class="id" title="var">x</span>)%<span class="id" title="var">multmonoid</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">nattorig_natmult</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">rigcomm1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hop1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">natmult_mult</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="var">max</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natmult_binophrel</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">rigcomm1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> <span class="id" title="var">BinaryOperations.op1</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">BinaryOperations.op</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">natmult_op</span>, &lt;- <span class="id" title="var">natmult_mult</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Hop1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">rigcomm1</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchrig_isarchmonoid</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">R</span> 1%<span class="id" title="var">rig</span> 0%<span class="id" title="var">rig</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchrig</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchmonoid</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr1</span> <span class="id" title="var">Hr</span> <span class="id" title="var">Hop1</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchrig_diff</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hy</span>) (<span class="id" title="var">isarchrig_pos</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">max</span> 1 (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>) * (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span>))%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchrig_isarchmonoid_1_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">m</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchrig_diff</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hy</span>) (<span class="id" title="var">isarchrig_gt</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">max</span> 1 (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>) * (<span class="id" title="var">pr1</span> <span class="id" title="var">m</span>))%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchrig_isarchmonoid_2_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">m</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchmonoid_isarchrig</span> {<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">R</span> 1%<span class="id" title="var">rig</span> 0%<span class="id" title="var">rig</span>)<br/>
+&nbsp;&nbsp;-&gt; <span class="id" title="var">isarchmonoid</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span><br/>
+&nbsp;&nbsp;-&gt; <span class="id" title="var">isarchrig</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H01</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchmonoid_2</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> 1%<span class="id" title="var">rig</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">nattorig_natmult</span>, <span class="id" title="var">rigcomm1</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchmonoid_2</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H01</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pattern</span> <span class="id" title="var">x</span> <span class="id" title="tactic">at</span> 1;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">riglunax1</span> <span class="id" title="var">X</span> <span class="id" title="var">x</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pattern</span> (0%<span class="id" title="var">rig</span> : <span class="id" title="var">X</span>) <span class="id" title="tactic">at</span> 1;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">rigmultx0</span> <span class="id" title="var">X</span> (<span class="id" title="var">nattorig</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>))) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">nattorig_natmult</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchmonoid_1</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H01</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">pattern</span> (0%<span class="id" title="var">rig</span> : <span class="id" title="var">X</span>) <span class="id" title="tactic">at</span> 1;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">rigmultx0</span> <span class="id" title="var">X</span> (<span class="id" title="var">nattorig</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>))), <span class="id" title="var">nattorig_natmult</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>)).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab575"></a><h2 class="section">Archimedean property in a ring</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchring</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">R</span> <span class="id" title="var">x</span> 0%<span class="id" title="tactic">ring</span> -&gt; ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span> * <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span> 1%<span class="id" title="tactic">ring</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× (∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchring_1</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">R</span> <span class="id" title="var">x</span> 0%<span class="id" title="tactic">ring</span> -&gt; ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span> * <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span> 1%<span class="id" title="tactic">ring</span> := <span class="id" title="var">pr1</span>.<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchring_2</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span> := <span class="id" title="var">pr2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchring_isarchrig</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchrig</span> (<span class="id" title="var">X</span> := <span class="id" title="var">ringtorig</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hop1</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y1</span> <span class="id" title="var">y2</span> <span class="id" title="var">Hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">X0</span> : <span class="id" title="var">R</span> (<span class="id" title="var">y1</span> - <span class="id" title="var">y2</span>)%<span class="id" title="tactic">ring</span> 0%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">isinvbinophrelgr</span> <span class="id" title="var">X</span> <span class="id" title="var">Hop1</span>)) <span class="id" title="keyword">with</span> <span class="id" title="var">y2</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> <span class="id" title="var">BinaryOperations.op</span> <span class="id" title="keyword">with</span> (@<span class="id" title="var">BinaryOperations.op1</span> <span class="id" title="var">X</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">ringassoc1</span>, <span class="id" title="var">ringlinvax1</span>, <span class="id" title="var">ringlunax1</span>, <span class="id" title="var">ringrunax1</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hy</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchring_1</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">_</span> <span class="id" title="var">X0</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">ringrunax1</span> <span class="id" title="var">_</span> (<span class="id" title="var">nattorig</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>) * <span class="id" title="var">y1</span>)%<span class="id" title="tactic">ring</span>), &lt;- (<span class="id" title="var">ringlinvax1</span> <span class="id" title="var">_</span> (<span class="id" title="var">nattorig</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>) * <span class="id" title="var">y2</span>)%<span class="id" title="tactic">ring</span>), &lt;- <span class="id" title="var">ringassoc1</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop1</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">ringrmultminus</span>, &lt;- <span class="id" title="var">ringldistr</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isarchring_2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchring_2</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> (- <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">change</span> 0%<span class="id" title="var">rig</span> <span class="id" title="keyword">with</span> (0%<span class="id" title="tactic">ring</span> : <span class="id" title="var">X</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">ringlinvax1</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">Hop1</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchrig_isarchring</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchrig</span> (<span class="id" title="var">X</span> := <span class="id" title="var">ringtorig</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchring</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchrig_diff</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hx</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">ringrunax1</span> <span class="id" title="var">_</span> 1%<span class="id" title="tactic">ring</span>), &lt;- (<span class="id" title="var">ringmultx0</span> <span class="id" title="var">_</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchrig_gt</span> (<span class="id" title="var">X</span> := <span class="id" title="var">ringtorig</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchring_isarchgr</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">R</span> 1%<span class="id" title="tactic">ring</span> 0%<span class="id" title="tactic">ring</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchgr</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr0</span> <span class="id" title="var">Hr</span> <span class="id" title="var">Hop1</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchmonoid_isarchgr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchrig_isarchmonoid</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">isarchring_isarchrig</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchgr_isarchring</span> {<span class="id" title="var">X</span> : <span class="id" title="tactic">ring</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">R</span> 1%<span class="id" title="tactic">ring</span> 0%<span class="id" title="tactic">ring</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchgr</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchring</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hr0</span> <span class="id" title="var">Hr</span> <span class="id" title="var">Hop1</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchrig_isarchring</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchmonoid_isarchrig</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchgr_isarchmonoid</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">isarchrigtoring</span> :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">X</span> : <span class="id" title="var">rig</span>) (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) (<span class="id" title="var">Hr</span> : <span class="id" title="var">R</span> 1%<span class="id" title="var">rig</span> 0%<span class="id" title="var">rig</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hadd</span> : <span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Htra</span> : <span class="id" title="var">istrans</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Harch</span> : <span class="id" title="var">isarchrig</span> (<span class="id" title="var">setquot_aux</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>)), <span class="id" title="var">isarchring</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigtoring</span> <span class="id" title="var">X</span>) (<span class="id" title="var">rigtoringrel</span> <span class="id" title="var">X</span> <span class="id" title="var">Hadd</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchgr_isarchring</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span> ;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 0%<span class="id" title="var">rig</span> ; <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">rigrunax1</span> ;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">istransabgrdiffrel</span> (<span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">generalize</span> <span class="id" title="var">Hadd</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">isbinopabgrdiffrel</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchabgrdiff</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchrig_isarchmonoid</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span> ;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> 0%<span class="id" title="var">rig</span> ; <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">rigrunax1</span> ;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hr</span>).<br/>
+&nbsp;&nbsp;(<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">istrans_setquot_aux</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>))).<br/>
+&nbsp;&nbsp;(<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">isbinophrel_setquot_aux</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Harch</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natmult_commringfrac</span> {<span class="id" title="var">X</span> : <span class="id" title="var">commring</span>} {<span class="id" title="var">S</span> : <span class="id" title="var">subabmonoid</span> <span class="id" title="var">_</span>} :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n</span> (<span class="id" title="var">x</span> : <span class="id" title="var">X</span> × <span class="id" title="var">S</span>), <span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">commringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>) <span class="id" title="var">n</span> (<span class="id" title="var">setquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>) <span class="id" title="var">x</span>) = <span class="id" title="var">setquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>) (<span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">n</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>) ,, (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> ; <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> (<span class="id" title="var">iscompsetquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">ringmult0x</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmultS</span>, <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">iscompsetquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">ringldistr</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">ringcomm2</span> <span class="id" title="var">X</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">ringassoc2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchcommringfrac</span> {<span class="id" title="var">X</span> : <span class="id" title="var">commring</span>} {<span class="id" title="var">S</span> : <span class="id" title="var">subabmonoid</span> <span class="id" title="var">_</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) <span class="id" title="var">Hop1</span> <span class="id" title="var">Hop2</span> <span class="id" title="var">Hs</span>:<br/>
+&nbsp;&nbsp;<span class="id" title="var">R</span> 1%<span class="id" title="tactic">ring</span> 0%<span class="id" title="tactic">ring</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">istrans</span> <span class="id" title="var">R</span> -&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchring</span> (<span class="id" title="var">X</span> := <span class="id" title="var">commringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>) (<span class="id" title="var">commringfracgt</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span> (<span class="id" title="var">R</span> := <span class="id" title="var">R</span>) <span class="id" title="var">Hop1</span> <span class="id" title="var">Hop2</span> <span class="id" title="var">Hs</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H0</span> <span class="id" title="var">Htra</span> <span class="id" title="var">Hr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivprop</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">_</span>, (<span class="id" title="var">_</span>,,<span class="id" title="var">_</span>)) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>, <span class="id" title="var">propproperty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">Hx</span> ; <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhuniv</span> ; <span class="id" title="tactic">intros</span> (<span class="id" title="var">c</span>,<span class="id" title="var">Hx</span>) ; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">ringmult0x</span> <span class="id" title="var">X</span>), (<span class="id" title="var">ringrunax2</span> <span class="id" title="var">X</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">hinhfun</span> (<span class="id" title="var">X</span> := ∑ <span class="id" title="var">n</span>, <span class="id" title="var">commringfracgt</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span> <span class="id" title="var">Hop1</span> <span class="id" title="var">Hop2</span> <span class="id" title="var">Hs</span> (<span class="id" title="var">setquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>) ((<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span> * <span class="id" title="var">pr1</span> <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span>,, <span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)) 1%<span class="id" title="tactic">ring</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eexists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">commringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natmult_commringfrac</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) (<span class="id" title="var">S</span> := <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchring_1</span> <span class="id" title="var">_</span> <span class="id" title="var">Hr</span> <span class="id" title="var">_</span> <span class="id" title="var">Hx</span>) (<span class="id" title="var">isarchring_2</span> <span class="id" title="var">_</span> <span class="id" title="var">Hr</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) * <span class="id" title="var">pr1</span> <span class="id" title="var">c</span>)%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">m</span>,<span class="id" title="var">Hm</span>) (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">max</span> 1 <span class="id" title="var">n</span> * <span class="id" title="var">m</span>)%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span> ; <span class="id" title="tactic">simpl</span> <span class="id" title="var">max</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">ringrunax2</span> <span class="id" title="var">X</span>), (<span class="id" title="var">ringlunax2</span> <span class="id" title="var">X</span>), (<span class="id" title="var">ringassoc2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)), <span class="id" title="var">natmult_mult</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">R</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">natmult</span> (<span class="id" title="var">succ</span> <span class="id" title="var">n</span>) (<span class="id" title="var">natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">m</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>)) * 1 * <span class="id" title="var">pr1</span> <span class="id" title="var">c</span>)%<span class="id" title="tactic">ring</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(1 * <span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>) * <span class="id" title="var">pr1</span> <span class="id" title="var">c</span>)%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)), (<span class="id" title="var">ringrunax2</span> <span class="id" title="var">X</span>), (<span class="id" title="var">ringlunax2</span> <span class="id" title="var">X</span>), (<span class="id" title="var">ringassoc2</span> <span class="id" title="var">X</span>), (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">natmult_binophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">R</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)), (<span class="id" title="var">ringassoc2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simple</span> <span class="id" title="tactic">refine</span> (<span class="id" title="var">setquotunivprop</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">hinhfun</span> (<span class="id" title="var">X</span> := ∑ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">commringfracgt</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span> <span class="id" title="var">Hop1</span> <span class="id" title="var">Hop2</span> <span class="id" title="var">Hs</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">setquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>) (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span>,, <span class="id" title="var">unel</span> <span class="id" title="var">S</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">setquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>) <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>, <span class="id" title="var">nattorig</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> 1%<span class="id" title="var">rig</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">setquotpr</span> (<span class="id" title="var">eqrelcommringfrac</span> <span class="id" title="var">X</span> <span class="id" title="var">S</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(1%<span class="id" title="tactic">ring</span>,, <span class="id" title="var">unel</span> <span class="id" title="var">S</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natmult_commringfrac</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) (<span class="id" title="var">S</span> := <span class="id" title="var">S</span>) <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchring_1</span> <span class="id" title="var">_</span> <span class="id" title="var">Hr</span> <span class="id" title="var">_</span> (<span class="id" title="var">Hs</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)) (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)))) (<span class="id" title="var">isarchring_2</span> <span class="id" title="var">_</span> <span class="id" title="var">Hr</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">m</span>,<span class="id" title="var">Hm</span>) (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">max</span> 1 <span class="id" title="var">n</span> * <span class="id" title="var">m</span>)%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span> ; <span class="id" title="tactic">simpl</span> <span class="id" title="var">max</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isringmultgttoisrringmultgt</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">ringrunax2</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span> ; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">n</span> * <span class="id" title="var">m</span> + <span class="id" title="var">m</span>)%<span class="id" title="var">nat</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">succ</span> <span class="id" title="var">n</span> * <span class="id" title="var">m</span>)%<span class="id" title="var">nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isringmultgttoisrringmultgt</span> <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">ringrunax2</span> <span class="id" title="var">X</span>), (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)), <span class="id" title="var">natmult_mult</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">natmult_binophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) <span class="id" title="var">R</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Htra</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hop1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab576"></a><h2 class="section">Archimedean property in a field</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchfld</span> {<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchfld_isarchring</span> {<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">Hadd</span> : <span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>) ( <span class="id" title="var">Hmult</span> : <span class="id" title="var">isringmultgt</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hirr</span> : <span class="id" title="var">isirrefl</span> <span class="id" title="var">R</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isarchfld</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchring</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hadd</span> <span class="id" title="var">Hmult</span> <span class="id" title="var">Hirr</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">case</span> (<span class="id" title="var">fldchoice</span> <span class="id" title="var">x</span>) ; <span class="id" title="tactic">intros</span> <span class="id" title="var">x'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">generalize</span> (<span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">x'</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">pattern</span> (1%<span class="id" title="tactic">ring</span> : <span class="id" title="var">X</span>) <span class="id" title="tactic">at</span> 1 ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">x'</span>)) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isringmultgttoisrringmultgt</span> <span class="id" title="var">_</span> <span class="id" title="var">Hadd</span> <span class="id" title="var">Hmult</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hx</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">n</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">hinhpr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">O</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">Hirr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>) ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">x'</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hx</span> ;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Hx</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchring_isarchfld</span> {<span class="id" title="var">X</span> : <span class="id" title="var">fld</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchfld</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchring_2</span> <span class="id" title="var">R</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">isarchfldfrac</span> ( <span class="id" title="var">X</span> : <span class="id" title="var">intdom</span> ) ( <span class="id" title="keyword">is</span> : <span class="id" title="var">isdeceq</span> <span class="id" title="var">X</span> )  { <span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span> } ( <span class="id" title="var">is0</span> : @<span class="id" title="var">isbinophrel</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span> ) ( <span class="id" title="var">is1</span> : <span class="id" title="var">isringmultgt</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span> ) ( <span class="id" title="var">is2</span> : <span class="id" title="var">R</span> 1%<span class="id" title="tactic">ring</span> 0%<span class="id" title="tactic">ring</span> ) ( <span class="id" title="var">nc</span> : <span class="id" title="var">neqchoice</span> <span class="id" title="var">R</span> ) ( <span class="id" title="var">irr</span> : <span class="id" title="var">isirrefl</span> <span class="id" title="var">R</span> ) ( <span class="id" title="var">tra</span> : <span class="id" title="var">istrans</span> <span class="id" title="var">R</span> ) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchfld</span> (<span class="id" title="var">X</span> := <span class="id" title="var">fldfrac</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span> ) (<span class="id" title="var">fldfracgt</span> <span class="id" title="var">_</span>  <span class="id" title="keyword">is</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span> <span class="id" title="var">nc</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isarchring_isarchfld</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">fldfracgt</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">isarchcommringfrac</span> (<span class="id" title="var">X</span> := <span class="id" title="var">X</span>) (<span class="id" title="var">S</span> := <span class="id" title="var">ringpossubmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span>) <span class="id" title="var">R</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> (<span class="id" title="var">λ</span> (<span class="id" title="var">c</span> : <span class="id" title="var">X</span>) (<span class="id" title="var">r</span> : (<span class="id" title="var">ringpossubmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span>) <span class="id" title="var">c</span>), <span class="id" title="var">r</span>) <span class="id" title="var">is2</span> <span class="id" title="var">tra</span> <span class="id" title="var">X0</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H_f</span> : ∏ <span class="id" title="var">n</span> <span class="id" title="var">x</span>, (<span class="id" title="var">weqfldfracgt_f</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span> <span class="id" title="var">nc</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span> * <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span>) = (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span> * <span class="id" title="var">weqfldfracgt_f</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span> <span class="id" title="var">nc</span> <span class="id" title="var">x</span>)%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">clear</span> -<span class="id" title="var">irr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">nattoring</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">fldfrac</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span>)), (<span class="id" title="var">nattorig_natmult</span> (<span class="id" title="var">X</span> := <span class="id" title="var">commringfrac</span> <span class="id" title="var">X</span> (@<span class="id" title="var">ringpossubmonoid</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">refine</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">isringfunweqfldfracgt_f</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">irr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">natmultS</span>, &lt;- <span class="id" title="var">IHn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">isringfunweqfldfracgt_f</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)) <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">irr</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H_0</span> : (<span class="id" title="var">weqfldfracgt_f</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span> <span class="id" title="var">nc</span> 0%<span class="id" title="tactic">ring</span>) = 0%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">refine</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">isringfunweqfldfracgt_f</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">irr</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H_1</span> : (<span class="id" title="var">weqfldfracgt_f</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span> <span class="id" title="var">nc</span> 1%<span class="id" title="tactic">ring</span>) = 1%<span class="id" title="tactic">ring</span>).<br/>
+&nbsp;&nbsp;{ <span class="id" title="tactic">refine</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">isringfunweqfldfracgt_f</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">irr</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchring_1</span> <span class="id" title="var">_</span> <span class="id" title="var">X1</span> (<span class="id" title="var">weqfldfracgt_f</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span> <span class="id" title="var">nc</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H_f</span>, <span class="id" title="var">H_1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H_0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchring_2</span> <span class="id" title="var">_</span> <span class="id" title="var">X1</span> (<span class="id" title="var">weqfldfracgt_f</span> <span class="id" title="var">X</span> <span class="id" title="keyword">is</span> <span class="id" title="var">is0</span> <span class="id" title="var">is1</span> <span class="id" title="var">is2</span> <span class="id" title="var">nc</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">ringrunax2</span> <span class="id" title="var">_</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span>)), <span class="id" title="var">H_f</span>, <span class="id" title="var">H_1</span>, <span class="id" title="var">ringrunax2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab577"></a><h2 class="section">Archimedean property in a constructive field</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isarchCF</span> {<span class="id" title="var">X</span> : <span class="id" title="var">ConstructiveField</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">R</span> (<span class="id" title="var">nattoring</span> <span class="id" title="var">n</span>) <span class="id" title="var">x</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchCF_isarchring</span> {<span class="id" title="var">X</span> : <span class="id" title="var">ConstructiveField</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;∏ (<span class="id" title="var">Hadd</span> : <span class="id" title="var">isbinophrel</span> (<span class="id" title="var">X</span> := <span class="id" title="var">rigaddabmonoid</span> <span class="id" title="var">X</span>) <span class="id" title="var">R</span>) ( <span class="id" title="var">Hmult</span> : <span class="id" title="var">isringmultgt</span> <span class="id" title="var">X</span> <span class="id" title="var">R</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hirr</span> : <span class="id" title="var">isirrefl</span> <span class="id" title="var">R</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> : <span class="id" title="var">X</span>, <span class="id" title="var">R</span> <span class="id" title="var">x</span> 0%<span class="id" title="var">CF</span> -&gt; (<span class="id" title="var">x</span> ≠ 0)%<span class="id" title="var">CF</span>) -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isarchCF</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchring</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hadd</span> <span class="id" title="var">Hmult</span> <span class="id" title="var">Hirr</span> <span class="id" title="var">H0</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<span class="id" title="var">H</span> (<span class="id" title="var">CFinv</span> <span class="id" title="var">x</span> (<span class="id" title="var">H0</span> <span class="id" title="var">_</span> <span class="id" title="var">Hx</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hinhfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> (<span class="id" title="var">n</span>,<span class="id" title="var">Hn</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> 1%<span class="id" title="tactic">ring</span> <span class="id" title="keyword">with</span> (1%<span class="id" title="var">CF</span> : <span class="id" title="var">X</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">islinv_CFinv</span> <span class="id" title="var">x</span> (<span class="id" title="var">H0</span> <span class="id" title="var">x</span> <span class="id" title="var">Hx</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isringmultgttoisrringmultgt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hadd</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hmult</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hn</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">H</span>.<br/>
+</div>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isarchring_isarchCF</span> {<span class="id" title="var">X</span> : <span class="id" title="var">ConstructiveField</span>} (<span class="id" title="var">R</span> : <span class="id" title="var">hrel</span> <span class="id" title="var">X</span>) :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">isarchring</span> <span class="id" title="var">R</span> -&gt; <span class="id" title="var">isarchCF</span> <span class="id" title="var">R</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isarchring_2</span> <span class="id" title="var">R</span> <span class="id" title="var">H</span> <span class="id" title="var">x</span>).<br/>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

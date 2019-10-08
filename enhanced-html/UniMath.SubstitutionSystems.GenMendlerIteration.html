@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.SubstitutionSystems.GenMendlerIteration</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+**********************************************************
+
+<div class="paragraph"> </div>
+
+Benedikt Ahrens, Ralph Matthes
+
+<div class="paragraph"> </div>
+
+SubstitutionSystems
+
+<div class="paragraph"> </div>
+
+2015
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+ **********************************************************
+
+<div class="paragraph"> </div>
+
+Contents :
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Derivation of Generalized Iteration in Mendler-style
+
+</li>
+<li> Instantiation to a special case, Specialized Mendler Iteration
+
+</li>
+<li> Proof of a fusion law à la Bird-Paterson (Generalised folds
+  for nested datatypes) for Generalized Iteration in Mendler-style
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.initial</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorAlgebras</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.categories.HSET.Core</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.opp_precat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.yoneda</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Adjunctions.Core</span>.<br/>
+
+<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">functor_composite</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> <span class="id" title="var">nat_trans_comp</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> <span class="id" title="var">_</span> .<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "G ∙ F" := (<span class="id" title="var">functor_composite</span> <span class="id" title="var">F</span> <span class="id" title="var">G</span> : [ <span class="id" title="var">_</span> , <span class="id" title="var">_</span> , <span class="id" title="var">_</span> ]) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 35).<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "C '^op'" := (<span class="id" title="var">opp_precat</span> <span class="id" title="var">C</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 3, <span class="id" title="var">format</span> "C ^op").<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "↓ f" := (<span class="id" title="var">mor_from_algebra_mor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 3, <span class="id" title="var">format</span> "↓ f").<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Goal: derive Generalized Iteration in Mendler-style and a fusion law 
+<div class="paragraph"> </div>
+
+<a name="lab2003"></a><h1 class="section">Generalized Iteration in Mendler-style</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">GenMenIt</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">F</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">AF</span> := <span class="id" title="var">FunctorAlg</span> <span class="id" title="var">F</span> <span class="id" title="var">hsC</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">AlgConstr</span> (<span class="id" title="var">A</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">α</span> : <span class="id" title="var">F</span> <span class="id" title="var">A</span> --&gt; <span class="id" title="var">A</span>) : <span class="id" title="var">AF</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">A</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">α</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Notation</span> &quot;⟨ A , α ⟩" := (<span class="id" title="var">AlgConstr</span> <span class="id" title="var">A</span> <span class="id" title="var">α</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">μF_Initial</span> : <span class="id" title="var">Initial</span> <span class="id" title="var">AF</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">μF</span> : <span class="id" title="var">C</span> := <span class="id" title="var">alg_carrier</span> <span class="id" title="var">_</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">μF_Initial</span>).<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">inF</span> : <span class="id" title="var">F</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">μF</span> := <span class="id" title="var">alg_map</span> <span class="id" title="var">_</span> (<span class="id" title="var">InitialObject</span> <span class="id" title="var">μF_Initial</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">iter</span> {<span class="id" title="var">A</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">α</span> : <span class="id" title="var">F</span> <span class="id" title="var">A</span> --&gt; <span class="id" title="var">A</span>) : <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">A</span> :=<br/>
+&nbsp;&nbsp;↓(<span class="id" title="var">InitialArrow</span> <span class="id" title="var">μF_Initial</span> ⟨<span class="id" title="var">A</span>,<span class="id" title="var">α</span>⟩).<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C'</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">hsC'</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C'</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">the_iteration_principle</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">X</span> : <span class="id" title="var">C'</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">Yon</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span>^<span class="id" title="var">op</span> <span class="id" title="var">HSET</span> := <span class="id" title="var">yoneda_objects</span> <span class="id" title="var">C'</span> <span class="id" title="var">hsC'</span> <span class="id" title="var">X</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">is_left_adj_L</span> : <span class="id" title="var">is_left_adjoint</span> <span class="id" title="var">L</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> φ := @φ<span class="id" title="var">_adj</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>).<br/>
+<span class="id" title="keyword">Let</span> φ<span class="id" title="var">_inv</span> := @φ<span class="id" title="var">_adj_inv</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>).<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">R</span> : <span class="id" title="var">functor</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">right_adjoint</span> <span class="id" title="var">is_left_adj_L</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">η</span> : <span class="id" title="var">nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">unit_from_left_adjoint</span> <span class="id" title="var">is_left_adj_L</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">ε</span> : <span class="id" title="var">nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> := <span class="id" title="var">counit_from_left_adjoint</span> <span class="id" title="var">is_left_adj_L</span>.<br/>
+
+<br/>
+<span class="id" title="var">Arguments</span> φ {<span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> .<br/>
+<span class="id" title="var">Arguments</span> φ<span class="id" title="var">_inv</span> {<span class="id" title="var">_</span> <span class="id" title="var">_</span>} <span class="id" title="var">_</span> .<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> ψ<span class="id" title="var">_source</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span>^<span class="id" title="var">op</span> <span class="id" title="var">HSET</span> := <span class="id" title="var">functor_composite</span> (<span class="id" title="var">functor_opp</span> <span class="id" title="var">L</span>) <span class="id" title="var">Yon</span>.<br/>
+<span class="id" title="keyword">Definition</span> ψ<span class="id" title="var">_target</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span>^<span class="id" title="var">op</span> <span class="id" title="var">HSET</span> := <span class="id" title="var">functor_composite</span> (<span class="id" title="var">functor_opp</span> <span class="id" title="var">F</span>) ψ<span class="id" title="var">_source</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">general_case</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> ψ : ψ<span class="id" title="var">_source</span> ⟹ ψ<span class="id" title="var">_target</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">preIt</span> : <span class="id" title="var">L</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">X</span> := φ<span class="id" title="var">_inv</span> (<span class="id" title="var">iter</span> (φ (ψ (<span class="id" title="var">R</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>)))).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> ψ<span class="id" title="var">_naturality</span> (<span class="id" title="var">A</span> <span class="id" title="var">B</span>: <span class="id" title="var">C</span>)(<span class="id" title="var">h</span>: <span class="id" title="var">B</span> --&gt; <span class="id" title="var">A</span>)(<span class="id" title="var">f</span>: <span class="id" title="var">L</span> <span class="id" title="var">A</span> --&gt; <span class="id" title="var">X</span>): ψ <span class="id" title="var">B</span> (#<span class="id" title="var">L</span> <span class="id" title="var">h</span>· <span class="id" title="var">f</span>) = #<span class="id" title="var">L</span> (#<span class="id" title="var">F</span> <span class="id" title="var">h</span>)· ψ <span class="id" title="var">A</span> <span class="id" title="var">f</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (ψ<span class="id" title="var">_is_nat</span> := <span class="id" title="var">nat_trans_ax</span> ψ);<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (ψ<span class="id" title="var">_is_nat_inst1</span> := ψ<span class="id" title="var">_is_nat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (ψ<span class="id" title="var">_is_nat_inst2</span> := <span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ψ<span class="id" title="var">_is_nat_inst1</span> <span class="id" title="var">f</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> ψ<span class="id" title="var">_is_nat_inst2</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">truth_about_ε</span> (<span class="id" title="var">A</span>: <span class="id" title="var">C'</span>): <span class="id" title="var">ε</span> <span class="id" title="var">A</span> = φ<span class="id" title="var">_inv</span> (<span class="id" title="var">identity</span> (<span class="id" title="var">R</span> <span class="id" title="var">A</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> φ<span class="id" title="var">_inv</span>, φ<span class="id" title="var">_adj_inv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">id_left</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> φ<span class="id" title="var">_</span>ψ<span class="id" title="var">_μF_eq</span> (<span class="id" title="var">h</span>: <span class="id" title="var">L</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">X</span>): φ (ψ <span class="id" title="var">μF</span> <span class="id" title="var">h</span>) = #<span class="id" title="var">F</span> (φ <span class="id" title="var">h</span>) · φ(ψ (<span class="id" title="var">R</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (φ<span class="id" title="var">_adj_natural_precomp</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>.<br/>
+&nbsp;&nbsp;2: <span class="id" title="tactic">apply</span> ψ<span class="id" title="var">_naturality</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">truth_about_ε</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (φ<span class="id" title="var">_adj_inv_natural_precomp</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">change</span> (φ<span class="id" title="var">_inv</span>(φ <span class="id" title="var">h</span>) = <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> φ<span class="id" title="var">_adj_inv_after_</span>φ<span class="id" title="var">_adj</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">cancel_</span>φ {<span class="id" title="var">A</span>: <span class="id" title="var">C</span>}{<span class="id" title="var">B</span>: <span class="id" title="var">C'</span>} (<span class="id" title="var">f</span> <span class="id" title="var">g</span> : <span class="id" title="var">L</span> <span class="id" title="var">A</span> --&gt; <span class="id" title="var">B</span>): φ <span class="id" title="var">f</span> = φ <span class="id" title="var">g</span> -&gt; <span class="id" title="var">f</span> = <span class="id" title="var">g</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">Hyp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsweq</span> (<span class="id" title="var">adjunction_hom_weq</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Hyp</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">preIt_ok</span> : # <span class="id" title="var">L</span> <span class="id" title="var">inF</span>· <span class="id" title="var">preIt</span> = ψ <span class="id" title="var">μF</span> <span class="id" title="var">preIt</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_</span>φ.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> φ<span class="id" title="var">_</span>ψ<span class="id" title="var">_μF_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (φ<span class="id" title="var">_adj_natural_precomp</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">preIt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (φ<span class="id" title="var">_adj_after_</span>φ<span class="id" title="var">_adj_inv</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (φ<span class="id" title="var">_adj_after_</span>φ<span class="id" title="var">_adj_inv</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">iter_eq</span> := <span class="id" title="var">algebra_mor_commutes</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">InitialArrow</span> <span class="id" title="var">μF_Initial</span> ⟨<span class="id" title="var">_</span>,φ (ψ (<span class="id" title="var">R</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>))⟩)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">iter_eq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">preIt_uniq</span> (<span class="id" title="var">t</span> : ∑ <span class="id" title="var">h</span> : <span class="id" title="var">L</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">X</span>, # <span class="id" title="var">L</span> <span class="id" title="var">inF</span>· <span class="id" title="var">h</span> = ψ <span class="id" title="var">μF</span> <span class="id" title="var">h</span>):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">t</span> = <span class="id" title="var">tpair</span> (<span class="id" title="var">λ</span> <span class="id" title="var">h</span> : <span class="id" title="var">L</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">X</span>, # <span class="id" title="var">L</span> <span class="id" title="var">inF</span>· <span class="id" title="var">h</span> = ψ <span class="id" title="var">μF</span> <span class="id" title="var">h</span>) <span class="id" title="var">preIt</span> <span class="id" title="var">preIt_ok</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">t</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h</span> <span class="id" title="var">h_rec_eq</span>]; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">same</span>: <span class="id" title="var">h</span> = <span class="id" title="var">preIt</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2: {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">subtypeEquality</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hsC'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">same</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_</span>φ.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">preIt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (φ<span class="id" title="var">_adj_after_</span>φ<span class="id" title="var">_adj_inv</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span>(φ<span class="id" title="var">h_is_alg_mor</span>: <span class="id" title="var">inF</span> · φ <span class="id" title="var">h</span> = #<span class="id" title="var">F</span>(φ <span class="id" title="var">h</span>) · φ (ψ (<span class="id" title="var">R</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- φ<span class="id" title="var">_</span>ψ<span class="id" title="var">_μF_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (φ<span class="id" title="var">_adj_natural_precomp</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">is_left_adj_L</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">h_rec_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="keyword">let</span> <span class="id" title="var">X</span> : <span class="id" title="var">AF</span> ⟦ <span class="id" title="var">InitialObject</span> <span class="id" title="var">μF_Initial</span>, ⟨ <span class="id" title="var">R</span> <span class="id" title="var">X</span>, φ (ψ (<span class="id" title="var">R</span> <span class="id" title="var">X</span>) (<span class="id" title="var">ε</span> <span class="id" title="var">X</span>)) ⟩ ⟧ := <span class="id" title="var">_</span> <span class="id" title="tactic">in</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (φ <span class="id" title="var">h</span>)); <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">maponpaths</span> <span class="id" title="var">pr1</span> (<span class="id" title="var">InitialArrowUnique</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">X0</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">GenMendlerIteration</span> : <span class="id" title="var">iscontr</span> (∑ <span class="id" title="var">h</span> : <span class="id" title="var">L</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">X</span>, #<span class="id" title="var">L</span> <span class="id" title="var">inF</span> · <span class="id" title="var">h</span> = ψ <span class="id" title="var">μF</span> <span class="id" title="var">h</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exists</span> <span class="id" title="var">preIt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">preIt_ok</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">preIt_uniq</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">It</span> : <span class="id" title="var">L</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">X</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">GenMendlerIteration</span>).<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">It_is_preIt</span> : <span class="id" title="var">It</span> = <span class="id" title="var">preIt</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">general_case</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2004"></a><h1 class="section">Specialized Mendler Iteration</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">special_case</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">G</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span> <span class="id" title="var">C'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> ρ : <span class="id" title="var">G</span> <span class="id" title="var">X</span> --&gt; <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">θ</span> : <span class="id" title="var">functor_composite</span> <span class="id" title="var">F</span> <span class="id" title="var">L</span> ⟹ <span class="id" title="var">functor_composite</span> <span class="id" title="var">L</span> <span class="id" title="var">G</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_nat_trans_</span>ψ<span class="id" title="var">_from_comps</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:  <span class="id" title="var">is_nat_trans</span> ψ<span class="id" title="var">_source</span> ψ<span class="id" title="var">_target</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> (<span class="id" title="var">A</span> : <span class="id" title="var">C</span>^<span class="id" title="var">op</span>) (<span class="id" title="var">f</span> : <span class="id" title="var">yoneda_objects_ob</span> <span class="id" title="var">C'</span> <span class="id" title="var">X</span> (<span class="id" title="var">L</span> <span class="id" title="var">A</span>)), <span class="id" title="var">θ</span> <span class="id" title="var">A</span>· # <span class="id" title="var">G</span> <span class="id" title="var">f</span>· ρ).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span> <span class="id" title="var">h</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span> <span class="id" title="tactic">at</span> 1 5; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">θ_nat_trans_ax</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">θ</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">functor_composite</span> <span class="id" title="tactic">in</span> <span class="id" title="var">θ_nat_trans_ax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">θ_nat_trans_ax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">θ_nat_trans_ax</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> ψ<span class="id" title="var">_from_comps</span> : ψ<span class="id" title="var">_source</span> ⟹ ψ<span class="id" title="var">_target</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">A</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">yoneda_objects_ob</span> <span class="id" title="tactic">in</span> *.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">θ</span> <span class="id" title="var">A</span> · #<span class="id" title="var">G</span> <span class="id" title="var">f</span> · ρ).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">is_nat_trans_</span>ψ<span class="id" title="var">_from_comps</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">SpecialGenMendlerIteration</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iscontr</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(∑ <span class="id" title="var">h</span> : <span class="id" title="var">L</span> <span class="id" title="var">μF</span> --&gt; <span class="id" title="var">X</span>, # <span class="id" title="var">L</span> <span class="id" title="var">inF</span> · <span class="id" title="var">h</span> = <span class="id" title="var">θ</span> <span class="id" title="var">μF</span> · #<span class="id" title="var">G</span> <span class="id" title="var">h</span> · ρ)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="var">GenMendlerIteration</span> ψ<span class="id" title="var">_from_comps</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">special_case</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">the_iteration_principle</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab2005"></a><h1 class="section">Fusion law for Generalized Iteration in Mendler-style</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">X</span> <span class="id" title="var">X'</span>: <span class="id" title="var">C'</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">Yon</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span>^<span class="id" title="var">op</span> <span class="id" title="var">HSET</span> := <span class="id" title="var">yoneda_objects</span> <span class="id" title="var">C'</span> <span class="id" title="var">hsC'</span> <span class="id" title="var">X</span>.<br/>
+<span class="id" title="keyword">Let</span> <span class="id" title="var">Yon'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C'</span>^<span class="id" title="var">op</span> <span class="id" title="var">HSET</span> := <span class="id" title="var">yoneda_objects</span> <span class="id" title="var">C'</span> <span class="id" title="var">hsC'</span> <span class="id" title="var">X'</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">L</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">is_left_adj_L</span> : <span class="id" title="var">is_left_adjoint</span> <span class="id" title="var">L</span>.<br/>
+<span class="id" title="keyword">Variable</span> ψ : ψ<span class="id" title="var">_source</span> <span class="id" title="var">X</span> <span class="id" title="var">L</span> ⟹ ψ<span class="id" title="var">_target</span> <span class="id" title="var">X</span> <span class="id" title="var">L</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">L'</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C'</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">is_left_adj_L'</span> : <span class="id" title="var">is_left_adjoint</span> <span class="id" title="var">L'</span>.<br/>
+<span class="id" title="keyword">Variable</span> ψ' : ψ<span class="id" title="var">_source</span> <span class="id" title="var">X'</span> <span class="id" title="var">L'</span> ⟹ ψ<span class="id" title="var">_target</span> <span class="id" title="var">X'</span> <span class="id" title="var">L'</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">Φ</span> : <span class="id" title="var">functor_composite</span> (<span class="id" title="var">functor_opp</span> <span class="id" title="var">L</span>) <span class="id" title="var">Yon</span> ⟹ <span class="id" title="var">functor_composite</span> (<span class="id" title="var">functor_opp</span> <span class="id" title="var">L'</span>) <span class="id" title="var">Yon'</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">fusion_law</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <span class="id" title="var">H</span> : ψ <span class="id" title="var">μF</span> · <span class="id" title="var">Φ</span> (<span class="id" title="var">F</span> <span class="id" title="var">μF</span>) = <span class="id" title="var">Φ</span> <span class="id" title="var">μF</span> · ψ' <span class="id" title="var">μF</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <span class="id" title="var">fusion_law</span> : <span class="id" title="var">Φ</span> <span class="id" title="var">μF</span> (<span class="id" title="var">It</span> <span class="id" title="var">X</span> <span class="id" title="var">L</span> <span class="id" title="var">is_left_adj_L</span> ψ) = <span class="id" title="var">It</span> <span class="id" title="var">X'</span> <span class="id" title="var">L'</span> <span class="id" title="var">is_left_adj_L'</span> ψ'.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">path_to_ctr</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Φ_is_nat</span> := <span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">Φ</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Φ_is_nat_inst1</span> := <span class="id" title="var">Φ_is_nat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">inF</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">Φ_is_nat_inst2</span> := <span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Φ_is_nat_inst1</span> (<span class="id" title="var">It</span> <span class="id" title="var">X</span> <span class="id" title="var">L</span> <span class="id" title="var">is_left_adj_L</span> ψ)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Φ_is_nat_inst2</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Φ_is_nat_inst2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">Φ_is_nat_inst2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H_inst</span> :=  <span class="id" title="var">toforallpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H</span> (<span class="id" title="var">It</span> <span class="id" title="var">X</span> <span class="id" title="var">L</span> <span class="id" title="var">is_left_adj_L</span> ψ)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">compose</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H_inst</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">H_inst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H_inst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">It_is_preIt</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">preIt_ok</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">fusion_law</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">GenMenIt</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

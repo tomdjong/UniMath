@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.limits.graphs.eqdiag</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Custom notion of equality between diagrams (eq_diag) over the same graph
+
+</li>
+<li> Transports of cones and cocones between equal diagrams.
+
+</li>
+<li> Limits/Colimits are the same for equal diagrams.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+This notion of equality is useful to make the link between standard
+diagrams (pushouts, coequalizers, ...) in a functor category and
+the induced pointwise diagram given an object of the source category
+
+<div class="paragraph"> </div>
+
+Example of the binary product :
+
+<div class="paragraph"> </div>
+
+Let
+<ul class="doclist">
+<li> C,D be two categories,
+
+</li>
+<li> A and B two functors from C to D
+
+</li>
+<li> x an object of C
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Let J := binproduct_diagram  (A x) (B x)
+Let J' := diagram_pointwise (binproduct_diagram A B) x.
+
+<div class="paragraph"> </div>
+
+J and J' are not definitionnally equal.
+
+<div class="paragraph"> </div>
+
+Let co a cone of J based on c.
+
+<div class="paragraph"> </div>
+
+Using a (not too stupid) proof (e : eq_diag J J'), we can transport the cone co
+with eq_diag_mkcone to get a cone co' of J' based on c that satisfies the
+definitional equalities :
+  coneOut co' true  ≡ coneOut co true
+  coneOut co' false ≡ coneOut co false
+
+<div class="paragraph"> </div>
+
+(true and false are the two vertices of the binproduct graph).
+
+<div class="paragraph"> </div>
+
+This equality would not be needed if functional extensionality computed.
+
+<div class="paragraph"> </div>
+
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.All</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.TransportMorphisms</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.colimits</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.graphs.limits</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_exists_unique</span> {<span class="id" title="var">A</span> : <span class="id" title="var">UU</span>} {<span class="id" title="var">B</span> : <span class="id" title="var">A</span> → <span class="id" title="var">UU</span>} (<span class="id" title="var">H</span> : ∃! <span class="id" title="var">a</span> : <span class="id" title="var">A</span>, <span class="id" title="var">B</span> <span class="id" title="var">a</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">B</span> ( <span class="id" title="var">pr1</span> (<span class="id" title="var">iscontrpr1</span> <span class="id" title="var">H</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span>(<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">H</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">transport_swap</span>: ∏ {<span class="id" title="var">X</span> <span class="id" title="var">Y</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">P</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">Y</span> → <span class="id" title="var">UU</span>) {<span class="id" title="var">x</span> <span class="id" title="var">x'</span>:<span class="id" title="var">X</span>} {<span class="id" title="var">y</span>  <span class="id" title="var">y'</span> : <span class="id" title="var">Y</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">e</span> : <span class="id" title="var">x</span> = <span class="id" title="var">x'</span>) (<span class="id" title="var">e'</span> : <span class="id" title="var">y</span> = <span class="id" title="var">y'</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">P</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span>) <span class="id" title="var">e'</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">P</span> <span class="id" title="var">a</span> <span class="id" title="var">_</span>) <span class="id" title="var">e</span> <span class="id" title="var">p</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">P</span> <span class="id" title="var">a</span> <span class="id" title="var">_</span>) <span class="id" title="var">e</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span>, <span class="id" title="var">P</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span>) <span class="id" title="var">e'</span> <span class="id" title="var">p</span>) .<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">e'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">transportf2_comp</span>  {<span class="id" title="var">X</span>  : <span class="id" title="var">UU</span>} (<span class="id" title="var">P</span> : <span class="id" title="var">X</span> -&gt; <span class="id" title="var">X</span> → <span class="id" title="var">UU</span>) (<span class="id" title="var">x</span> <span class="id" title="var">x'</span>  : <span class="id" title="var">X</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ex</span> : <span class="id" title="var">x</span> = <span class="id" title="var">x'</span>)  (<span class="id" title="var">t</span>:<span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">x</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">y</span>, <span class="id" title="var">P</span> <span class="id" title="var">y</span> <span class="id" title="var">y</span>) <span class="id" title="var">ex</span> <span class="id" title="var">t</span> = <span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">y</span>, <span class="id" title="var">P</span> <span class="id" title="var">y</span> <span class="id" title="var">x'</span>) <span class="id" title="var">ex</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">y</span>, <span class="id" title="var">P</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="var">ex</span> <span class="id" title="var">t</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">induction</span> <span class="id" title="var">ex</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eq_diag</span>  {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} (<span class="id" title="var">d</span> <span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>) :=<br/>
+&nbsp;&nbsp;∑ (<span class="id" title="var">eq_v</span> : ∏ <span class="id" title="var">v</span>: <span class="id" title="var">vertex</span> <span class="id" title="var">g</span>, <span class="id" title="var">dob</span> <span class="id" title="var">d</span> <span class="id" title="var">v</span> = <span class="id" title="var">dob</span> <span class="id" title="var">d'</span> <span class="id" title="var">v</span>), ∏ (<span class="id" title="var">v</span> <span class="id" title="var">v'</span>:<span class="id" title="var">vertex</span> <span class="id" title="var">g</span>) (<span class="id" title="var">f</span>:<span class="id" title="var">edge</span> <span class="id" title="var">v</span> <span class="id" title="var">v'</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">obj</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">obj</span>, <span class="id" title="var">dob</span> <span class="id" title="var">d</span> <span class="id" title="var">v'</span>⟧)  (<span class="id" title="var">eq_v</span> <span class="id" title="var">v</span>) (<span class="id" title="var">dmor</span> <span class="id" title="var">d</span> <span class="id" title="var">f</span>) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">transportb</span> (<span class="id" title="var">λ</span> <span class="id" title="var">obj</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">_</span>, <span class="id" title="var">obj</span>⟧) (<span class="id" title="var">eq_v</span> <span class="id" title="var">v'</span>) (<span class="id" title="var">dmor</span> <span class="id" title="var">d'</span> <span class="id" title="var">f</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_is_eq_diag</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} (<span class="id" title="var">d</span> <span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>)  :<br/>
+&nbsp;&nbsp;<span class="id" title="var">d</span> = <span class="id" title="var">d'</span> -&gt; <span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>, <span class="id" title="var">idpath</span> <span class="id" title="var">_</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_diag_is_eq</span> {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} (<span class="id" title="var">d</span> <span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> -&gt; <span class="id" title="var">d</span> = <span class="id" title="var">d'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">eqv</span> <span class="id" title="var">autreq</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">total2_paths_f</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">funextfun</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eqv</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">transportf2_comp</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> : <span class="id" title="var">vertex</span> <span class="id" title="var">g</span> → <span class="id" title="var">C</span>, ∏ <span class="id" title="var">a</span> <span class="id" title="var">b</span> : <span class="id" title="var">vertex</span> <span class="id" title="var">g</span>, <span class="id" title="var">edge</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">C</span> ⟦ <span class="id" title="var">y</span> <span class="id" title="var">a</span>, <span class="id" title="var">x</span> <span class="id" title="var">b</span> ⟧)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span> |- <span class="id" title="var">transportf</span> ?<span class="id" title="var">Pf</span> ?<span class="id" title="var">x1</span> (<span class="id" title="var">transportf</span> ?<span class="id" title="var">Pf2</span> ?<span class="id" title="var">s1</span> ?<span class="id" title="var">s2</span> )  = <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">e</span> := <span class="id" title="var">x1</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">P</span> := <span class="id" title="var">Pf</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">P2</span> := <span class="id" title="var">Pf2</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">tp2</span>:=<span class="id" title="var">transportf</span> <span class="id" title="var">P2</span> <span class="id" title="var">s1</span> <span class="id" title="var">s2</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">trp</span> := <span class="id" title="var">transportf</span> <span class="id" title="var">P</span> <span class="id" title="var">x1</span> <span class="id" title="var">tp2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<span class="id" title="var">trp</span> = <span class="id" title="var">pr2</span> <span class="id" title="var">d'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">trp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">v'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">funextsec</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">ed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">autreq</span> <span class="id" title="var">v</span> <span class="id" title="var">v'</span> <span class="id" title="var">ed</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span>  &lt;- (<span class="id" title="var">pathsinv0inv0</span> (<span class="id" title="var">eqv</span> <span class="id" title="var">v</span>)) <span class="id" title="tactic">in</span> <span class="id" title="var">autreq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span> <span class="id" title="tactic">in</span> <span class="id" title="var">autreq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_transpose</span> <span class="id" title="tactic">in</span> <span class="id" title="var">autreq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">dmor</span> <span class="id" title="tactic">in</span> <span class="id" title="var">autreq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">autreq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">pathsinv0inv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (  <span class="id" title="var">transport_map</span> (<span class="id" title="var">P</span>:=<span class="id" title="var">P</span>) (<span class="id" title="var">Q</span>:=<span class="id" title="var">_</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">tp</span>, <span class="id" title="var">tp</span>  <span class="id" title="var">v</span> <span class="id" title="var">v'</span> <span class="id" title="var">ed</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">transportf_funextfun</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">C</span>⟦ <span class="id" title="var">pr1</span> <span class="id" title="var">d'</span> <span class="id" title="var">v</span>,<span class="id" title="var">x</span>⟧)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (  <span class="id" title="var">transport_map</span> (<span class="id" title="var">P</span>:=<span class="id" title="var">P2</span>) (<span class="id" title="var">Q</span>:=<span class="id" title="var">_</span>) (<span class="id" title="var">λ</span> <span class="id" title="var">x</span> <span class="id" title="var">tp</span>, <span class="id" title="var">tp</span>  <span class="id" title="var">v</span> <span class="id" title="var">v'</span> <span class="id" title="var">ed</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">transportf_funextfun</span> (<span class="id" title="var">λ</span> <span class="id" title="var">x</span>, <span class="id" title="var">C</span>⟦ <span class="id" title="var">x</span>,<span class="id" title="var">pr1</span> <span class="id" title="var">d</span> <span class="id" title="var">v'</span>⟧)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">sym_eq_diag</span>  {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} (<span class="id" title="var">d</span> <span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span> -&gt; <span class="id" title="var">eq_diag</span> <span class="id" title="var">d'</span> <span class="id" title="var">d</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">eq_d</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d1</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">eq_d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d2</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">eq_d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">tpair</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (! (<span class="id" title="var">eq_d1</span> <span class="id" title="var">v</span>)).<br/>
+&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">eq_d1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">heqdag</span>:<span class="id" title="var">eq_diag</span> <span class="id" title="var">d'</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">eq_is_eq_diag</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">eq_diag_is_eq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;+<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span> (<span class="id" title="var">cbn</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">v</span> <span class="id" title="var">v'</span> <span class="id" title="var">f</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">eq_d2</span> <span class="id" title="var">v</span> <span class="id" title="var">v'</span> <span class="id" title="var">f</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">pathsinv0inv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">transportf_transpose</span> (<span class="id" title="var">P</span>:=(<span class="id" title="var">λ</span> <span class="id" title="var">obj</span> : <span class="id" title="var">C</span>, <span class="id" title="var">C</span> ⟦ <span class="id" title="var">obj</span>, <span class="id" title="var">dob</span> <span class="id" title="var">d'</span> <span class="id" title="var">v'</span> ⟧)));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">eq_d2'</span>:=<span class="id" title="var">transportf_transpose</span> (<span class="id" title="var">P</span>:=(<span class="id" title="var">precategory_morphisms</span> (<span class="id" title="var">dob</span> <span class="id" title="var">d'</span> <span class="id" title="var">v</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (! <span class="id" title="var">eq_d2</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">eq_d2'</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">pathsinv0inv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">transport_swap</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">b</span>,<span class="id" title="var">a</span>⟧))).<br/>
+
+<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_diag_mkcocone</span>  :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">heq_d</span>: <span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">cc</span>:<span class="id" title="var">cocone</span> <span class="id" title="var">d</span> <span class="id" title="var">c</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">cocone</span> <span class="id" title="var">d'</span> <span class="id" title="var">c</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">heq_d</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">heq</span> <span class="id" title="var">heq2</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_cocone</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">obj</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">obj</span>,<span class="id" title="var">_</span>⟧ ) (<span class="id" title="var">heq</span> <span class="id" title="var">v</span>)); <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">coconeIn</span> <span class="id" title="var">cc</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">abstract</span>(<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">e</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- ( <span class="id" title="var">coconeInCommutes</span> <span class="id" title="var">cc</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">e</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">b</span>:=<span class="id" title="var">transportb</span> (<span class="id" title="var">precategory_morphisms</span> (<span class="id" title="var">dob</span> <span class="id" title="var">d'</span> <span class="id" title="var">u</span>)) (<span class="id" title="var">heq</span> <span class="id" title="var">v</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">dmor</span> <span class="id" title="var">d'</span> <span class="id" title="var">e</span>) · (<span class="id" title="var">coconeIn</span> <span class="id" title="var">cc</span> <span class="id" title="var">v</span>)));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>; (<span class="id" title="tactic">set</span> (<span class="id" title="var">z</span>:= ! <span class="id" title="var">heq</span> <span class="id" title="var">v</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pathsinv0inv0</span> (<span class="id" title="var">heq</span> <span class="id" title="var">v</span>));<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transport_compose</span>|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>; [<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">heq2</span>|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">clear</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">destruct</span> (<span class="id" title="var">heq</span> <span class="id" title="var">u</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_diag_mkcone</span>  :<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">heq_d</span>: <span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} (<span class="id" title="var">cc</span>:<span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">c</span>),<br/>
+&nbsp;&nbsp;<span class="id" title="var">cone</span> <span class="id" title="var">d'</span> <span class="id" title="var">c</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">heq</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">heq_d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">heq2</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">heq_d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="var">use</span> <span class="id" title="var">mk_cone</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">transportf</span> (<span class="id" title="var">λ</span> <span class="id" title="var">obj</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">_</span>,<span class="id" title="var">obj</span>⟧ ) (<span class="id" title="var">heq</span> <span class="id" title="var">v</span>) (<span class="id" title="var">coneOut</span> <span class="id" title="var">cc</span> <span class="id" title="var">v</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">abstract</span>(<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">e</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- ( <span class="id" title="var">coneOutCommutes</span> <span class="id" title="var">cc</span> <span class="id" title="var">u</span> <span class="id" title="var">v</span> <span class="id" title="var">e</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>;[<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transport_compose</span>|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">transport_target_postcompose</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_transpose</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>;[<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">transport_swap</span> (<span class="id" title="var">λ</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>, <span class="id" title="var">C</span>⟦<span class="id" title="var">a</span>,<span class="id" title="var">b</span>⟧))|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>;[<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">heq2</span>|];<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">heq</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">heq_d</span> <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_diag_islimcone</span>:<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">eq_d</span> : <span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">cc</span>:<span class="id" title="var">cone</span> <span class="id" title="var">d</span> <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">islimcone</span> : <span class="id" title="var">isLimCone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">cc</span>) ,<br/>
+&nbsp;&nbsp;<span class="id" title="var">isLimCone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">eq_diag_mkcone</span> <span class="id" title="var">d'</span> <span class="id" title="var">eq_d</span> <span class="id" title="var">cc</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d1</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">eq_d</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d2</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">eq_d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d'</span> := <span class="id" title="var">sym_eq_diag</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">eq_d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d1'</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">eq_d'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d2'</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">eq_d'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c'</span> <span class="id" title="var">cc'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">cc'2</span> := <span class="id" title="var">eq_diag_mkcone</span> <span class="id" title="var">_</span> <span class="id" title="var">eq_d'</span> <span class="id" title="var">cc'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">islimcone</span> <span class="id" title="var">c'</span> <span class="id" title="var">cc'2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">unique_exists</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">islimcone</span>))).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">islim</span> := <span class="id" title="var">is_exists_unique</span> <span class="id" title="var">islimcone</span> <span class="id" title="var">v</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">islim</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transport_target_postcompose</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">islim</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transportfbinv</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">path_to_ctr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">islimcone</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">specialize</span> (<span class="id" title="var">hy</span> <span class="id" title="var">v</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transportf_transpose</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">pathsinv0inv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transport_target_postcompose</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The dual proof .
+This proof could be deduced from the previous if there was a lemma
+stating that colimits are limits in the dual category.
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">eq_diag_iscolimcocone</span>:<br/>
+&nbsp;&nbsp;∏ {<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">eq_d</span> : <span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">c</span> : <span class="id" title="var">C</span>} {<span class="id" title="var">cc</span>:<span class="id" title="var">cocone</span> <span class="id" title="var">d</span> <span class="id" title="var">c</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">islimcone</span> : <span class="id" title="var">isColimCocone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">cc</span>) ,<br/>
+&nbsp;&nbsp;<span class="id" title="var">isColimCocone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">eq_diag_mkcocone</span> <span class="id" title="var">d'</span> <span class="id" title="var">eq_d</span> <span class="id" title="var">cc</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">eq_d</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">eq_d1</span> <span class="id" title="var">eq_d2</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d</span> := <span class="id" title="var">eq_d1</span>,,<span class="id" title="var">eq_d2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d''</span> := <span class="id" title="var">sym_eq_diag</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">eq_d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d1'</span> := <span class="id" title="var">pr1</span> <span class="id" title="var">eq_d''</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d2'</span> := <span class="id" title="var">pr2</span> <span class="id" title="var">eq_d''</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">eq_d'</span>  := (<span class="id" title="var">eq_d1'</span>,,<span class="id" title="var">eq_d2'</span>):<span class="id" title="var">eq_diag</span> <span class="id" title="var">d'</span> <span class="id" title="var">d</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">red</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">c'</span> <span class="id" title="var">cc'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">cc'2</span> := <span class="id" title="var">eq_diag_mkcocone</span> <span class="id" title="var">_</span> <span class="id" title="var">eq_d'</span> <span class="id" title="var">cc'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">islimcone</span> <span class="id" title="var">c'</span> <span class="id" title="var">cc'2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">unique_exists</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">islimcone</span>))).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">islim</span> := <span class="id" title="var">is_exists_unique</span> <span class="id" title="var">islimcone</span> <span class="id" title="var">v</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span> <span class="id" title="tactic">in</span> <span class="id" title="var">islim</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pathsinv0inv0</span> (<span class="id" title="var">eq_d1</span> <span class="id" title="var">v</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transport_source_precompose</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">islim</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">transportbfinv</span> ( (<span class="id" title="var">λ</span> <span class="id" title="var">x'</span> : <span class="id" title="var">C</span>, <span class="id" title="var">C</span> ⟦ <span class="id" title="var">x'</span>, <span class="id" title="var">c'</span> ⟧) )).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span> <span class="id" title="var">y</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">t</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">homset_property</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">y</span> <span class="id" title="var">hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">path_to_ctr</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">islimcone</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">specialize</span> (<span class="id" title="var">hy</span> <span class="id" title="var">v</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cbn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">hy</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">transportf_transpose</span> (<span class="id" title="var">P</span>:=(<span class="id" title="var">λ</span> <span class="id" title="var">obj</span> : <span class="id" title="var">C</span>, <span class="id" title="var">C</span> ⟦ <span class="id" title="var">obj</span>, <span class="id" title="var">c'</span> ⟧))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">transport_source_precompose</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">transportb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">pathsinv0inv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">hy</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eq_diag_liftcolimcocone</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">eq_d</span> : <span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">cc</span>:<span class="id" title="var">ColimCocone</span> <span class="id" title="var">d</span> ) : <span class="id" title="var">ColimCocone</span> <span class="id" title="var">d'</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">mk_ColimCocone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">eq_diag_iscolimcocone</span> <span class="id" title="var">_</span> <span class="id" title="var">eq_d</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">isColimCocone_ColimCocone</span> <span class="id" title="var">cc</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">eq_diag_liftlimcone</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">C</span> : <span class="id" title="var">category</span>} {<span class="id" title="var">g</span> : <span class="id" title="var">graph</span>} {<span class="id" title="var">d</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">d'</span> : <span class="id" title="var">diagram</span> <span class="id" title="var">g</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">eq_d</span> : <span class="id" title="var">eq_diag</span> <span class="id" title="var">d</span> <span class="id" title="var">d'</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">cc</span>:<span class="id" title="var">LimCone</span> <span class="id" title="var">d</span> ) : <span class="id" title="var">LimCone</span> <span class="id" title="var">d'</span><br/>
+&nbsp;&nbsp;:= <span class="id" title="var">mk_LimCone</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">eq_diag_islimcone</span> <span class="id" title="var">_</span> <span class="id" title="var">eq_d</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">isLimCone_LimCone</span> <span class="id" title="var">cc</span>)).<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

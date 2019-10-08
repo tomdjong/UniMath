@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.NumberSystems.NaturalNumbers_le_Inductive</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+<a name="lab625"></a><h1 class="section">Natural numbers and their properties. Vladimir Voevodsky. Apr. - Sep. 2011</h1>
+
+
+<div class="paragraph"> </div>
+
+This file contains the formulations and proofs of general properties of natural
+numbers from the univalent perspecive. <a name="lab626"></a><h2 class="section">Contents</h2>
+
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Inductive types <span class="inlinecode"><span class="id" title="var">le</span></span> with values in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a></span>
+<ul class="doclist">
+<li> A generalization of <span class="inlinecode"><span class="id" title="var">le</span></span> and its properties
+
+</li>
+<li> Inductive types <span class="inlinecode"><span class="id" title="var">le</span></span> with values in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a></span> are in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Propositions.html#hProp"><span class="id" title="definition">hProp</span></a></span>
+
+</li>
+<li> Comparison between <span class="inlinecode"><span class="id" title="var">le</span></span> with values in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a></span> and <span class="inlinecode"><a class="idref" href="UniMath.Foundations.NaturalNumbers.html#natleh"><span class="id" title="definition">natleh</span></a></span>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+<a name="lab627"></a><h2 class="section">Preamble</h2>
+
+<div class="paragraph"> </div>
+
+ Settings 
+<div class="paragraph"> </div>
+
+ Imports. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="var">UniMath.Foundations.NaturalNumbers</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab628"></a><h2 class="section">Inductive types <span class="inlinecode"><span class="id" title="var">le</span></span> with values in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a></span>.</h2>
+
+
+<div class="paragraph"> </div>
+
+This part is included for illustration purposes only. In practice it is easier
+to work with <span class="inlinecode"><a class="idref" href="UniMath.Foundations.NaturalNumbers.html#natleh"><span class="id" title="definition">natleh</span></a></span> than with <span class="inlinecode"><span class="id" title="var">le</span></span>.
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+<a name="lab629"></a><h3 class="section">A generalization of <span class="inlinecode"><span class="id" title="var">le</span></span> and its properties.</h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <span class="id" title="var">leF</span> {<span class="id" title="var">T</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span>) (<span class="id" title="var">t</span> : <span class="id" title="var">T</span>) : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">UU</span> :=<br/>
+| <span class="id" title="var">leF_O</span> : <span class="id" title="var">leF</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t</span><br/>
+| <span class="id" title="var">leF_S</span> : ∏ <span class="id" title="var">t'</span> : <span class="id" title="var">T</span>, <span class="id" title="var">leF</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span> -&gt; <span class="id" title="var">leF</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> (<span class="id" title="var">F</span> <span class="id" title="var">t'</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">leFiter</span> {<span class="id" title="var">T</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span>) (<span class="id" title="var">t</span> : <span class="id" title="var">T</span>) (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">leF</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n</span> <span class="id" title="var">t</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">n</span> <span class="id" title="var">IHn</span> ].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">leF_O</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">unfold</span> <span class="id" title="var">funcomp</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">leF_S</span>. <span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">leFtototal2withnat</span> {<span class="id" title="var">T</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span>) (<span class="id" title="var">t</span> <span class="id" title="var">t'</span> : <span class="id" title="var">T</span>) (<span class="id" title="var">a</span> : <span class="id" title="var">leF</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n</span> <span class="id" title="var">t</span>) = <span class="id" title="var">t'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">a</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">b</span> <span class="id" title="var">H0</span> <span class="id" title="var">IH0</span> ].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> <span class="id" title="var">O</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">split</span> <span class="id" title="keyword">with</span> (<span class="id" title="var">S</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">IH0</span>)). <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">F</span> (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">IH0</span>) <span class="id" title="var">t</span>) <span class="id" title="var">b</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">IH0</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">total2withnattoleF</span> {<span class="id" title="var">T</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span>) (<span class="id" title="var">t</span> <span class="id" title="var">t'</span> : <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">a</span> : <span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n</span> <span class="id" title="var">t</span>) = <span class="id" title="var">t'</span>)) : <span class="id" title="var">leF</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">a</span> <span class="id" title="keyword">as</span> [ <span class="id" title="var">n</span> <span class="id" title="var">e</span> ]. <span class="id" title="tactic">destruct</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">leFiter</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">leFtototal2withnat_l0</span> {<span class="id" title="var">T</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span>) (<span class="id" title="var">t</span> : <span class="id" title="var">T</span>) (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">leFtototal2withnat</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">_</span> (<span class="id" title="var">leFiter</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">n</span>)) = (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span>  <span class="id" title="var">n</span> (<span class="id" title="var">idpath</span> (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n</span> <span class="id" title="var">t</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">n</span> <span class="id" title="var">IHn</span> ].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">h</span> := <span class="id" title="keyword">fun</span> <span class="id" title="var">ne</span> : <span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n0</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">paths</span> (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n0</span> <span class="id" title="var">t</span>) (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n</span> <span class="id" title="var">t</span>)) =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">tpair</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n0</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">paths</span> (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n0</span> <span class="id" title="var">t</span>) (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) <span class="id" title="var">t</span>)) (<span class="id" title="var">S</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">ne</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">maponpaths</span> <span class="id" title="var">F</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">ne</span>))).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">h</span>  <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">IHn</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isweqleFtototal2withnat</span> {<span class="id" title="var">T</span> : <span class="id" title="var">UU</span>} (<span class="id" title="var">F</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span>) (<span class="id" title="var">t</span> <span class="id" title="var">t'</span> : <span class="id" title="var">T</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">leFtototal2withnat</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">f</span> := <span class="id" title="var">leFtototal2withnat</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">g</span> := <span class="id" title="var">total2withnattoleF</span>  <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">egf</span> : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">_</span>, <span class="id" title="var">paths</span> (<span class="id" title="var">g</span> (<span class="id" title="var">f</span> <span class="id" title="var">x</span>)) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">y</span> <span class="id" title="var">H0</span> <span class="id" title="var">IHH0</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">IHH0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="var">leFtototal2withnat</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">y</span> <span class="id" title="var">H0</span>) <span class="id" title="keyword">as</span> [ <span class="id" title="var">m</span> <span class="id" title="var">e</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">IHH0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (@<span class="id" title="var">maponpaths</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">leF_S</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">m</span> <span class="id" title="var">t</span>)) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">IHH0</span>).<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">efg</span> : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">_</span>, <span class="id" title="var">paths</span> (<span class="id" title="var">f</span> (<span class="id" title="var">g</span> <span class="id" title="var">x</span>)) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [ <span class="id" title="var">n</span> <span class="id" title="var">e</span> ]. <span class="id" title="tactic">destruct</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">leFtototal2withnat_l0</span>.<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweq_iso</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">egf</span> <span class="id" title="var">efg</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">weqleFtototalwithnat</span> { <span class="id" title="var">T</span> : <span class="id" title="var">UU</span> } (<span class="id" title="var">F</span> : <span class="id" title="var">T</span> -&gt; <span class="id" title="var">T</span>) (<span class="id" title="var">t</span> <span class="id" title="var">t'</span> : <span class="id" title="var">T</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">weq</span> (<span class="id" title="var">leF</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span>) (<span class="id" title="var">total2</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, (<span class="id" title="var">iteration</span> <span class="id" title="var">F</span> <span class="id" title="var">n</span> <span class="id" title="var">t</span>) = <span class="id" title="var">t'</span>)) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">isweqleFtototal2withnat</span> <span class="id" title="var">F</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab630"></a><h3 class="section">Inductive types <span class="inlinecode"><span class="id" title="var">le</span></span> with values in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a></span> are in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Propositions.html#hProp"><span class="id" title="definition">hProp</span></a></span></h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">le</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">nat</span> -&gt; <span class="id" title="var">UU</span> := <span class="id" title="var">leF</span> <span class="id" title="var">S</span> <span class="id" title="var">n</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">le_n</span> : ∏ <span class="id" title="var">t</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">leF</span> <span class="id" title="var">S</span> <span class="id" title="var">t</span> <span class="id" title="var">t</span> := <span class="id" title="var">leF_O</span> <span class="id" title="var">S</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">le_S</span> : ∏ <span class="id" title="var">t</span> <span class="id" title="var">t'</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">leF</span> <span class="id" title="var">S</span> <span class="id" title="var">t</span> <span class="id" title="var">t'</span> → <span class="id" title="var">leF</span> <span class="id" title="var">S</span> <span class="id" title="var">t</span> (<span class="id" title="var">S</span> <span class="id" title="var">t'</span>) := <span class="id" title="var">leF_S</span> <span class="id" title="var">S</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Theorem</span> <span class="id" title="var">isaprople</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">isaprop</span> (<span class="id" title="var">le</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isofhlevelweqb</span> 1 (<span class="id" title="var">weqleFtototalwithnat</span> <span class="id" title="var">S</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invproofirrelevance</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">i</span> := @<span class="id" title="var">pr1</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n0</span> : <span class="id" title="var">nat</span>, (<span class="id" title="var">iteration</span> <span class="id" title="var">S</span> <span class="id" title="var">n0</span> <span class="id" title="var">n</span>) = <span class="id" title="var">m</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="keyword">is</span> : <span class="id" title="var">isincl</span> <span class="id" title="var">i</span>) <span class="id" title="tactic">by</span> <span class="id" title="tactic">apply</span> (<span class="id" title="var">isinclpr1</span> <span class="id" title="var">_</span> (<span class="id" title="var">λ</span> <span class="id" title="var">n0</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">isasetnat</span> (<span class="id" title="var">iteration</span> <span class="id" title="var">S</span> <span class="id" title="var">n0</span> <span class="id" title="var">n</span>) <span class="id" title="var">m</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">_</span>  <span class="id" title="keyword">is</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">x</span> <span class="id" title="keyword">as</span> [ <span class="id" title="var">n1</span> <span class="id" title="var">e1</span> ]. <span class="id" title="tactic">destruct</span> <span class="id" title="var">x'</span> <span class="id" title="keyword">as</span> [ <span class="id" title="var">n2</span> <span class="id" title="var">e2</span> ]. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">int1</span> := <span class="id" title="var">pathsinv0</span> (<span class="id" title="var">pathsitertoplus</span> <span class="id" title="var">n1</span> <span class="id" title="var">n</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">int2</span> := <span class="id" title="var">pathsinv0</span> (<span class="id" title="var">pathsitertoplus</span> <span class="id" title="var">n2</span> <span class="id" title="var">n</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ee1</span> := <span class="id" title="var">pathscomp0</span> <span class="id" title="var">int1</span> <span class="id" title="var">e1</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">ee2</span> := <span class="id" title="var">pathscomp0</span> <span class="id" title="var">int2</span> <span class="id" title="var">e2</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">e</span> := <span class="id" title="var">pathscomp0</span> <span class="id" title="var">ee1</span> (<span class="id" title="var">pathsinv0</span> <span class="id" title="var">ee2</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">invmaponpathsincl</span> <span class="id" title="var">_</span> (<span class="id" title="var">isinclnatplusr</span> <span class="id" title="var">n</span>) <span class="id" title="var">n1</span> <span class="id" title="var">n2</span> <span class="id" title="var">e</span>).<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab631"></a><h3 class="section">Comparison between <span class="inlinecode"><span class="id" title="var">le</span></span> with values in <span class="inlinecode"><a class="idref" href="UniMath.Foundations.Preamble.html#UU"><span class="id" title="definition">UU</span></a></span> and <span class="inlinecode"><a class="idref" href="UniMath.Foundations.NaturalNumbers.html#natleh"><span class="id" title="definition">natleh</span></a></span>.</h3>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">letoleh</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">le</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> -&gt; <span class="id" title="var">n</span> ≤ <span class="id" title="var">m</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">H</span> <span class="id" title="keyword">as</span> [ | <span class="id" title="var">m</span> <span class="id" title="var">H0</span> <span class="id" title="var">IHH0</span> ].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">isreflnatleh</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">natlehtolehs</span>. <span class="id" title="tactic">assumption</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">natlehtole</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">n</span> ≤ <span class="id" title="var">m</span> -&gt;  <span class="id" title="var">le</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">m</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">m</span> <span class="id" title="var">IHm</span>].<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">assert</span> (<span class="id" title="var">int</span> := <span class="id" title="var">natleh0tois0</span> <span class="id" title="var">H</span>). <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">int</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">le_n</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">set</span> (<span class="id" title="var">int2</span> := <span class="id" title="var">natlehchoice2</span> <span class="id" title="var">n</span> (<span class="id" title="var">S</span> <span class="id" title="var">m</span>) <span class="id" title="var">H</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">int2</span> <span class="id" title="keyword">as</span> [ <span class="id" title="var">isnatleh</span> | <span class="id" title="var">iseq</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">le_S</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> (<span class="id" title="var">IHm</span> <span class="id" title="var">isnatleh</span>)). <span class="id" title="tactic">destruct</span> <span class="id" title="var">iseq</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">le_n</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">isweqletoleh</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">isweq</span> (<span class="id" title="var">letoleh</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">is1</span> := <span class="id" title="var">isaprople</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>). <span class="id" title="tactic">set</span> (<span class="id" title="var">is2</span> := <span class="id" title="var">pr2</span> (<span class="id" title="var">n</span> ≤ <span class="id" title="var">m</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">isweqimplimpl</span> (<span class="id" title="var">letoleh</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>) (<span class="id" title="var">natlehtole</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>) <span class="id" title="var">is1</span> <span class="id" title="var">is2</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">weqletoleh</span> (<span class="id" title="var">n</span> <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">le</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> ≃ <span class="id" title="var">n</span> ≤ <span class="id" title="var">m</span> := <span class="id" title="var">weqpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">isweqletoleh</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span>).<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

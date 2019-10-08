@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Tactics.Abmonoids_Tactics</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Author: Michael A. Warren. Date: Spring 2015. Description: Some tactics for abelian monoids.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Tactics.Monoids_Tactics</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Tactics.Utilities</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1957"></a><h1 class="section">I. Definitions.</h1>
+
+<div class="paragraph"> </div>
+
+ Because rewrite seems to have handling the two scopes multmonoid and addmonoid, the following definitions are for arbitrary commutative operations.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">isabsemigrop</span> {<span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>} (<span class="id" title="var">opp</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>) :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">isassoc</span> <span class="id" title="var">opp</span>) ** (<span class="id" title="var">iscomm</span> <span class="id" title="var">opp</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">abmonoid_to_absemigr</span> (<span class="id" title="var">M</span> : <span class="id" title="var">abmonoid</span>) : <span class="id" title="var">isabsemigrop</span> (@<span class="id" title="var">op</span> <span class="id" title="var">M</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">dirprodpair</span> (@<span class="id" title="var">assocax</span> <span class="id" title="var">M</span>) (@<span class="id" title="var">commax</span> <span class="id" title="var">M</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">absemigr_perm021</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>, ∏ <span class="id" title="var">opp</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>, ∏ <span class="id" title="keyword">is</span> : <span class="id" title="var">isabsemigrop</span> <span class="id" title="var">opp</span>,<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>) <span class="id" title="var">n2</span> = <span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">n2</span>) <span class="id" title="var">n1</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pathscomp0</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pathscomp0</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">z</span>) ((<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pathsinv0</span> ((<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">n0</span> <span class="id" title="var">n2</span> <span class="id" title="var">n1</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">abmonoid_perm021</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">M</span> : <span class="id" title="var">abmonoid</span>, <span class="id" title="var">absemigr_perm021</span> <span class="id" title="var">M</span> (@<span class="id" title="var">op</span> <span class="id" title="var">M</span>) (<span class="id" title="var">abmonoid_to_absemigr</span> <span class="id" title="var">M</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">absemigr_perm102</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>, ∏ <span class="id" title="var">opp</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>, ∏ <span class="id" title="keyword">is</span> : <span class="id" title="var">isabsemigrop</span> <span class="id" title="var">opp</span>,<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>) <span class="id" title="var">n2</span> = <span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n1</span> <span class="id" title="var">n0</span>) <span class="id" title="var">n2</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>, <span class="id" title="var">maponpaths</span> (<span class="id" title="var">λ</span> <span class="id" title="var">z</span>, <span class="id" title="var">opp</span> <span class="id" title="var">z</span> <span class="id" title="var">n2</span>) ((<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">abmonoid_perm102</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">M</span> : <span class="id" title="var">abmonoid</span>, <span class="id" title="var">absemigr_perm102</span> <span class="id" title="var">M</span> (@<span class="id" title="var">op</span> <span class="id" title="var">M</span>) (<span class="id" title="var">abmonoid_to_absemigr</span> <span class="id" title="var">M</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">absemigr_perm120</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>, ∏ <span class="id" title="var">opp</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>, ∏ <span class="id" title="keyword">is</span> : <span class="id" title="var">isabsemigrop</span> <span class="id" title="var">opp</span>,<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>) <span class="id" title="var">n2</span> = <span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n2</span> <span class="id" title="var">n0</span>) <span class="id" title="var">n1</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pathscomp0</span> ((<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>) (<span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>) <span class="id" title="var">n2</span>) (<span class="id" title="var">pathsinv0</span> ((<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">n2</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">abmonoid_perm120</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">M</span> : <span class="id" title="var">abmonoid</span>, <span class="id" title="var">absemigr_perm120</span> <span class="id" title="var">M</span> (@<span class="id" title="var">op</span> <span class="id" title="var">M</span>) (<span class="id" title="var">abmonoid_to_absemigr</span> <span class="id" title="var">M</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">absemigr_perm201</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>, ∏ <span class="id" title="var">opp</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>, ∏ <span class="id" title="keyword">is</span> : <span class="id" title="var">isabsemigrop</span> <span class="id" title="var">opp</span>,<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>) <span class="id" title="var">n2</span> = <span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) <span class="id" title="var">n0</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pathscomp0</span> ((<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>) ((<span class="id" title="var">pr2</span> <span class="id" title="keyword">is</span>) <span class="id" title="var">n0</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">abmonoid_perm201</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">M</span> : <span class="id" title="var">abmonoid</span>, <span class="id" title="var">absemigr_perm201</span> <span class="id" title="var">M</span> (@<span class="id" title="var">op</span> <span class="id" title="var">M</span>) (<span class="id" title="var">abmonoid_to_absemigr</span> <span class="id" title="var">M</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">absemigr_perm210</span> :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">X</span> : <span class="id" title="var">hSet</span>, ∏ <span class="id" title="var">opp</span> : <span class="id" title="var">binop</span> <span class="id" title="var">X</span>, ∏ <span class="id" title="keyword">is</span> : <span class="id" title="var">isabsemigrop</span> <span class="id" title="var">opp</span>,<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span>) <span class="id" title="var">n2</span> = <span class="id" title="var">opp</span> (<span class="id" title="var">opp</span> <span class="id" title="var">n2</span> <span class="id" title="var">n1</span>) <span class="id" title="var">n0</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pathscomp0</span> (<span class="id" title="var">absemigr_perm102</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">n0</span> <span class="id" title="var">n1</span> <span class="id" title="var">n2</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">absemigr_perm120</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">n1</span> <span class="id" title="var">n0</span> <span class="id" title="var">n2</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">abmonoid_perm210</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">λ</span> <span class="id" title="var">M</span> : <span class="id" title="var">abmonoid</span>, <span class="id" title="var">absemigr_perm210</span> <span class="id" title="var">M</span> (@<span class="id" title="var">op</span> <span class="id" title="var">M</span>) (<span class="id" title="var">abmonoid_to_absemigr</span> <span class="id" title="var">M</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1958"></a><h1 class="section">II. Tactics for rearranging words.</h1>
+
+<div class="paragraph"> </div>
+
+ We employ the following naming conventions.  By default a tactics given pertain only to equations and operate by default on the left-hand side of equations.  Those that operate on both left- and right-hand sides of the goal are suffixed with <span class="inlinecode"><span class="id" title="var">_goal</span></span>.  Tactics that operate on the left-hand side of equations occurring as hypotheses are suffixed with <span class="inlinecode"><span class="id" title="var">_in</span></span>.  Those that operate on both left- and right-hand sides of equations occurring as hypotheses are suffixed with <span class="inlinecode"><span class="id" title="var">_both_in</span></span>.  Those that opexrate on all sides of goals and hypotheses are suffixed with <span class="inlinecode"><span class="id" title="var">_all</span></span>.
+<div class="paragraph"> </div>
+
+ TODO: More general version.
+</div>
+<div class="code">
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">absemigr_ternary_perm</span> <span class="id" title="var">X</span> <span class="id" title="var">opp</span> <span class="id" title="keyword">is</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">f</span> := <span class="id" title="tactic">eval</span> <span class="id" title="tactic">hnf</span> <span class="id" title="tactic">in</span> <span class="id" title="var">opp</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- ?<span class="id" title="var">lhs</span> = ?<span class="id" title="var">rhs</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">lhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span>) <span class="id" title="var">u</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm102</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span> <span class="id" title="var">u</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span>) <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm120</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span> <span class="id" title="var">s</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> <span class="id" title="var">u</span> <span class="id" title="var">s</span>) <span class="id" title="var">t</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm201</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">u</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> <span class="id" title="var">u</span> <span class="id" title="var">t</span>) <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm210</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">u</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> <span class="id" title="var">s</span> <span class="id" title="var">u</span>) <span class="id" title="var">t</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm021</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">s</span> <span class="id" title="var">u</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> (<span class="id" title="var">f</span> ?<span class="id" title="var">x</span> <span class="id" title="var">t</span>) <span class="id" title="var">s</span>) <span class="id" title="var">u</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span>); <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span>) <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm102</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span> <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>) <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> (<span class="id" title="var">f</span> ?<span class="id" title="var">x</span> <span class="id" title="var">t</span>) <span class="id" title="var">u</span>) <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span>); <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span>) <span class="id" title="var">s</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm120</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span> <span class="id" title="var">s</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>) <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> (<span class="id" title="var">f</span> ?<span class="id" title="var">x</span> <span class="id" title="var">u</span>) <span class="id" title="var">s</span>) <span class="id" title="var">t</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">u</span> <span class="id" title="var">s</span>); <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">u</span> <span class="id" title="var">s</span>) <span class="id" title="var">t</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm201</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">u</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>) <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> (<span class="id" title="var">f</span> ?<span class="id" title="var">x</span> <span class="id" title="var">u</span>) <span class="id" title="var">t</span>) <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">u</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">u</span> <span class="id" title="var">t</span>) <span class="id" title="var">s</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm210</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">u</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>) <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">f</span> (<span class="id" title="var">f</span> (<span class="id" title="var">f</span> ?<span class="id" title="var">x</span> <span class="id" title="var">s</span>) <span class="id" title="var">u</span>) <span class="id" title="var">t</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">u</span>); <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">s</span> <span class="id" title="var">u</span>) <span class="id" title="var">t</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">absemigr_perm021</span> <span class="id" title="var">X</span> <span class="id" title="var">f</span> <span class="id" title="keyword">is</span> <span class="id" title="var">s</span> <span class="id" title="var">u</span> <span class="id" title="var">t</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> (<span class="id" title="var">f</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>) <span class="id" title="var">u</span>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">pr1</span> <span class="id" title="keyword">is</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>); <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_ternary_perm</span> <span class="id" title="var">M</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">absemigr_ternary_perm</span> <span class="id" title="var">M</span> (@<span class="id" title="var">op</span> <span class="id" title="var">M</span>) (<span class="id" title="var">abmonoid_to_absemigr</span> <span class="id" title="var">M</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">addmonoid</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">s</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| ?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span> =&gt; <span class="id" title="tactic">fail</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_not_at_front</span> <span class="id" title="var">M</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">t</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">s</span> =&gt; <span class="id" title="tactic">fail</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">s</span> + ?<span class="id" title="var">x</span>] =&gt; <span class="id" title="tactic">fail</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_not_at_back</span> <span class="id" title="var">M</span> <span class="id" title="var">t</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">t</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">s</span> =&gt; <span class="id" title="tactic">fail</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| ?<span class="id" title="var">x</span> + <span class="id" title="var">s</span> =&gt; <span class="id" title="tactic">fail</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_back</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">lhs</span> := <span class="id" title="var">get_current_lhs</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_back</span> <span class="id" title="var">M</span> <span class="id" title="var">lhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">lhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">s</span> + ?<span class="id" title="var">x</span> =&gt; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span> + ?<span class="id" title="var">y</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">s</span> + ?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm201</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_back_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">lhs</span> := <span class="id" title="var">get_current_lhs_in</span> <span class="id" title="var">H</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_back</span> <span class="id" title="var">M</span> <span class="id" title="var">lhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">lhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">s</span> + ?<span class="id" title="var">x</span> =&gt; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span> + ?<span class="id" title="var">y</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">y</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">s</span> + ?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm201</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_front</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">lhs</span> := <span class="id" title="var">get_current_lhs</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_front</span> <span class="id" title="var">M</span> <span class="id" title="var">lhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">lhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span> + <span class="id" title="var">s</span>] =&gt; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">s</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_front_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">lhs</span> := <span class="id" title="var">get_current_lhs_in</span> <span class="id" title="var">H</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_front</span> <span class="id" title="var">M</span> <span class="id" title="var">lhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">lhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span> + <span class="id" title="var">s</span>] =&gt; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">s</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_front_goal</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">rhs</span> := <span class="id" title="var">get_current_rhs</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_front</span> <span class="id" title="var">M</span> <span class="id" title="var">rhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">rhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span> + <span class="id" title="var">s</span>] =&gt; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">s</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_front_both_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">rhs</span> := <span class="id" title="var">get_current_rhs_in</span> <span class="id" title="var">H</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_front</span> <span class="id" title="var">M</span> <span class="id" title="var">rhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">rhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span> + <span class="id" title="var">s</span>] =&gt; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">s</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_back_goal</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">rhs</span> := <span class="id" title="var">get_current_rhs</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_back</span> <span class="id" title="var">M</span> <span class="id" title="var">rhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">rhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span> [<span class="id" title="var">s</span> + ?<span class="id" title="var">x</span>] =&gt; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span> + ?<span class="id" title="var">y</span>] =&gt; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">s</span> + ?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm201</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_move_to_back_both_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">rhs</span> := <span class="id" title="var">get_current_rhs_in</span> <span class="id" title="var">H</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_at_back</span> <span class="id" title="var">M</span> <span class="id" title="var">rhs</span> <span class="id" title="var">s</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">rhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span> [<span class="id" title="var">s</span> + ?<span class="id" title="var">x</span>] =&gt; <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[?<span class="id" title="var">x</span> + <span class="id" title="var">s</span> + ?<span class="id" title="var">y</span>] =&gt; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm021</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">s</span> <span class="id" title="var">y</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span>[<span class="id" title="var">s</span> + ?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">abmonoid_perm201</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_group</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoid_move_to_front</span> <span class="id" title="var">M</span> <span class="id" title="var">t</span>; <span class="id" title="var">abmonoid_move_to_front</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_group_goal</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoid_move_to_front_goal</span> <span class="id" title="var">M</span> <span class="id" title="var">t</span>; <span class="id" title="var">abmonoid_move_to_front_goal</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_group_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoid_move_to_front_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">t</span>; <span class="id" title="var">abmonoid_move_to_front_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_group_both_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoid_move_to_front_both_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">t</span>; <span class="id" title="var">abmonoid_move_to_front_both_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_group_all</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">abmonoid_group_goal</span> <span class="id" title="var">M</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">repeat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">H</span> : <span class="id" title="var">_</span> |- <span class="id" title="var">_</span> =&gt; <span class="id" title="var">abmonoid_group_both_in</span> <span class="id" title="var">M</span> <span class="id" title="var">H</span> <span class="id" title="var">s</span> <span class="id" title="var">t</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+t is a term of type M and abmonoid_group_as attempts to reorganize the lhs of the goal to include as a subterm t.
+</div>
+<div class="code">
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_group_as</span> <span class="id" title="var">M</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">t</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| ?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>; <span class="id" title="var">abmonoid_move_to_front</span> <span class="id" title="var">M</span> <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_group_as</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| ?<span class="id" title="var">x</span> =&gt; <span class="id" title="var">abmonoid_not_word</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>; <span class="id" title="var">abmonoid_move_to_front</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+t is a term of type x = y for x, y : M and abmonoid_group_from attempts to reogranize the lhs of the goal to include as a subterm x.
+</div>
+<div class="code">
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_group_from</span> <span class="id" title="var">M</span> <span class="id" title="var">t</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">T</span> := <span class="id" title="keyword">type</span> <span class="id" title="keyword">of</span> <span class="id" title="var">t</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">T</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| ?<span class="id" title="var">lhs</span> = ?<span class="id" title="var">rhs</span> =&gt; <span class="id" title="var">abmonoid_group_as</span> <span class="id" title="var">M</span> <span class="id" title="var">lhs</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_op_strip</span> <span class="id" title="var">M</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| |- ?<span class="id" title="var">lhs</span> = ?<span class="id" title="var">rhs</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">lhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span> [?<span class="id" title="var">x</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">rhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">context</span> [<span class="id" title="var">x</span>] =&gt; <span class="id" title="var">abmonoid_move_to_back_goal</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">ap</span> (<span class="id" title="var">λ</span> <span class="id" title="var">v</span>, <span class="id" title="var">v</span> + <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_zap_body</span> <span class="id" title="var">M</span> <span class="id" title="var">f</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| |- ?<span class="id" title="var">lhs</span> = ?<span class="id" title="var">rhs</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">lhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">rhs</span> =&gt; <span class="id" title="tactic">apply</span> <span class="id" title="var">idpath</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0 =&gt; <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>; <span class="id" title="var">abmonoid_zap_body</span> <span class="id" title="var">M</span> <span class="id" title="var">f</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ?<span class="id" title="var">x</span> + ?<span class="id" title="var">y</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">rhs</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">y</span> + <span class="id" title="var">x</span> =&gt; <span class="id" title="tactic">apply</span> (<span class="id" title="var">commax</span> <span class="id" title="var">M</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; (<span class="id" title="var">abmonoid_op_strip</span> <span class="id" title="var">M</span>; <span class="id" title="var">abmonoid_zap_body</span> <span class="id" title="var">M</span> <span class="id" title="var">f</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">E</span> : ?<span class="id" title="var">l</span> = ?<span class="id" title="var">r</span> |- ?<span class="id" title="var">lhs</span> = ?<span class="id" title="var">rhs</span> =&gt; <span class="id" title="var">f</span> <span class="id" title="var">E</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">g</span> := <span class="id" title="var">make_hyp_check</span> <span class="id" title="var">E</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">h</span> := <span class="id" title="var">check_cons</span> <span class="id" title="var">g</span> <span class="id" title="var">f</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">abmonoid_group_from</span> <span class="id" title="var">M</span> <span class="id" title="var">E</span>; <span class="id" title="var">matched_rewrite</span> <span class="id" title="var">E</span>; <span class="id" title="var">abmonoid_zap_body</span> <span class="id" title="var">M</span> <span class="id" title="var">h</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">abmonoid_zap</span> <span class="id" title="var">M</span> := <span class="id" title="var">monoid_clean_all</span> <span class="id" title="var">M</span>; <span class="id" title="var">abmonoid_zap_body</span> <span class="id" title="var">M</span> <span class="id" title="var">id_check</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1959"></a><h1 class="section">TESTS</h1>
+
+</div>
+<div class="code">
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Combinatorics.BoundedSearch</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+Auke Booij
+Nov. 2017
+
+<div class="paragraph"> </div>
+
+If <span class="inlinecode"></span> <span class="inlinecode"><a class="idref" href="UniMath.Partiality.PCF.html#P"><span class="id" title="definition">P</span></a></span> <span class="inlinecode"></span> is a decidable predicate on the natural numbers, then from the existence of a natural
+number satisfying <span class="inlinecode"></span> <span class="inlinecode"><a class="idref" href="UniMath.Partiality.PCF.html#P"><span class="id" title="definition">P</span></a></span> <span class="inlinecode"></span>, we can find a natural number satisfying <span class="inlinecode"></span> <span class="inlinecode"><a class="idref" href="UniMath.Partiality.PCF.html#P"><span class="id" title="definition">P</span></a></span> <span class="inlinecode"></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.NaturalNumbers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Propositions</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">constr_indef_descr</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">P</span> : <span class="id" title="var">nat</span> → <span class="id" title="var">hProp</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">P_dec</span> : ∏ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">P</span> <span class="id" title="var">n</span> ⨿ ¬ <span class="id" title="var">P</span> <span class="id" title="var">n</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">P_inhab</span> : ∃ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">P</span> <span class="id" title="var">n</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">minimal</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">UU</span> := ∏ <span class="id" title="var">m</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">P</span> <span class="id" title="var">m</span> → (<span class="id" title="var">n</span> ≤ <span class="id" title="var">m</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">isapropminimal</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">isaprop</span> (<span class="id" title="var">minimal</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">impred_isaprop</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">m</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropimpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isasetbool</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">min_n_UU</span> : <span class="id" title="var">UU</span> := ∑ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">P</span> <span class="id" title="var">n</span> × <span class="id" title="var">minimal</span> <span class="id" title="var">n</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">isapropmin_n</span> : <span class="id" title="var">isaprop</span> <span class="id" title="var">min_n_UU</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isaproptotal2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropdirprod</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">P</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isapropminimal</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">n'</span> <span class="id" title="var">k</span> <span class="id" title="var">k'</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">k</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">p</span> <span class="id" title="var">m</span>], <span class="id" title="var">k'</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">p'</span> <span class="id" title="var">m'</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isantisymmnatleh</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">m</span> <span class="id" title="var">n'</span> <span class="id" title="var">p'</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">m'</span> <span class="id" title="var">n</span> <span class="id" title="var">p</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">min_n</span> : <span class="id" title="var">hProp</span> := <span class="id" title="var">hProppair</span> <span class="id" title="var">min_n_UU</span> <span class="id" title="var">isapropmin_n</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">smaller</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) := ∑ <span class="id" title="var">l</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">P</span> <span class="id" title="var">l</span> × <span class="id" title="var">minimal</span> <span class="id" title="var">l</span> × (<span class="id" title="var">l</span> ≤ <span class="id" title="var">n</span>)%<span class="id" title="var">nat</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">smaller_S</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">k</span> : <span class="id" title="var">smaller</span> <span class="id" title="var">n</span>) : <span class="id" title="var">smaller</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">k</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">l</span> <span class="id" title="var">pmz</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">pmz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">p</span> <span class="id" title="var">mz</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">mz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">m</span> <span class="id" title="var">z</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">l</span>,,<span class="id" title="var">p</span>,,<span class="id" title="var">m</span>,,<span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">istransnatgth</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natgthsnn</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">z</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">bounded_search</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) : <span class="id" title="var">smaller</span> <span class="id" title="var">n</span> ⨿ ∏ <span class="id" title="var">l</span> : <span class="id" title="var">nat</span>, (<span class="id" title="var">l</span> ≤ <span class="id" title="var">n</span>)%<span class="id" title="var">nat</span> → ¬ <span class="id" title="var">P</span> <span class="id" title="var">l</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">assert</span> (<span class="id" title="var">P</span> 0 ⨿ ¬ <span class="id" title="var">P</span> 0) <span class="id" title="keyword">as</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">P_dec</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">ii1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">O</span>,,<span class="id" title="var">h</span>,,<span class="id" title="var">_</span>,,<span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">intros</span> ? ?. <span class="id" title="tactic">apply</span> <span class="id" title="var">natleh0n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">isreflnatleh</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">ii2</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">l</span> <span class="id" title="var">lleq0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : <span class="id" title="var">l</span> = <span class="id" title="var">O</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">natleh0tois0</span>. <span class="id" title="tactic">assumption</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">induction</span> <span class="id" title="var">IHn</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n0</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">ii1</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">smaller_S</span>. <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">assert</span> (<span class="id" title="var">P</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) ⨿ ¬ <span class="id" title="var">P</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>)) <span class="id" title="keyword">as</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">P_dec</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">refine</span> (<span class="id" title="var">ii1</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>,,<span class="id" title="var">h</span>,,<span class="id" title="var">_</span>,,<span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (((<span class="id" title="var">S</span> <span class="id" title="var">n</span>) &gt; <span class="id" title="var">m</span>)%<span class="id" title="var">nat</span> ⨿ (<span class="id" title="var">S</span> <span class="id" title="var">n</span> ≤ <span class="id" title="var">m</span>)) <span class="id" title="keyword">as</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natgthorleh</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h0</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">n0</span> <span class="id" title="var">m</span> <span class="id" title="var">h0</span> <span class="id" title="var">q</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++ <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">apply</span> <span class="id" title="var">isreflnatleh</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> <span class="id" title="var">ii2</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">l</span> <span class="id" title="var">q</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> ((<span class="id" title="var">l</span> &gt; <span class="id" title="var">n</span>)%<span class="id" title="var">nat</span> ⨿ (<span class="id" title="var">l</span> ≤ <span class="id" title="var">n</span>)) <span class="id" title="keyword">as</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">natgthorleh</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h</span>|<span class="id" title="var">h</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">assert</span> (<span class="id" title="var">H</span> : <span class="id" title="var">l</span> = <span class="id" title="var">S</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">isantisymmnatgeh</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">h</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">q</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-- <span class="id" title="tactic">exact</span> (<span class="id" title="var">n0</span> <span class="id" title="var">l</span> <span class="id" title="var">h</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">n_to_min_n</span> (<span class="id" title="var">n</span> : <span class="id" title="var">nat</span>) (<span class="id" title="var">p</span> : <span class="id" title="var">P</span> <span class="id" title="var">n</span>) : <span class="id" title="var">min_n</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">smaller</span> <span class="id" title="var">n</span> ⨿ ∏ <span class="id" title="var">l</span> : <span class="id" title="var">nat</span>, (<span class="id" title="var">l</span> ≤ <span class="id" title="var">n</span>)%<span class="id" title="var">nat</span> → ¬ <span class="id" title="var">P</span> <span class="id" title="var">l</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">bounded_search</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">X</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">lqmz</span>|<span class="id" title="var">none</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">induction</span> <span class="id" title="var">lqmz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">l</span> <span class="id" title="var">qmz</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">qmz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">q</span> <span class="id" title="var">mz</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">mz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">m</span> <span class="id" title="var">z</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">l</span>,,<span class="id" title="var">q</span>,,<span class="id" title="var">m</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">none</span> <span class="id" title="var">n</span> (<span class="id" title="var">isreflnatgeh</span> <span class="id" title="var">_</span> ) <span class="id" title="var">p</span>).<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">prop_n_to_min_n</span> : <span class="id" title="var">min_n</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (@<span class="id" title="var">hinhuniv</span> (∑ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">P</span> <span class="id" title="var">n</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">induction</span> 1 <span class="id" title="keyword">as</span> [<span class="id" title="var">n</span> <span class="id" title="var">p</span>]. <span class="id" title="tactic">exact</span> (<span class="id" title="var">n_to_min_n</span> <span class="id" title="var">n</span> <span class="id" title="var">p</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> <span class="id" title="var">P_inhab</span>.<br/>
+</div>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">minimal_n</span> : ∑ <span class="id" title="var">n</span> : <span class="id" title="var">nat</span>, <span class="id" title="var">P</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">prop_n_to_min_n</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">n</span> <span class="id" title="var">pl</span>]. <span class="id" title="tactic">induction</span> <span class="id" title="var">pl</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">p</span> <span class="id" title="var">_</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">n</span>,,<span class="id" title="var">p</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">constr_indef_descr</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

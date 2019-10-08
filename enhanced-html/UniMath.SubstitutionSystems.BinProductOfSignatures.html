@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.SubstitutionSystems.BinProductOfSignatures</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+**********************************************************
+
+<div class="paragraph"> </div>
+
+Contents:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Definition of the binary product of two signatures
+  (<span class="inlinecode"><span class="id" title="var">BinProduct_of_Signatures</span></span>), in particular proof of strength
+  laws for the product
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Written by Anders Mörtberg, 2016 (adapted from SumOfSignatures.v)
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.FunctorCategory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.binproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PointedFunctors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PointedFunctorsComposition</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.Signatures</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.SubstitutionSystems.Notation</span>.<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">subsys</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Chains.Chains</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Chains.OmegaCocontFunctors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.exponentials</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">binproduct_of_signatures</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">hsC</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">C</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">hs</span> : <span class="id" title="var">has_homsets</span> <span class="id" title="var">D</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">PD</span> : <span class="id" title="var">BinProducts</span> <span class="id" title="var">D</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">construction</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "'PCD'" := (<span class="id" title="var">BinProducts_functor_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">PD</span> <span class="id" title="var">hs</span> : <span class="id" title="var">BinProducts</span> [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hs</span>]).<br/>
+
+<br/>
+<span class="id" title="keyword">Variables</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span> : <span class="id" title="var">functor</span> [<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>] [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hs</span>].<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">θ1</span> : <span class="id" title="var">θ_source</span> <span class="id" title="var">H1</span> ⟹ <span class="id" title="var">θ_target</span> <span class="id" title="var">H1</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">θ2</span> : <span class="id" title="var">θ_source</span> <span class="id" title="var">H2</span> ⟹ <span class="id" title="var">θ_target</span> <span class="id" title="var">H2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S11</span> : <span class="id" title="var">θ_Strength1</span> <span class="id" title="var">θ1</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S12</span> : <span class="id" title="var">θ_Strength2</span> <span class="id" title="var">θ1</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S21</span> : <span class="id" title="var">θ_Strength1</span> <span class="id" title="var">θ2</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S22</span> : <span class="id" title="var">θ_Strength2</span> <span class="id" title="var">θ2</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1987"></a><h1 class="section">Definition of the data of the product of two signatures</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">H</span> : <span class="id" title="var">functor</span> [<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>] [<span class="id" title="var">C</span>, <span class="id" title="var">D</span>, <span class="id" title="var">hs</span>] :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinProduct_of_functors</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">PCD</span> <span class="id" title="var">H1</span> <span class="id" title="var">H2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_ob_fun</span> (<span class="id" title="var">X</span> : [<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>]) (<span class="id" title="var">Z</span> : <span class="id" title="var">precategory_Ptd</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span>) :<br/>
+&nbsp;&nbsp;&nbsp;∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_composite_data</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinProduct_of_functors_data</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">PD</span> (<span class="id" title="var">H1</span> <span class="id" title="var">X</span>) (<span class="id" title="var">H2</span> <span class="id" title="var">X</span>))) <span class="id" title="var">c</span><br/>
+&nbsp;&nbsp;&nbsp;--&gt; (<span class="id" title="var">BinProduct_of_functors_data</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">PD</span> (<span class="id" title="var">H1</span> (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>) <span class="id" title="var">X</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">H2</span> (<span class="id" title="var">functor_composite</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">Z</span>) <span class="id" title="var">X</span>))) <span class="id" title="var">c</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">θ1</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>)) <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">exact</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">θ2</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>)) <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_nat_trans_θ_ob_fun</span> (<span class="id" title="var">X</span> : [<span class="id" title="var">C</span>, <span class="id" title="var">C</span>, <span class="id" title="var">hsC</span>]) (<span class="id" title="var">Z</span> : <span class="id" title="var">precategory_Ptd</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span>):<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">is_nat_trans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">θ_ob_fun</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">x</span> <span class="id" title="var">x'</span> <span class="id" title="var">f</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span> | ].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ | <span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_eq</span>.<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">θ1</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>))).<br/>
+&nbsp;&nbsp;* <span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">θ2</span> (<span class="id" title="var">X</span> ⊗ <span class="id" title="var">Z</span>))).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">θ_ob</span> : ∏ <span class="id" title="var">XZ</span>, <span class="id" title="var">θ_source</span> <span class="id" title="var">H</span> <span class="id" title="var">XZ</span> --&gt; <span class="id" title="var">θ_target</span> <span class="id" title="var">H</span> <span class="id" title="var">XZ</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">XZ</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">θ_ob_fun</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">XZ</span>) (<span class="id" title="var">pr2</span> <span class="id" title="var">XZ</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_nat_trans_θ_ob_fun</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_nat_trans_θ_ob</span> :<br/>
+&nbsp;<span class="id" title="var">is_nat_trans</span> (<span class="id" title="var">θ_source_functor_data</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">D</span> <span class="id" title="var">hs</span> <span class="id" title="var">H</span>) (<span class="id" title="var">θ_target_functor_data</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">D</span> <span class="id" title="var">hs</span> <span class="id" title="var">H</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">θ_ob</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> [<span class="id" title="var">X</span> <span class="id" title="var">Z</span>] [<span class="id" title="var">X'</span> <span class="id" title="var">Z'</span>] [<span class="id" title="var">α</span> <span class="id" title="var">β</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ | <span class="id" title="tactic">eapply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinProductOfArrows_comp</span>].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>, <span class="id" title="var">BinProductOfArrows_comp</span> |].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span> |].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_eq</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">θ1</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">α</span>,,<span class="id" title="var">β</span>)) <span class="id" title="var">c</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">exact</span> (<span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">θ2</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">α</span>,,<span class="id" title="var">β</span>)) <span class="id" title="var">c</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">θ</span> : <span class="id" title="var">θ_source</span> <span class="id" title="var">H</span> ⟹ <span class="id" title="var">θ_target</span> <span class="id" title="var">H</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> <span class="id" title="var">θ_ob</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">is_nat_trans_θ_ob</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1988"></a><h1 class="section">Proof of the laws of the product of two signatures</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ProductStrength1</span> : <span class="id" title="var">θ_Strength1</span> <span class="id" title="var">θ</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span>|].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinProduct_endo_is_identity</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductOfArrowsPr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ | <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, (<span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">S11</span> <span class="id" title="var">X</span>) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductOfArrowsPr2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ | <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>, (<span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">S21</span> <span class="id" title="var">X</span>) <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ProductStrength2</span> : <span class="id" title="var">θ_Strength2</span> <span class="id" title="var">θ</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> <span class="id" title="var">Y</span> <span class="id" title="var">α</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span> |].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span>|].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span>|].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinProductOfArrows_eq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">assert</span> (<span class="id" title="var">Ha</span> := <span class="id" title="var">S12</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> <span class="id" title="var">Y</span> <span class="id" title="var">α</span>); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Ha</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq_pointwise</span> <span class="id" title="var">Ha</span> <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">assert</span> (<span class="id" title="var">Ha</span> := <span class="id" title="var">S22</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span> <span class="id" title="var">Y</span> <span class="id" title="var">α</span>); <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Ha</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq_pointwise</span> <span class="id" title="var">Ha</span> <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S11'</span> : <span class="id" title="var">θ_Strength1_int</span> <span class="id" title="var">θ1</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S12'</span> : <span class="id" title="var">θ_Strength2_int</span> <span class="id" title="var">θ1</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S21'</span> : <span class="id" title="var">θ_Strength1_int</span> <span class="id" title="var">θ2</span>.<br/>
+<span class="id" title="keyword">Variable</span> <span class="id" title="var">S22'</span> : <span class="id" title="var">θ_Strength2_int</span> <span class="id" title="var">θ2</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ProductStrength1'</span> : <span class="id" title="var">θ_Strength1_int</span> <span class="id" title="var">θ</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">S11</span> <span class="id" title="var">S12</span> <span class="id" title="var">S21</span> <span class="id" title="var">S22</span> <span class="id" title="var">S12'</span> <span class="id" title="var">S22'</span>; <span class="id" title="tactic">intro</span> <span class="id" title="var">X</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ <span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span> |].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinProduct_endo_is_identity</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductOfArrowsPr1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ | <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>]; <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">S11'</span> <span class="id" title="var">X</span>) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinProductOfArrowsPr2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [ | <span class="id" title="tactic">apply</span> <span class="id" title="var">id_right</span>]; <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">S21'</span> <span class="id" title="var">X</span>) <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">ProductStrength2'</span> : <span class="id" title="var">θ_Strength2_int</span> <span class="id" title="var">θ</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">S11</span> <span class="id" title="var">S12</span> <span class="id" title="var">S21</span> <span class="id" title="var">S22</span> <span class="id" title="var">S11'</span> <span class="id" title="var">S21'</span>; <span class="id" title="tactic">intros</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_eq</span> <span class="id" title="var">hs</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span>|].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">pathscomp0</span>; [<span class="id" title="tactic">apply</span> <span class="id" title="var">BinProductOfArrows_comp</span>|].<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>, <span class="id" title="var">BinProductOfArrows_eq</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">assert</span> (<span class="id" title="var">Ha_x</span> := <span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">S12'</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Ha_x</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Ha_x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Ha_x</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">assert</span> (<span class="id" title="var">Ha_x</span> := <span class="id" title="var">nat_trans_eq_pointwise</span> (<span class="id" title="var">S22'</span> <span class="id" title="var">X</span> <span class="id" title="var">Z</span> <span class="id" title="var">Z'</span>) <span class="id" title="var">x</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Ha_x</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span> <span class="id" title="tactic">in</span> <span class="id" title="var">Ha_x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> <span class="id" title="var">Ha_x</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">construction</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Binary product of signatures 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">BinProduct_of_Signatures</span> (<span class="id" title="var">S1</span> <span class="id" title="var">S2</span> : <span class="id" title="var">Signature</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">D</span> <span class="id" title="var">hs</span>) : <span class="id" title="var">Signature</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">D</span> <span class="id" title="var">hs</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">H</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">S1</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">S2</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">exists</span> (<span class="id" title="var">θ</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">S1</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">S2</span>) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">S1</span>)) (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">S2</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">ProductStrength1'</span>; [<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">S1</span>)))|<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">S2</span>)))].<br/>
+&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <span class="id" title="var">ProductStrength2'</span>; [<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">S1</span>)))|<span class="id" title="tactic">apply</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr2</span> <span class="id" title="var">S2</span>)))].<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">is_omega_cocont_BinProduct_of_Signatures</span> (<span class="id" title="var">S1</span> <span class="id" title="var">S2</span> : <span class="id" title="var">Signature</span> <span class="id" title="var">C</span> <span class="id" title="var">hsC</span> <span class="id" title="var">D</span> <span class="id" title="var">hs</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">h1</span> : <span class="id" title="var">is_omega_cocont</span> <span class="id" title="var">S1</span>) (<span class="id" title="var">h2</span> : <span class="id" title="var">is_omega_cocont</span> <span class="id" title="var">S2</span>) (<span class="id" title="var">PC</span>: <span class="id" title="var">BinProducts</span> <span class="id" title="var">C</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">hE</span> : ∏ <span class="id" title="var">x</span>, <span class="id" title="var">is_omega_cocont</span> (<span class="id" title="var">constprod_functor1</span> (<span class="id" title="var">BinProducts_functor_precat</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> <span class="id" title="var">PD</span> <span class="id" title="var">hs</span>) <span class="id" title="var">x</span>)) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">is_omega_cocont</span> (<span class="id" title="var">BinProduct_of_Signatures</span> <span class="id" title="var">S1</span> <span class="id" title="var">S2</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+<span class="id" title="tactic">destruct</span> <span class="id" title="var">S1</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">F1</span> [<span class="id" title="var">F2</span> [<span class="id" title="var">F3</span> <span class="id" title="var">F4</span>]]]; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+<span class="id" title="tactic">destruct</span> <span class="id" title="var">S2</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">G1</span> [<span class="id" title="var">G2</span> [<span class="id" title="var">G3</span> <span class="id" title="var">G4</span>]]]; <span class="id" title="tactic">simpl</span> <span class="id" title="tactic">in</span> *.<br/>
+<span class="id" title="tactic">unfold</span> <span class="id" title="var">H</span>.<br/>
+<span class="id" title="tactic">apply</span> <span class="id" title="var">is_omega_cocont_BinProduct_of_functors</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">assumption</span>.<br/>
+- <span class="id" title="tactic">apply</span> (<span class="id" title="var">BinProducts_functor_precat</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">PC</span>).<br/>
+- <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_category_has_homsets</span>.<br/>
+- <span class="id" title="tactic">apply</span> <span class="id" title="var">functor_category_has_homsets</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">binproduct_of_signatures</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

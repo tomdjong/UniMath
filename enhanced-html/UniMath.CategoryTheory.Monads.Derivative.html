@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.CategoryTheory.Monads.Derivative</h1>
+
+<div class="code">
+</div>
+
+<div class="doc">
+**********************************************************
+Contents:
+<ul class="doclist">
+<li> "maybe" monad (binary coproduct with a fixed object) <span class="inlinecode"><span class="id" title="var">maybe_monad</span></span>
+
+</li>
+<li> distributive laws for pairs of monads <span class="inlinecode"><span class="id" title="var">monad_dist_laws</span></span>
+<ul class="doclist">
+<li> in particular: the distributive law for the maybe monad and any monad <span class="inlinecode"><span class="id" title="var">deriv_dist</span></span>
+
+</li>
+</ul>
+
+</li>
+<li> composition of two monads with a distributive law <span class="inlinecode"><span class="id" title="var">monad_comp</span></span>
+<ul class="doclist">
+<li> in particular: derivative of a monad (composing with maybe) <span class="inlinecode"><span class="id" title="var">monad_deriv</span></span>
+
+</li>
+</ul>
+
+</li>
+<li> monad morphism from the first composand to the composition of monads <span class="inlinecode"><span class="id" title="var">monad_to_comp</span></span>
+<ul class="doclist">
+<li> in particular: monad morphism from a monad to its derivative <span class="inlinecode"><span class="id" title="var">monad_to_deriv</span></span>
+
+</li>
+</ul>
+
+</li>
+<li> left module over a monad T obtained by composing a monad having a distributive
+          law with T <span class="inlinecode"><span class="id" title="var">LModule_comp_laws</span></span>
+<ul class="doclist">
+<li> in particular: the derivative of a left module over a monad <span class="inlinecode"><span class="id" title="var">LModule_deriv</span></span>
+
+</li>
+</ul>
+
+</li>
+<li> Commutation of module derivation with pullback <span class="inlinecode"><span class="id" title="var">pb_LModule_deriv_iso</span></span>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+Written by: Joseph Helfer (May 2017)
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.PartD</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Propositions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.Sets</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.MoreFoundations.Tactics</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Categories</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Isos</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.Functors</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Core.NaturalTransformations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monads.Monads</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.limits.bincoproducts</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.PrecategoryBinProduct</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.whiskering</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.CategoryTheory.Monads.LModules</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">cat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1301"></a><h1 class="section">Definition of distributive laws for Monads and composition of Monads</h1>
+
+ cf. Beck "Distributive laws" (1969) 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">comp_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <span class="id" title="var">DistrLaws</span>.<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory_data</span>} {<span class="id" title="var">S</span> <span class="id" title="var">T</span> : <span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+distributivity law for a pair of monads 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_dist_laws</span> (<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>) :=<br/>
+&nbsp;&nbsp;(((∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>, <span class="id" title="var">η</span> <span class="id" title="var">S</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>) · <span class="id" title="var">a</span> <span class="id" title="var">x</span> = #<span class="id" title="var">T</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>)) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>, #<span class="id" title="var">S</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span>) · <span class="id" title="var">a</span> <span class="id" title="var">x</span> = <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>, <span class="id" title="var">a</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>) · #<span class="id" title="var">T</span> (<span class="id" title="var">a</span> <span class="id" title="var">x</span>) · <span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>) = #<span class="id" title="var">S</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span>) · <span class="id" title="var">a</span> <span class="id" title="var">x</span>)) ×<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>, #<span class="id" title="var">S</span> (<span class="id" title="var">a</span> <span class="id" title="var">x</span>) · <span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>) = <span class="id" title="var">μ</span> <span class="id" title="var">S</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>) · <span class="id" title="var">a</span> <span class="id" title="var">x</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_dist_law1</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) := (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">l</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_dist_law2</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) := (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">l</span>))).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_dist_law3</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) := (<span class="id" title="var">pr2</span> (<span class="id" title="var">pr1</span> <span class="id" title="var">l</span>)).<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_dist_law4</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) := <span class="id" title="var">pr2</span> <span class="id" title="var">l</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">DistrLaws</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+composition of monads with a distributive law 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_comp_mu</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">S</span> <span class="id" title="var">T</span> : <span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>) ⟹ (<span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">post_whisker</span> (<span class="id" title="var">pre_whisker</span> <span class="id" title="var">S</span> <span class="id" title="var">a</span>) <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">pre_whisker</span> (<span class="id" title="var">S</span> ∙ <span class="id" title="var">S</span>) (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>)) (<span class="id" title="var">post_whisker</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span>) <span class="id" title="var">T</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_comp_eta</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">S</span> <span class="id" title="var">T</span> : <span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>):<br/>
+&nbsp;&nbsp;<span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span>) (<span class="id" title="var">pre_whisker</span> <span class="id" title="var">S</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_comp_data</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">S</span> <span class="id" title="var">T</span> : <span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">tpair</span> <span class="id" title="var">_</span> (<span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>) (<span class="id" title="var">monad_comp_mu</span> <span class="id" title="var">a</span>)) (<span class="id" title="var">monad_comp_eta</span> <span class="id" title="var">a</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Below are the proofs of the monad laws for the composition of monads. We prove them as separate
+    lemmas not only because they are somewhat lengthy, but also for the following reason: the μ and
+    η for this monad are defined via operations on natural transformations, rather than their value
+    being given explicitly at each object. However, for the proofs, it is desirable to have these
+    explicit expressions; the easiest way to accomplish this is to write out the statements by hand
+    in the desired form (as ugly as they may be).
+
+<div class="paragraph"> </div>
+
+    This is also done for the same reason later in the file, where the proofs of the individual
+    lemmas are not as lengthy.
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+Here is the diagram corresponding to this proof. The outside of the diagram represents the equation
+to be proved. The numbers indicate the order in which the sub-diagrams are used.
+TSTSx ---------------&gt; TTSSx -----------&gt;  TSSx  ------------&gt; TSx
+  ^     T (a (Sx))     ^     μ T (SSx)     ^     T (μ S x)   ^
+  |                     |                  /                  /
+  |η T (STSx)           |η T (TSSx)       /id                /
+  |                 1   |            3   /                  /
+           a (Sx)                       /                  /
+ STSx  --------------&gt; TSSx ------------         4        /
+  ^                     ^                                /
+  |             2      /T (η S (Sx))                   /
+  |η S (TSx)          /                                /
+  | _________________/                                /
+  |/                               id                /
+ TSx ------------------------------------------------
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">S</span> <span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>}.<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">monad_comp_law1</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;(<span class="id" title="var">η</span> <span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))) · (<span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))) · (#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>))) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">identity</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !(<span class="id" title="var">assoc</span> ((<span class="id" title="var">η</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">do</span> 3 <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">monad_dist_law1</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> (# <span class="id" title="var">T</span> ((<span class="id" title="var">η</span> <span class="id" title="var">S</span>) (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">Monad_law1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">etrans</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law1</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+The diagram for this proof (see above for explanation):
+TSTSx ---------------&gt; TTSSx -----------&gt;  TSSx  ------------&gt; TSx
+  ^     T (a (Sx))     ^     μ T (SSx)     ^     T (μ S x)   ^
+  |                 1  /             2     /                  /
+  |T S (η T (Sx))   /                   /id                /
+  |                  /T (η T (SSx))     /                  /
+  |  _______________/                   /                  /
+  | /                                  /                  /
+ TSSx  --------------------------------         3        /
+  ^                                                     /
+  |                                                    /
+  |T S (η S x)                                      /
+  |                                      id          /
+ TSx ------------------------------------------------
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">monad_comp_law2</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;#<span class="id" title="var">T</span> (#<span class="id" title="var">S</span> ((<span class="id" title="var">η</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>) · (<span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))) · (#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>))) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">identity</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">functor_comp</span> <span class="id" title="var">S</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">monad_dist_law2</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> (# <span class="id" title="var">T</span> ((<span class="id" title="var">η</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Monad_law2</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="var">etrans</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law2</span>.<br/>
+</div>
+
+<br/>
+</div>
+
+<div class="doc">
+Here, more enlightening than a diagram is just the "strategy" of the proof: each side of the
+    equation consists of some applications of the monad multiplications μ T and μ S and the
+    distributive law 'a'. The strategy is - (1) using repeated applications of the third and fourth
+    axioms for the distributive law and the naturality of μ T, μ S, and 'a' - to arrange for all the
+    applications of 'a' to come first, and then the applications μ T and μ S. Thus, both sides are
+    transformed to a composite TSTSTSx --&gt; TTTSSSx -&gt; TSx; then (2) the first composands are equal
+    by the naturality of 'a', and the second composands are equal by the naturality and
+    associativity of μ T and μ S.
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">monad_comp_law3</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;#<span class="id" title="var">T</span> (#<span class="id" title="var">S</span> (#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>)))) ·<br/>
+&nbsp;&nbsp;&nbsp;(#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>))) =<br/>
+&nbsp;&nbsp;#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))) · (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))) ·<br/>
+&nbsp;&nbsp;&nbsp;(#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">nat_trans_ax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">functor_comp</span> <span class="id" title="var">S</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (#<span class="id" title="var">S</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (#<span class="id" title="var">S</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))) <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">monad_dist_law3</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> (<span class="id" title="var">a</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (<span class="id" title="var">a</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (# <span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (! (<span class="id" title="var">functor_comp</span> <span class="id" title="var">T</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (# <span class="id" title="var">T</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">S</span>) (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> (# <span class="id" title="var">T</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">S</span>) (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">monad_dist_law4</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">do</span> 5 <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> (# <span class="id" title="var">T</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- !(<span class="id" title="var">functor_comp</span> <span class="id" title="var">T</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (# <span class="id" title="var">T</span> (# <span class="id" title="var">T</span> (# <span class="id" title="var">T</span> (# <span class="id" title="var">S</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">S</span>) <span class="id" title="var">x</span>)))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- !<span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (@<span class="id" title="var">Monad_law3</span> <span class="id" title="var">C</span> <span class="id" title="var">S</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (# <span class="id" title="var">T</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (@<span class="id" title="var">Monad_law3</span> <span class="id" title="var">C</span> <span class="id" title="var">T</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> ((<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">nat_trans_ax</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_comp</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">monad_comp_data</span> <span class="id" title="var">a</span>,,<br/>
+&nbsp;&nbsp;<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">monad_comp_law1</span> <span class="id" title="var">l</span>) (<span class="id" title="var">monad_comp_law2</span> <span class="id" title="var">l</span>)) (<span class="id" title="var">monad_comp_law3</span> <span class="id" title="var">l</span>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+morphism from the factor T to the composite S ∙ T of two monads 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_to_comp_data</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">T</span> ⟹ <span class="id" title="var">monad_comp</span> <span class="id" title="var">l</span> := <span class="id" title="var">post_whisker</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span>) <span class="id" title="var">T</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We prove the monad morphism laws as separate lemmas for the reason explained in the comment
+    near the beginning of the file 
+<div class="paragraph"> </div>
+
+ The diagram for this proof (see above for explanation):
+TTx-------------------------------------------------------------------&gt;Tx
+ | \                                      μ T x                         |
+ |  ¯¯¯¯¯¯¯¯¯¯¯¯¯\                                                      |
+ |T (η S (Tx))   \T (T (η S x)                 5           T (η S x)|
+ |              2  \                                                    |
+ v    T (a x)      v        id                     μ T (Sx)            |
+TSTx----------------TTSx------------------TTSx---------------------     |
+ |                    |                   ^                        \    |
+ |T S T (η S x)    |T T S (η S x)  /                          \   |
+ |                    |    _____________/ T T (μ S x)     3        \  |
+ |         1          | 4 /                                           \ |
+ v                    v  /                                            v v
+TSTSx-------------->TTSSx-------------------------->TSSx-------------->TSx
+      T (a (Sx))                  μ T (SSx)               T (μ S x)
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">monad_to_comp_law1</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span> · #<span class="id" title="var">T</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#<span class="id" title="var">T</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)) · #<span class="id" title="var">T</span> (#<span class="id" title="var">S</span> (#<span class="id" title="var">T</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>))) ·<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) · #<span class="id" title="var">T</span> (<span class="id" title="var">μ</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>))).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> (# <span class="id" title="var">T</span> (# <span class="id" title="var">S</span> (# <span class="id" title="var">T</span> ((<span class="id" title="var">η</span> <span class="id" title="var">S</span>) <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> <span class="id" title="var">a</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">monad_dist_law1</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- !<span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) (<span class="id" title="var">S</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> (# <span class="id" title="var">T</span> (# <span class="id" title="var">T</span> (# <span class="id" title="var">S</span> ((<span class="id" title="var">η</span> <span class="id" title="var">S</span>) <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- !<span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_law2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_to_comp_law2</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>, <span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span> · #<span class="id" title="var">T</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span>) = <span class="id" title="var">η</span> <span class="id" title="var">S</span> <span class="id" title="var">x</span> · (<span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>) <span class="id" title="var">x</span> ).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_to_comp</span> {<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) :<br/>
+&nbsp;&nbsp;<span class="id" title="var">Monad_Mor</span> <span class="id" title="var">T</span> (<span class="id" title="var">monad_comp</span> <span class="id" title="var">l</span>) :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">monad_to_comp_data</span> <span class="id" title="var">l</span>,, <span class="id" title="var">dirprodpair</span> (<span class="id" title="var">monad_to_comp_law1</span> <span class="id" title="var">l</span>) (<span class="id" title="var">monad_to_comp_law2</span> <span class="id" title="var">l</span>)).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">comp_def</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1302"></a><h1 class="section">Definition of the "Maybe" monad (coproduct with a fixed object)</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">maybe_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>} (<span class="id" title="var">o</span> : <span class="id" title="var">C</span>) (<span class="id" title="var">co</span> : <span class="id" title="var">BinCoproducts</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">maybe_functor</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">constcoprod_functor1</span> <span class="id" title="var">co</span> <span class="id" title="var">o</span>.<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" title="var">maybe_functor</span></span> is the same as <span class="inlinecode"><span class="id" title="var">UniMath.SubstitutionSystems.SignatureExamples.genopt</span></span>,
+    which is introduced there only by <span class="inlinecode"><span class="id" title="keyword">Let</span></span>, and a different notion of distributive law
+    is studied 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">maybe_mu</span> : <span class="id" title="var">maybe_functor</span> ∙ <span class="id" title="var">maybe_functor</span> ⟹ <span class="id" title="var">maybe_functor</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">coproduct_nat_trans</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">co</span> (<span class="id" title="var">constant_functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">o</span>) <span class="id" title="var">maybe_functor</span> <span class="id" title="var">maybe_functor</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">coproduct_nat_trans_in1</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">co</span> (<span class="id" title="var">constant_functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">o</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">nat_trans_id</span> <span class="id" title="var">maybe_functor</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">maybe_eta</span> : <span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span> ⟹ <span class="id" title="var">maybe_functor</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">coproduct_nat_trans_in2</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">co</span> (<span class="id" title="var">constant_functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">o</span>) (<span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">maybe_monad_data</span> : <span class="id" title="var">Monad_data</span> <span class="id" title="var">C</span> := (<span class="id" title="var">maybe_functor</span>,, <span class="id" title="var">maybe_mu</span>),, <span class="id" title="var">maybe_eta</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We prove the monad laws as separate lemmas for the reason explained in the comment
+    near the beginning of the file 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">maybe_monad_law1</span> : ∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>,<br/>
+<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) ·<br/>
+<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) =<br/>
+<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn2Commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">maybe_monad_law2</span> : ∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>,<br/>
+<span class="id" title="var">BinCoproductOfArrows</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>) (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))<br/>
+&nbsp;&nbsp;(<span class="id" title="var">identity</span> <span class="id" title="var">o</span>) (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) ·<br/>
+<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) =<br/>
+<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">precompWithBinCoproductArrow</span>, <span class="id" title="var">id_left</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;- (<span class="id" title="var">id_right</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))), &lt;- <span class="id" title="var">BinCoproductArrowEta</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">maybe_monad_law3</span> : ∏ <span class="id" title="var">c</span> : <span class="id" title="var">C</span>,<br/>
+<span class="id" title="var">BinCoproductOfArrows</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))) (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))<br/>
+&nbsp;(<span class="id" title="var">identity</span> <span class="id" title="var">o</span>)<br/>
+&nbsp;(<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))) ·<br/>
+<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) =<br/>
+<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))) (<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))) ·<br/>
+&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">c</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">precompWithBinCoproductArrow</span>, <span class="id" title="var">postcompWithBinCoproductArrow</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!<span class="id" title="var">id_right</span>, <span class="id" title="var">postcompWithBinCoproductArrow</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!<span class="id" title="var">id_left</span>, <span class="id" title="var">BinCoproductIn1Commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">maybe_monad</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">maybe_monad_data</span>,,<br/>
+&nbsp;&nbsp;<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">dirprodpair</span> <span class="id" title="var">maybe_monad_law1</span> <span class="id" title="var">maybe_monad_law2</span>) <span class="id" title="var">maybe_monad_law3</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Definition of the derivative of a monad, i.e. precomposing with the maybe monad 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">deriv_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">functor_deriv</span> {<span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">T</span> : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span>) : <span class="id" title="var">functor</span> <span class="id" title="var">C</span> <span class="id" title="var">D</span> := <span class="id" title="var">maybe_monad</span> ∙ <span class="id" title="var">T</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The distributive law for any monad with the Maybe monad. This is the obvious map
+    (TX + Y) -&gt; T (X + Y) - i.e., T(in1) on the first component and (in2 · η T)
+    on the second component 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">deriv_dist</span> (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : (<span class="id" title="var">T</span> ∙ <span class="id" title="var">maybe_monad</span>) ⟹ (<span class="id" title="var">maybe_monad</span> ∙ <span class="id" title="var">T</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">coproduct_nat_trans</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">co</span> (<span class="id" title="var">constant_functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">o</span>) <span class="id" title="var">T</span> (<span class="id" title="var">functor_deriv</span> <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">coproduct_nat_trans_in1</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">co</span> (<span class="id" title="var">constant_functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">o</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pre_whisker</span> <span class="id" title="var">maybe_monad</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">post_whisker</span> (<span class="id" title="var">coproduct_nat_trans_in2</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">co</span> (<span class="id" title="var">constant_functor</span> <span class="id" title="var">C</span> <span class="id" title="var">C</span> <span class="id" title="var">o</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">functor_identity</span> <span class="id" title="var">C</span>)) <span class="id" title="var">T</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We prove the distributive law axioms as separate lemmas for the reason explained in the comment
+    near the beginning of the file 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">deriv_dist_law1</span> (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)) ·<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> · <span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">_</span>) (#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>)) =<br/>
+&nbsp;&nbsp;#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn2Commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">deriv_dist_law2</span> (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductOfArrows</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>) (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)) (<span class="id" title="var">identity</span> <span class="id" title="var">o</span>) (<span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span>) ·<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> · <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>)) (#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>)) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">precompWithBinCoproductArrow</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (!(<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>) <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">BinCoproductArrowEta</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">deriv_dist_law3</span> (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> · <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>))) (#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>)) ·<br/>
+&nbsp;&nbsp;#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> · <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>)) (#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>))) ·<br/>
+&nbsp;&nbsp;<span class="id" title="var">μ</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductOfArrows</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>))) (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)) (<span class="id" title="var">identity</span> <span class="id" title="var">o</span>) (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span>) ·<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> · <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>)) (#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">rewrite</span> <span class="id" title="var">postcompWithBinCoproductArrow</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn2Commutes</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>) (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">assoc</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> ((<span class="id" title="var">η</span> <span class="id" title="var">T</span>) (<span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Monad_law1</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn1Commutes</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">precompWithBinCoproductArrow</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span>) <span class="id" title="var">x</span>).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Lemma</span> <span class="id" title="var">deriv_dist_law4</span> (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductOfArrows</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>))) (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>))) (<span class="id" title="var">identity</span> <span class="id" title="var">o</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> · <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>))) ·<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> · <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>))) (#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>)) ·<br/>
+&nbsp;&nbsp;#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span> (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>) (<span class="id" title="var">identity</span> <span class="id" title="var">_</span>)) =<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>))) (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>) (<span class="id" title="var">identity</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>))) ·<br/>
+&nbsp;&nbsp;<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)) (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>) · <span class="id" title="var">η</span> <span class="id" title="var">T</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(#<span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> <span class="id" title="var">_</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">precompWithBinCoproductArrow</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">postcompWithBinCoproductArrow</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (# <span class="id" title="var">T</span> (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>))))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn2Commutes</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">functor_id</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_right</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span>) (<span class="id" title="var">co</span> <span class="id" title="var">o</span> (<span class="id" title="var">co</span> <span class="id" title="var">o</span> <span class="id" title="var">x</span>))).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn1Commutes</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">postcompWithBinCoproductArrow</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">BinCoproductIn1Commutes</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">deriv_dist_is_monad_dist</span> (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : <span class="id" title="var">monad_dist_laws</span> (<span class="id" title="var">deriv_dist</span> <span class="id" title="var">T</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">dirprodpair</span> (<span class="id" title="var">deriv_dist_law1</span> <span class="id" title="var">T</span>) (<span class="id" title="var">deriv_dist_law2</span> <span class="id" title="var">T</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">deriv_dist_law3</span> <span class="id" title="var">T</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">deriv_dist_law4</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_deriv</span> (<span class="id" title="var">T</span>: <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span> := <span class="id" title="var">monad_comp</span> (<span class="id" title="var">deriv_dist_is_monad_dist</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+the morphism from a monad to its derivative 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">monad_to_deriv</span> (<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) : <span class="id" title="var">Monad_Mor</span> <span class="id" title="var">T</span> (<span class="id" title="var">monad_deriv</span> <span class="id" title="var">T</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">monad_to_comp</span> (<span class="id" title="var">deriv_dist_is_monad_dist</span> <span class="id" title="var">T</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+derivative of a left module over a monad 
+</div>
+<div class="code">
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">LModule_comp_law1</span> {<span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} {<span class="id" title="var">S</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) (<span class="id" title="var">L</span> : <span class="id" title="var">LModule</span> <span class="id" title="var">T</span> <span class="id" title="var">D</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;#<span class="id" title="var">L</span> (#<span class="id" title="var">S</span> (<span class="id" title="var">η</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span>)) · (#<span class="id" title="var">L</span> (<span class="id" title="var">a</span> <span class="id" title="var">x</span>) · <span class="id" title="var">lm_mult</span> <span class="id" title="var">T</span> <span class="id" title="var">L</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) = <span class="id" title="var">identity</span> (<span class="id" title="var">L</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>, &lt;- <span class="id" title="var">functor_comp</span>, (<span class="id" title="var">monad_dist_law2</span> <span class="id" title="var">l</span>), (<span class="id" title="var">LModule_law1</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)).<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">LModule_comp_law2</span> {<span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} {<span class="id" title="var">S</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) (<span class="id" title="var">L</span> : <span class="id" title="var">LModule</span> <span class="id" title="var">T</span> <span class="id" title="var">D</span>) : ∏ <span class="id" title="var">x</span> : <span class="id" title="var">C</span>,<br/>
+&nbsp;&nbsp;#<span class="id" title="var">L</span> (#<span class="id" title="var">S</span> (<span class="id" title="var">μ</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span>)) · (#<span class="id" title="var">L</span> (<span class="id" title="var">a</span> <span class="id" title="var">x</span>) · <span class="id" title="var">lm_mult</span> <span class="id" title="var">T</span> <span class="id" title="var">L</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)) =<br/>
+&nbsp;&nbsp;(#<span class="id" title="var">L</span> (<span class="id" title="var">a</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>)) · <span class="id" title="var">lm_mult</span> <span class="id" title="var">T</span> <span class="id" title="var">L</span> (<span class="id" title="var">S</span> (<span class="id" title="var">T</span> <span class="id" title="var">x</span>))) · (#<span class="id" title="var">L</span> (<span class="id" title="var">a</span> <span class="id" title="var">x</span>) · <span class="id" title="var">lm_mult</span> <span class="id" title="var">T</span> <span class="id" title="var">L</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)).<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;<span class="id" title="tactic">intro</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">monad_dist_law3</span> <span class="id" title="var">l</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="var">LModule_law2</span> <span class="id" title="var">T</span> (<span class="id" title="var">S</span> <span class="id" title="var">x</span>)).<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- (<span class="id" title="var">assoc</span> <span class="id" title="var">_</span> (#<span class="id" title="var">L</span> (#<span class="id" title="var">T</span> (<span class="id" title="var">a</span> <span class="id" title="var">x</span>)))).<br/>
+&nbsp;&nbsp;<span class="id" title="var">etrans</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">nat_trans_ax</span> (<span class="id" title="var">lm_mult</span> <span class="id" title="var">T</span> <span class="id" title="var">L</span>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<span class="id" title="var">now</span> <span class="id" title="tactic">rewrite</span> !<span class="id" title="var">assoc</span>.<br/>
+</div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">LModule_comp_data</span> {<span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} {<span class="id" title="var">S</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} (<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">L</span> : <span class="id" title="var">LModule</span> <span class="id" title="var">T</span> <span class="id" title="var">D</span>) : <span class="id" title="var">LModule_data</span> <span class="id" title="var">T</span> <span class="id" title="var">D</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">S</span> ∙ <span class="id" title="var">L</span>,, <span class="id" title="var">nat_trans_comp</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">post_whisker</span> <span class="id" title="var">a</span> <span class="id" title="var">L</span>) (<span class="id" title="var">pre_whisker</span> <span class="id" title="var">S</span> (<span class="id" title="var">lm_mult</span> <span class="id" title="var">T</span> <span class="id" title="var">L</span>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">LModule_comp_laws</span> {<span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} {<span class="id" title="var">S</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">a</span> : <span class="id" title="var">T</span> ∙ <span class="id" title="var">S</span> ⟹ <span class="id" title="var">S</span> ∙ <span class="id" title="var">T</span>} (<span class="id" title="var">l</span> : <span class="id" title="var">monad_dist_laws</span> <span class="id" title="var">a</span>) (<span class="id" title="var">L</span> : <span class="id" title="var">LModule</span> <span class="id" title="var">T</span> <span class="id" title="var">D</span>) :<br/>
+&nbsp;&nbsp;(<span class="id" title="var">LModule_laws</span> <span class="id" title="var">T</span> (<span class="id" title="var">LModule_comp_data</span> <span class="id" title="var">a</span> <span class="id" title="var">L</span>)) := <span class="id" title="var">dirprodpair</span> (<span class="id" title="var">LModule_comp_law1</span> <span class="id" title="var">l</span> <span class="id" title="var">L</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">LModule_comp_law2</span> <span class="id" title="var">l</span> <span class="id" title="var">L</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">LModule_deriv</span> {<span class="id" title="var">D</span> : <span class="id" title="var">precategory</span>} {<span class="id" title="var">T</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} (<span class="id" title="var">L</span> : <span class="id" title="var">LModule</span> <span class="id" title="var">T</span> <span class="id" title="var">D</span>) : <span class="id" title="var">LModule</span> <span class="id" title="var">T</span> <span class="id" title="var">D</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="var">LModule_comp_data</span> (<span class="id" title="var">deriv_dist</span> <span class="id" title="var">T</span>) <span class="id" title="var">L</span>,, <span class="id" title="var">LModule_comp_laws</span> (<span class="id" title="var">deriv_dist_is_monad_dist</span> <span class="id" title="var">T</span>) <span class="id" title="var">L</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">deriv_def</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">maybe_def</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Derivation on modules commutes with the pullback: if m is a monad morphism, then m*(M')
+ is isomorphic to m*(M)'
+ 
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <span class="id" title="var">pullback_deriv</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">C</span> : <span class="id" title="var">precategory</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">o</span> : <span class="id" title="var">C</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">bcpC</span> : <span class="id" title="var">limits.bincoproducts.BinCoproducts</span> <span class="id" title="var">C</span> )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="id" title="var">D</span> : <span class="id" title="var">category</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Let</span> <span class="id" title="var">MOD</span> (<span class="id" title="var">R</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>) := (<span class="id" title="var">precategory_LModule</span> <span class="id" title="var">R</span> <span class="id" title="var">D</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">R</span> <span class="id" title="var">S</span> : <span class="id" title="var">Monad</span> <span class="id" title="var">C</span>} (<span class="id" title="var">f</span> : <span class="id" title="var">Monad_Mor</span> <span class="id" title="var">R</span> <span class="id" title="var">S</span>) (<span class="id" title="var">M</span> : <span class="id" title="var">LModule</span> <span class="id" title="var">S</span> <span class="id" title="var">D</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> "M '" := (<span class="id" title="var">LModule_deriv</span> <span class="id" title="var">o</span> <span class="id" title="var">bcpC</span> <span class="id" title="var">M</span>) (<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 30).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> <span class="id" title="var">pb_d</span> := (<span class="id" title="var">pb_LModule</span> <span class="id" title="var">f</span> (<span class="id" title="var">M</span> ')).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span> <span class="id" title="keyword">Notation</span> <span class="id" title="var">d_pb</span> := ((<span class="id" title="var">pb_LModule</span> <span class="id" title="var">f</span> <span class="id" title="var">M</span> ) ').<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Pointwise equality of the involved multiplication 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <span class="id" title="var">pb_LModule_deriv_eq_mult</span> <span class="id" title="var">c</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# <span class="id" title="var">M</span> (<span class="id" title="var">BinCoproductOfArrows</span> <span class="id" title="var">C</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> (<span class="id" title="var">R</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> (<span class="id" title="var">S</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">identity</span> <span class="id" title="var">o</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span> <span class="id" title="var">c</span>)) ·<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">pr1</span> <span class="id" title="var">M</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> (<span class="id" title="var">S</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>) · <span class="id" title="var">pr1</span> (<span class="id" title="var">η</span> <span class="id" title="var">S</span>) (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">pr1</span> <span class="id" title="var">S</span>) (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)))) · <span class="id" title="var">pr1</span> (<span class="id" title="var">lm_mult</span> <span class="id" title="var">S</span> <span class="id" title="var">M</span>) (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) =<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;# (<span class="id" title="var">pr1</span> <span class="id" title="var">M</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">BinCoproductArrow</span> <span class="id" title="var">C</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> (<span class="id" title="var">R</span> <span class="id" title="var">c</span>)) (<span class="id" title="var">BinCoproductIn1</span> <span class="id" title="var">C</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>) · <span class="id" title="var">pr1</span> (<span class="id" title="var">η</span> <span class="id" title="var">R</span>) (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(# (<span class="id" title="var">pr1</span> <span class="id" title="var">R</span>) (<span class="id" title="var">BinCoproductIn2</span> <span class="id" title="var">C</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)))) · (# (<span class="id" title="var">pr1</span> <span class="id" title="var">M</span>) (<span class="id" title="var">pr1</span> <span class="id" title="var">f</span> (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)) ·<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">lm_mult</span> <span class="id" title="var">S</span> <span class="id" title="var">M</span>) (<span class="id" title="var">bcpC</span> <span class="id" title="var">o</span> <span class="id" title="var">c</span>)).<br/>
+&nbsp;&nbsp;<a class="proof" href="#">Show proof.</a><br/><div class="proof">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">rewrite</span> <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_postcomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">do</span> 2 <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">functor_comp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">maponpaths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">etrans</span>;[ <span class="id" title="tactic">apply</span> <span class="id" title="var">precompWithBinCoproductArrow</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">id_left</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">postcompWithBinCoproductArrow</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">map_on_two_paths</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">assoc</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">cancel_precomposition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">Monad_Mor_η</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <span class="id" title="var">pathsinv0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">nat_trans_ax</span>.<br/>
+</div>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <span class="id" title="var">pb_LModule_deriv_iso</span> :<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">iso</span> (<span class="id" title="var">C</span> := <span class="id" title="var">MOD</span> <span class="id" title="var">R</span>) <span class="id" title="var">pb_d</span> <span class="id" title="var">d_pb</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">LModule_same_func_iso</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pb_LModule_laws</span> <span class="id" title="var">f</span> (<span class="id" title="var">M</span> '))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">LModule_comp_laws</span> (<span class="id" title="var">deriv_dist_is_monad_dist</span> <span class="id" title="var">o</span> <span class="id" title="var">bcpC</span> <span class="id" title="var">R</span>) (<span class="id" title="var">pb_LModule</span> <span class="id" title="var">f</span> <span class="id" title="var">M</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pb_LModule_deriv_eq_mult</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">homset_property</span> <span class="id" title="var">D</span>) .<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <span class="id" title="var">pullback_deriv</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

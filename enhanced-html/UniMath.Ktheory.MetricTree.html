@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js" type="text/javascript"></script>
+	<script src="./proofs-toggle.js" type="text/javascript"></script>
+	<style>
+		div.proofcomment {
+			font-style: italic;
+		}
+	</style>
+	<title>Documentation</title>
+</head>
+<body>
+<div id="page">
+<div id="main">
+<h1 class="libtitle">Library UniMath.Ktheory.MetricTree</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1814"></a><h1 class="section">Metric trees</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Monoids</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Algebra.Groups</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Foundations.NaturalNumbers</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Foundations.UnivalenceAxiom</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.MoreFoundations.NegativePropositions</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.CategoryTheory.total2_paths</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">UniMath.Ktheory.Utilities</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab1815"></a><h2 class="section">Definitions</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Record</span> <span class="id" title="var">Tree</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="var">make</span> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mt_set</span>:&gt; <span class="id" title="keyword">Type</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mt_dist</span>: <span class="id" title="var">mt_set</span> -&gt; <span class="id" title="var">mt_set</span> -&gt; <span class="id" title="var">nat</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mt_refl</span>: ∏ <span class="id" title="var">x</span>, <span class="id" title="var">mt_dist</span> <span class="id" title="var">x</span> <span class="id" title="var">x</span> = 0;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mt_anti</span>: ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">mt_dist</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = 0 -&gt; <span class="id" title="var">x</span> = <span class="id" title="var">y</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mt_symm</span>: ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span>, <span class="id" title="var">mt_dist</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = <span class="id" title="var">mt_dist</span> <span class="id" title="var">y</span> <span class="id" title="var">x</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mt_trans</span>: ∏ <span class="id" title="var">x</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>, <span class="id" title="var">mt_dist</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> &lt;= <span class="id" title="var">mt_dist</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> + <span class="id" title="var">mt_dist</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">mt_step</span>: ∏ <span class="id" title="var">x</span> <span class="id" title="var">z</span>, <span class="id" title="var">x</span> != <span class="id" title="var">z</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∑ <span class="id" title="var">y</span>, (<span class="id" title="var">S</span> (<span class="id" title="var">mt_dist</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>) = <span class="id" title="var">mt_dist</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span>) × (<span class="id" title="var">mt_dist</span> <span class="id" title="var">y</span> <span class="id" title="var">z</span> = 1)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">mt_path_refl</span> (<span class="id" title="var">T</span>:<span class="id" title="var">Tree</span>) (<span class="id" title="var">x</span> <span class="id" title="var">y</span>:<span class="id" title="var">T</span>) : <span class="id" title="var">x</span> = <span class="id" title="var">y</span> -&gt; <span class="id" title="var">mt_dist</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span> = 0.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">mt_refl</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <span class="id" title="var">tree_deceq</span> (<span class="id" title="var">T</span>:<span class="id" title="var">Tree</span>) : <span class="id" title="var">isdeceq</span> <span class="id" title="var">T</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">intros</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span>. <span class="id" title="tactic">induction</span> (<span class="id" title="var">isdeceqnat</span> (<span class="id" title="var">mt_dist</span> <span class="id" title="var">T</span> <span class="id" title="var">t</span> <span class="id" title="var">u</span>) 0) <span class="id" title="keyword">as</span> [<span class="id" title="var">a</span>|<span class="id" title="var">b</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">inl</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">mt_anti</span>. <span class="id" title="tactic">assumption</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">inr</span>. <span class="id" title="tactic">intro</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">b</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">e</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">mt_refl</span>. } </div>
+
+<br/>
+<span class="id" title="keyword">Corollary</span> <span class="id" title="var">tree_isaset</span> (<span class="id" title="var">T</span>:<span class="id" title="var">Tree</span>) : <span class="id" title="var">isaset</span> <span class="id" title="var">T</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">isasetifdeceq</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">tree_deceq</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">step</span> (<span class="id" title="var">T</span>:<span class="id" title="var">Tree</span>) {<span class="id" title="var">x</span> <span class="id" title="var">z</span>:<span class="id" title="var">T</span>} (<span class="id" title="var">ne</span>:<span class="id" title="var">x</span> != <span class="id" title="var">z</span>) : <span class="id" title="var">T</span> := <span class="id" title="var">pr1</span> (<span class="id" title="var">mt_step</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> <span class="id" title="var">ne</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">tree_induction</span> (<span class="id" title="var">T</span>:<span class="id" title="var">Tree</span>) (<span class="id" title="var">x</span>:<span class="id" title="var">T</span>) (<span class="id" title="var">P</span>:<span class="id" title="var">T</span>-&gt;<span class="id" title="keyword">Type</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">p0</span> : <span class="id" title="var">P</span> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">pn</span> : ∏ <span class="id" title="var">z</span> (<span class="id" title="var">ne</span>:<span class="id" title="var">x</span> != <span class="id" title="var">z</span>), <span class="id" title="var">P</span> (<span class="id" title="var">step</span> <span class="id" title="var">T</span> <span class="id" title="var">ne</span>) -&gt; <span class="id" title="var">P</span> <span class="id" title="var">z</span>) :<br/>
+&nbsp;&nbsp;∏ <span class="id" title="var">z</span>, <span class="id" title="var">P</span> <span class="id" title="var">z</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">assert</span>(<span class="id" title="var">d_ind</span> : ∏ <span class="id" title="var">n</span> <span class="id" title="var">z</span>, <span class="id" title="var">mt_dist</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> = <span class="id" title="var">n</span> -&gt; <span class="id" title="var">P</span> <span class="id" title="var">z</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> ?.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IH</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">assert</span> (<span class="id" title="var">k</span>:<span class="id" title="var">x</span>=<span class="id" title="var">z</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">mt_anti</span>. <span class="id" title="tactic">assumption</span>. } <span class="id" title="tactic">destruct</span> <span class="id" title="var">k</span>. <span class="id" title="tactic">assumption</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> ? <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">ne</span> : <span class="id" title="var">x</span> != <span class="id" title="var">z</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">s</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">negpaths0sx</span> <span class="id" title="var">_</span> (! <span class="id" title="var">mt_path_refl</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">s</span> @ <span class="id" title="var">H</span>)). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">refine</span> (<span class="id" title="var">pn</span> <span class="id" title="var">z</span> <span class="id" title="var">ne</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">IH</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="var">step</span>; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">set</span> (<span class="id" title="var">y</span> := <span class="id" title="var">mt_step</span> <span class="id" title="var">T</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span> <span class="id" title="var">ne</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">y</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">y</span> [<span class="id" title="var">i</span> <span class="id" title="var">j</span>]]; <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">invmaponpathsS</span>. <span class="id" title="tactic">exact</span> (<span class="id" title="var">i@H</span>). } } }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> (<span class="id" title="var">d_ind</span> (<span class="id" title="var">mt_dist</span> <span class="id" title="var">_</span> <span class="id" title="var">x</span> <span class="id" title="var">z</span>)). <span class="id" title="tactic">reflexivity</span>. </div>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Ktheory.Nat</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Import</span> <span class="id" title="var">UniMath.Ktheory.Nat.Discern</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <span class="id" title="var">nat_tree</span> : <span class="id" title="var">Tree</span>.<br/>
+<a class="proof" href="#">Show proof.</a><br/><div class="proof"> <span class="id" title="tactic">refine</span> (<span class="id" title="var">make</span> <span class="id" title="var">nat</span> <span class="id" title="var">nat_dist</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intro</span> <span class="id" title="var">m</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">m</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">m</span> <span class="id" title="var">IHm</span>]. { <span class="id" title="tactic">reflexivity</span>. } { <span class="id" title="tactic">rewrite</span> <span class="id" title="var">nat_dist_S</span>. <span class="id" title="tactic">assumption</span>. } }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_dist_anti</span>. } { <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_dist_symm</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_dist_trans</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">intros</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Set Printing All</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">d</span> := <span class="id" title="var">natneqchoice</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> (<span class="id" title="var">nat_nopath_to_neq</span> <span class="id" title="var">e</span>)); <span class="id" title="tactic">clear</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">d</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">h</span>|<span class="id" title="var">h</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">exists</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">nat_dist_gt</span>. <span class="id" title="tactic">exact</span> <span class="id" title="var">h</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">destruct</span> (<span class="id" title="var">natgthorleh</span> (<span class="id" title="var">S</span> <span class="id" title="var">n</span>) <span class="id" title="var">n</span>) <span class="id" title="keyword">as</span> [<span class="id" title="var">_</span>|<span class="id" title="var">j</span>].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">clear</span> <span class="id" title="var">h</span>. <span class="id" title="tactic">induction</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [|<span class="id" title="var">n</span> <span class="id" title="var">IHn</span>]. { <span class="id" title="tactic">reflexivity</span>. } { <span class="id" title="tactic">apply</span> <span class="id" title="var">IHn</span>. } }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <span class="id" title="var">fromempty</span>. <span class="id" title="tactic">clear</span> <span class="id" title="var">h</span>. <span class="id" title="var">contradicts</span> <span class="id" title="var">j</span> (<span class="id" title="var">negnatSleh</span> <span class="id" title="var">n</span>). }}} }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">exists</span> (<span class="id" title="var">n</span> - 1).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">assert</span> (<span class="id" title="var">a</span> := <span class="id" title="var">natltminus1</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> <span class="id" title="var">h</span>). <span class="id" title="tactic">assert</span> (<span class="id" title="var">b</span> := <span class="id" title="var">natlthtoleh</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">c</span> := <span class="id" title="var">nat_dist_le</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span>). <span class="id" title="tactic">assert</span> (<span class="id" title="var">d</span> := <span class="id" title="var">nat_dist_le</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">b</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">c</span>, <span class="id" title="var">d</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">c</span> <span class="id" title="var">d</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">natminusminusassoc</span>. <span class="id" title="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (1 + (<span class="id" title="var">n</span> - (1+<span class="id" title="var">m</span>)) = <span class="id" title="var">n</span> - <span class="id" title="var">m</span>). <span class="id" title="tactic">rewrite</span> (<span class="id" title="var">natpluscomm</span> 1 <span class="id" title="var">m</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">natminusminusassoc</span>. <span class="id" title="tactic">rewrite</span> <span class="id" title="var">natpluscomm</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">minusplusnmm</span> (<span class="id" title="var">n</span>-<span class="id" title="var">m</span>) 1).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> (<span class="id" title="var">natminusplusltcomm</span> <span class="id" title="var">m</span> <span class="id" title="var">n</span> 1).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">assert</span>(<span class="id" title="var">e</span> := <span class="id" title="var">natleh0n</span> <span class="id" title="var">m</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span>(<span class="id" title="var">f</span> := <span class="id" title="var">natlehlthtrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">e</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">natlthtolehsn</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">f</span>). }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">exact</span> <span class="id" title="var">a</span>. } }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">assert</span> (<span class="id" title="var">a</span> := <span class="id" title="var">natleh0n</span> <span class="id" title="var">m</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">b</span> := <span class="id" title="var">natlehlthtrans</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">a</span> <span class="id" title="var">h</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">c</span> := <span class="id" title="var">natlthtolehsn</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">b</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">exact</span> (<span class="id" title="var">nat_dist_minus</span> 1 <span class="id" title="var">n</span> <span class="id" title="var">c</span>). } } } } </div>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
