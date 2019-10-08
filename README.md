@@ -6,7 +6,7 @@ It uses the [UniMath](https://github.com/UniMath/UniMath) library.
 It includes a copy of the UniMath library for compatibility and to make it easy to run without too much setting up.
 
 The paper accompanying this formalisation can be found
-[here](https://github.com/tomdjong/UniMath/blob/paper/paper.pdf).
+[here](https://arxiv.org/abs/1904.09810).
 
 Installation
 ------------
