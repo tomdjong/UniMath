@@ -50,8 +50,8 @@ Proof.
   intro d. cbn. apply idpath.
 Defined.
 
-(** * We avoid expressing this using ∘, because that does not work well
-      with the rewrite tactic. *)
+(** We avoid expressing this using ∘, because that does not work well
+    with the rewrite tactic. *)
 Definition fun_extension_after_η {X Y : UU} (f : X -> 𝓛 Y) :
   ∏ (x : X), f # (η x) = f x.
 Proof.
