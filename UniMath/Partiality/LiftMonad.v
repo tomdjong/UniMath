@@ -42,7 +42,7 @@ Defined.
 
 Notation "f #" := (Kleisli_extension f) (at level 30) : LiftMonad.
 
-Definition η_extension {X : UU} : η # ~ idfun (𝓛 X).
+Definition eta_extension {X : UU} : η # ~ idfun (𝓛 X).
 Proof.
   intro l.
   apply lifteq_suff.
@@ -52,7 +52,7 @@ Defined.
 
 (** We avoid expressing this using ∘, because that does not work well
     with the rewrite tactic. *)
-Definition fun_extension_after_η {X Y : UU} (f : X -> 𝓛 Y) :
+Definition fun_extension_after_eta {X Y : UU} (f : X -> 𝓛 Y) :
   ∏ (x : X), f # (η x) = f x.
 Proof.
   intro x. apply lifteq_suff.

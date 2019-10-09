@@ -217,7 +217,7 @@ Proof.
         assert (d2' : isdefined (ifz' (value l d1) a (u i))).
         { exact d2. }
         rewrite eq.
-        do 2 (rewrite fun_extension_after_η).
+        do 2 (rewrite fun_extension_after_eta).
         induction (value l d1) as [| n _].
         -- apply idpath.
         -- simpl.
@@ -231,7 +231,7 @@ Proof.
         assert (d2' : isdefined (ifz' (value l d1) a v)).
         { exact d2. }
         rewrite eq.
-        rewrite fun_extension_after_η.
+        rewrite fun_extension_after_eta.
         induction (value l d1) as [| n _ ].
         -- cbn. apply (@factor_through_squash I).
            ++ assert (helper : isaset (𝓛 ℕ)).
@@ -242,9 +242,9 @@ Proof.
               apply pathsinv0.
               etrans.
               ** apply pathsinv0, ineq.
-                 rewrite fun_extension_after_η.
+                 rewrite fun_extension_after_eta.
                  cbn. exact d2'.
-              ** rewrite fun_extension_after_η.
+              ** rewrite fun_extension_after_eta.
                  apply idpath.
            ++ exact (isdirected_inhabited isdirec).
         -- cbn.
@@ -253,7 +253,7 @@ Proof.
               set (eq' := liftlub_isdefined isdirec islubv i di).
               rewrite <- eq'.
               set (ineq := ineqs i (η (S n))).
-              cbn in ineq. rewrite fun_extension_after_η in ineq.
+              cbn in ineq. rewrite fun_extension_after_eta in ineq.
               cbn in ineq. apply ineq. exact di.
            ++ set (helper := @liftofhset_isaset ℕ).
               use helper.
@@ -266,7 +266,7 @@ Proof.
       { exact d2. }
       assert (eq : m = η (value m d1)).
       { apply isdefined_lift_embedding. }
-      rewrite eq. do 2 (rewrite fun_extension_after_η).
+      rewrite eq. do 2 (rewrite fun_extension_after_eta).
       induction (value m d1) as [| n _].
       * cbn. exact (liftlub_isdefined isdirec islubv i d2').
       * apply idpath.
@@ -277,14 +277,14 @@ Proof.
       { exact d2. }
       assert (eq : m = η (value m d1)).
       { apply isdefined_lift_embedding. }
-      rewrite eq. rewrite fun_extension_after_η.
+      rewrite eq. rewrite fun_extension_after_eta.
       induction (value m d1) as [| n _].
       * cbn. apply (isdefinedlub_toprop isdirec islubv).
         -- intros [i di].
            set (eq' := liftlub_isdefined isdirec islubv i di).
            rewrite <- eq'.
            set (ineq := (ineqs i l (η 0))). cbn in ineq.
-           rewrite fun_extension_after_η in ineq; cbn in ineq.
+           rewrite fun_extension_after_eta in ineq; cbn in ineq.
            apply ineq.
            exact di.
         -- set (helper := @liftofhset_isaset ℕ).
@@ -295,13 +295,13 @@ Proof.
            use helper.
         -- intro i.
            set (ineq := ineqs i l (η (S n))).
-           rewrite fun_extension_after_η in ineq; cbn in ineq.
+           rewrite fun_extension_after_eta in ineq; cbn in ineq.
            apply ineq.
            exact d2'.
         -- exact (isdirected_inhabited isdirec).
 Defined.
 
-Definition 𝓀_dcpo {D D' : dcpowithbottom} : D --> (D' --> D).
+Definition k_dcpo {D D' : dcpowithbottom} : D --> (D' --> D).
 Proof.
   use mkdcpomorphism.
   - intro x. use mkdcpomorphism.
@@ -319,7 +319,7 @@ Proof.
       intro i. exact (ineqs i d').
 Defined.
 
-Definition 𝓈_dcpo {A B C : dcpowithbottom} :
+Definition s_dcpo {A B C : dcpowithbottom} :
   (A --> (B --> C)) --> ((A --> B) --> (A --> C)).
 Proof.
   use mkdcpomorphism.
@@ -398,8 +398,8 @@ Fixpoint denotational_semantics_terms {σ : type} (t : term σ) : ⦃ σ ⦄ :=
   | pred     => lifted_pred
   | ifz      => lifted_ifz
   | fixp     => leastfixedpoint
-  | 𝓀        => 𝓀_dcpo
-  | 𝓈        => 𝓈_dcpo
+  | 𝓀        => k_dcpo
+  | 𝓈        => s_dcpo
   | app s r  => pr1 (denotational_semantics_terms s)
                     (denotational_semantics_terms r)
   end.
@@ -434,12 +434,12 @@ Proof.
         induction step'.
         -- apply idpath.
         -- apply idpath.
-        -- cbn. rewrite fun_extension_after_η.
+        -- cbn. rewrite fun_extension_after_eta.
            apply idpath.
         -- change (⟦ ifz ` s ` t ` (succ ` numeral n) ⟧) with
            (pr1 (⟦ ifz ` s ` t ⟧) (⟦ numeral (S n) ⟧)).
            rewrite (denotational_semantics_numerals (S n)).
-           cbn. rewrite fun_extension_after_η.
+           cbn. rewrite fun_extension_after_eta.
            apply idpath.
         -- apply pathsinv0. apply leastfixedpoint_isfixedpoint.
         -- apply idpath.
@@ -582,7 +582,7 @@ Proof.
       * apply rel2.
 Defined.
 
-Definition adequacy_𝓀 {σ τ : type} : adequacy_relation (σ ⇨ τ ⇨ σ) 𝓀_dcpo 𝓀.
+Definition adequacy_k {σ τ : type} : adequacy_relation (σ ⇨ τ ⇨ σ) k_dcpo 𝓀.
 Proof.
   intros l t rel m s rel'.
   cbn.
@@ -593,9 +593,9 @@ Proof.
   - exact rel.
 Defined.
 
-Definition adequacy_𝓈 {σ τ ρ : type} : adequacy_relation
+Definition adequacy_s {σ τ ρ : type} : adequacy_relation
                                          ((σ ⇨ τ ⇨ ρ) ⇨ (σ ⇨ τ) ⇨ σ ⇨ ρ)
-                                         𝓈_dcpo 𝓈.
+                                         s_dcpo 𝓈.
 Proof.
   intros l1 t1 rel1 l2 t2 rel2 l3 t3 rel3.
   cbn.
@@ -657,8 +657,8 @@ Proof.
   - exact adequacy_pred.
   - exact adequacy_ifz.
   - exact adequacy_fixp.
-  - exact adequacy_𝓀.
-  - exact adequacy_𝓈.
+  - exact adequacy_k.
+  - exact adequacy_s.
   - exact (IHt1 _ _ IHt2).
 Defined.
 
