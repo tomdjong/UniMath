@@ -16,7 +16,8 @@ Refactored: January 2019
 - The Scott model of PCF ([denotationalsemantics])
 - Soundness of the Scott model with respect to the operational semantics
   ([soundness])
-- Adequacy ([adequacy])
+- Computational adequacy ([adequacy])
+- Characterising PCF propositions ([pcf_propositions])
 *)
 
 
@@ -474,7 +475,7 @@ Qed.
 
 End soundness.
 
-(** * Adequacy *)
+(** * Computational adequacy *)
 Section adequacy.
 
 Fixpoint adequacy_relation (σ : type) : ⦃ σ ⦄ -> term σ -> UU :=
@@ -703,3 +704,66 @@ Proof.
 Qed.
 
 End adequacy.
+
+(** * Characterising PCF propositions *)
+Section pcf_propositions.
+
+Definition char_pcf_propositions (t : term ι) :
+  isdefined (⟦ t ⟧) <-> ∥ ∑ (n : nat), t ▹* numeral n ∥.
+Proof.
+  split.
+  - intro p.
+    apply hinhpr.
+    exists (value (⟦ t ⟧) p).
+    exact (adequacy t p).
+  - apply factor_through_squash.
+    + apply isaprop_isdefined.
+    + intros [n r].
+      set (e1 := soundness t (numeral n) r).
+      set (e2 := denotational_semantics_numerals n).
+      apply (transportb isdefined (e1 @ e2)).
+      cbn.
+      exact tt.
+Defined.
+
+Definition refltrans_step_smallstep {σ : type} : nat -> hrel (term σ) :=
+  refltransclos_step_hrel (smallstep).
+
+Definition char_pcf_propositions' (t : term ι) :
+  isdefined (⟦ t ⟧) <->
+  ∃ (n : nat), ∃ (k : nat), refltrans_step_smallstep k t (numeral n).
+Proof.
+  set (rhs := ∃ (n : nat), ∃ (k : nat), refltrans_step_smallstep k t (numeral n)).
+  set (lhs := ∃ (n : nat), t ▹* numeral n).
+  set (lem1 := stepleftequiv_hrel (@smallstep ι)).
+  set (lem2 := left_regular_equiv (@smallstep ι)).
+  assert (helper : lhs <-> rhs).
+  {
+    split.
+    - apply hinhfun.
+      intros [n r].
+      exists n.
+      apply lem1.
+      eapply hinhfun.
+      + apply lem2.
+      + exact r.
+    - apply hinhfun.
+      intros [n r].
+      exists n.
+      eapply hinhfun.
+      + apply lem2.
+      + apply lem1.
+        exact r.
+  }
+  split.
+  - intro d.
+    apply helper.
+    apply char_pcf_propositions.
+    exact d.
+  - intro h.
+    apply char_pcf_propositions.
+    apply helper.
+    exact h.
+Defined.
+
+End pcf_propositions.
