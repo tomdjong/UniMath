@@ -662,10 +662,44 @@ Proof.
   - exact (IHt1 _ _ IHt2).
 Defined.
 
-Theorem adequacy (t : term ι) :
-  ∏ (p : isdefined (⟦ t ⟧)), t ▹* numeral (value (⟦ t ⟧) p).
+Definition adequacy_statement : UU :=
+  ∏ (t : term ι) (p : isdefined (⟦ t ⟧)), t ▹* numeral (value (⟦ t ⟧) p).
+
+Definition adequacy_alt_statement : UU :=
+  ∏ (t : term ι) (n : nat), ⟦ t ⟧ = ⟦ numeral n ⟧ -> t ▹* numeral n.
+
+Theorem adequacy : adequacy_statement.
 Proof.
+  intro t.
   exact (@adequacy_allterms ι t).
+Defined.
+
+Theorem adequacy_alt : adequacy_statement -> adequacy_alt_statement.
+Proof.
+  intro hyp.
+  intros t n densemeq.
+  set (numeq := denotational_semantics_numerals n).
+  set (compeq := densemeq @ numeq).
+  set (p := lifteq_isdefined (!compeq) tt).
+  assert (eq : n = value (⟦ t ⟧) p).
+  {
+    change n with (value (lift_embedding n) tt).
+    apply lifteq_valueeq.
+    exact (!compeq).
+  }
+  rewrite eq.
+  apply hyp.
+Defined.
+
+Theorem alt_adequacy : adequacy_alt_statement -> adequacy_statement.
+Proof.
+  intro hyp.
+  intros t p.
+  set (v := lift_embedding (value (⟦ t ⟧) p)).
+  set (eq := isdefined_lift_embedding (⟦ t ⟧) p).
+  apply hyp.
+  rewrite denotational_semantics_numerals.
+  exact eq.
 Qed.
 
 End adequacy.
