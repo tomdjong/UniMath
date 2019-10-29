@@ -701,7 +701,7 @@ Proof.
   apply hyp.
   rewrite denotational_semantics_numerals.
   exact eq.
-Qed.
+Defined.
 
 End adequacy.
 
